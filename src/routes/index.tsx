@@ -1,8 +1,8 @@
 import { Route, Routes } from 'react-router-dom';
 import React from 'react';
-const LoginPage = React.lazy(() => import('../pages/Login'));
-const DashboardPage = React.lazy(() => import('../pages/Dashboard'));
-const NotFoundPage = React.lazy(() => import('../pages/NotFound'));
+const LoginPage = React.lazy(async () => await import('../pages/Login'));
+const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
+const NotFoundPage = React.lazy(async () => await import('../pages/NotFound'));
 
 export default function RoutesComponent() {
   return (

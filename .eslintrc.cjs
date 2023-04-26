@@ -16,6 +16,9 @@ module.exports = {
     'react/react-in-jsx-scope': 0,
     '@typescript-eslint/triple-slash-reference': 0,
     'import/no-absolute-path': 0,
+    '@typescript-eslint/consistent-type-definitions': 0,
+    '@typescript-eslint/consistent-type-imports': 0,
+    '@typescript-eslint/no-invalid-void-type': 0,
   },
   settings: {
     react: {
