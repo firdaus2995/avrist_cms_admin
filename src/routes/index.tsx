@@ -6,6 +6,9 @@ const LoginPage = React.lazy(async () => await import('../pages/Login'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
 const NotFoundPage = React.lazy(async () => await import('../pages/NotFound'));
 
+const RolesPage = React.lazy(async () => await import('../pages/Roles'));
+const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNew'));
+
 export default function RoutesComponent() {
   return (
     <Routes>
@@ -17,6 +20,10 @@ export default function RoutesComponent() {
           </Suspense>
         }>
         <Route index element={<DashboardPage />} />
+        {/* ROLES PAGES */}
+        <Route path="roles" element={<RolesPage />} />
+        <Route path="roles/new" element={<RolesNewPage />} />
+        <Route path="roles/edit" element={<RolesNewPage />} />
       </Route>
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
