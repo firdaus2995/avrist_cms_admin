@@ -1,5 +1,5 @@
 import React from 'react';
-
+import ReactLogo from '../../../assets/react.svg';
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -40,7 +40,7 @@ const HeadSidebar: React.FC<IHeadSidebar> = props => {
           d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
         />
       </svg>
-      <h1>Logo</h1>
+      <img className={`w-[160px] h-[31px] ${open ? 'visible' : 'hidden'}`} src={ReactLogo} />
     </div>
   );
 };
