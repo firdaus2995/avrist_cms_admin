@@ -1,0 +1,8 @@
+{
+  "sidebar": {
+    "role": "peran"
+  },
+  "dashboard": {
+    "sample": "Ini adalah list dari graphql"
+  }
+}

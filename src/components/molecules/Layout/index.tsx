@@ -1,7 +1,7 @@
 import React from 'react';
 import { Navbar } from '../Navbar';
 import { Sidebar } from '../Sidebar';
-import { isDesktop } from 'react-device-detect';
+import { isDesktop, isTablet, isMobile } from 'react-device-detect';
 import { Outlet } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { setOpen } from './slice';
@@ -11,7 +11,7 @@ const Layout: React.FC<any> = props => {
   const { open } = useAppSelector(s => s.layoutSlice);
   return (
     <div>
-      {isDesktop && (
+      {(isMobile || isTablet || isDesktop) && (
         <Sidebar
           open={open}
           setOpen={() => {
@@ -19,6 +19,7 @@ const Layout: React.FC<any> = props => {
           }}
         />
       )}
+
       <Navbar
         open={open}
         setOpen={() => {
@@ -28,7 +29,7 @@ const Layout: React.FC<any> = props => {
       <div
         className={`${
           open ? 'lg:pl-[300px]' : 'lg:pl-[100px]'
-        } pr-[32px] pl-[32px]   pt-[100px] h-screen`}>
+        } pr-[32px] md:pl-[100px] pl-[32px]   pt-[100px] h-screen`}>
         <Outlet />
         {props.children}
       </div>
