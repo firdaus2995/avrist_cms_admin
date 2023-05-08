@@ -1,6 +1,6 @@
 import React from 'react';
-import { Navbar } from '../Navbar';
-import { Sidebar } from '../Sidebar';
+import { Navbar } from '../../molecules/Navbar';
+import { Sidebar } from '../../molecules/Sidebar';
 import { isDesktop, isTablet, isMobile } from 'react-device-detect';
 import { Outlet } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../store';

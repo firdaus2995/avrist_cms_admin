@@ -1,6 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import React, { Suspense } from 'react';
-import Layout from '../components/molecules/Layout';
+import Layout from '../components/organisms/Layout';
 import Loading from '../components/atoms/Loading';
 const LoginPage = React.lazy(async () => await import('../pages/Login'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));

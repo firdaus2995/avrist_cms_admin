@@ -3,7 +3,7 @@ import { api } from './api';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
 import navbarSlice from './components/molecules/Navbar/slice';
-import layoutSlice from './components/molecules/Layout/slice';
+import layoutSlice from './components/organisms/Layout/slice';
 // config the store
 export const store = configureStore({
   reducer: {
