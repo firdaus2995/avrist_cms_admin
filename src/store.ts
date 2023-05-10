@@ -1,21 +1,23 @@
 import { configureStore } from '@reduxjs/toolkit';
-import { api } from './api';
-import type { TypedUseSelectorHook } from 'react-redux';
-import { useDispatch, useSelector } from 'react-redux';
+import { loginApi } from './services/Login/loginApi';
+import { rolesApi } from './services/Roles/rolesApi';
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
-// config the store
+import type { TypedUseSelectorHook } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 export const store = configureStore({
   reducer: {
-    navbarSlice,
     layoutSlice,
-    [api.reducerPath]: api.reducer,
+    navbarSlice,
+    [loginApi.reducerPath]: loginApi.reducer,
+    [rolesApi.reducerPath]: rolesApi.reducer,
   },
-  middleware: getDefaultMiddleware => getDefaultMiddleware().concat(api.middleware),
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware().concat(loginApi.middleware).concat(rolesApi.middleware),
 });
 
-// export default the store
 export type RootState = ReturnType<typeof store.getState>;
+
 export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch: () => AppDispatch = useDispatch;
 export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector;

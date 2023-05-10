@@ -19,6 +19,8 @@ module.exports = {
     '@typescript-eslint/consistent-type-definitions': 0,
     '@typescript-eslint/consistent-type-imports': 0,
     '@typescript-eslint/no-invalid-void-type': 0,
+    '@typescript-eslint/restrict-template-expressions': 0,
+    '@typescript-eslint/strict-boolean-expressions': 0,
   },
   settings: {
     react: {

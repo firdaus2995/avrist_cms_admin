@@ -1,8 +1,15 @@
-import { useGetListCharactersQuery } from '../../services/characters/characters.generated';
 import { useTranslation } from 'react-i18next';
+import { useGetRolesQuery } from '../../services/Roles/rolesApi';
 export default function Dashboard() {
-  const { data } = useGetListCharactersQuery({ page: 1 });
+  const { data } = useGetRolesQuery({
+    pageIndex: 0,
+    limit: 2,
+    direction: '',
+    search: '',
+    sortBy: '',
+  });
   const { t } = useTranslation();
+  console.log(data);
 
   return (
     <div>
@@ -11,11 +18,6 @@ export default function Dashboard() {
       <button className="btn btn-primary btn-sm ">This button made with daisyui</button>
       <br />
       <h1 className="my-10"> {t('dashboard.sample') ?? ''}</h1>
-      {data !== undefined ? (
-        data.characters?.results?.map(d => <li key={d?.id}>{d?.name}</li>)
-      ) : (
-        <p>Loading...</p>
-      )}
     </div>
   );
 }
