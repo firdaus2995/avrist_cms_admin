@@ -10,3 +10,11 @@ export interface ILoginResponse {
     roles: string[];
   };
 }
+
+export interface IRefreshTokenResponse {
+  refreshToken: {
+    accessToken: string;
+    refreshToken: string;
+    roles: string[];
+  };
+}

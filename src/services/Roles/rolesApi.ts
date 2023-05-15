@@ -1,17 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { gql } from 'graphql-request';
-import { graphqlRequestBaseQuery } from '@rtk-query/graphql-request-base-query';
 import { IGetRolesPayload, IGetRolesResponse } from './types';
+import customFetchBase from '../../utils/Interceptor';
 export const rolesApi = createApi({
   reducerPath: 'rolesApi',
-  baseQuery: graphqlRequestBaseQuery({
-    url: import.meta.env.VITE_BASE_URL,
-    prepareHeaders: headers => {
-      const accessToken = localStorage.getItem('accessToken');
-      headers.set('Authorization', `Bearer ${accessToken}`);
-      return headers;
-    },
-  }),
+  baseQuery: customFetchBase,
   endpoints: builder => ({
     getRoles: builder.query<IGetRolesResponse, IGetRolesPayload>({
       query: payload => ({

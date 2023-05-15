@@ -1,14 +1,17 @@
 import { configureStore } from '@reduxjs/toolkit';
 import { loginApi } from './services/Login/loginApi';
 import { rolesApi } from './services/Roles/rolesApi';
-import navbarSlice from './components/molecules/Navbar/slice';
-import layoutSlice from './components/organisms/Layout/slice';
 import type { TypedUseSelectorHook } from 'react-redux';
 import { useDispatch, useSelector } from 'react-redux';
+
+import navbarSlice from './components/molecules/Navbar/slice';
+import layoutSlice from './components/organisms/Layout/slice';
+import loginSlice from './services/Login/slice';
 export const store = configureStore({
   reducer: {
     layoutSlice,
     navbarSlice,
+    loginSlice,
     [loginApi.reducerPath]: loginApi.reducer,
     [rolesApi.reducerPath]: rolesApi.reducer,
   },
