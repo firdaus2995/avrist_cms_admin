@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useGetRolesQuery } from '../../services/Roles/rolesApi';
+import DropDown from '../../components/molecules/DropDown';
 export default function Dashboard() {
   const { data } = useGetRolesQuery({
     pageIndex: 0,
@@ -18,6 +19,21 @@ export default function Dashboard() {
       <button className="btn btn-primary btn-sm ">This button made with daisyui</button>
       <br />
       <h1 className="my-10"> {t('dashboard.sample') ?? ''}</h1>
+      <div className='w-96'>
+        <DropDown
+          defaultValue="Ayam"
+          items={[
+            {
+              value: 'Ayam',
+              label: 'Daging Ayam'
+            },
+            {
+              value: 'Sapi',
+              label: 'Daging Sapi'
+            }
+          ]}
+        />
+      </div>
     </div>
   );
 }
