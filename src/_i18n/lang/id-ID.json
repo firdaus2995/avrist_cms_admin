@@ -4,5 +4,21 @@
   },
   "dashboard": {
     "sample": "Ini adalah list dari graphql"
-  }
+  },
+  "roles": {
+    "role-name": "Nama Role",
+    "role-description": "Deskripsi Role",
+    "add": {
+      "title": "Tambah Roles",
+      "success-msg": "Peran {{name}} berhasil disimpan",
+      "failed-msg": "Peran {{name}} gagal disimpan"
+    }
+  },
+  "toast-success": "Berhasil",
+  "toast-failed": "Gagal",
+  "btn": {
+    "save": "Simpan",
+    "cancel": "Batal"
+  },
+  "token-failed-renew": "Token gagal diperbarui"
 }

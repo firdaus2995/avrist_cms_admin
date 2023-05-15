@@ -7,11 +7,15 @@ import { useDispatch, useSelector } from 'react-redux';
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
 import loginSlice from './services/Login/slice';
+import rolesSlice from './services/Roles/rolesSlice';
+import toastSlice from './components/atoms/Toast/slice';
 export const store = configureStore({
   reducer: {
     layoutSlice,
     navbarSlice,
     loginSlice,
+    rolesSlice,
+    toastSlice,
     [loginApi.reducerPath]: loginApi.reducer,
     [rolesApi.reducerPath]: rolesApi.reducer,
   },

@@ -18,7 +18,7 @@ export const TitleCard: React.FC<ITitleCard> = ({ title, children, topMargin, To
         )}
       </Subtitle>
 
-      <div className="divider mt-2"></div>
+      <div className=" mt-6"></div>
 
       <div className="h-full w-full pb-6 bg-base-100">{children}</div>
     </div>

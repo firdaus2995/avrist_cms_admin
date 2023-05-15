@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { BreadCrumbs } from '../../components/molecules/BreadCrumbs';
+import { BreadCrumbs } from '../../components/atoms/BreadCrumbs';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 
 const CreateButton = () => {

@@ -30,15 +30,17 @@ export const CheckBox: React.FC<ICheckBox> = ({
   };
 
   return (
-    <div className={`form-control w-full ${containerStyle}`}>
+    <div className={`form-control  ${containerStyle}`}>
       <label className="label cursor-pointer">
-        <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
         <input
           type="checkbox"
-          className="checkbox checkbox-primary"
+          className="checkbox checkbox-primary mr-3"
           checked={value}
-          onChange={e => { updateToogleValue(); }}
+          onChange={e => {
+            updateToogleValue();
+          }}
         />
+        <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
       </label>
     </div>
   );

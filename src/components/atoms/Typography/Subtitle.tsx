@@ -6,5 +6,5 @@ interface ISubtitle {
 }
 
 export const Subtitle: React.FC<ISubtitle> = ({ styleClass = '', children }) => {
-  return <div className={`text-xl font-semibold ${styleClass}`}>{children}</div>;
+  return <div className={`text-2xl font-semibold ${styleClass}`}>{children}</div>;
 };

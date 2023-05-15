@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, HTMLInputTypeAttribute } from 'react';
 import PropTypes from 'prop-types';
 
 interface IInputText {
   labelTitle: string;
   labelStyle?: string;
-  type?: string;
+  type?: HTMLInputTypeAttribute;
   containerStyle?: string;
   defaultValue?: string;
   placeholder?: string;
@@ -22,7 +22,7 @@ export const InputText: React.FC<IInputText> = ({
   updateFormValue,
   updateType,
 }) => {
-  const [value, setValue] = useState((defaultValue != null) || '');
+  const [value, setValue] = useState(defaultValue ?? '');
 
   const updateInputValue = (val: string) => {
     setValue(val);
@@ -30,15 +30,17 @@ export const InputText: React.FC<IInputText> = ({
   };
 
   return (
-    <div className={`form-control w-full ${containerStyle}`}>
+    <div className={`form-control w-full ${containerStyle} `}>
       <label className="label">
         <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
       </label>
       <input
-        type={(type != null) || 'text'}
+        type={type ?? 'text'}
         value={value}
-        placeholder={(placeholder != null) || ''}
-        onChange={e => { updateInputValue(e.target.value); }}
+        placeholder={placeholder ?? ''}
+        onChange={e => {
+          updateInputValue(e.target.value);
+        }}
         className="input input-bordered w-full "
       />
     </div>
