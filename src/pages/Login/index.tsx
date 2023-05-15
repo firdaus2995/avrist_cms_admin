@@ -1,14 +1,15 @@
 import { useLoginMutation } from '../../services/Login/loginApi';
-
+import { storeDataStorage } from '../../utils/sessionStorage';
 export default function Login() {
   const [login] = useLoginMutation();
   const onClickLogin = () => {
     login({ username: 'super', password: 'Password09!' })
       .unwrap()
       .then(res => {
-        localStorage.setItem('accessToken', res.login.accessToken);
-        localStorage.setItem('refreshToken', res.login.refreshToken);
-        localStorage.setItem('roles', JSON.stringify(res.login.roles));
+        storeDataStorage('accessToken', res.login.accessToken);
+        storeDataStorage('refreshToken', res.login.refreshToken);
+        storeDataStorage('roles', res.login.roles);
+
         window.location.assign('/');
       })
       .catch(err => {
