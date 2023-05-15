@@ -1,4 +1,4 @@
-import { useState, HTMLInputTypeAttribute } from 'react';
+import { HTMLInputTypeAttribute } from 'react';
 import PropTypes from 'prop-types';
 
 interface IInputText {
@@ -6,10 +6,10 @@ interface IInputText {
   labelStyle?: string;
   type?: HTMLInputTypeAttribute;
   containerStyle?: string;
-  defaultValue?: string;
+  value?: string;
   placeholder?: string;
-  updateFormValue: (formValue: { updateType: string; value: string }) => void;
-  updateType: string;
+  disabled?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const InputText: React.FC<IInputText> = ({
@@ -17,18 +17,11 @@ export const InputText: React.FC<IInputText> = ({
   labelStyle = '',
   type,
   containerStyle = '',
-  defaultValue,
+  value,
   placeholder,
-  updateFormValue,
-  updateType,
+  disabled,
+  onChange,
 }) => {
-  const [value, setValue] = useState(defaultValue ?? '');
-
-  const updateInputValue = (val: string) => {
-    setValue(val);
-    updateFormValue({ updateType, value: val });
-  };
-
   return (
     <div className={`form-control w-full ${containerStyle} `}>
       <label className="label">
@@ -37,9 +30,10 @@ export const InputText: React.FC<IInputText> = ({
       <input
         type={type ?? 'text'}
         value={value}
+        disabled={disabled}
         placeholder={placeholder ?? ''}
         onChange={e => {
-          updateInputValue(e.target.value);
+          onChange(e);
         }}
         className="input input-bordered w-full "
       />
@@ -52,8 +46,8 @@ InputText.propTypes = {
   labelStyle: PropTypes.string,
   type: PropTypes.string,
   containerStyle: PropTypes.string,
-  defaultValue: PropTypes.string,
+  value: PropTypes.string,
   placeholder: PropTypes.string,
-  updateFormValue: PropTypes.func.isRequired,
-  updateType: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };

@@ -4,7 +4,7 @@ import { IPermisionList } from './types';
 import { useAppSelector, useAppDispatch } from '../../../store';
 import { setPermissions } from '../../../services/Roles/rolesSlice';
 export default function PermissionList(props: IPermisionList) {
-  const { permissionList, loading } = props;
+  const { permissionList, loading, disabled } = props;
   const dispatch = useAppDispatch();
   const { permissions } = useAppSelector(state => state.rolesSlice);
   const onChangePermission = (d: string) => {
@@ -29,7 +29,11 @@ export default function PermissionList(props: IPermisionList) {
         ) : (
           permissionList.map((permission, i) => (
             <div className="p-3" key={i}>
-              <PermissionCollapse permission={permission} onChange={onChangePermission} />
+              <PermissionCollapse
+                permission={permission}
+                disabled={disabled}
+                onChange={onChangePermission}
+              />
             </div>
           ))
         )}

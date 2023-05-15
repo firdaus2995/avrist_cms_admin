@@ -1,15 +1,6 @@
 import { useTranslation } from 'react-i18next';
-import { useGetRolesQuery } from '../../services/Roles/rolesApi';
 export default function Dashboard() {
-  const { data } = useGetRolesQuery({
-    pageIndex: 0,
-    limit: 2,
-    direction: '',
-    search: '',
-    sortBy: '',
-  });
   const { t } = useTranslation();
-  console.log(data);
 
   return (
     <div>

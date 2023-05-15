@@ -39,19 +39,40 @@ export interface IGetPermissionResponse {
 }
 
 export interface IRolesSliceInitialState {
+  id: number;
   name: string;
   description: string;
   permissions: string[];
 }
 
-export interface IRoleRequestPayload {
+export interface IRoleCreatePayload {
   name: string;
   description: string;
   permissions: string;
 }
 
-export interface IRoleRequestResponse {
+export interface IRoleCreateResponse {
   roleCreate: {
+    name: string;
+  };
+}
+
+export interface IGetDetailRole {
+  roleById: {
+    id: number;
+    description: string;
+    name: string;
+    permissions: string;
+    permissionHierarchy: IListPermission[];
+  };
+}
+
+export interface IRoleUpdatePayload extends IRoleCreatePayload {
+  id: number;
+}
+
+export interface IRoleUpdateResponse {
+  roleUpdate: {
     name: string;
   };
 }

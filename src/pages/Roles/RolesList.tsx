@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 import { BreadCrumbs } from '../../components/atoms/BreadCrumbs';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-
+import { useGetRolesQuery } from '../../services/Roles/rolesApi';
 const CreateButton = () => {
   return (
     <div className="inline-block float-right">
@@ -34,6 +34,15 @@ const EditButtons = () => {
 // };
 
 export default function RolesList() {
+  const { data } = useGetRolesQuery({
+    pageIndex: 0,
+    limit: 2,
+    direction: '',
+    search: '',
+    sortBy: '',
+  });
+  console.log(data);
+
   const dummyData = [
     {
       displayName: 'Admin',

@@ -3,29 +3,31 @@ import { TextArea } from '../../atoms/Input/TextArea';
 import { useTranslation } from 'react-i18next';
 import { setName, setDescription } from '../../../services/Roles/rolesSlice';
 import { useAppDispatch, useAppSelector } from '../../../store';
-export default function PermissionForm() {
+import { IPermissionForm } from './types';
+export default function PermissionForm(props: IPermissionForm) {
   const dispatch = useAppDispatch();
   const { name, description } = useAppSelector(state => state.rolesSlice);
+  const { disabled } = props;
   const { t } = useTranslation();
 
   return (
     <div className="w-[500px] mb-16">
       <InputText
         labelTitle={t('roles.role-name')}
-        updateType="roleName"
-        updateFormValue={({ value }) => dispatch(setName(value))}
+        onChange={e => dispatch(setName(e.target.value))}
         containerStyle="mb-[22px] flex flex-row"
         labelStyle="font-bold w-[200px]"
-        defaultValue={name}
+        value={name}
+        disabled={disabled}
       />
 
       <TextArea
         labelTitle={t('roles.role-description')}
-        updateType="roleDescription"
-        updateFormValue={({ value }) => dispatch(setDescription(value))}
+        onChange={e => dispatch(setDescription(e.target.value))}
         containerStyle=" flex flex-row"
         labelStyle="font-bold w-[200px]"
-        defaultValue={description}
+        value={description}
+        disabled={disabled}
       />
     </div>
   );

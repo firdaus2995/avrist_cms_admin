@@ -3,7 +3,7 @@ import Collapse from '@mui/material/Collapse';
 import { CheckBox } from '../../atoms/Input/CheckBox';
 import { IPermissionCollase, ISubCollapse } from './types';
 export default function PermissionCollapse(props: IPermissionCollase) {
-  const { permission, onChange } = props;
+  const { permission, disabled, onChange } = props;
 
   const [open, setOpen] = useState(false);
   return (
@@ -39,7 +39,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
       <Collapse in={open}>
         <div className="py-4 pl-4 ">
           {permission.listContent.map((content, i) => (
-            <SubCollapse key={i} subcollapse={content} onChange={onChange} />
+            <SubCollapse key={i} subcollapse={content} disabled={disabled} onChange={onChange} />
           ))}
         </div>
       </Collapse>
@@ -48,7 +48,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
 }
 
 const SubCollapse = (props: ISubCollapse) => {
-  const { subcollapse, onChange } = props;
+  const { subcollapse, disabled, onChange } = props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -88,7 +88,8 @@ const SubCollapse = (props: ISubCollapse) => {
               key={i}
               updateType={d.permission}
               labelTitle={d.permissionTitleLabel}
-              defaultValue={false}
+              defaultValue={d.isChecked}
+              disabled={disabled}
               updateFormValue={() => {
                 onChange(d.permission);
               }}

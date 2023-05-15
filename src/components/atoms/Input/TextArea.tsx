@@ -1,31 +1,23 @@
-import { useState } from 'react';
 import PropTypes from 'prop-types';
 interface ITextArea {
   labelTitle: string;
   labelStyle?: string;
   containerStyle?: string;
-  defaultValue?: string;
+  value?: string;
   placeholder?: string;
-  updateFormValue: (formValue: { updateType: string; value: string }) => void;
-  updateType: string;
+  disabled?: boolean;
+  onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 }
 
 export const TextArea: React.FC<ITextArea> = ({
   labelTitle,
   labelStyle = '',
   containerStyle = '',
-  defaultValue,
+  value,
   placeholder,
-  updateFormValue,
-  updateType,
+  disabled,
+  onChange,
 }) => {
-  const [value, setValue] = useState(defaultValue ?? '');
-
-  const updateInputValue = (val: string) => {
-    setValue(val);
-    updateFormValue({ updateType, value: val });
-  };
-
   return (
     <div className={`form-control w-full ${containerStyle}`}>
       <label className="label">
@@ -34,9 +26,10 @@ export const TextArea: React.FC<ITextArea> = ({
       <textarea
         rows={6}
         value={value}
+        disabled={disabled}
         placeholder={placeholder ?? ''}
         onChange={e => {
-          updateInputValue(e.target.value);
+          onChange(e);
         }}
         className="input input-bordered w-full h-24 py-3"
       />
@@ -48,8 +41,8 @@ TextArea.propTypes = {
   labelTitle: PropTypes.string.isRequired,
   labelStyle: PropTypes.string,
   containerStyle: PropTypes.string,
-  defaultValue: PropTypes.string,
+  value: PropTypes.string,
   placeholder: PropTypes.string,
-  updateFormValue: PropTypes.func.isRequired,
-  updateType: PropTypes.string.isRequired,
+  onChange: PropTypes.func.isRequired,
+  disabled: PropTypes.bool,
 };

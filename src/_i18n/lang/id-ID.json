@@ -1,4 +1,11 @@
 {
+  "toast-success": "Berhasil",
+  "toast-failed": "Gagal",
+  "btn": {
+    "save": "Simpan",
+    "cancel": "Batal"
+  },
+  "token-failed-renew": "Token gagal diperbarui",
   "sidebar": {
     "role": "peran"
   },
@@ -6,19 +13,17 @@
     "sample": "Ini adalah list dari graphql"
   },
   "roles": {
-    "role-name": "Nama Role",
-    "role-description": "Deskripsi Role",
+    "role-name": "Nama Peran",
+    "role-description": "Deskripsi Peran",
     "add": {
-      "title": "Tambah Roles",
+      "title": "Tambah Peran",
       "success-msg": "Peran {{name}} berhasil disimpan",
       "failed-msg": "Peran {{name}} gagal disimpan"
+    },
+    "edit": {
+      "title": "Edit Peran",
+      "success-msg": "Peran {{name}} berhasil diperbarui",
+      "failed-msg": "Peran {{name}} gagal diperbarui"
     }
-  },
-  "toast-success": "Berhasil",
-  "toast-failed": "Gagal",
-  "btn": {
-    "save": "Simpan",
-    "cancel": "Batal"
-  },
-  "token-failed-renew": "Token gagal diperbarui"
+  }
 }

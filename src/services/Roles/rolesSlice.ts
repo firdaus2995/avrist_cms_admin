@@ -6,12 +6,16 @@ const initialState: IRolesSliceInitialState = {
   name: '',
   description: '',
   permissions: [],
+  id: 0,
 };
 
 const rolesSlice = createSlice({
   name: 'rolesSlice',
   initialState,
   reducers: {
+    setId: (state, action: PayloadAction<number>) => {
+      state.id = action.payload;
+    },
     setName: (state, action: PayloadAction<string>) => {
       state.name = action.payload;
     },
@@ -29,5 +33,5 @@ const rolesSlice = createSlice({
   },
 });
 
-export const { setName, setDescription, setPermissions, resetForm } = rolesSlice.actions;
+export const { setName, setDescription, setPermissions, resetForm, setId } = rolesSlice.actions;
 export default rolesSlice.reducer;

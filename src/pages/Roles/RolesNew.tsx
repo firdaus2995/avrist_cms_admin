@@ -1,9 +1,6 @@
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useTranslation } from 'react-i18next';
-import {
-  useGetPermissionHirarkyQuery,
-  useRoleRequestMutation,
-} from '../../services/Roles/rolesApi';
+import { useGetPermissionHirarkyQuery, useRoleCreateMutation } from '../../services/Roles/rolesApi';
 import { useAppSelector, useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
@@ -16,14 +13,14 @@ export default function RolesNew() {
   const { t } = useTranslation();
   const { data, isFetching } = useGetPermissionHirarkyQuery(null);
   const { name, description, permissions } = useAppSelector(state => state.rolesSlice);
-  const [roleRequest, { isLoading: onSaveLoading }] = useRoleRequestMutation();
+  const [roleCreate, { isLoading: onSaveLoading }] = useRoleCreateMutation();
   const onSave = () => {
     const payload = {
       name,
       description,
       permissions: permissions.join(','),
     };
-    roleRequest(payload)
+    roleCreate(payload)
       .unwrap()
       .then(d => {
         dispatch(resetForm());
