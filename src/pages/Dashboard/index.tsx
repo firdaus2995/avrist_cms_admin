@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useGetRolesQuery } from '../../services/Roles/rolesApi';
 import DropDown from '../../components/molecules/DropDown';
+import DropDownList from '../../components/molecules/DropDownList';
+
 export default function Dashboard() {
   const { data } = useGetRolesQuery({
     pageIndex: 0,
@@ -30,6 +32,34 @@ export default function Dashboard() {
             {
               value: 'Sapi',
               label: 'Daging Sapi'
+            }
+          ]}
+        />
+      </div>
+      <h1 className='m-6'>INI LIST</h1>
+      <div className='w-80'>
+        <DropDownList
+          defaultValue={['Ayam', 'Sapi', 'Ular']}
+          items={[
+            {
+              value: 'Ayam',
+              label: 'Daging Ayam'
+            },
+            {
+              value: 'Sapi',
+              label: 'Daging Sapi'
+            },
+            {
+              value: 'Ular',
+              label: 'Daging Ular'
+            },
+            {
+              value: 'Domba',
+              label: 'Daging Domba'
+            },
+            {
+              value: 'Manusia',
+              label: 'Daging Manusia',
             }
           ]}
         />
