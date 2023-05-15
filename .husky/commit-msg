@@ -1,0 +1,25 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+message="$(cat $1)"
+requiredPattern="(AVR)+-[0-9]+: ([a-zA-Z0-9]+)"
+if ! [[ $message =~ $requiredPattern ]];
+then
+  echo " "
+  echo "💻 🤷"
+  echo " "
+  echo "🚨 Wrong commit message! 😕"
+  echo "The commit message must have this format:"
+  echo "<id_jira>-<number_card>: <message_commit>"
+  echo " "
+  echo "Example:"
+  echo "AVR-207: Add validate email & password"
+  echo " "
+  echo "Your commit message was:"
+  echo $message
+  echo " "
+  echo "For more information, check https://bit.ly/3UnrqjY"
+  echo " "
+  exit 1
+fi
+
