@@ -1,4 +1,7 @@
 import { useTranslation } from 'react-i18next';
+import DropDown from '../../components/molecules/DropDown';
+import DropDownList from '../../components/molecules/DropDownList';
+
 export default function Dashboard() {
   const { t } = useTranslation();
 
@@ -9,6 +12,49 @@ export default function Dashboard() {
       <button className="btn btn-primary btn-sm ">This button made with daisyui</button>
       <br />
       <h1 className="my-10"> {t('dashboard.sample') ?? ''}</h1>
+      <div className="w-96">
+        <DropDown
+          defaultValue="Ayam"
+          items={[
+            {
+              value: 'Ayam',
+              label: 'Daging Ayam',
+            },
+            {
+              value: 'Sapi',
+              label: 'Daging Sapi',
+            },
+          ]}
+        />
+      </div>
+      <h1 className="m-6">INI LIST</h1>
+      <div className="w-80">
+        <DropDownList
+          defaultValue={['Ayam', 'Sapi', 'Ular']}
+          items={[
+            {
+              value: 'Ayam',
+              label: 'Daging Ayam',
+            },
+            {
+              value: 'Sapi',
+              label: 'Daging Sapi',
+            },
+            {
+              value: 'Ular',
+              label: 'Daging Ular',
+            },
+            {
+              value: 'Domba',
+              label: 'Daging Domba',
+            },
+            {
+              value: 'Manusia',
+              label: 'Daging Manusia',
+            },
+          ]}
+        />
+      </div>
     </div>
   );
 }
