@@ -1,0 +1,87 @@
+#react-table {
+  margin: 0;
+}
+
+.table-container {
+  width: 100%;
+  overflow: auto;
+}
+.t-head {
+  position: sticky;
+  top: 0;
+  z-index: 4;
+  background: #f7f9fc;
+
+  /* border-color: red; */
+
+  /* border: 1px solid; */
+}
+
+#react-table th {
+  padding: 10px 10px;
+  height: 56px;
+}
+#react-table td {
+  padding: 17px 20px;
+}
+
+.lock-head {
+  position: sticky;
+  width: 100px;
+  left: 0;
+  top: 0;
+  z-index: 10;
+}
+.lock-body {
+  position: sticky;
+  width: 100px;
+  left: 0;
+  z-index: 3;
+}
+#react-table .t-head th {
+  color: #68788d;
+  font-weight: bold !important;
+  border-bottom: 1px solid #e7eaf1;
+}
+
+#react-table .t-head th:first-child {
+  /* background: #ed1b2e; */
+}
+
+#react-table tr:first-child th:first-child {
+  border-radius: 10px 0 0 0px;
+  /* border: 1px solid; */
+  /* border-top-left-radius: 40px 20px; */
+}
+
+#react-table tr:first-child th:last-child {
+  border-radius: 0 10px 0px 0;
+}
+
+#react-table {
+  border-spacing: 0;
+  border-collapse: separate;
+  border-radius: 10px;
+  border: 1px solid #e7eaf1;
+}
+
+/* Apply a border to the right of all but the last column */
+#react-table th:not(:last-child),
+#react-table td:not(:last-child) {
+  /* border-right: 1px solid black; */
+}
+
+/* Apply a border to the bottom of all but the last row */
+#react-table > thead > tr:not(:last-child) > th,
+#react-table > thead > tr:not(:last-child) > td,
+#react-table > tbody > tr:not(:last-child) > th,
+#react-table > tbody > tr:not(:last-child) > td,
+#react-table > tfoot > tr:not(:last-child) > th,
+#react-table > tfoot > tr:not(:last-child) > td,
+#react-table > tr:not(:last-child) > td,
+#react-table > tr:not(:last-child) > th,
+#react-table > thead:not(:last-child),
+#react-table > tbody:not(:last-child),
+#react-table > tfoot:not(:last-child) {
+  border-bottom: 1px solid #e7eaf1;
+}
