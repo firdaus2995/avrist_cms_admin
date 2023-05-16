@@ -6,45 +6,48 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default function Dashboard() {
   const { t } = useTranslation();
-  const base64 = btoa(
-    `${import.meta.env.VITE_USERNAME || ''}:${import.meta.env.VITE_PASSWORD || ''}`,
-  );
 
-  const API_URI = "http://109.123.234.62:8095";
+
+  const API_URL = "http://109.123.234.62:8095";
   const UPLOAD_ENDPOINT = "files/image/upload";
 
   function uploadAdapter(loader) {
     return {
-      upload : async () => {
+      upload: async () => {
         return await new Promise((resolve, reject) => {
           const body = new FormData();
           loader.file.then((file) => {
-            body.append("image", file);
-            fetch(`${API_URI}/${UPLOAD_ENDPOINT}`, {
-              method: 'post',
+            body.append("files", file);
+            // let headers = new Headers();
+            // headers.append("Origin", "http://localhost:3000");
+            fetch(`${API_URL}/${UPLOAD_ENDPOINT}`, {
+              method: "post",
               body
-            }).then(async (res) => await res.json())
-            .then((res) => {
-              resolve({ default: `${API_URI}/${res.url}` })
+              // mode: "no-cors"
             })
-            .catch((err) => {
-              reject(err);
-            })
-          })
-        })
+              .then(async (res) => await res.json())
+              .then((res) => {
+                resolve({
+                  default: `${API_URL}/${res.filename}`
+                });
+              })
+              .catch((err) => {
+                reject(err);
+              });
+          });
+        });
       }
-    }
+    };
   }
-
   function uploadPlugin(editor) {
     editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
       return uploadAdapter(loader);
-    }
+    };
   }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">{base64}</h1>
+      <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <br />
       <button className="btn btn-primary btn-sm ">This button made with daisyui</button>
       <br />

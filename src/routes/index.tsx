@@ -18,7 +18,7 @@ export default function RoutesComponent() {
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
         <Route path="/login" element={<LoginPage />} />
       </Route>
-      <Route element={<ProtectedRoute token={!accessToken} />}>
+      <Route element={<ProtectedRoute token={accessToken} />}>
         <Route
           element={
             <Suspense fallback={<Loading />}>
