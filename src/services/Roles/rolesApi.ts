@@ -7,6 +7,7 @@ import {
   IGetRolesResponse,
   IRoleCreatePayload,
   IRoleCreateResponse,
+  IRoleDeleteResponse,
   IRoleUpdatePayload,
   IRoleUpdateResponse,
 } from './types';
@@ -14,8 +15,10 @@ import customFetchBase from '../../utils/Interceptor';
 export const rolesApi = createApi({
   reducerPath: 'rolesApi',
   baseQuery: customFetchBase,
+  tagTypes: ['getRoles'],
   endpoints: builder => ({
     getRoles: builder.query<IGetRolesResponse, IGetRolesPayload>({
+      providesTags: ['getRoles'],
       query: payload => ({
         document: gql`
           query roleList(
@@ -131,6 +134,18 @@ export const rolesApi = createApi({
         variables: payload,
       }),
     }),
+    roleHapus: builder.mutation<IRoleDeleteResponse, { id: number }>({
+      query: payload => ({
+        document: gql`
+          mutation roleDelete($id: Int!) {
+            roleDelete(id: $id) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 export const {
@@ -139,4 +154,5 @@ export const {
   useRoleCreateMutation,
   useGetDetailRoleQuery,
   useRoleUpdateMutation,
+  useRoleHapusMutation,
 } = rolesApi;

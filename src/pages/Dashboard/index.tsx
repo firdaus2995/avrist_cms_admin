@@ -1,13 +1,50 @@
 import { useTranslation } from 'react-i18next';
 import DropDown from '../../components/molecules/DropDown';
 import DropDownList from '../../components/molecules/DropDownList';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default function Dashboard() {
   const { t } = useTranslation();
+  const base64 = btoa(
+    `${import.meta.env.VITE_USERNAME || ''}:${import.meta.env.VITE_PASSWORD || ''}`,
+  );
+
+  const API_URI = "http://109.123.234.62:8095";
+  const UPLOAD_ENDPOINT = "files/image/upload";
+
+  function uploadAdapter(loader) {
+    return {
+      upload : async () => {
+        return await new Promise((resolve, reject) => {
+          const body = new FormData();
+          loader.file.then((file) => {
+            body.append("image", file);
+            fetch(`${API_URI}/${UPLOAD_ENDPOINT}`, {
+              method: 'post',
+              body
+            }).then(async (res) => await res.json())
+            .then((res) => {
+              resolve({ default: `${API_URI}/${res.url}` })
+            })
+            .catch((err) => {
+              reject(err);
+            })
+          })
+        })
+      }
+    }
+  }
+
+  function uploadPlugin(editor) {
+    editor.plugins.get("FileRepository").createUploadAdapter = (loader) => {
+      return uploadAdapter(loader);
+    }
+  }
 
   return (
     <div>
-      <h1 className="text-3xl font-bold underline">Hello world!</h1>
+      <h1 className="text-3xl font-bold underline">{base64}</h1>
       <br />
       <button className="btn btn-primary btn-sm ">This button made with daisyui</button>
       <br />
@@ -53,6 +90,28 @@ export default function Dashboard() {
               label: 'Daging Manusia',
             },
           ]}
+        />
+      </div>
+      <div className='my-5'>
+        <CKEditor
+          editor={ ClassicEditor }
+          config={{
+            extraPlugins: [uploadPlugin]
+          }}
+          onReady={ editor => {
+              // You can store the "editor" and use when it is needed.
+              console.log( 'Editor is ready to use!', editor );
+          } }
+          onChange={ ( event, editor ) => {
+              const data = editor.getData();
+              console.log( { event, editor, data } );
+          } }
+          onBlur={ ( event, editor ) => {
+              console.log( 'Blur.', editor );
+          } }
+          onFocus={ ( event, editor ) => {
+              console.log( 'Focus.', editor );
+          } }
         />
       </div>
     </div>

@@ -76,3 +76,8 @@ export interface IRoleUpdateResponse {
     name: string;
   };
 }
+export interface IRoleDeleteResponse {
+  roleDelete: {
+    message: string;
+  };
+}
