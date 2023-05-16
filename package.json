@@ -11,10 +11,6 @@
     "prepare": "husky install"
   },
   "dependencies": {
-<<<<<<< HEAD
-    "@ckeditor/ckeditor5-build-classic": "^37.1.0",
-=======
->>>>>>> ae4e02452dcc79f838ca7ec39240739e3a3a8947
     "@ckeditor/ckeditor5-react": "^6.0.0",
     "@emotion/react": "^11.11.0",
     "@emotion/styled": "^11.11.0",
