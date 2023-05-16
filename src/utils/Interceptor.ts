@@ -8,6 +8,7 @@ import { setRefreshToken, setAccessToken, setRoles } from '../services/Login/sli
 import { getCredential, removeCredential } from './Credential';
 import { loginApi } from '../services/Login/loginApi';
 import { storeDataStorage } from './sessionStorage';
+import { openToast } from '../components/atoms/Toast/slice';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const mutex = new Mutex();
 
@@ -49,7 +50,13 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
           store.dispatch(setRefreshToken(''));
           store.dispatch(setRoles([]));
           removeCredential();
-          alert('Token gagal diperbarui');
+          store.dispatch(
+            openToast({
+              type: 'error',
+              title: 'Oops',
+              message: 'Failed renew token',
+            }),
+          );
           window.location.assign('/login');
         }
       } catch (err) {
@@ -57,8 +64,13 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
         store.dispatch(setRefreshToken(''));
         store.dispatch(setRoles([]));
         removeCredential();
-
-        alert('Token gagal diperbarui from catch');
+        store.dispatch(
+          openToast({
+            type: 'error',
+            title: 'Oops',
+            message: 'Failed renew token',
+          }),
+        );
         window.location.assign('/login');
       } finally {
         release();

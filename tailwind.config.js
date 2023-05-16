@@ -6,6 +6,17 @@ export default {
   },
   plugins: [require('daisyui')],
   daisyui: {
-    themes: false,
+    themes: [
+      {
+        light: {
+          ...require('daisyui/src/colors/themes')['[data-theme=light]'],
+          primary: '#81219A',
+          'primary-focus': '#340d3e',
+          success: '#417C40',
+          'success-focus': '#1a321a',
+          '--btn-text-case': 'none',
+        },
+      },
+    ],
   },
 };

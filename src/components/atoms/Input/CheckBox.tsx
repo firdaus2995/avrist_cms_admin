@@ -8,8 +8,10 @@ interface ICheckBox {
   containerStyle?: string;
   defaultValue?: string;
   placeholder?: string;
+  disabled?: boolean;
+  updateType: string;
+
   updateFormValue: (formValue: { updateType: string; value: boolean }) => void;
-  checked: boolean;
 }
 
 export const CheckBox: React.FC<ICheckBox> = ({
@@ -17,8 +19,9 @@ export const CheckBox: React.FC<ICheckBox> = ({
   labelStyle = '',
   containerStyle = '',
   defaultValue,
+  updateType,
+  disabled,
   updateFormValue,
-  checked,
 }) => {
   const [value, setValue] = useState(defaultValue);
 
@@ -28,15 +31,18 @@ export const CheckBox: React.FC<ICheckBox> = ({
   };
 
   return (
-    <div className={`form-control w-full ${containerStyle}`}>
+    <div className={`form-control  ${containerStyle}`}>
       <label className="label cursor-pointer">
-        <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
         <input
           type="checkbox"
-          className="checkbox-md rounded-xl border-[#81219A] accent-[#81219A]"
-          checked={checked}
-          onChange={e => { updateToogleValue(); }}
+          className="checkbox checkbox-primary mr-3"
+          checked={value}
+          disabled={disabled}
+          onChange={e => {
+            updateToogleValue();
+          }}
         />
+        <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
       </label>
     </div>
   );
@@ -50,5 +56,6 @@ CheckBox.propTypes = {
   defaultValue: PropTypes.string,
   placeholder: PropTypes.string,
   updateFormValue: PropTypes.any,
-  checked: PropTypes.bool,
+  updateType: PropTypes.any,
+  disabled: PropTypes.bool,
 };

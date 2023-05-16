@@ -9,6 +9,7 @@ const NotFoundPage = React.lazy(async () => await import('../pages/NotFound'));
 
 const RolesPage = React.lazy(async () => await import('../pages/Roles'));
 const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNew'));
+const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
@@ -17,7 +18,7 @@ export default function RoutesComponent() {
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
         <Route path="/login" element={<LoginPage />} />
       </Route>
-      <Route element={<ProtectedRoute token={accessToken} />}>
+      <Route element={<ProtectedRoute token={!accessToken} />}>
         <Route
           element={
             <Suspense fallback={<Loading />}>
@@ -28,7 +29,8 @@ export default function RoutesComponent() {
           {/* ROLES PAGES */}
           <Route path="roles" element={<RolesPage />} />
           <Route path="roles/new" element={<RolesNewPage />} />
-          <Route path="roles/edit" element={<RolesNewPage />} />
+          <Route path="roles/edit/:id" element={<RolesEditPage />} />
+          <Route path="roles/detail/:id" element={<RolesEditPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

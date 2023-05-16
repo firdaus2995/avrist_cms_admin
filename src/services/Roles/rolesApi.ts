@@ -1,6 +1,15 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { gql } from 'graphql-request';
-import { IGetRolesPayload, IGetRolesResponse } from './types';
+import {
+  IGetDetailRole,
+  IGetPermissionResponse,
+  IGetRolesPayload,
+  IGetRolesResponse,
+  IRoleCreatePayload,
+  IRoleCreateResponse,
+  IRoleUpdatePayload,
+  IRoleUpdateResponse,
+} from './types';
 import customFetchBase from '../../utils/Interceptor';
 export const rolesApi = createApi({
   reducerPath: 'rolesApi',
@@ -38,6 +47,96 @@ export const rolesApi = createApi({
         variables: payload,
       }),
     }),
+
+    getPermissionHirarky: builder.query<IGetPermissionResponse, null>({
+      query: () => ({
+        document: gql`
+          query permissionQuery {
+            permissionHierarchy {
+              list {
+                categoryLabel
+                listContent {
+                  titleLabel
+                  listDetail {
+                    permission
+                    permissionTitle
+                    permissionTitleLabel
+                    isChecked
+                  }
+                }
+              }
+            }
+          }
+        `,
+      }),
+    }),
+    roleCreate: builder.mutation<IRoleCreateResponse, IRoleCreatePayload>({
+      query: payload => ({
+        document: gql`
+          mutation roleCreate($name: String!, $description: String, $permissions: String!) {
+            roleCreate(
+              request: { name: $name, description: $description, permissions: $permissions }
+            ) {
+              name
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    getDetailRole: builder.query<IGetDetailRole, { id: number }>({
+      query: ({ id }) => ({
+        document: gql`
+          query roleById($id: Int!) {
+            roleById(id: $id) {
+              id
+              name
+              permissions
+              description
+              permissionHierarchy {
+                categoryLabel
+                listContent {
+                  titleLabel
+                  listDetail {
+                    permission
+                    permissionTitle
+                    permissionTitleLabel
+                    isChecked
+                  }
+                }
+              }
+            }
+          }
+        `,
+        variables: { id },
+      }),
+    }),
+    roleUpdate: builder.mutation<IRoleUpdateResponse, IRoleUpdatePayload>({
+      query: payload => ({
+        document: gql`
+          mutation roleUpdate(
+            $id: Int!
+            $name: String!
+            $description: String
+            $permissions: String!
+          ) {
+            roleUpdate(
+              id: $id
+              request: { name: $name, description: $description, permissions: $permissions }
+            ) {
+              name
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
-export const { useGetRolesQuery } = rolesApi;
+export const {
+  useGetRolesQuery,
+  useGetPermissionHirarkyQuery,
+  useRoleCreateMutation,
+  useGetDetailRoleQuery,
+  useRoleUpdateMutation,
+} = rolesApi;
