@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import DropDown from '../../components/molecules/DropDown';
 import DropDownList from '../../components/molecules/DropDownList';
-
+import CkEditor from '../../components/atoms/Ckeditor';
 export default function Dashboard() {
   const { t } = useTranslation();
 
@@ -55,6 +55,7 @@ export default function Dashboard() {
           ]}
         />
       </div>
+      <CkEditor />
     </div>
   );
 }
