@@ -6,7 +6,7 @@ interface ICheckBox {
   labelStyle?: string;
   type?: string;
   containerStyle?: string;
-  defaultValue?: string;
+  defaultValue?: boolean;
   placeholder?: string;
   disabled?: boolean;
   updateType: string;
@@ -26,8 +26,8 @@ export const CheckBox: React.FC<ICheckBox> = ({
   const [value, setValue] = useState(defaultValue);
 
   const updateToogleValue = () => {
-    setValue(value);
-    updateFormValue({ value });
+    setValue(!(value ?? false));
+    updateFormValue({ updateType, value: !(value ?? false) });
   };
 
   return (
@@ -53,7 +53,7 @@ CheckBox.propTypes = {
   labelStyle: PropTypes.string,
   type: PropTypes.string,
   containerStyle: PropTypes.string,
-  defaultValue: PropTypes.string,
+  defaultValue: PropTypes.any,
   placeholder: PropTypes.string,
   updateFormValue: PropTypes.any,
   updateType: PropTypes.any,
