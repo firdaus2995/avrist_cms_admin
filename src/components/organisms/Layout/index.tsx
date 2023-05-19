@@ -29,7 +29,7 @@ const Layout: React.FC<any> = props => {
       <div
         className={`${
           open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'
-        } pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-screen bg-[#F9F5FD] ease-in-out duration-300`}>
+        } pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full bg-[#F9F5FD] ease-in-out duration-300`}>
         <Outlet />
         {props.children}
       </div>
