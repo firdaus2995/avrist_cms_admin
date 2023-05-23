@@ -2,11 +2,12 @@ import { useTranslation } from 'react-i18next';
 import DropDown from '../../components/molecules/DropDown';
 import DropDownList from '../../components/molecules/DropDownList';
 import CkEditor from '../../components/atoms/Ckeditor';
+import SortableTreeComponent from '../../components/atoms/SortableTree';
 export default function Dashboard() {
   const { t } = useTranslation();
 
   return (
-    <div>
+    <div className='overflow-auto'>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <br />
       <button className="btn btn-primary btn-sm ">This button made with daisyui</button>
@@ -56,6 +57,7 @@ export default function Dashboard() {
         />
       </div>
       <CkEditor />
+      <SortableTreeComponent />
     </div>
   );
 }
