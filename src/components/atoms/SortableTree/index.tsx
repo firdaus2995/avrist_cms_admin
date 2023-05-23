@@ -282,6 +282,8 @@ export default function SortableTreeComponent() {
             setSearchFocusIndex(matches.length > 0 ? searchFocusIndex % matches.length : 0);
           }}
           canDrag={({ node }) => !node.dragDisabled}
+          maxDepth={3}
+          canDrop={({ nextParent,nextPath }) =>(!nextParent?.noChildren) && nextPath.length>1 }
           generateNodeProps={rowInfo => ({
             // title: rowInfo.node.label,
             // subtitle: rowInfo.node.subTitle,
