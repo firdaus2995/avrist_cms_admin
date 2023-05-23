@@ -7,7 +7,6 @@ import Table from '../../components/atoms/Table';
 import { COLUMNS } from './column';
 import { useCallback } from 'react';
 import type { SortingState } from '@tanstack/react-table';
-import PaginationComponent from '../../components/atoms/Pagination';
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -17,6 +16,7 @@ export default function Dashboard() {
       // setDirection(sortModel[0].desc ? "desc" : "asc")
     }
   }, []);
+  
   return (
     <div className='overflow-auto'>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
@@ -69,6 +69,8 @@ export default function Dashboard() {
       </div>
       <CkEditor />
       <SortableTreeComponent />
+      <br />
+      <br />
       <Table
         rows={dummy}
         columns={COLUMNS}
@@ -78,20 +80,21 @@ export default function Dashboard() {
         manualSorting={true}
         onSortModelChange={handleSortModelChange}
       />
-      <PaginationComponent
-        page={1}
-        setPage={() => null}
-        total={100}
-        pageSize={10}
-        setPageSize={() => null}
-      />
     </div>
   );
 }
 
 const dummy = [
   {
-    name: 'Super Admin',
-    description: 'Ini adalah super admin',
+    name: 'Fariz',
+    description: 'Ini adalah Super Saiyan 1',
+  },
+  {
+    name: 'Andhika',
+    description: 'Ini adalah Super Saiyan 2',
+  },
+  {
+    name: 'Samuel',
+    description: 'Ini adalah Super Saiyan 3',
   },
 ];

@@ -8,8 +8,7 @@ import {
 } from '@tanstack/react-table';
 import type { ColumnDef, SortingState } from '@tanstack/react-table';
 
-import Sorted from '../../../assets/sorted.png';
-import Sorting from '../../../assets/sorting.png';
+import TableChevron from '../../../assets/table-chevron.png';
 import NoResultIcon from '../../../assets/no-result.svg';
 import './style.css';
 import Skeleton from './skeleton';
@@ -52,7 +51,6 @@ const Table: React.FC<IDataGrid> = props => {
           {table.getHeaderGroups().map((headerGroup, i) => (
             <tr key={i} className="t-head ">
               {headerGroup.headers.map((header, i2) => {
-                // let id = header.getContext().column.id
                 const canSorted = header.column.getCanSort();
                 const isSorted = header.column.getIsSorted();
 
@@ -63,21 +61,20 @@ const Table: React.FC<IDataGrid> = props => {
                         {...{
                           className:
                             (header.column.getCanSort()
-                              ? 'cursor-pointer select-none flex items-center'
+                              ? 'cursor-pointer select-none flex items-center justify-center'
                               : '') +
-                            ` flex gap-2 justify-start  flex items-center    break-words ${
+                            ` flex gap-3.5 justify-start flex items-center break-words text-black ${
                               window.innerWidth <= 1366 ? '' : 'pl-4'
                             }`,
                           onClick: header.column.getToggleSortingHandler(),
                         }}>
-                        {flexRender(header.column.columnDef.header, header.getContext())}
-
-                        {canSorted && (isSorted === 'asc' || isSorted === 'desc') && (
-                          <img src={Sorted} alt="Sorting" className="w-2" />
-                        )}
-                        {canSorted && !isSorted && (
-                          <img src={Sorting} alt="Sorting" className="w-2" />
-                        )}
+                          {flexRender(header.column.columnDef.header, header.getContext())}
+                          {canSorted && (isSorted === 'asc' || isSorted === 'desc') && (
+                            <img src={TableChevron} alt="TableChevron" />
+                          )}
+                          {canSorted && !isSorted && (
+                            <img src={TableChevron} alt="TableChevron" />
+                          )}
                       </div>
                     )}
                   </th>
@@ -93,15 +90,15 @@ const Table: React.FC<IDataGrid> = props => {
             table.getRowModel().rows.map((row, i) => {
               return (
                 <React.Fragment key={i}>
-                  <tr className={'mb-[20px] '}>
+                  <tr>
                     {row.getVisibleCells().map((cell, i2) => {
                       return (
                         <td
                           key={i2}
-                          style={{
-                            paddingLeft: 10,
-                          }}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        >
+                          <div className='flex justify-center'>
+                            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          </div>
                         </td>
                       );
                     })}
@@ -124,10 +121,12 @@ const Table: React.FC<IDataGrid> = props => {
     </div>
   );
 };
+
 interface IErrorComponent {
   colspan: number;
   message: string;
 }
+
 export const ErrorComponent: React.FC<IErrorComponent> = ({ colspan, message }) => {
   return (
     <tr>
