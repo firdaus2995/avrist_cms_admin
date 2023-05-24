@@ -3,9 +3,20 @@ import DropDown from '../../components/molecules/DropDown';
 import DropDownList from '../../components/molecules/DropDownList';
 import CkEditor from '../../components/atoms/Ckeditor';
 import SortableTreeComponent from '../../components/atoms/SortableTree';
+import Table from '../../components/atoms/Table';
+import { COLUMNS } from './column';
+import { useCallback } from 'react';
+import type { SortingState } from '@tanstack/react-table';
+
 export default function Dashboard() {
   const { t } = useTranslation();
-
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      // setSortBy(sortModel[0].id)
+      // setDirection(sortModel[0].desc ? "desc" : "asc")
+    }
+  }, []);
+  
   return (
     <div className='overflow-auto'>
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
@@ -58,6 +69,32 @@ export default function Dashboard() {
       </div>
       <CkEditor />
       <SortableTreeComponent />
+      <br />
+      <br />
+      <Table
+        rows={dummy}
+        columns={COLUMNS}
+        loading={false}
+        error={false}
+        manualPagination={true}
+        manualSorting={true}
+        onSortModelChange={handleSortModelChange}
+      />
     </div>
   );
 }
+
+const dummy = [
+  {
+    name: 'Fariz',
+    description: 'Ini adalah Super Saiyan 1',
+  },
+  {
+    name: 'Andhika',
+    description: 'Ini adalah Super Saiyan 2',
+  },
+  {
+    name: 'Samuel',
+    description: 'Ini adalah Super Saiyan 3',
+  },
+];
