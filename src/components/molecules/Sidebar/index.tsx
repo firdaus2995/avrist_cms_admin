@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { 
+  useState,
+} from 'react';
+import { 
+  useLocation, 
+  useNavigate
+} from 'react-router-dom';
+
+import { 
+  sidebarList,
+} from './list';
 import Menu from '../../../assets/menu.png';
-import HomeIcon from '../../../assets/sidebar/Home-icon.png';
 import LogoutIcon from '../../../assets/sidebar/Logout-icon.png';
-import MenuIcon from '../../../assets/sidebar/Menu-icon.png';
-import PageIcon from '../../../assets/sidebar/Page-icon.png';
-import PageTemplateIcon from '../../../assets/sidebar/Page-template-icon.png';
-import SidebarIcon from '../../../assets/sidebar/Sidebar-icon.png';
-import TemplateIcon from '../../../assets/sidebar/Template-icon.png';
-import UserIcon from '../../../assets/sidebar/User-icon.png';
 import ProfilePhoto from '../../../assets/Profile-photo.png';
+
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -46,66 +50,29 @@ const HeadSidebar: React.FC<IHeadSidebar> = props => {
 interface IMenuSidebar extends ISidebar {}
 const MenuSidebar: React.FC<IMenuSidebar> = props => {
   const { open } = props;
-  const [activeTab, setActiveTab] = useState(1);
-  const [openedTab, setOpenedTab] = useState<string[]>([]);
 
-  const sidebarList = [
-    {
-      id: 1,
-      title: 'Home',
-      icon: HomeIcon,
-    },
-    {
-      id: 2,
-      title: 'Page Management',
-      icon: PageIcon,
-    },
-    {
-      id: 3,
-      title: 'Menu Management',
-      icon: MenuIcon,
-    },
-    {
-      id: 4,
-      title: 'Template Management',
-      icon: TemplateIcon,
-      list: [
-        {
-          id: 41,
-          title: 'Content Type Builder',
-        },
-        {
-          id: 42,
-          title: 'Content Manager',
-        },
-      ],
-    },
-    {
-      id: 5,
-      title: 'Sidebar Template',
-      icon: SidebarIcon,
-    },
-    {
-      id: 6,
-      title: 'Page Template',
-      icon: PageTemplateIcon,
-    },
-    {
-      id: 7,
-      title: 'User Management',
-      icon: UserIcon,
-      list: [
-        {
-          id: 71,
-          title: 'User',
-        },
-        {
-          id: 72,
-          title: 'Role',
-        },
-      ],
-    },
-  ];
+  const navigate  = useNavigate();
+  const location = useLocation();
+  const [openedTab, setOpenedTab] = useState<string[]>([]);
+  const [activeTab, setActiveTab] = useState(() => {
+    // SET DEFAULT ACTIVE PAGE
+    const pathName = location.pathname;    
+    for (const parentItem of sidebarList) {
+      if (parentItem?.list) {
+        for (const childItem of parentItem?.list) {
+          if (childItem?.path === pathName) {
+            // SET DEFAULT OPEN ACTIVE TAB 
+            setOpenedTab([`Tab_${parentItem.id}`]);
+            return childItem.id;
+          };
+        };
+      } else {
+        if (parentItem?.path === pathName) {
+          return parentItem.id;
+        };
+      };
+    };
+  });
 
   const footerList = [
     {
@@ -122,7 +89,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
 
   const listTabHandler = (e: string) => {
     if (openedTab.includes(e)) {
-      const filtered = openedTab.filter(val => val !== e);
+      const filtered = openedTab.filter(val => val !== e);      
       setOpenedTab(filtered);
     } else {
       setOpenedTab(val => [...val, e]);
@@ -151,12 +118,13 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
   const renderListMenu = () => {
     return (
       <div className="border-b pb-5">
-        {sidebarList.map(val => (
+        {sidebarList.map((val: any) => (
           <div key={val.id}>
             <div
               role="button"
               onClick={() => {
                 val.list ? listTabHandler(`Tab_${val.id}`) : setActiveTab(val.id);
+                if (val.path) navigate(val.path);
               }}
               className={`${activeTab === val.id ? 'bg-[#9B86BA]' : ''} ${
                 open ? 'justify-between m-2' : 'justify-center m-3'
@@ -205,7 +173,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
               ) : null}
             </div>
             {openedTab.includes(`Tab_${val.id}`) && open
-              ? val.list?.map(e => (
+              ? val.list?.map((e: any) => (
                   <div
                     key={e.id}
                     className={`${
@@ -214,11 +182,13 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
                     role="button"
                     onClick={() => {
                       setActiveTab(e.id);
+                      if (e.path) navigate(e.path);
                     }}>
                     <text
                       className={`${
                         activeTab === e.id ? 'font-bold' : 'font-base'
-                      } text-white text-sm ml-8`}>
+                      } text-white text-sm ml-8`}
+                    >
                       {e.title}
                     </text>
                   </div>
