@@ -1,10 +1,24 @@
-import React, { Fragment } from 'react';
-import { Menu, Transition } from '@headlessui/react';
-
-import { ChevronDownIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
-import { Pagination } from 'react-headless-pagination';
 import './style.css';
+
+import React, { 
+  Fragment,
+} from 'react';
+import { 
+  Menu, 
+  Transition,
+} from '@headlessui/react';
+import { 
+  ChevronDownIcon, 
+} from '@heroicons/react/20/solid';
+
+import { 
+  Pagination,
+} from 'react-headless-pagination';
+import CheckMark from '../../../assets/checkmark.png';
 import countPage from '../../../utils/countPage';
+import TableNext from '../../../assets/table-next.png';
+import TablePrev from '../../../assets/table-prev.png';
+
 const rangePageSize = [10, 25, 50, 100];
 
 interface TPaginationComponent {
@@ -14,18 +28,23 @@ interface TPaginationComponent {
   setPage: (d: number) => void;
   setPageSize: (d: number) => void;
 }
-const PaginationComponent: React.FC<TPaginationComponent> = props => {
-  const { page, total, pageSize, setPage, setPageSize } = props;
-
+const PaginationComponent: React.FC<TPaginationComponent> = ({
+  page, 
+  total, 
+  pageSize, 
+  setPage, 
+  setPageSize,
+}) => {
   const handlePageChange = (page: number): void => {
     setPage(page);
   };
+  
   return (
-    <div className="flex lg:items-center lg:justify-between gap-6  flex-col lg:flex-row">
-      <div className="flex gap-3 items-center">
+    <div className="flex lg:items-center lg:justify-between gap- flex-col lg:flex-row">
+      <div className="flex gap-5 items-center">
         <Menu as="div" className="relative inline-block text-left">
           <div>
-            <Menu.Button className="inline-flex w-full justify-center rounded-xl bg-[#F3F7FB]  px-4 py-2 text-sm font-medium text-[ #333333]  focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75">
+            <Menu.Button className="inline-flex w-[200px] justify-between rounded-xl p-3 text-sm font-medium text-[#333333] border-[1px] border-[#BBBBBB] active:border-purple-900">
               {pageSize} / Page
               <ChevronDownIcon className="ml-2 -mr-1 h-5 w-5 text-[#798F9F] " aria-hidden="true" />
             </Menu.Button>
@@ -38,7 +57,7 @@ const PaginationComponent: React.FC<TPaginationComponent> = props => {
             leave="transition ease-in duration-75"
             leaveFrom="transform opacity-100 scale-100"
             leaveTo="transform opacity-0 scale-95">
-            <Menu.Items className="absolute  -top-32 w-24 left-0 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+            <Menu.Items className="absolute w-[200px] left-0 origin-top-right divide-y divide-gray-100 rounded-xl bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
               <div className="px-1 py-1 ">
                 {rangePageSize.map((d: number) => (
                   <Menu.Item key={d}>
@@ -48,9 +67,14 @@ const PaginationComponent: React.FC<TPaginationComponent> = props => {
                           setPageSize(d);
                         }}
                         className={`${
-                          active ? 'bg-primary text-white' : 'text-gray-900'
-                        } group flex w-full items-center rounded-md px-2 py-2 text-sm`}>
+                          active ? 'bg-purple-100' : ''
+                        } ${pageSize === d ? 'text-purple-900 font-bold' : ''} group flex w-full items-center justify-between rounded-xl px-2 py-2 text-sm`}>
                         {d}
+                        {
+                          pageSize === d && (
+                            <img src={CheckMark} className="w-6 h-6" />
+                          )
+                        }
                       </button>
                     )}
                   </Menu.Item>
@@ -59,29 +83,31 @@ const PaginationComponent: React.FC<TPaginationComponent> = props => {
             </Menu.Items>
           </Transition>
         </Menu>
-        <p className="text-sm font-semibold">Total {total} items</p>
+        <p className="text-sm font-bold">Total {total} items</p>
       </div>
       <div id="pagination">
         <Pagination
-          className="flex lg:w-auto w-full"
+          className="flex lg:w-auto w-full gap-2"
           currentPage={page}
           edgePageCount={2}
           middlePagesSiblingCount={1}
           setCurrentPage={handlePageChange}
           totalPages={countPage(total, pageSize)}
-          truncableClassName="w-10 px-0.5 text-center border border-l-0 text-[14px] items-center flex justify-center"
-          truncableText="...">
-          <Pagination.PrevButton className="flex justify-center items-center w-[43px] h-[38px] border rounded-tl-xl rounded-bl-xl">
-            <ChevronLeftIcon className=" h-5 w-5 text-[#798F9F] " aria-hidden="true" />
+          truncableClassName="w-10 px-0.5 text-center text-[14px] items-center flex justify-center rounded-2xl bg-[#E5DFEC] w-[48px] h-[48px] text-white"
+          truncableText="..."
+        >
+          <Pagination.PrevButton className="flex justify-center items-center w-[48px] h-[48px]">
+            <img src={TablePrev} />
           </Pagination.PrevButton>
+
           <Pagination.PageButton
-            activeClassName="text-[#28BCDC] bg-[#F1FDFF] border-[#28BCDC] font-semibold"
-            className="flex justify-center items-center w-[43px] h-[38px] border  cursor-pointer text-sm"
-            inactiveClassName="text-[#333333] font-semibold border-l-0"
+            activeClassName="text-white bg-primary font-semibold"
+            className="flex justify-center items-center w-[48px] h-[48px] cursor-pointer text-sm gap-1 rounded-2xl"
+            inactiveClassName="text-white bg-[#E5DFEC] font-semibold"
           />
 
-          <Pagination.NextButton className="flex justify-center items-center w-[43px] h-[38px] border border-l-0 rounded-tr-xl rounded-br-xl">
-            <ChevronRightIcon className=" h-5 w-5 text-[#798F9F] " aria-hidden="true" />
+          <Pagination.NextButton className="flex justify-center items-center w-[48px] h-[48px]">
+            <img src={TableNext} />
           </Pagination.NextButton>
         </Pagination>
       </div>
