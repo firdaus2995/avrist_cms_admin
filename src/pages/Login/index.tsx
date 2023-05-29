@@ -1,5 +1,5 @@
-import { useLoginMutation } from '../../services/Login/loginApi';
-import { storeDataStorage } from '../../utils/sessionStorage';
+// import { useLoginMutation } from '../../services/Login/loginApi';
+// import { storeDataStorage } from '../../utils/sessionStorage';
 import BottomAccessories from '../../assets/login/bottom-accessories.svg';
 import IconContainer from '../../assets/login/icon-container.svg';
 import Logo from '../../assets/Avrist-logo.png';
@@ -8,21 +8,21 @@ import { Typography } from '../../components/atoms/Typography';
 import AuthInput from '../../components/atoms/Input/AuthInput';
 
 export default function Login() {
-  const [login] = useLoginMutation();
-  const onClickLogin = () => {
-    login({ username: 'super', password: 'Password09!' })
-      .unwrap()
-      .then(res => {
-        storeDataStorage('accessToken', res.login.accessToken);
-        storeDataStorage('refreshToken', res.login.refreshToken);
-        storeDataStorage('roles', res.login.roles);
+  // const [login] = useLoginMutation();
+  // const onClickLogin = () => {
+  //   login({ username: 'super', password: 'Password09!' })
+  //     .unwrap()
+  //     .then(res => {
+  //       storeDataStorage('accessToken', res.login.accessToken);
+  //       storeDataStorage('refreshToken', res.login.refreshToken);
+  //       storeDataStorage('roles', res.login.roles);
 
-        window.location.assign('/');
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
+  //       window.location.assign('/');
+  //     })
+  //     .catch(err => {
+  //       console.log(err);
+  //     });
+  // };
   return (
     <div className="h-screen md:flex">
       {/* LEFT CONTENT */}

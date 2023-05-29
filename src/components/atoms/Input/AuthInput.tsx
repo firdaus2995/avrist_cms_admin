@@ -1,3 +1,5 @@
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Typography } from '../Typography';
 
 interface IAuthInputProps {
@@ -32,6 +34,13 @@ const AuthInput: React.FC<IAuthInputProps> = ({ label, placeholder, error, style
       </div>
     </div>
   );
+};
+
+AuthInput.propTypes = {
+  label: PropTypes.string.isRequired,
+  placeholder: PropTypes.string.isRequired,
+  error: PropTypes.string,
+  styleClass: PropTypes.string,
 };
 
 export default AuthInput;
