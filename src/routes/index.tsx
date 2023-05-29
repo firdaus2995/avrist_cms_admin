@@ -7,6 +7,11 @@ const LoginPage = React.lazy(async () => await import('../pages/Login'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
 const NotFoundPage = React.lazy(async () => await import('../pages/NotFound'));
 
+// IMPORT USERS PAGE
+const UserPage = React.lazy(async () => await import('../pages/Users'));
+const UserNewPage = React.lazy(async () => await import('../pages/Users/UsersNew'));
+const UserEditPage = React.lazy(async () => await import('../pages/Users/UsersEdit'));
+
 const RolesPage = React.lazy(async () => await import('../pages/Roles'));
 const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNew'));
 const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
@@ -26,6 +31,10 @@ export default function RoutesComponent() {
             </Suspense>
           }>
           <Route index element={<DashboardPage />} />
+          {/* USER PAGES ROUTE */}
+          <Route path="user" element={<UserPage />} />
+          <Route path="user/new" element={<UserNewPage />} />
+          <Route path="user/edit" element={<UserEditPage />} />
           {/* ROLES PAGES */}
           <Route path="roles" element={<RolesPage />} />
           <Route path="roles/new" element={<RolesNewPage />} />

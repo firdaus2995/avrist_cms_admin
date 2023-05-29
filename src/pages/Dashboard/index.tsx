@@ -3,7 +3,7 @@ import DropDown from '../../components/molecules/DropDown';
 import DropDownList from '../../components/molecules/DropDownList';
 import CkEditor from '../../components/atoms/Ckeditor';
 import SortableTreeComponent from '../../components/atoms/SortableTree';
-import Table from '../../components/atoms/Table';
+import Table from '../../components/molecules/Table';
 import { COLUMNS } from './column';
 import { useCallback } from 'react';
 import type { SortingState } from '@tanstack/react-table';
