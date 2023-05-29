@@ -12,7 +12,6 @@ import {
 import Menu from '../../../assets/menu.png';
 import LogoutIcon from '../../../assets/sidebar/Logout-icon.png';
 import ProfilePhoto from '../../../assets/Profile-photo.png';
-
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;

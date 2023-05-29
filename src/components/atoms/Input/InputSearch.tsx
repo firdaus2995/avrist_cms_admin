@@ -9,6 +9,7 @@ interface IInputSearch {
   placeholder?: string;
   disabled?: boolean;
   onBlur: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   width?: number;
 }
 
@@ -19,6 +20,7 @@ export const InputSearch: React.FC<IInputSearch> = ({
   placeholder,
   disabled,
   onBlur,
+  onChange,
   width,
 }) => {
   return (
@@ -29,6 +31,9 @@ export const InputSearch: React.FC<IInputSearch> = ({
         disabled={disabled}
         placeholder={placeholder ?? ''}
         onBlur={onBlur}
+        onChange={e => {
+          onChange(e);
+        }}
         className="w-full text-base font-normal" 
         style={{
           outline: 'none',
@@ -45,6 +50,7 @@ InputSearch.propTypes = {
   value: PropTypes.string,
   placeholder: PropTypes.string,
   onBlur: PropTypes.func.isRequired,
+  onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   width: PropTypes.number,
 };

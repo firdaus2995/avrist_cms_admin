@@ -7,6 +7,10 @@ import { useNavigate } from 'react-router-dom';
 import { resetForm } from '../../services/Roles/rolesSlice';
 import PermissionList from '../../components/organisms/PermissionList';
 import PermissionForm from '../../components/organisms/PermissionForm';
+import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import CancelIcon from "../../assets/cancel.png";
+import { useState } from 'react';
+
 export default function RolesNew() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -14,6 +18,10 @@ export default function RolesNew() {
   const { data, isFetching } = useGetPermissionHirarkyQuery(null);
   const { name, description, permissions } = useAppSelector(state => state.rolesSlice);
   const [roleCreate, { isLoading: onSaveLoading }] = useRoleCreateMutation();
+  const [showComfirm, setShowComfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setmessageConfirm] = useState('');
+
   const onSave = () => {
     const payload = {
       name,
@@ -45,9 +53,28 @@ export default function RolesNew() {
         );
       });
   };
+
+  const onLeave = () => {
+    setShowComfirm(false);
+    navigate('/roles');
+  }
+
   return (
     <>
       <TitleCard title={t('roles.add.title')} topMargin="mt-2">
+        <ModalConfirmLeave
+          open={showComfirm}
+          cancelAction={() => {
+            setShowComfirm(false);
+          }}
+          title={titleConfirm}
+          cancelTitle="No"
+          message={messageConfirm}
+          submitAction={onLeave}
+          submitTitle="Yes"
+          icon={CancelIcon}
+          btnType='btn-warning'
+        />
         <PermissionForm />
         <PermissionList
           permissionList={data?.permissionHierarchy.list ?? []}
@@ -57,7 +84,9 @@ export default function RolesNew() {
           <button
             className="btn btn-outline btn-md"
             onClick={() => {
-              navigate('/roles');
+              setTitleConfirm('Are you sure?');
+              setmessageConfirm(`Do you want to cancel all the process?`);
+              setShowComfirm(true);
             }}>
             {t('btn.cancel')}
           </button>

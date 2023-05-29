@@ -61,6 +61,7 @@ export const sidebarList = [
       {
         id: 72,
         title: 'Role',
+        path: '/roles',
       },
     ],
   },
