@@ -19,6 +19,7 @@
     "@nosferatu500/react-sortable-tree": "^4.4.0",
     "@reduxjs/toolkit": "^1.9.5",
     "@rtk-query/graphql-request-base-query": "^2.2.0",
+    "@tailwindcss/typography": "^0.5.9",
     "@types/react-redux": "^7.1.25",
     "async-mutex": "^0.4.0",
     "ckeditor5-custom-build": "file:ckeditor5",

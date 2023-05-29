@@ -2,10 +2,29 @@
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   theme: {
-    extend: {},
+    extend: {
+      // Custom colors variables - color second options
+      colors: {
+        'dark-purple': '#4F2C74',
+        purple: '#5E217C',
+        'bright-purple': '#81219A',
+        lavender: '#9B86BA',
+        'light-purple': '#E5DFEC',
+        'light-purple-2': '#F9F5FD',
+        'body-text-2': '#464B53',
+
+        error: '#EC2247',
+        'error-stroke': '#AE1D1D',
+      },
+      // Custom fonts
+      fontFamily: {
+        sans: ['DIN', 'Open Sans', 'sans-serif'],
+      },
+    },
   },
   plugins: [require('daisyui')],
   daisyui: {
+    // color themes - utamakan gunakan warna dibawah
     themes: [
       {
         light: {
