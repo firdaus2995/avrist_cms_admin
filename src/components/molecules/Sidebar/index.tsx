@@ -9,6 +9,7 @@ import SidebarIcon from '../../../assets/sidebar/Sidebar-icon.png';
 import TemplateIcon from '../../../assets/sidebar/Template-icon.png';
 import UserIcon from '../../../assets/sidebar/User-icon.png';
 import ProfilePhoto from '../../../assets/Profile-photo.png';
+import { useNavigate } from 'react-router';
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -48,6 +49,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
   const { open } = props;
   const [activeTab, setActiveTab] = useState(1);
   const [openedTab, setOpenedTab] = useState<string[]>([]);
+  const navigate = useNavigate();
 
   const sidebarList = [
     {
@@ -102,6 +104,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
         {
           id: 72,
           title: 'Role',
+          pages: '/roles',
         },
       ],
     },
@@ -214,6 +217,9 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
                     role="button"
                     onClick={() => {
                       setActiveTab(e.id);
+                      if (e.pages) {
+                        navigate(e.pages)
+                      }
                     }}>
                     <text
                       className={`${

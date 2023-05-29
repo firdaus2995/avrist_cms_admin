@@ -21,7 +21,7 @@ export default function PermissionList(props: IPermisionList) {
     <div>
       <div>
         <div className="flex gap-4 items-center ">
-          <img src={PermissionImg} alt="permission" className="w-[18px] h-[22px]" />
+          <img src={PermissionImg} alt="permission" className="h-[22px]" />
           <p className="font-bold text-lg">Permission</p>
         </div>
         {loading ? (
