@@ -19,7 +19,7 @@ import {
 import { 
   InputSearch,
 } from "../../components/atoms/Input/InputSearch";
-import PaginationComponent from "../../components/atoms/Pagination";
+import PaginationComponent from "../../components/molecules/Pagination";
 
 export default function UsersList () {
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
