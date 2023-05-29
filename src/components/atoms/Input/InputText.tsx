@@ -9,6 +9,7 @@ interface IInputText {
   value?: string;
   placeholder?: string;
   disabled?: boolean;
+  suffix?: React.ReactNode;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -21,22 +22,26 @@ export const InputText: React.FC<IInputText> = ({
   placeholder,
   disabled,
   onChange,
+  suffix,
 }) => {
   return (
     <div className={`form-control w-full ${containerStyle} `}>
       <label className="label">
         <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
       </label>
-      <input
-        type={type ?? 'text'}
-        value={value}
-        disabled={disabled}
-        placeholder={placeholder ?? ''}
-        onChange={e => {
-          onChange(e);
-        }}
-        className="input input-bordered w-full "
-      />
+      <div className='flex flex-row items-center'>
+        <input
+          type={type ?? 'text'}
+          value={value}
+          disabled={disabled}
+          placeholder={placeholder ?? ''}
+          onChange={e => {
+            onChange(e);
+          }}
+          className="input input-bordered w-full focus:border-0"
+        />
+        <div className='relative right-8'>{suffix ?? ''}</div>
+      </div>
     </div>
   );
 };
@@ -50,4 +55,5 @@ InputText.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  suffix: PropTypes.any,
 };

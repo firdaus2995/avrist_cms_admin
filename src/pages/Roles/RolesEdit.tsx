@@ -15,6 +15,9 @@ import { openToast } from '../../components/atoms/Toast/slice';
 
 import PermissionForm from '../../components/organisms/PermissionForm';
 import PermissionList from '../../components/organisms/PermissionList';
+import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import CancelIcon from "../../assets/cancel.png";
+
 export default function RolesEdit() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
@@ -22,9 +25,14 @@ export default function RolesEdit() {
 
   const { name, description, permissions, id } = useAppSelector(state => state.rolesSlice);
   const { t } = useTranslation();
-  const { data, isFetching } = useGetDetailRoleQuery({ id: parseInt(params.id ?? '') });
+  const fetchQuery = useGetDetailRoleQuery({ id: parseInt(params.id ?? '') });
+  const { data, isFetching } = fetchQuery;
   const [roleUpdate, { isLoading: onUpdateLoading }] = useRoleUpdateMutation();
   const [editMode, setEditMode] = useState(true);
+  const [showComfirm, setShowComfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setmessageConfirm] = useState('');
+
   useEffect(() => {
     dispatch(setId(parseInt(params.id ?? '')));
     if (data) {
@@ -35,6 +43,10 @@ export default function RolesEdit() {
       setEditMode(!findDetail);
     }
   }, [data]);
+
+  useEffect(() => {
+    void fetchQuery.refetch()
+  }, [])
 
   const onSave = () => {
     const payload = {
@@ -68,6 +80,12 @@ export default function RolesEdit() {
         );
       });
   };
+
+  const onLeave = () => {
+    setShowComfirm(false);
+    navigate('/roles');
+  }
+
   return (
     <>
       <TitleCard title={t('roles.edit.title')}>
@@ -76,6 +94,19 @@ export default function RolesEdit() {
         ) : (
           <PermissionForm disabled={!editMode} />
         )}
+        <ModalConfirmLeave
+          open={showComfirm}
+          cancelAction={() => {
+            setShowComfirm(false);
+          }}
+          title={titleConfirm}
+          cancelTitle="No"
+          message={messageConfirm}
+          submitAction={onLeave}
+          submitTitle="Yes"
+          icon={CancelIcon}
+          btnType='btn-warning'
+        />
 
         <PermissionList
           permissionList={data?.roleById.permissionHierarchy ?? []}
@@ -86,7 +117,9 @@ export default function RolesEdit() {
           <button
             className="btn btn-outline btn-md"
             onClick={() => {
-              navigate('/roles');
+              setTitleConfirm('Are you sure?');
+              setmessageConfirm(`Do you want to cancel all the process?`);
+              setShowComfirm(true);
             }}>
             {t('btn.cancel')}
           </button>
