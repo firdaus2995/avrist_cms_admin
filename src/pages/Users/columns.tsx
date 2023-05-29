@@ -1,10 +1,11 @@
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
+import { Link } from "react-router-dom";
 
 export const columns = [
   {
-    header: () => <span className="text-[14px]">Nama Role</span>,
-    accessorKey: 'userId',
+    header: () => <span className="text-[14px]">User Id</span>,
+    accessorKey: 'id',
     enableSorting: true,
     cell: (info: any) => (
       <p className="text-[14px] truncate">
@@ -16,7 +17,7 @@ export const columns = [
   },
   {
     header: () => <span className="text-[14px]">User Name</span>,
-    accessorKey: 'userName',
+    accessorKey: 'username',
     enableSorting: true,
     cell: (info: any) => (
       <p className="text-[14px] truncate">
@@ -52,15 +53,13 @@ export const columns = [
   },
   {
     header: () => <span className="text-[14px]">Aksi</span>,
-    accessorKey: 'action',
-    enableSorting: true,
+    accessorKey: 'id',
+    enableSorting: false,
     cell: (info: any) => (
       <div className="flex gap-5">
-        <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit}
-          onClick={(event: React.SyntheticEvent) => {
-            console.log(event);
-          }}
-        />
+        <Link to={`edit/${info.getValue()}`}>
+          <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
+        </Link>
         <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
           onClick={(event: React.SyntheticEvent) => {
             console.log(event);

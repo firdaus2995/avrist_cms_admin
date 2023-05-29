@@ -31,10 +31,12 @@ export const sidebarList = [
       {
         id: 41,
         title: 'Content Type Builder',
+        path: '',
       },
       {
         id: 42,
         title: 'Content Manager',
+        path: '',
       },
     ],
   },

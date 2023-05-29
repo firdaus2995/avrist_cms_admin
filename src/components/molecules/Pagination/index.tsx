@@ -19,11 +19,11 @@ import countPage from '../../../utils/countPage';
 import TableNext from '../../../assets/table-next.png';
 import TablePrev from '../../../assets/table-prev.png';
 
-const rangePageSize = [10, 25, 50, 100];
+const rangePageSize = [5, 10, 25, 50, 100];
 
 interface TPaginationComponent {
   page: number;
-  total: number;
+  total: number | null;
   pageSize: number;
   setPage: (d: number) => void;
   setPageSize: (d: number) => void;
@@ -83,7 +83,7 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
             </Menu.Items>
           </Transition>
         </Menu>
-        <p className="text-sm font-bold">Total {total} items</p>
+        <p className="text-sm font-bold">{total ? `Total ${total} items` : ``}</p>
       </div>
       <div id="pagination">
         <Pagination

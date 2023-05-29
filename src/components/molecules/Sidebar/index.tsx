@@ -55,11 +55,12 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
   const [openedTab, setOpenedTab] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState(() => {
     // SET DEFAULT ACTIVE PAGE
-    const pathName = location.pathname;    
+    const pathName = location.pathname;
+       
     for (const parentItem of sidebarList) {
       if (parentItem?.list) {
         for (const childItem of parentItem?.list) {
-          if (childItem?.path === pathName) {
+          if (childItem?.path === pathName || `/${pathName.split('/')[1]}` === childItem?.path) {
             // SET DEFAULT OPEN ACTIVE TAB 
             setOpenedTab([`Tab_${parentItem.id}`]);
             return childItem.id;

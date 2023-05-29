@@ -63,7 +63,7 @@ const Table: React.FC<IDataGrid> = props => {
                             (header.column.getCanSort()
                               ? 'cursor-pointer select-none flex items-center justify-center'
                               : '') +
-                            ` flex gap-3.5 justify-start flex items-center break-words text-black ${
+                            ` flex gap-3.5 justify-start flex items-center justify-center break-words text-black ${
                               window.innerWidth <= 1366 ? '' : 'pl-4'
                             }`,
                           onClick: header.column.getToggleSortingHandler(),
