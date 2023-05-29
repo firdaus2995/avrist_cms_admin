@@ -66,6 +66,9 @@ td {
   border-style: none solid solid none;
 }
 
+tr td { border-bottom: 1px solid #D6D6D6;}
+tr:last-child td { border-bottom: 1px solid transparent; }
+
 tr:first-child td:first-child { border-top-left-radius: 10px; }
 tr:first-child td:last-child { border-top-right-radius: 10px; }
 

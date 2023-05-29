@@ -1,10 +1,10 @@
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
 
-export const COLUMNS = [
+export const columns = [
   {
     header: () => <span className="text-[14px]">Nama Role</span>,
-    accessorKey: 'name',
+    accessorKey: 'userId',
     enableSorting: true,
     cell: (info: any) => (
       <p className="text-[14px] truncate">
@@ -15,8 +15,32 @@ export const COLUMNS = [
     ),
   },
   {
-    header: () => <span className="text-[14px]">Deskripsi</span>,
-    accessorKey: 'description',
+    header: () => <span className="text-[14px]">User Name</span>,
+    accessorKey: 'userName',
+    enableSorting: true,
+    cell: (info: any) => (
+      <p className="text-[14px] truncate">
+        {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+          ? info.getValue()
+          : '-'}
+      </p>
+    ),
+  },
+  {
+    header: () => <span className="text-[14px]">Email</span>,
+    accessorKey: 'email',
+    enableSorting: true,
+    cell: (info: any) => (
+      <p className="text-[14px] truncate">
+        {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+          ? info.getValue()
+          : '-'}
+      </p>
+    ),
+  },
+  {
+    header: () => <span className="text-[14px]">Role</span>,
+    accessorKey: 'role',
     enableSorting: true,
     cell: (info: any) => (
       <p className="text-[14px] truncate">

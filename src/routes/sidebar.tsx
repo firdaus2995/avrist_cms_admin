@@ -9,7 +9,6 @@ export const routes = [
     icon: 'B',
     name: 'Roles',
   },
-
   {
     path: '',
     icon: '',

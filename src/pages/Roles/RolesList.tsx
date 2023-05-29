@@ -5,12 +5,13 @@ import { useGetRolesQuery, useRoleHapusMutation } from '../../services/Roles/rol
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
-import Table from '../../components/atoms/Table';
+import Table from '../../components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-import { InputText } from '../../components/atoms/Input/InputText';
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
 import WarningIcon from "../../assets/warning.png";
+import { InputSearch } from '../../components/atoms/Input/InputSearch';
+import PaginationComponent from '../../components/molecules/Pagination';
 
 const CreateButton = () => {
   return (
@@ -32,22 +33,6 @@ const CreateButton = () => {
         </button>
       </Link>
     </div>
-  );
-};
-
-const SearchIcon = () => {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      fill="none" viewBox="0 0 24 24" 
-      strokeWidth={1.5} stroke="currentColor" 
-      className="w-6 h-6">
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
-    </svg>
-
   );
 };
 
@@ -194,27 +179,29 @@ export default function RolesList() {
         open={showComfirm}
         cancelAction={() => {
           setShowComfirm(false);
-        }}
+        } }
         title={titleConfirm}
         cancelTitle="Cancel"
         message={messageConfirm}
         submitAction={onDelete}
         submitTitle="Yes"
         loading={hapusLoading}
-        icon={WarningIcon}
-      />
+        icon={WarningIcon} btnType={''}      />
       <TitleCard 
         title="Role List" 
         topMargin="mt-2" 
         SearchBar={
-          <InputText 
+          <InputSearch 
             value={searchData} 
             onChange={(e) => { setSearchData(e.target.value); }} 
-            suffix={<SearchIcon />} 
-            placeholder='Search'  />
-          } 
+            onBlur={(e: any) => {
+              console.log(e);
+            }}
+            placeholder="Search"
+          />
+        } 
         TopSideButtons={<CreateButton />}>
-        <div className="overflow-x-auto w-full">
+        <div className="overflow-x-auto w-full mb-5">
           <Table
             rows={listData || ''}
             columns={COLUMNS}
@@ -225,6 +212,13 @@ export default function RolesList() {
             onSortModelChange={handleSortModelChange}
           />
         </div>
+        <PaginationComponent
+          page={1}
+          setPage={() => null}
+          total={100}
+          pageSize={10}
+          setPageSize={() => null}
+        />
       </TitleCard>
     </>
   );

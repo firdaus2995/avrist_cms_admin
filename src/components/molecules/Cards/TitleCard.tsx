@@ -11,7 +11,7 @@ interface ITitleCard {
 
 export const TitleCard: React.FC<ITitleCard> = ({ title, children, topMargin, TopSideButtons, SearchBar }) => {
   return (
-    <div className={`card w-full p-6 bg-base-100 shadow-xl ${topMargin ?? 'mt-6'}`}>
+    <div className={`card w-full p-6 bg-base-100 ${topMargin ?? 'mt-6'}`}>
       <Subtitle styleClass={TopSideButtons !== undefined ? 'inline-block' : ''}>
         {title}
         {/* {SearchBar !== undefined && (
