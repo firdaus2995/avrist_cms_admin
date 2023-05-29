@@ -43,9 +43,22 @@ export const userApi = createApi({
         variables: payload,
       }),
     }),
+    deleteUser: builder.mutation<any, {id: number}>({
+      query: payload => ({
+        document: gql`
+          mutation userDelete($id: Int!) {
+            userDelete(id: $id) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
   })
 })
 
 export const {
   useGetUserQuery,
+  useDeleteUserMutation,
 } = userApi;
