@@ -1,8 +1,10 @@
 import { 
   SortingState,
 } from "@tanstack/react-table";
-import { 
-  useCallback,
+import React, { 
+  useCallback, 
+  useEffect, 
+  useState,
 } from "react";
 import { 
   Link, 
@@ -10,81 +12,228 @@ import {
 
 import Table from "../../components/molecules/Table";
 import Plus from "../../assets/plus.png";
+import PaginationComponent from "../../components/molecules/Pagination";
+import WarningIcon from "../../assets/warning.png";
+import TableEdit from "../../assets/table-edit.png";
+import TableDelete from "../../assets/table-delete.png";
+import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
 import { 
   TitleCard,
 } from "../../components/molecules/Cards/TitleCard";
 import { 
-  columns,
-} from "./columns";
-import { 
   InputSearch,
 } from "../../components/atoms/Input/InputSearch";
-import PaginationComponent from "../../components/molecules/Pagination";
+import { 
+  useDeleteUserMutation,
+  useGetUserQuery,
+} from "../../services/User/userApi";
+import { 
+  useAppDispatch,
+} from "../../store";
+import { openToast } from "../../components/atoms/Toast/slice";
 
 export default function UsersList () {
+  // TABLE COLUMN
+  const columns = [
+    {
+      header: () => <span className="text-[14px]">User Id</span>,
+      accessorKey: 'id',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">User Name</span>,
+      accessorKey: 'username',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Email</span>,
+      accessorKey: 'email',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Role</span>,
+      accessorKey: 'role',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Aksi</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (info: any) => (
+        <div className="flex gap-5">
+          <Link to={`edit/${info.getValue()}`}>
+            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
+          </Link>
+          <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
+            onClick={() => {
+              onClickUserDelete(info.getValue(), info?.row?.original?.name);
+            }}
+          />
+        </div>
+      ),
+    },
+  ];
+  
+  const dispatch = useAppDispatch();
+  const [listData, setListData] = useState([]);
+  // TABLE PAGINATION STATE
+  const [total, setTotal] = useState(null);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(5);
+  const [direction, setDirection] = useState('asc');
+  const [sortBy, setSortBy] = useState('id');
+  const [search, setSearch] = useState('');
+  // DELETE MODAL STATE
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [deleteModalTitle, setDeleteModalTitle] = useState('');
+  const [deleteModalBody, setDeleteModayBody] = useState('');
+  const [deletedId, setDeletedId] = useState(0);
+
+  // RTK GET DATA
+  const fetchQuery = useGetUserQuery({
+    pageIndex,
+    limit: pageLimit,
+    sortBy,
+    direction,
+    search,
+  });
+  const { data, isFetching, isError } = fetchQuery;
+  // RTK DELETE
+  const [deletedUser, { isLoading } ] = useDeleteUserMutation();
+
+  useEffect(() => {
+    if (data) {
+      setListData(data?.userList?.users);
+      setTotal(data?.userList?.total);
+    }
+  }, [data])
+
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
-      // CODE HERE
-    }
+      setSortBy(sortModel[0].id);
+      setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    };
   }, []);
 
-  const ButtonGroup = () => {
-    return (
-      <div className="flex gap-5">
-        <InputSearch 
-          onBlur={(e: any) => {
-            console.log(e);
-          }}
-          placeholder="Search"
-        />
-        <Link to='new' className="btn btn-primary flex flex-row gap-2 rounded-xl">
-          <img src={Plus} className="w-[24px] h-[24px]" />
-          Add New User
-        </Link>
-      </div>
-    );
-  };  
+  // FUNCTION FOR DELETE USER
+  const submitDeleteUser = () => {
+    deletedUser({
+      id: deletedId,
+    })
+      .unwrap()
+      .then(async (result: any) => {
+        setOpenDeleteModal(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Delete User',
+            message: result.userDelete.message,
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setOpenDeleteModal(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Delete User',
+            message: 'Something went wrong!',
+          }),
+        );
+      })
+  }
+
+  const onClickUserDelete = (id: number, name: string) => {
+    setDeletedId(id);
+    setDeleteModalTitle(`Are you sure?`);
+    setDeleteModayBody(`Do you want to delete user ${name}? \n Once you delete this user, this user won't be recovered`);
+    setOpenDeleteModal(true);
+  };
 
   return (
-    <TitleCard title="User List" TopSideButtons={<ButtonGroup />} >
-      <Table
-        rows={dummy}
-        columns={columns}
-        loading={false}
-        error={false}
-        manualPagination={true}
-        manualSorting={true}
-        onSortModelChange={handleSortModelChange}
+    <React.Fragment>
+      <ModalConfirmLeave
+        open={openDeleteModal}
+        cancelAction={() => {
+          setOpenDeleteModal(false);
+        }}
+        title={deleteModalTitle}
+        message={deleteModalBody}
+        cancelTitle="Cancel"
+        submitTitle="Yes"
+        submitAction={submitDeleteUser}
+        loading={isLoading}
+        icon={WarningIcon}
+        btnType=''
       />
-      <PaginationComponent
-        page={1}
-        setPage={() => null}
-        total={100}
-        pageSize={10}
-        setPageSize={() => null}
-      />
-    </TitleCard>
+      <TitleCard title="User List" 
+        topMargin="mt-2" 
+        TopSideButtons={
+          <Link to='new' className="btn btn-primary flex flex-row gap-2 rounded-xl">
+            <img src={Plus} className="w-[24px] h-[24px]" />
+            Add New User
+          </Link>
+        }
+        SearchBar={
+          <InputSearch 
+            onBlur={(e: any) => {
+              setSearch(e.target.value);
+            }}
+            placeholder="Search"
+          />
+        }
+      >
+        <Table
+          rows={listData || []}
+          columns={columns}
+          manualPagination={true}
+          manualSorting={true}
+          onSortModelChange={handleSortModelChange}
+          loading={isFetching}
+          error={isError}
+        />
+        <PaginationComponent
+          total={total}
+          page={pageIndex}
+          pageSize={pageLimit}
+          setPageSize={(page: number) => {
+            setPageLimit(page);
+          }}
+          setPage={(page: number) => {
+            setPageIndex(page);
+          }}
+        />
+      </TitleCard>
+    </React.Fragment>
   );
 };
-
-const dummy = [
-  {
-    userId: '600234563',
-    userName: 'Haykal',
-    email: 'haykal@barito.tech',
-    role: 'Submitter',
-  },
-  {
-    userId: '600234564',
-    userName: 'Faris',
-    email: 'fariz@barito.tech',
-    role: 'Submitter',
-  },
-  {
-    userId: '600234565',
-    userName: 'Mitha',
-    email: 'mitha@barito.tech',
-    role: 'Submitter',
-  },
-];

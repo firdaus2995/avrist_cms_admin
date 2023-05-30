@@ -36,7 +36,7 @@ export default function RoutesComponent() {
           {/* USER PAGES ROUTE */}
           <Route path="user" element={<UserPage />} />
           <Route path="user/new" element={<UserNewPage />} />
-          <Route path="user/edit" element={<UserEditPage />} />
+          <Route path="user/edit/:id" element={<UserEditPage />} />
           {/* ROLES PAGES */}
           <Route path="roles" element={<RolesPage />} />
           <Route path="roles/new" element={<RolesNewPage />} />

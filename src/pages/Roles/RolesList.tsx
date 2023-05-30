@@ -17,7 +17,7 @@ const CreateButton = () => {
   return (
     <div className="inline-block float-right">
       <Link to="new">
-        <button className="btn normal-case btn-primary text-xs whitespace-nowrap mt-4">
+        <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
           <div className='flex flex-row gap-2 items-center justify-center'>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
