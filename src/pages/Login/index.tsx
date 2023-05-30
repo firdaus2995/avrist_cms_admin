@@ -1,5 +1,6 @@
-// import { useLoginMutation } from '../../services/Login/loginApi';
-// import { storeDataStorage } from '../../utils/sessionStorage';
+import { useState } from 'react';
+import { useLoginMutation } from '../../services/Login/loginApi';
+import { storeDataStorage } from '../../utils/sessionStorage';
 import BottomAccessories from '../../assets/login/bottom-accessories.svg';
 import IconContainer from '../../assets/login/icon-container.svg';
 import Logo from '../../assets/Avrist-logo.png';
@@ -8,21 +9,54 @@ import { Typography } from '../../components/atoms/Typography';
 import AuthInput from '../../components/atoms/Input/AuthInput';
 
 export default function Login() {
-  // const [login] = useLoginMutation();
-  // const onClickLogin = () => {
-  //   login({ username: 'super', password: 'Password09!' })
-  //     .unwrap()
-  //     .then(res => {
-  //       storeDataStorage('accessToken', res.login.accessToken);
-  //       storeDataStorage('refreshToken', res.login.refreshToken);
-  //       storeDataStorage('roles', res.login.roles);
+  const [login] = useLoginMutation();
+  const [authValue, setAuthValue] = useState({
+    username: '',
+    password: '',
+    errors: { username: '', password: '' },
+  });
+  const handleUsernameChange = (e: { target: { value: string } }) => {
+    setAuthValue({ ...authValue, username: e.target.value });
+  };
 
-  //       window.location.assign('/');
-  //     })
-  //     .catch(err => {
-  //       console.log(err);
-  //     });
-  // };
+  const handlePasswordChange = (e: { target: { value: string } }) => {
+    setAuthValue({ ...authValue, password: e.target.value });
+  };
+  const onClickLogin = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+
+    // Check if username and password are empty
+    if (!authValue.username || !authValue.password) {
+      const updatedErrors = {
+        username: !authValue.username ? 'Please enter your username' : '',
+        password: !authValue.password ? 'Please enter your password' : '',
+      };
+      setAuthValue(prevState => ({
+        ...prevState,
+        errors: updatedErrors,
+      }));
+      return;
+    }
+
+    login({ username: authValue.username, password: authValue.password })
+      .unwrap()
+      .then(res => {
+        storeDataStorage('accessToken', res.login.accessToken);
+        storeDataStorage('refreshToken', res.login.refreshToken);
+        storeDataStorage('roles', res.login.roles);
+
+        window.location.assign('/');
+      })
+      .catch(err => {
+        setAuthValue(prevState => ({
+          ...prevState,
+          errors: { username: '', password: 'Sign-in failed' },
+        }));
+        console.log('Sign-in failed:', err);
+        // Handle sign-in failure here
+      });
+  };
+
   return (
     <div className="h-screen md:flex">
       {/* LEFT CONTENT */}
@@ -52,25 +86,35 @@ export default function Login() {
             Welcome to Avrist Content Management System, please put your login credentials below to
             start using the app.
           </Typography>
-          <form className="mx-10 sm:mx-0">
+          <form className="mx-0 md:mx-10">
             <AuthInput
               label="User Name"
               placeholder="Enter Username"
-              error="Invalid username"
+              error={authValue.errors.username}
               styleClass="mb-5"
+              onChange={handleUsernameChange}
+              value={authValue.username}
             />
-            <AuthInput label="Password" placeholder="Enter Password" error="Invalid username" />
-            <div className='bg-red'>
-              <span className="text-sm ml-2 hover:text-blue-500 cursor-pointer">
+            <AuthInput
+              label="Password"
+              placeholder="Enter Password"
+              error={authValue.errors.password}
+              onChange={handlePasswordChange}
+              value={authValue.password}
+              passwordMode={true}
+            />
+            <div className="flex flex-col items-end my-12">
+              <Typography
+                type="body"
+                size="s"
+                weight="regular"
+                styleClass="text-primary cursor-pointer mb-8">
                 Forgot Password ?
-              </span>
+              </Typography>
+              <button onClick={onClickLogin} className="btn btn-primary btn-wide">
+                Login
+              </button>
             </div>
-
-            <button
-              type="submit"
-              className="block w-full bg- mt-4 py-2 rounded-2xl text-white font-semibold mb-2">
-              Login
-            </button>
           </form>
         </div>
       </div>
