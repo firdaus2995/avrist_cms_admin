@@ -4,6 +4,7 @@ import Layout from '../components/organisms/Layout';
 import Loading from '../components/atoms/Loading';
 import { useAppSelector } from '../store';
 const LoginPage = React.lazy(async () => await import('../pages/Login'));
+const LoginPortal = React.lazy(async () => await import('../pages/LoginPortal'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
 const NotFoundPage = React.lazy(async () => await import('../pages/NotFound'));
 
@@ -22,6 +23,7 @@ export default function RoutesComponent() {
     <Routes>
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/loginportal" element={<LoginPortal />} />
       </Route>
       <Route element={<ProtectedRoute token={accessToken} />}>
         <Route
