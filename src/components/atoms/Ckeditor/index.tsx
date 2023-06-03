@@ -46,7 +46,7 @@ export default function CkEditor() {
       config={{
         extraPlugins: [uploadPlugin],
       }}
-      onChange={(event: any, editor: any) => {
+      onChange={(_event: any, editor: any) => {
         const data = editor.getData();
         console.log(data);
       }}

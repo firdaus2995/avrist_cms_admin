@@ -1,4 +1,4 @@
-import { getDataStorage } from './sessionStorage';
+import { getDataStorage } from './SessionStorage';
 interface IGetCredential {
   accessToken: string;
   refreshToken: string;
