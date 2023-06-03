@@ -42,6 +42,11 @@ export default function RoutesComponent() {
           <Route path="roles/new" element={<RolesNewPage />} />
           <Route path="roles/edit/:id" element={<RolesEditPage />} />
           <Route path="roles/detail/:id" element={<RolesEditPage />} />
+          {/* PAGE MANAGEMENT */}
+          <Route path="page-management" element={<RolesPage />} />
+          <Route path="page-management/new" element={<RolesNewPage />} />
+          <Route path="page-management/edit/:id" element={<RolesEditPage />} />
+          <Route path="page-management/detail/:id" element={<RolesEditPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

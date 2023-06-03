@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLoginMutation } from '../../services/Login/loginApi';
-import { storeDataStorage } from '../../utils/sessionStorage';
+import { storeDataStorage } from '../../utils/SessionStorage';
 import BottomAccessories from '../../assets/login/bottom-accessories.svg';
 import IconContainer from '../../assets/login/icon-container.svg';
 import Logo from '../../assets/Avrist-logo.png';
@@ -86,7 +86,7 @@ export default function Login() {
             Welcome to Avrist Content Management System, please put your login credentials below to
             start using the app.
           </Typography>
-          <form className="mx-0 md:mx-10">
+          <form className="mx-0 lg:mx-10">
             <AuthInput
               label="User Name"
               placeholder="Enter Username"

@@ -7,7 +7,7 @@ import type { RootState } from '../store';
 import { setRefreshToken, setAccessToken, setRoles } from '../services/Login/slice';
 import { getCredential, removeCredential } from './Credential';
 import { loginApi } from '../services/Login/loginApi';
-import { storeDataStorage } from './sessionStorage';
+import { storeDataStorage } from './SessionStorage';
 import { openToast } from '../components/atoms/Toast/slice';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const mutex = new Mutex();
