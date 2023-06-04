@@ -7,7 +7,7 @@ import Logo from '../../assets/Avrist-logo.png';
 import LoginIllustrator from '../../assets/login/login-illustrator.svg';
 import { Typography } from '../../components/atoms/Typography';
 import AuthInput from '../../components/atoms/Input/AuthInput';
-import PasswordInput from '../../components/atoms/Input/PasswordInput';
+// import { Link } from 'react-router-dom';
 
 export default function Login() {
   const [login] = useLoginMutation();
@@ -58,11 +58,48 @@ export default function Login() {
       });
   };
 
-  // PASSWORD
-  const [password, setPassword] = useState('');
-
-  const handleNewPasswordChange = e => {
-    setPassword(e.target.value);
+  const LoginForm = () => {
+    return (
+      <div className="bg-white mx-16">
+        <h1 className="font-bold text-2xl my-5 text-dark-purple">Login</h1>
+        <Typography type="body" size="normal" weight="regular" styleClass="text-body-text-2 mb-10">
+          Welcome to Avrist Content Management System, please put your login credentials below to
+          start using the app.
+        </Typography>
+        <form className="mx-0 lg:mx-10">
+          <AuthInput
+            label="User Name"
+            placeholder="Enter Username"
+            error={authValue.errors.username}
+            styleClass="mb-5"
+            onChange={handleUsernameChange}
+            value={authValue.username}
+          />
+          <AuthInput
+            label="Password"
+            placeholder="Enter Password"
+            error={authValue.errors.password}
+            onChange={handlePasswordChange}
+            value={authValue.password}
+            passwordMode={true}
+          />
+          <div className="flex flex-col items-end my-10">
+            {/* <Link to="/forgot-password"> */}
+            <Typography
+              type="body"
+              size="s"
+              weight="regular"
+              styleClass="text-primary cursor-pointer mb-8">
+              Forgot Password ?
+            </Typography>
+            {/* </Link> */}
+            <button onClick={onClickLogin} className="btn btn-primary btn-wide">
+              Login
+            </button>
+          </div>
+        </form>
+      </div>
+    );
   };
 
   return (
@@ -84,47 +121,7 @@ export default function Login() {
       </div>
       {/* RIGHT CONTENT - LOGIN FORM */}
       <div className="flex md:w-1/2 justify-center py-10 items-center bg-white">
-        <div className="bg-white mx-16">
-          <h1 className="font-bold text-2xl my-5 text-dark-purple">Login</h1>
-          <Typography
-            type="body"
-            size="normal"
-            weight="regular"
-            styleClass="text-body-text-2 mb-10">
-            Welcome to Avrist Content Management System, please put your login credentials below to
-            start using the app.
-          </Typography>
-          <form className="mx-0 lg:mx-10">
-            <AuthInput
-              label="User Name"
-              placeholder="Enter Username"
-              error={authValue.errors.username}
-              styleClass="mb-5"
-              onChange={handleUsernameChange}
-              value={authValue.username}
-            />
-            <AuthInput
-              label="Password"
-              placeholder="Enter Password"
-              error={authValue.errors.password}
-              onChange={handlePasswordChange}
-              value={authValue.password}
-              passwordMode={true}
-            />
-            <div className="flex flex-col items-end my-10">
-              <Typography
-                type="body"
-                size="s"
-                weight="regular"
-                styleClass="text-primary cursor-pointer mb-8">
-                Forgot Password ?
-              </Typography>
-              <button onClick={onClickLogin} className="btn btn-primary btn-wide">
-                Login
-              </button>
-            </div>
-          </form>
-        </div>
+        <LoginForm />
       </div>
     </div>
   );
