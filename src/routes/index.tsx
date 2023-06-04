@@ -17,6 +17,11 @@ const RolesPage = React.lazy(async () => await import('../pages/Roles'));
 const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNew'));
 const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
 
+const PageManagementPage = React.lazy(async () => await import('../pages/PageManagement'));
+// const PageManagementNewPage = React.lazy(async () => await import('../pages/PageManagement/RolesNew'));
+// const PageManagementEditPage = React.lazy(async () => await import('../pages/PageManagement/RolesEdit'));
+
+
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
   return (
@@ -43,10 +48,10 @@ export default function RoutesComponent() {
           <Route path="roles/edit/:id" element={<RolesEditPage />} />
           <Route path="roles/detail/:id" element={<RolesEditPage />} />
           {/* PAGE MANAGEMENT */}
-          <Route path="page-management" element={<RolesPage />} />
-          <Route path="page-management/new" element={<RolesNewPage />} />
+          <Route path="page-management" element={<PageManagementPage />} />
+          {/* <Route path="page-management/new" element={<RolesNewPage />} />
           <Route path="page-management/edit/:id" element={<RolesEditPage />} />
-          <Route path="page-management/detail/:id" element={<RolesEditPage />} />
+          <Route path="page-management/detail/:id" element={<RolesEditPage />} /> */}
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
