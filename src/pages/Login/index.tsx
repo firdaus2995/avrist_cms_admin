@@ -7,6 +7,7 @@ import Logo from '../../assets/Avrist-logo.png';
 import LoginIllustrator from '../../assets/login/login-illustrator.svg';
 import { Typography } from '../../components/atoms/Typography';
 import AuthInput from '../../components/atoms/Input/AuthInput';
+import PasswordInput from '../../components/atoms/Input/PasswordInput';
 
 export default function Login() {
   const [login] = useLoginMutation();
@@ -57,6 +58,13 @@ export default function Login() {
       });
   };
 
+  // PASSWORD
+  const [password, setPassword] = useState('');
+
+  const handleNewPasswordChange = e => {
+    setPassword(e.target.value);
+  };
+
   return (
     <div className="h-screen md:flex">
       {/* LEFT CONTENT */}
@@ -103,7 +111,7 @@ export default function Login() {
               value={authValue.password}
               passwordMode={true}
             />
-            <div className="flex flex-col items-end my-12">
+            <div className="flex flex-col items-end my-10">
               <Typography
                 type="body"
                 size="s"
