@@ -1,5 +1,6 @@
 export interface ILoginPayload {
-  username: string;
+  // username: string;
+  userId: string;
   password: string;
 }
 

@@ -38,7 +38,7 @@ export default function Login() {
       return;
     }
 
-    login({ username: authValue.username, password: authValue.password })
+    login({ userId: authValue.username, password: authValue.password })
       .unwrap()
       .then(res => {
         storeDataStorage('accessToken', res.login.accessToken);

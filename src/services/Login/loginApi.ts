@@ -16,10 +16,10 @@ export const loginApi = createApi({
   }),
   endpoints: builder => ({
     login: builder.mutation<ILoginResponse, ILoginPayload>({
-      query: ({ password, username }) => ({
+      query: ({ password, userId }) => ({
         document: gql`
-          mutation loginMutation($username: String!, $password: String!) {
-            login(username: $username, password: $password) {
+          mutation loginMutation($userId: String!, $password: String!) {
+            login(userId: $userId, password: $password) {
               accessToken
               refreshToken
               roles
@@ -27,7 +27,7 @@ export const loginApi = createApi({
           }
         `,
         variables: {
-          username,
+          userId,
           password,
         },
       }),
