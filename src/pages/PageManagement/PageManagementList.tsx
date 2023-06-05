@@ -10,9 +10,45 @@ import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '../../assets/table-edit.png';
 import TableView from '../../assets/table-view.png';
 import TableDelete from '../../assets/table-delete.png';
+import FilterIcon from '../../assets/filter.svg';
+import ArchiveBox from '../../assets/archive-box.svg';
 import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
+
+const TopRightButton = () => {
+  return (
+    <div className="flex flex-row">
+      <FilterButton />
+      <CreateButton />
+    </div>
+  );
+};
+
+const ArchiveButton = () => {
+  return (
+    <div className="inline-block float-right mr-5">
+      <button className=" border-secondary-warning border-[1px] rounded-xl w-44 py-3">
+        <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-secondary-warning">
+          <img src={ArchiveBox} className="w-6 h-6 mr-1" />
+          Archive
+        </div>
+      </button>
+    </div>
+  );
+};
+
+const FilterButton = () => {
+  return (
+    <div className="inline-block float-right mr-5">
+      <button className=" border-grey border-[1px] rounded-xl px-3 py-3">
+        <div className="flex flex-row gap-2 items-center justify-center">
+          <img src={FilterIcon} className="w-6 h-6" />
+        </div>
+      </button>
+    </div>
+  );
+};
 
 const CreateButton = () => {
   return (
@@ -39,9 +75,9 @@ const CreateButton = () => {
 
 export default function PageManagementList() {
   const dispatch = useAppDispatch();
-  const [showComfirm, setShowComfirm] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
-  const [messageConfirm, setmessageConfirm] = useState('');
+  const [messageConfirm, setMessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
   const fetchQuery = useGetRolesQuery({
     pageIndex: 0,
@@ -58,17 +94,17 @@ export default function PageManagementList() {
   const onConfirm = (id: number, name: string) => {
     setIdDelete(id);
     setTitleConfirm('Are you sure?');
-    setmessageConfirm(
+    setMessageConfirm(
       `Do you want to delete role ${name}? \n Once you delete this role, this role won't be recovered`,
     );
-    setShowComfirm(true);
+    setShowConfirm(true);
   };
 
   const onDelete = () => {
     hapusRole({ id: idDelete })
       .unwrap()
       .then(async d => {
-        setShowComfirm(false);
+        setShowConfirm(false);
         dispatch(
           openToast({
             type: 'success',
@@ -79,7 +115,7 @@ export default function PageManagementList() {
         await fetchQuery.refetch();
       })
       .catch(err => {
-        setShowComfirm(false);
+        setShowConfirm(false);
 
         console.log(err);
         dispatch(
@@ -124,13 +160,11 @@ export default function PageManagementList() {
     {
       header: () => <span className="text-[14px]"></span>,
       accessorKey: 'status',
-      enableSorting: true,
+      enableSorting: false,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
+        <span className="inline-block rounded-min text-gray-600 bg-gray-100 px-2 py-1 text-xs font-bold mr-3">
+          Default
+        </span>
       ),
     },
     {
@@ -184,7 +218,7 @@ export default function PageManagementList() {
     {
       header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
-      enableSorting: true,
+      enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-5">
           <div className="tooltip" data-tip="View">
@@ -218,9 +252,9 @@ export default function PageManagementList() {
   return (
     <>
       <ModalConfirmLeave
-        open={showComfirm}
+        open={showConfirm}
         cancelAction={() => {
-          setShowComfirm(false);
+          setShowConfirm(false);
         }}
         title={titleConfirm}
         cancelTitle="Cancel"
@@ -246,7 +280,15 @@ export default function PageManagementList() {
             placeholder="Search"
           />
         }
-        TopSideButtons={<CreateButton />}>
+        TopSideButtons={<TopRightButton />}>
+        <div className="flex flex-row justify-between mb-5">
+          <div className="flex flex-row">
+            <button className="btn btn-primary text-xs w-40">Page List</button>
+            <button className="btn btn-outline text-xs w-40">My Task</button>
+          </div>
+          <ArchiveButton />
+        </div>
+
         <div className="overflow-x-auto w-full mb-5">
           <Table
             rows={listData || ''}

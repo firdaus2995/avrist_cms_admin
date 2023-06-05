@@ -12,9 +12,12 @@ export default {
         'light-purple': '#E5DFEC',
         'light-purple-2': '#F9F5FD',
         'body-text-2': '#464B53',
+        grey:'#BBBBBB',
 
         error: '#EC2247',
         'error-stroke': '#AE1D1D',
+
+        'secondary-warning': '#FF8E3C',
       },
       // Custom fonts
       fontFamily: {
