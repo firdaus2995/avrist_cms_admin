@@ -28,7 +28,7 @@ const CreateButton = () => {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add New Role
+            Create New Page
           </div>
         </button>
       </Link>
@@ -36,7 +36,7 @@ const CreateButton = () => {
   );
 };
 
-export default function RolesList() {
+export default function PageManagementList() {
   const dispatch = useAppDispatch();
   const [showComfirm, setShowComfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -119,7 +119,19 @@ export default function RolesList() {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Role ID</span>,
+      header: () => <span className="text-[14px]"></span>,
+      accessorKey: 'status',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Page Name</span>,
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -131,7 +143,7 @@ export default function RolesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Role Name</span>,
+      header: () => <span className="text-[14px]">Created by</span>,
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -143,7 +155,19 @@ export default function RolesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Description</span>,
+      header: () => <span className="text-[14px]">Created Date</span>,
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Updated Date</span>,
       accessorKey: 'description',
       enableSorting: true,
       cell: (info: any) => (
@@ -188,7 +212,7 @@ export default function RolesList() {
         loading={hapusLoading}
         icon={WarningIcon} btnType={''}      />
       <TitleCard 
-        title="Role List" 
+        title="Page List" 
         topMargin="mt-2" 
         SearchBar={
           <InputSearch 

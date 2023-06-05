@@ -4,6 +4,7 @@ import Layout from '../components/organisms/Layout';
 import Loading from '../components/atoms/Loading';
 import { useAppSelector } from '../store';
 const LoginPage = React.lazy(async () => await import('../pages/Login'));
+const LoginPortal = React.lazy(async () => await import('../pages/LoginPortal'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
 const NotFoundPage = React.lazy(async () => await import('../pages/NotFound'));
 
@@ -19,6 +20,9 @@ const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesE
 const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
 
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplate'));
+const PageManagementPage = React.lazy(async () => await import('../pages/PageManagement'));
+// const PageManagementNewPage = React.lazy(async () => await import('../pages/PageManagement/RolesNew'));
+// const PageManagementEditPage = React.lazy(async () => await import('../pages/PageManagement/RolesEdit'));
 
 
 export default function RoutesComponent() {
@@ -27,6 +31,8 @@ export default function RoutesComponent() {
     <Routes>
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
         <Route path="/login" element={<LoginPage />} />
+        {/* <Route path="/forgot-password" element={<LoginPortal />} /> */}
+        <Route path="/loginportal" element={<LoginPortal />} />
       </Route>
       <Route element={<ProtectedRoute token={accessToken} />}>
         <Route
@@ -39,7 +45,7 @@ export default function RoutesComponent() {
           {/* USER PAGES ROUTE */}
           <Route path="user" element={<UserPage />} />
           <Route path="user/new" element={<UserNewPage />} />
-          <Route path="user/edit" element={<UserEditPage />} />
+          <Route path="user/edit/:id" element={<UserEditPage />} />
           {/* ROLES PAGES */}
           <Route path="roles" element={<RolesPage />} />
           <Route path="roles/new" element={<RolesNewPage />} />
@@ -49,6 +55,11 @@ export default function RoutesComponent() {
           <Route path="menu" element={<MenuManagementPage />} />
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route path="pageTemplate" element={<PageTemplatePage />} />
+          {/* PAGE MANAGEMENT */}
+          <Route path="page-management" element={<PageManagementPage />} />
+          {/* <Route path="page-management/new" element={<RolesNewPage />} />
+          <Route path="page-management/edit/:id" element={<RolesEditPage />} />
+          <Route path="page-management/detail/:id" element={<RolesEditPage />} /> */}
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

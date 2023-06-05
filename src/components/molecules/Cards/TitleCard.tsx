@@ -14,10 +14,7 @@ export const TitleCard: React.FC<ITitleCard> = ({ title, children, topMargin, To
     <div className={`card w-full p-6 bg-base-100 ${topMargin ?? 'mt-6'}`}>
       <Subtitle styleClass={TopSideButtons !== undefined ? 'inline-block' : ''}>
         {title}
-        {/* {SearchBar !== undefined && (
-          <div className="inline-block mr-2">{SearchBar}</div>
-        )} */}
-        <div className="inline-block flex flex-row float-right gap-2 items-center">
+        <div className="flex gap-5">
           {SearchBar !== undefined && SearchBar}
           {TopSideButtons !== undefined && TopSideButtons}
         </div>

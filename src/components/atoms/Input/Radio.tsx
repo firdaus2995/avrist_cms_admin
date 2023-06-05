@@ -22,9 +22,12 @@ export const Radio: React.FC<IRadio> = ({
 }) => {
   const [value, setValue] = useState(defaultValue);
 
-  const updateToogleValue = () => {
+  const updateToggleValue = () => {
     setValue(value);
-    updateFormValue({ value });
+    updateFormValue({
+      value: !!value,
+      updateType: ''
+    });
   };
 
   return (
@@ -32,10 +35,10 @@ export const Radio: React.FC<IRadio> = ({
       <label className="label cursor-pointer">
         <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
         <input
-          type="Radio"
+          type="radio"
           className="radio checked:bg-[#81219A]"
           checked={checked}
-          onChange={e => { updateToogleValue(); }}
+          onChange={updateToggleValue}
         />
       </label>
     </div>
@@ -49,6 +52,6 @@ Radio.propTypes = {
   containerStyle: PropTypes.string,
   defaultValue: PropTypes.string,
   placeholder: PropTypes.string,
-  updateFormValue: PropTypes.any,
-  checked: PropTypes.bool,
+  updateFormValue: PropTypes.func.isRequired,
+  checked: PropTypes.bool.isRequired,
 };

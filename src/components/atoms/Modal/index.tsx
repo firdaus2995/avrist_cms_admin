@@ -1,4 +1,3 @@
-import React from 'react';
 import { IModal } from './types';
 
 export default function Modal(props: IModal) {

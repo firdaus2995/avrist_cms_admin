@@ -38,7 +38,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
           className="checkbox checkbox-primary mr-3"
           checked={value}
           disabled={disabled}
-          onChange={e => {
+          onChange={_e => {
             updateToogleValue();
           }}
         />
