@@ -11,6 +11,7 @@ interface IInputText {
   disabled?: boolean;
   suffix?: React.ReactNode;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  inputStyle?: string;
 }
 
 export const InputText: React.FC<IInputText> = ({
@@ -23,6 +24,7 @@ export const InputText: React.FC<IInputText> = ({
   disabled,
   onChange,
   suffix,
+  inputStyle,
 }) => {
   return (
     <div className={`form-control w-full ${containerStyle} `}>
@@ -38,7 +40,7 @@ export const InputText: React.FC<IInputText> = ({
           onChange={e => {
             onChange(e);
           }}
-          className="input input-bordered w-full focus:border-0"
+          className={`input input-bordered w-full focus:border-0 ${inputStyle}`}
         />
         <div className='relative right-8'>{suffix ?? ''}</div>
       </div>
@@ -56,4 +58,5 @@ InputText.propTypes = {
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   suffix: PropTypes.any,
+  inputStyle: PropTypes.string,
 };

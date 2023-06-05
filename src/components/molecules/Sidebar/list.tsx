@@ -22,6 +22,7 @@ export const sidebarList = [
     id: 3,
     title: 'Menu Management',
     icon: MenuIcon,
+    path: '/menu',
   },
   {
     id: 4,
@@ -47,6 +48,7 @@ export const sidebarList = [
     id: 6,
     title: 'Page Template',
     icon: PageTemplateIcon,
+    path: '/pageTemplate',
   },
   {
     id: 7,

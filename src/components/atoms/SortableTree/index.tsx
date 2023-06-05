@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import SortableTree, {
   addNodeUnderParent,
   removeNodeAtPath,
@@ -7,41 +7,16 @@ import SortableTree, {
   toggleExpandedForAll,
 } from '@nosferatu500/react-sortable-tree';
 import '@nosferatu500/react-sortable-tree/style.css';
-
-const seed = [
-  {
-    id: '123',
-    title: 'Company',
-    subtitle: 'zzz',
-    isDirectory: true,
-    expanded: true,
-    children: [
-      { id: '456', title: 'Human Resource', subtitle: 'zzz' },
-      {
-        id: '789',
-        title: 'Bussiness',
-        subtitle: 'zzz',
-        expanded: true,
-        children: [
-          {
-            id: '234',
-            title: 'Store A',
-            subtitle: 'zzz',
-          },
-          { id: '567', title: 'Store B', subtitle: 'zzz' },
-        ],
-      },
-    ],
-  },
-];
+import { ISortableTree } from './types';
 
 <style>.button {}</style>;
 
-export default function SortableTreeComponent() {
+export default function SortableTreeComponent(props: ISortableTree) {
+  const { data, onChange } = props;
   const [searchString, setSearchString] = useState('');
   const [searchFocusIndex, setSearchFocusIndex] = useState(0);
   const [searchFoundCount, setSearchFoundCount] = useState(null);
-  const [treeData, setTreeData] = useState(seed);
+  const [treeData, setTreeData] = useState(data);
 
   const inputEl = useRef();
 
@@ -212,68 +187,12 @@ export default function SortableTreeComponent() {
 
   return (
     <div className="mt-10">
-      <div style={{ flex: '0 0 auto', padding: '0 15px' }}>
-        <input className="input input-bordered input-sm" ref={inputEl} type="text" />
-        <br />
-        <button className="btn btn-active btn-ghost btn-xs my-2" onClick={createNode}>
-          Create Node
-        </button>
-        <br />
-        <button className="btn btn-active btn-ghost btn-xs my-2" onClick={expandAll}>
-          Expand All
-        </button>
-        <button className="btn btn-active btn-ghost btn-xs m-2" onClick={collapseAll}>
-          Collapse All
-        </button>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <form
-          style={{ display: 'inline-block' }}
-          onSubmit={event => {
-            event.preventDefault();
-          }}>
-          <label htmlFor="find-box">
-            Search:&nbsp;
-            <input
-              className="input input-bordered input-sm"
-              id="find-box"
-              type="text"
-              value={searchString}
-              onChange={event => {
-                setSearchString(event.target.value);
-              }}
-            />
-          </label>
-
-          <button
-            type="button"
-            className="btn btn-active btn-ghost btn-xs m-1"
-            disabled={!searchFoundCount}
-            onClick={selectPrevMatch}>
-            &lt;
-          </button>
-
-          <button
-            type="submit"
-            className="btn btn-active btn-ghost btn-xs m-1"
-            disabled={!searchFoundCount}
-            onClick={selectNextMatch}>
-            &gt;
-          </button>
-
-          <span>
-            &nbsp;
-            {searchFoundCount > 0 ? searchFocusIndex + 1 : 0}
-            &nbsp;/&nbsp;
-            {searchFoundCount ?? 0}
-          </span>
-        </form>
-      </div>
-
-      <div className="w-full h-[70vh] overflow-auto">
+      <div className="w-full py-10 h-[50vh] overflow-auto">
         <SortableTree
           treeData={treeData}
           onChange={treeData => {
             updateTreeData(treeData);
+            onChange(treeData);
           }}
           searchQuery={searchString}
           searchFocusOffset={searchFocusIndex}
@@ -283,44 +202,12 @@ export default function SortableTreeComponent() {
           }}
           canDrag={({ node }) => !node.dragDisabled}
           maxDepth={3}
-          canDrop={({ nextParent,nextPath }) =>(!nextParent?.noChildren) && nextPath.length>1 }
+          // canDrop={({ nextParent,nextPath }) =>(!nextParent?.noChildren) && nextPath.length>1 }
           generateNodeProps={rowInfo => ({
             // title: rowInfo.node.label,
             // subtitle: rowInfo.node.subTitle,
             buttons: [
               <div key={1}>
-                <button
-                  label="Add Sibling"
-                  className="btn btn-active btn-ghost btn-xs m-2"
-                  onClick={_event => {
-                    addNodeSibling(rowInfo);
-                  }}>
-                  Add Sibling
-                </button>
-                <button
-                  label="Add Child"
-                  className="btn btn-active btn-ghost btn-xs m-2"
-                  onClick={_event => {
-                    addNodeChild(rowInfo);
-                  }}>
-                  Add Child
-                </button>
-                <button
-                  label="Update"
-                  className="btn btn-active btn-ghost btn-xs m-2"
-                  onClick={_event => {
-                    updateNode(rowInfo);
-                  }}>
-                  Update
-                </button>
-                <button
-                  label="Delete"
-                  className="btn btn-active btn-ghost btn-xs m-2"
-                  onClick={_event => {
-                    removeNode(rowInfo);
-                  }}>
-                  Remove
-                </button>
                 <button
                   label="Alert"
                   className="btn btn-active btn-ghost btn-xs m-2"
@@ -333,6 +220,7 @@ export default function SortableTreeComponent() {
             ],
             style: {
               height: '50px',
+              width: '80vh',
             },
           })}
         />
