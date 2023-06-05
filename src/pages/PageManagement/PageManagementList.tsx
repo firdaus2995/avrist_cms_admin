@@ -7,9 +7,10 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import Table from '../../components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-import TableEdit from "../../assets/table-edit.png";
-import TableDelete from "../../assets/table-delete.png";
-import WarningIcon from "../../assets/warning.png";
+import TableEdit from '../../assets/table-edit.png';
+import TableView from '../../assets/table-view.png';
+import TableDelete from '../../assets/table-delete.png';
+import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
 
@@ -18,13 +19,13 @@ const CreateButton = () => {
     <div className="inline-block float-right">
       <Link to="new">
         <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
-          <div className='flex flex-row gap-2 items-center justify-center'>
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              strokeWidth={1.5} 
-              stroke="currentColor" 
+          <div className="flex flex-row gap-2 items-center justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
@@ -57,7 +58,9 @@ export default function PageManagementList() {
   const onConfirm = (id: number, name: string) => {
     setIdDelete(id);
     setTitleConfirm('Are you sure?');
-    setmessageConfirm(`Do you want to delete role ${name}? \n Once you delete this role, this role won't be recovered`);
+    setmessageConfirm(
+      `Do you want to delete role ${name}? \n Once you delete this role, this role won't be recovered`,
+    );
     setShowComfirm(true);
   };
 
@@ -90,25 +93,25 @@ export default function PageManagementList() {
   };
 
   useEffect(() => {
-    if(data){
-      setListData(data?.roleList?.roles)
+    if (data) {
+      setListData(data?.roleList?.roles);
     }
-  }, [data])
+  }, [data]);
 
   useEffect(() => {
-    void fetchQuery.refetch()
-  }, [])
+    void fetchQuery.refetch();
+  }, []);
 
   useEffect(() => {
-    const filtered = data?.roleList?.roles?.filter((val) => (
-      val?.id?.includes(searchData) ||
-      val?.name?.includes(searchData) ||
-      val?.description?.includes(searchData)
-    ));
+    const filtered = data?.roleList?.roles?.filter(
+      val =>
+        val?.id?.includes(searchData) ||
+        val?.name?.includes(searchData) ||
+        val?.description?.includes(searchData),
+    );
 
-    setListData(filtered)
-
-  }, [searchData])
+    setListData(filtered);
+  }, [searchData]);
 
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
@@ -184,14 +187,29 @@ export default function PageManagementList() {
       enableSorting: true,
       cell: (info: any) => (
         <div className="flex gap-5">
+          <div className="tooltip" data-tip="View">
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableView}
+            />
+          </div>
           <Link to={`edit/${info.getValue()}`}>
-            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
+            <div className="tooltip" data-tip="Edit">
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+              />
+            </div>
           </Link>
-          <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
-            onClick={(event: React.SyntheticEvent) => {
-              onConfirm(info.getValue(), info?.row?.original?.name);
-            }}
-          />
+          <div className="tooltip" data-tip="Delete">
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableDelete}
+              onClick={() => {
+                onConfirm(info.getValue(), info?.row?.original?.name);
+              }}
+            />
+          </div>
         </div>
       ),
     },
@@ -203,27 +221,31 @@ export default function PageManagementList() {
         open={showComfirm}
         cancelAction={() => {
           setShowComfirm(false);
-        } }
+        }}
         title={titleConfirm}
         cancelTitle="Cancel"
         message={messageConfirm}
         submitAction={onDelete}
         submitTitle="Yes"
         loading={hapusLoading}
-        icon={WarningIcon} btnType={''}      />
-      <TitleCard 
-        title="Page List" 
-        topMargin="mt-2" 
+        icon={WarningIcon}
+        btnType={''}
+      />
+      <TitleCard
+        title="Page List"
+        topMargin="mt-2"
         SearchBar={
-          <InputSearch 
-            value={searchData} 
-            onChange={(e) => { setSearchData(e.target.value); }} 
+          <InputSearch
+            value={searchData}
+            onChange={e => {
+              setSearchData(e.target.value);
+            }}
             onBlur={(e: any) => {
               console.log(e);
             }}
             placeholder="Search"
           />
-        } 
+        }
         TopSideButtons={<CreateButton />}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
