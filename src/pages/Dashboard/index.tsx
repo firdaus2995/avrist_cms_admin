@@ -68,7 +68,7 @@ export default function Dashboard() {
         />
       </div>
       <CkEditor />
-      <SortableTreeComponent />
+      <SortableTreeComponent data={seed} />
       <br />
       <br />
       <Table
@@ -83,6 +83,33 @@ export default function Dashboard() {
     </div>
   );
 }
+
+const seed = [
+  {
+    id: '123',
+    title: 'Company',
+    subtitle: 'zzz',
+    isDirectory: true,
+    expanded: true,
+    children: [
+      { id: '456', title: 'Human Resource', subtitle: 'zzz' },
+      {
+        id: '789',
+        title: 'Bussiness',
+        subtitle: 'zzz',
+        expanded: true,
+        children: [
+          {
+            id: '234',
+            title: 'Store A',
+            subtitle: 'zzz',
+          },
+          { id: '567', title: 'Store B', subtitle: 'zzz' },
+        ],
+      },
+    ],
+  },
+];
 
 const dummy = [
   {

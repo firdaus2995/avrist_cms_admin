@@ -17,6 +17,9 @@ const RolesPage = React.lazy(async () => await import('../pages/Roles'));
 const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNew'));
 const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
 
+const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
+
+const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplate'));
 const PageManagementPage = React.lazy(async () => await import('../pages/PageManagement'));
 const PageManagementArchivePage = React.lazy(
   async () => await import('../pages/PageManagement/PageManagementArchive'),
@@ -50,6 +53,10 @@ export default function RoutesComponent() {
           <Route path="roles/new" element={<RolesNewPage />} />
           <Route path="roles/edit/:id" element={<RolesEditPage />} />
           <Route path="roles/detail/:id" element={<RolesEditPage />} />
+          {/* MENU MANAGEMENT PAGES ROUTE */}
+          <Route path="menu" element={<MenuManagementPage />} />
+          {/* PAGE TEMPLATE PAGES ROUTE */}
+          <Route path="pageTemplate" element={<PageTemplatePage />} />
           {/* PAGE MANAGEMENT */}
           <Route path="page-management" element={<PageManagementPage />} />
           <Route path="page-management/archive" element={<PageManagementArchivePage />} />
