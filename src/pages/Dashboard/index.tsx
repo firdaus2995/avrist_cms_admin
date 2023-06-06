@@ -68,9 +68,7 @@ export default function Dashboard() {
         />
       </div>
       <CkEditor />
-      <SortableTreeComponent data={seed} onChange={function (): void {
-        throw new Error('Function not implemented.');
-      } } />
+      <SortableTreeComponent data={seed} />
       <br />
       <br />
       <Table
