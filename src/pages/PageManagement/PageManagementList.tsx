@@ -16,6 +16,13 @@ import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
 
+export interface Role {
+  id: number;
+  name: string;
+  description: string;
+  permissions: string;
+}
+
 const TopRightButton = () => {
   return (
     <div className="flex flex-row">
@@ -91,7 +98,7 @@ export default function PageManagementList() {
   const { data } = fetchQuery;
   const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
   const [searchData, setSearchData] = useState('');
-  const [listData, setListData] = useState([]);
+  const [listData, setListData] = useState<any>([]);
 
   const onConfirm = (id: number, name: string) => {
     setIdDelete(id);
@@ -141,13 +148,13 @@ export default function PageManagementList() {
   }, []);
 
   useEffect(() => {
-    const filtered = data?.roleList?.roles?.filter(
-      val =>
-        val?.id?.includes(searchData) ||
-        val?.name?.includes(searchData) ||
-        val?.description?.includes(searchData),
+    const filtered = data?.roleList?.roles?.filter((val: Role | undefined) =>
+      String(val?.id).includes(searchData) ||
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      (val?.name && val?.name.includes(searchData)) ||
+      (val?.description && val?.description.includes(searchData)),
     );
-
+  
     setListData(filtered);
   }, [searchData]);
 
@@ -163,7 +170,7 @@ export default function PageManagementList() {
       header: () => <span className="text-[14px]"></span>,
       accessorKey: 'status',
       enableSorting: false,
-      cell: (info: any) => (
+      cell: () => (
         <span className="inline-block rounded-min text-gray-600 bg-gray-100 px-2 py-1 text-xs font-bold mr-3">
           Default
         </span>
