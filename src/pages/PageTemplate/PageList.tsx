@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
