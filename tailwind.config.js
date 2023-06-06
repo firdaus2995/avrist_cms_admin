@@ -12,6 +12,7 @@ export default {
         'light-purple': '#E5DFEC',
         'light-purple-2': '#F9F5FD',
         'body-text-2': '#464B53',
+        'body-text-3': '#818494',
         grey:'#BBBBBB',
 
         error: '#EC2247',

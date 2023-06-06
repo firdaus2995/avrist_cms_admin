@@ -17,6 +17,7 @@ export const sidebarList = [
     id: 2,
     title: 'Page Management',
     icon: PageIcon,
+    path: '/page-management',
   },
   {
     id: 3,

@@ -137,7 +137,7 @@ const AuthInput: React.FC<IAuthInputProps> = ({
             id={label}
             placeholder={placeholder}
             value={value}
-            onChange={e => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               onChange(e);
             }}
           />
