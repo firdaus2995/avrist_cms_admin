@@ -13,7 +13,7 @@ interface IInputText {
   placeholder?: string;
   disabled?: boolean;
   suffix?: React.ReactNode;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export const InputText: React.FC<IInputText> = ({

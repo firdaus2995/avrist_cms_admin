@@ -70,7 +70,7 @@ const DropDown = ({
       <button onClick={(event: React.SyntheticEvent) => {
         event.preventDefault();
         setOpen(!open); 
-      }} tabIndex={0} className="flex flex-row justify-between items-center p-3 w-full h-[48px] border-[1px] border-neutral-300 rounded-3xl bg-transparent box-border text-left text-sm focus:border-purple-600">
+      }} tabIndex={0} className="flex flex-row justify-between items-center p-3 w-full h-[48px] border-[1px] border-neutral-300 rounded-3xl bg-transparent box-border text-left text-sm focus:border-bright-purple">
         {selectedLabel}
         <img src={open ? ChevronUp : ChevronDown} className="w-6 h-6" />
       </button>
@@ -79,14 +79,14 @@ const DropDown = ({
           items.map((element: IItems, keyIndex: number) => {
             return (
               selected === element.value ? (
-                <li className="flex flex-row justify-between items-center	active:bg-purple-900 hover:bg-purple-100 p-3 rounded-xl text-purple-900 font-bold text-sm active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
+                <li className="flex flex-row justify-between items-center	active:bg-purple hover:bg-light-purple p-3 rounded-xl text-purple font-bold text-sm active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
                   handleSelect(event, element.value, element.label)
                 }}>
                   <a className="">{element.label}</a>
                   <img src={CheckMark} className="w-6 h-6" />
                 </li>
               ) : (
-                <li className="flex flex-row justify-between items-center active:bg-purple-900 text-sm hover:bg-purple-100 p-3 rounded-xl active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
+                <li className="flex flex-row justify-between items-center active:bg-purple text-sm hover:bg-light-purple p-3 rounded-xl active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
                   handleSelect(event, element.value, element.label)
                 }}>
                   <a>{element.label}</a>
