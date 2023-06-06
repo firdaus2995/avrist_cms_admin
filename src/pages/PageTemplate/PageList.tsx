@@ -1,58 +1,195 @@
-import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
-import { InputText } from '../../components/atoms/Input/InputText';
-import DropDown from '../../components/molecules/DropDown';
-import { CheckBox } from '../../components/atoms/Input/CheckBox';
-import LifeInsurance from '../../assets/lifeInsurance.png';
-import SortableTreeComponent from '../../components/atoms/SortableTree';
+import { useGetRolesQuery, useRoleHapusMutation } from '../../services/Roles/rolesApi';
+import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import Table from '../../components/molecules/Table';
+import type { SortingState } from '@tanstack/react-table';
+import TableEdit from "../../assets/table-edit.png";
+import TableDelete from "../../assets/table-delete.png";
+import TableView from "../../assets/table-view.png";
+import DefaultPage from "../../assets/pages/Default.png";
+import WarningIcon from "../../assets/warning.png";
+import { InputSearch } from '../../components/atoms/Input/InputSearch';
+import PaginationComponent from '../../components/molecules/Pagination';
+import Modal from '../../components/atoms/Modal';
 
-export default function MenuList() {
-  const { t } = useTranslation();
-  const params = useParams();
-  const [isAddClick, setIsAddClicked] = useState(false);
+const CreateButton = () => {
+  return (
+    <div className="inline-block float-right">
+      <Link to="new">
+        <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
+          <div className='flex flex-row gap-2 items-center justify-center'>
+            Page Registration
+          </div>
+        </button>
+      </Link>
+    </div>
+  );
+};
 
-  const [title, setTitle] = useState('');
-  const [page, setPage] = useState('');
-  const [type, setType] = useState('');
-  const [isOpenTab, setIsOpenTab] = useState(false);
-  const [urlLink, setUrlLink] = useState('');
+export default function PageList() {
+  const [showComfirm, setShowComfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setmessageConfirm] = useState('');
+  const [idDelete, setIdDelete] = useState(0);
+  const fetchQuery = useGetRolesQuery({
+    pageIndex: 0,
+    limit: 100,
+    direction: '',
+    search: '',
+    sortBy: '',
+  });
+  const { data } = fetchQuery;
+  const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
+  const [searchData, setSearchData] = useState('');
+  const [listData, setListData] = useState([]);
 
-  const [isOpenForm, setIsOpenForm] = useState(false);
-  const [dataScructure, setDataStructure] = useState([]);
+  const [openModalView, setOpenModalView] = useState(false);
 
-  function onSave() {
-    const dataForm = {
-      title,
-      page,
-      type,
-      isOpenTab,
-    };
-    setDataStructure(data => [...data, dataForm]);
+  const onConfirm = (id: number, name: string) => {
+    setIdDelete(id);
+    setTitleConfirm('Are you sure?');
+    setmessageConfirm(`Do you want to delete role ${name}? \n Once you delete this role, this role won't be recovered`);
+    setShowComfirm(true);
+  };
 
-    setIsOpenForm(false);
-    setIsAddClicked(false);
-  }
+  // const onDelete = () => {
+  //   hapusRole({ id: idDelete })
+  //     .unwrap()
+  //     .then(async d => {
+  //       setShowComfirm(false);
+  //       dispatch(
+  //         openToast({
+  //           type: 'success',
+  //           title: 'Success delete',
+  //           message: d.roleDelete.message,
+  //         }),
+  //       );
+  //       await fetchQuery.refetch();
+  //     })
+  //     .catch(err => {
+  //       setShowComfirm(false);
 
-  function clearForm() {
-    setTitle('');
-    setPage('');
-    setType('');
-    setIsOpenTab(false);
-  }
+  //       console.log(err);
+  //       dispatch(
+  //         openToast({
+  //           type: 'error',
+  //           title: 'Gagal delete',
+  //           message: 'Oops gagal delete',
+  //         }),
+  //       );
+  //     });
+  // };
 
-  const renderAddButtons = () => {
-    return (
-      <div className='flex flex-row items-center justify-center gap-4 mb-10'>
-        {!isAddClick ? (
-          <div 
-            role='button'
-            onClick={() => { 
-              setIsAddClicked(true); 
-              clearForm();
+  // useEffect(() => {
+  //   if(data){
+  //     setListData(data?.roleList?.roles)
+  //   }
+  // }, [data])
+
+  // useEffect(() => {
+  //   void fetchQuery.refetch()
+  // }, [])
+
+  useEffect(() => {
+    const filtered = data?.roleList?.roles?.filter((val) => (
+      val?.id?.includes(searchData) ||
+      val?.name?.includes(searchData) ||
+      val?.description?.includes(searchData)
+    ));
+
+    setListData(filtered)
+
+  }, [searchData])
+
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      // setSortBy(sortModel[0].id)
+      // setDirection(sortModel[0].desc ? "desc" : "asc")
+    }
+  }, []);
+
+  const pageData = [
+    {
+      id: 1,
+      name: 'Home',
+      uploadBy: 'Admin',
+    },
+    {
+      id: 2,
+      name: 'Menu',
+      uploadBy: 'Admin',
+    }
+  ]
+
+  const COLUMNS = [
+    {
+      header: () => <span className="text-[14px]">Page ID</span>,
+      accessorKey: 'id',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Page Name</span>,
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Uploaded By</span>,
+      accessorKey: 'uploadBy',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Action</span>,
+      accessorKey: 'id',
+      enableSorting: true,
+      cell: (info: any) => (
+        <div className="flex gap-5">
+          <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableView}
+            onClick={() => {
+              setOpenModalView(true);
             }}
-            className='py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white'>
+          />
+          <Link to={`edit/${info.getValue()}`}>
+            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
+          </Link>
+          <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
+            onClick={() => {
+              onConfirm(info.getValue(), info?.row?.original?.name);
+            }}
+          />
+        </div>
+      ),
+    },
+  ];
+
+  const modalViewPage = () => {
+    return (
+      <Modal open={openModalView} toggle={() => { setOpenModalView(false); }} title="" width={720} height={640}>
+        <div className='flex flex-row justify-between mb-5 font-bold text-lg'>
+          Page Template - Default Page
+          <div role='button' onClick={() => { setOpenModalView(false); }}>
             <svg 
               xmlns="http://www.w3.org/2000/svg" 
               fill="none" 
@@ -63,136 +200,68 @@ export default function MenuList() {
               <path 
                 strokeLinecap="round" 
                 strokeLinejoin="round" 
-                d="M12 4.5v15m7.5-7.5h-15" />
+                d="M6 18L18 6M6 6l12 12" />
             </svg>
-            Add Pages
           </div>
-        ): (
-          <>
-            <div 
-              role='button'
-              onClick={() => { 
-                // setFormData({...formData, type: 'Page'});
-                setType('Page');
-                setIsOpenForm(true);
-               }}
-              className='py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white'>
-              Pages
-            </div>
-            <div 
-              role='button'
-              onClick={() => { 
-                // setFormData({...formData, type: 'Link'});
-                setType('Link');
-                setIsOpenForm(true);
-              }}
-              className='py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white'>
-              Links
-            </div>
-          </>
-        )}
-      </div>
-    )
-  }
-
-  const renderForm = () => {
-    return (
-      <div className='grid grid-cols-2 gap-10 p-4 border-b-2'>
-        <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
-          Page Title
-          <InputText 
-            labelTitle='' 
-            value={title}
-            inputStyle='rounded-3xl' 
-            onChange={(e) => { setTitle(e.target.value); }} />
         </div>
-        <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
-          Type
-          <DropDown
-            defaultValue={type}
-            items={[
-              {
-                value: 'Page',
-                label: 'Page',
-              },
-              {
-                value: 'Link',
-                label: 'Link',
-              },
-            ]}
-            onSelect={(e) => { setType(e.target.innerText); }}
-          />
+        <div className='font-semibold my-2'>
+          Preview
         </div>
-        {type === 'Page' ? (
-          <div className='flex flex-row whitespace-nowrap items-center gap-20 text-lg font-bold'>
-            Page
-            <DropDown
-              defaultValue={page}
-              items={[
-                {
-                  value: 'Page 1',
-                  label: 'Page 1',
-                },
-                {
-                  value: 'Page 2',
-                  label: 'Page 2',
-                },
-              ]}
-              onSelect={(e) => { setPage(e.target.innerText); }}
-            />
-          </div>
-        ) : (
-          <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
-            URL Link
-            <InputText 
-              labelTitle='' 
-              value={urlLink}
-              inputStyle='rounded-3xl' 
-              onChange={(e) => { setUrlLink(e.target.value); }} />
-          </div>
-        )}
-        <p></p>
-        <div className='w-40 ml-28'>
-          <CheckBox
-            defaultValue={isOpenTab}
-            updateFormValue={(e) => { setIsOpenTab(e.value); }} 
-            labelTitle='Open in New Tab' />
+        <div className='py-4 flex items-center justify-center flex-col'>
+          <img src={DefaultPage} alt="iconModal" className='w-[80vh]' />
         </div>
-        <div 
-          role='button'
-          aria-disabled
-          onClick={() => {
-            onSave();
-          }}
-          className='py-4 w-28 place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white'>
-          Save
-        </div>
-      </div>
+      </Modal>
     )
   }
 
   return (
     <>
-      {/* <TitleCard title='Avrist Life Insurance' topMargin="mt-2">
-      </TitleCard> */}
-      <div className='p-5 text-2xl font-bold mb-5 gap-2 text-primary flex flex-row'>
-        <img src={LifeInsurance} className='w-8' />
-        Avrist Life Insurance
-      </div>
-      <div className='p-5 text-2xl font-semibold border-b-2 mb-10'>
-        Menu Structure
-      </div>
-      {isOpenForm && renderForm()}
-      {!isOpenForm && (
-        <>
-          {dataScructure?.length > 0 && (
-            <SortableTreeComponent data={dataScructure} onChange={(e) => {
-              setDataStructure(e)
-              console.log(dataScructure)}} />
-          )}
-          {renderAddButtons()}
-        </>
-      )}
+      <ModalConfirmLeave
+        open={showComfirm}
+        cancelAction={() => {
+          setShowComfirm(false);
+        } }
+        title={titleConfirm}
+        cancelTitle="Cancel"
+        message={messageConfirm}
+        // submitAction={onDelete}
+        submitTitle="Yes"
+        loading={hapusLoading}
+        icon={WarningIcon} btnType={''}      />
+      {modalViewPage()}
+      <TitleCard 
+        title="Page Template" 
+        topMargin="mt-2" 
+        SearchBar={
+          <InputSearch 
+            value={searchData} 
+            onChange={(e) => { setSearchData(e.target.value); }} 
+            onBlur={(e: any) => {
+              console.log(e);
+            }}
+            placeholder="Search"
+          />
+        } 
+        TopSideButtons={<CreateButton />}>
+        <div className="overflow-x-auto w-full mb-5">
+          <Table
+            rows={pageData}
+            columns={COLUMNS}
+            loading={false}
+            error={false}
+            manualPagination={true}
+            manualSorting={true}
+            onSortModelChange={handleSortModelChange}
+          />
+        </div>
+        <PaginationComponent
+          page={1}
+          setPage={() => null}
+          total={100}
+          pageSize={10}
+          setPageSize={() => null}
+        />
+      </TitleCard>
     </>
   );
 }

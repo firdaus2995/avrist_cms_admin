@@ -101,7 +101,7 @@ export default function RolesList() {
 
   useEffect(() => {
     const filtered = data?.roleList?.roles?.filter((val) => (
-      val?.id?.includes(searchData) ||
+      val?.id?.find(x => x === 3) ||
       val?.name?.includes(searchData) ||
       val?.description?.includes(searchData)
     ));
