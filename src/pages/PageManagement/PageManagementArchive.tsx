@@ -7,9 +7,6 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import Table from '../../components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-import TableEdit from '../../assets/table-edit.png';
-import TableView from '../../assets/table-view.png';
-import TableDelete from '../../assets/table-delete.png';
 import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
@@ -17,9 +14,9 @@ import PaginationComponent from '../../components/molecules/Pagination';
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
   const [showConfirm, setShowConfirm] = useState(false);
-  const [titleConfirm, setTitleConfirm] = useState('');
-  const [messageConfirm, setMessageConfirm] = useState('');
-  const [idDelete, setIdDelete] = useState(0);
+  const [titleConfirm] = useState('');
+  const [messageConfirm] = useState('');
+  const [idDelete] = useState(0);
   const fetchQuery = useGetRolesQuery({
     pageIndex: 0,
     limit: 100,
@@ -35,15 +32,6 @@ export default function PageManagementArchive() {
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
-  };
-
-  const onConfirm = (id: number, name: string) => {
-    setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(
-      `Do you want to delete role ${name}? \n Once you delete this role, this role won't be recovered`,
-    );
-    setShowConfirm(true);
   };
 
   const onDelete = () => {
