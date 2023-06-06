@@ -23,7 +23,7 @@ export default function Login() {
   const handlePasswordChange = (e: { target: { value: string } }) => {
     setAuthValue({ ...authValue, password: e.target.value });
   };
-  const onClickLogin = (e: { preventDefault: () => void }) => {
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     // Check if username and password are empty
@@ -58,50 +58,6 @@ export default function Login() {
       });
   };
 
-  const LoginForm = () => {
-    return (
-      <div className="bg-white mx-16">
-        <h1 className="font-bold text-2xl my-5 text-dark-purple">Login</h1>
-        <Typography type="body" size="normal" weight="regular" styleClass="text-body-text-2 mb-10">
-          Welcome to Avrist Content Management System, please put your login credentials below to
-          start using the app.
-        </Typography>
-        <form className="mx-0 lg:mx-10">
-          <AuthInput
-            label="User Name"
-            placeholder="Enter Username"
-            error={authValue.errors.username}
-            styleClass="mb-5"
-            onChange={handleUsernameChange}
-            value={authValue.username}
-          />
-          <AuthInput
-            label="Password"
-            placeholder="Enter Password"
-            error={authValue.errors.password}
-            onChange={handlePasswordChange}
-            value={authValue.password}
-            passwordMode={true}
-          />
-          <div className="flex flex-col items-end my-10">
-            {/* <Link to="/forgot-password"> */}
-            <Typography
-              type="body"
-              size="s"
-              weight="regular"
-              styleClass="text-primary cursor-pointer mb-8">
-              Forgot Password ?
-            </Typography>
-            {/* </Link> */}
-            <button onClick={onClickLogin} className="btn btn-primary btn-wide">
-              Login
-            </button>
-          </div>
-        </form>
-      </div>
-    );
-  };
-
   return (
     <div className="h-screen md:flex">
       {/* LEFT CONTENT */}
@@ -121,7 +77,52 @@ export default function Login() {
       </div>
       {/* RIGHT CONTENT - LOGIN FORM */}
       <div className="flex md:w-1/2 justify-center py-10 items-center bg-white">
-        <LoginForm />
+        {/* <LoginForm /> */}
+        <div className="bg-white mx-16">
+          <h1 className="font-bold text-2xl my-5 text-dark-purple">Login</h1>
+          <Typography
+            type="body"
+            size="normal"
+            weight="regular"
+            styleClass="text-body-text-2 mb-10">
+            Welcome to Avrist Content Management System, please put your login credentials below to
+            start using the app.
+          </Typography>
+          <form onSubmit={handleSubmit} className="mx-0 lg:mx-10">
+            <AuthInput
+              key="username"
+              label="User Name"
+              placeholder="Enter Username"
+              error={authValue.errors.username}
+              styleClass="mb-5"
+              onChange={handleUsernameChange}
+              value={authValue.username}
+            />
+            <AuthInput
+              key="password"
+              label="Password"
+              placeholder="Enter Password"
+              error={authValue.errors.password}
+              onChange={handlePasswordChange}
+              value={authValue.password}
+              passwordMode={true}
+            />
+            <div className="flex flex-col items-end my-10">
+              {/* <Link to="/forgot-password"> */}
+              <Typography
+                type="body"
+                size="s"
+                weight="regular"
+                styleClass="text-primary cursor-pointer mb-8">
+                Forgot Password ?
+              </Typography>
+              {/* </Link> */}
+              <button type="submit" className="btn btn-primary btn-wide">
+                Login
+              </button>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   );
