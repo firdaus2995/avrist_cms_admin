@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import { SetStateAction, useState } from 'react';
 import SortableTree from '@nosferatu500/react-sortable-tree';
 import '@nosferatu500/react-sortable-tree/style.css';
@@ -14,7 +13,14 @@ export default function SortableTreeComponent(props: ISortableTree) {
     setTreeData(treeData);
   }
 
-  const alertNodeInfo = (rowInfo: { node: any; path: any; treeIndex: any; lowerSiblingCounts?: number[]; isSearchMatch?: boolean; isSearchFocus?: boolean; }) => {
+  const alertNodeInfo = (rowInfo: {
+    node: any;
+    path: any;
+    treeIndex: any;
+    lowerSiblingCounts?: number[];
+    isSearchMatch?: boolean;
+    isSearchFocus?: boolean;
+  }) => {
     const objectString = Object.keys(rowInfo.node)
       .map(k => (k === 'children' ? 'children: Array' : `${k}: '${rowInfo.node[k]}'`))
       .join(',\n   ');
@@ -26,9 +32,6 @@ export default function SortableTreeComponent(props: ISortableTree) {
         `treeIndex: ${rowInfo.treeIndex}`,
     );
   };
-
-
-
 
   return (
     <div className="mt-10">

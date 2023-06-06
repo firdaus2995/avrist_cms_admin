@@ -1,6 +1,6 @@
-import { useParams } from 'react-router-dom';
-import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-import { useTranslation } from 'react-i18next';
+// import { useParams } from 'react-router-dom';
+// import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+// import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import { InputText } from '../../components/atoms/Input/InputText';
 import DropDown from '../../components/molecules/DropDown';
@@ -9,8 +9,8 @@ import LifeInsurance from '../../assets/lifeInsurance.png';
 import SortableTreeComponent from '../../components/atoms/SortableTree';
 
 export default function MenuList() {
-  const { t } = useTranslation();
-  const params = useParams();
+  // const { t } = useTranslation();
+  // const params = useParams();
   const [isAddClick, setIsAddClicked] = useState(false);
 
   const [title, setTitle] = useState('');
@@ -20,7 +20,7 @@ export default function MenuList() {
   const [urlLink, setUrlLink] = useState('');
 
   const [isOpenForm, setIsOpenForm] = useState(false);
-  const [dataScructure, setDataStructure] = useState([]);
+  const [dataScructure, setDataStructure] = useState<any>([]);
 
   function onSave() {
     const dataForm = {

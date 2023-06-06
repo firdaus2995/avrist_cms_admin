@@ -23,7 +23,7 @@ const rangePageSize = [5, 10, 25, 50, 100];
 
 interface TPaginationComponent {
   page: number;
-  total: number | null;
+  total: number;
   pageSize: number;
   setPage: (d: number) => void;
   setPageSize: (d: number) => void;

@@ -11,6 +11,13 @@ import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
 
+export interface Role {
+  id: number;
+  name: string;
+  description: string;
+  permissions: string;
+}
+
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -27,7 +34,7 @@ export default function PageManagementArchive() {
   const { data } = fetchQuery;
   const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
   const [searchData, setSearchData] = useState('');
-  const [listData, setListData] = useState([]);
+  const [listData, setListData] = useState<any>([]);
 
   const navigate = useNavigate();
   const goBack = () => {
@@ -73,13 +80,13 @@ export default function PageManagementArchive() {
   }, []);
 
   useEffect(() => {
-    const filtered = data?.roleList?.roles?.filter(
-      val =>
-        val?.id?.includes(searchData) ||
-        val?.name?.includes(searchData) ||
-        val?.description?.includes(searchData),
+    const filtered = data?.roleList?.roles?.filter((val: Role | undefined) =>
+      String(val?.id).includes(searchData) ||
+      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
+      (val?.name && val?.name.includes(searchData)) ||
+      (val?.description && val?.description.includes(searchData)),
     );
-
+  
     setListData(filtered);
   }, [searchData]);
 
@@ -143,7 +150,7 @@ export default function PageManagementArchive() {
       header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
-      cell: (info: any) => (
+      cell: () => (
         <div className="flex gap-5">
           <button className="btn btn-primary text-xs btn-sm w-28">Restore</button>
         </div>
@@ -186,7 +193,7 @@ export default function PageManagementArchive() {
         hasBack={true}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
-            rows={listData || ''}
+            rows={listData ?? ''}
             columns={COLUMNS}
             loading={false}
             error={false}
