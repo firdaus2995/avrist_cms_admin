@@ -44,7 +44,7 @@ export default function UsersNew () {
   const [roleData, setRoleData] = useState([]);
   // FORM STATE
   const [userId, setUserId] = useState<string>("");
-  const [password, setPassword] = useState<string>("");
+  const [password] = useState<string>("Avrist01#");
   const [fullName, setFullName] = useState<string>("");
   const [dob, setDob] = useState<any>("");
   const [gender, setGender] = useState<string | number | boolean>("");
@@ -153,9 +153,7 @@ export default function UsersNew () {
                 labelTitle="Password"
                 labelStyle="font-bold	"
                 value={password}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setPassword(event.target.value);
-                }}
+                disabled
               />
             </div>
             <div className="flex flex-1">
