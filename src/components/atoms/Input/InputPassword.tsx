@@ -1,66 +1,70 @@
-import { 
-  HTMLInputTypeAttribute,
+import React, { 
+  useState,
 } from 'react';
 import PropTypes from 'prop-types';
+import PasswordHide from "../../../assets/password-hide.png";
 
-interface IInputText {
+interface IInputPassword {
   labelTitle: string;
   labelStyle?: string;
-  inputStyle?: string;
-  type?: HTMLInputTypeAttribute;
   containerStyle?: string;
   value?: string;
   placeholder?: string;
   disabled?: boolean;
-  suffix?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
-export const InputText: React.FC<IInputText> = ({
+export const InputPassword: React.FC<IInputPassword> = ({
   labelTitle,
   labelStyle = '',
-  type,
   containerStyle = '',
   value,
   placeholder,
   disabled,
   onChange,
-  suffix,
-  inputStyle,
 }) => {
+  const [type, setType] = useState("password");
+
   return (
     <div className={`form-control w-full ${containerStyle} `}>
       <label className="label">
         <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
       </label>
-      <div className={`input input-bordered w-full rounded-3xl focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
+      <div className={`rounded-3xl flex flex-row items-center justify-center input input-bordered w-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
         <input
-          type={type ?? 'text'}
+          type={type}
           value={value}
           disabled={disabled}
           placeholder={placeholder ?? ''}
           onChange={e => {
             if (onChange) {
               onChange(e);
-            };
+            }
           }}
-          className={`w-full h-full rounded-3xl outline-0 ${inputStyle} ${disabled ? 'text-[#637488]' : ''}`}
+          className={`rounded-3xl w-full h-full outline-0 ${disabled ? 'text-[#637488]' : ''}`}
         />
-        <div className='relative right-8'>{suffix ?? ''}</div>
+        {
+          !disabled && (
+            <img src={PasswordHide} className="w-[24px] h-[24px] cursor-pointer" onClick={() => {
+              if (type === "password") {
+                setType("text")
+              } else {
+                setType("password");
+              };
+            }}/>
+          )
+        }
       </div>
     </div>
   );
 };
 
-InputText.propTypes = {
+InputPassword.propTypes = {
   labelTitle: PropTypes.string.isRequired,
   labelStyle: PropTypes.string,
-  type: PropTypes.string,
   containerStyle: PropTypes.string,
   value: PropTypes.string,
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  suffix: PropTypes.any,
-  inputStyle: PropTypes.string,
 };

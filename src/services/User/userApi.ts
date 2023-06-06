@@ -10,6 +10,29 @@ export const userApi = createApi({
   reducerPath: 'userApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
+    getUserDetail: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+        query userById($id: Int!) {
+          userById(id: $id) {
+            id
+            userId
+            fullName
+            email
+            dob
+            gender
+            company
+            isActive
+            role {
+              id
+              name
+            }
+          }
+        }
+      `,
+        variables: payload,
+      }),
+    }),
     getUser: builder.query<any, any>({
       query: payload => ({
         document: gql`
@@ -32,15 +55,43 @@ export const userApi = createApi({
               total
               users {
                 id
-                username
-                name
+                userId
+                fullName
                 email
-                isActived
+                dob
+                gender
+                company
+                isActive
+                role {
+                  id
+                  name
+                }
               }
             }
           }
         `,
         variables: payload,
+      }),
+    }),
+    getRole: builder.query<any, any>({
+      query: () => ({
+        document: gql`
+          query{
+            roleList(pageableRequest: {
+                pageIndex: 0
+                limit: 9999
+                sortBy: "id"
+                direction: "asc"
+                search: ""
+            }) {
+                total
+                roles {
+                  id
+                  name
+                }
+            }
+          }
+        `,
       }),
     }),
     deleteUser: builder.mutation<any, {id: number}>({
@@ -55,10 +106,79 @@ export const userApi = createApi({
         variables: payload,
       })
     }),
+    createUser: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation userCreate($userId: String!, $password: String!, $fullName: String!, $email: String!, $dob: String!, $gender: Boolean!, $company: String!, $roleId: Int!) {
+            userCreate(
+              request: {
+                userId: $userId,
+                password: $password,
+                fullName: $fullName,
+                email: $email,
+                dob: $dob,
+                gender: $gender,
+                company: $company,
+                roleId: $roleId
+              }
+            ) {
+              id
+              userId
+              fullName
+              email
+              dob
+              gender
+              company
+              isActive
+              role {
+                id
+              }      
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
+    editUser: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation userUpdate($id: Int!, $fullName: String!, $email: String!, $dob: String!, $gender: Boolean!, $company: String!, $roleId: Int!) {
+            userUpdate(
+              id: $id
+              request: {
+                fullName: $fullName,
+                email: $email,
+                dob: $dob,
+                gender: $gender,
+                company: $company,
+                roleId: $roleId
+              }
+            ) {
+              id
+              userId
+              fullName
+              email
+              dob
+              gender
+              company
+              isActive
+              role {
+                id
+              }      
+            }
+          }
+        `,
+        variables: payload,
+      })
+    })
   })
 })
 
 export const {
+  useGetUserDetailQuery,
   useGetUserQuery,
+  useGetRoleQuery,
   useDeleteUserMutation,
+  useCreateUserMutation,
+  useEditUserMutation,
 } = userApi;

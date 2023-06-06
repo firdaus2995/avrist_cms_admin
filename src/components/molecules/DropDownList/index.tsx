@@ -65,12 +65,12 @@ const DropDownList = ({
     <div className="w-full" ref={componentRef}>
       <button onClick={() => {
         setOpen(!open); 
-      }} tabIndex={0} className="flex flex-row justify-between p-3 w-full border-[1px] border-neutral-300 rounded-3xl bg-transparent box-border text-left text-sm focus:border-purple-600">
+      }} tabIndex={0} className="flex flex-row justify-between p-3 w-full border-[1px] border-neutral-300 rounded-3xl bg-transparent box-border text-left text-sm focus:border-bright-purple">
         <div className="flex flex-wrap gap-x-2 gap-y-2 w-9/12">
           {
             selected.map((element: string | number | boolean, keyIndex: number) => {
               return (
-                <button key={keyIndex} className="px-2 py-2.5 bg-purple-900 flex justify-between rounded-xl items-center text-white gap-2 items-center">
+                <button key={keyIndex} className="px-2 py-2.5 bg-purple flex justify-between rounded-xl items-center text-white gap-2 items-center">
                   {element}
                   <img src={CloseWhite} className="w-6 h-6" onClick={(event: React.SyntheticEvent) => {
                     handleRemove(event, element);
@@ -94,13 +94,13 @@ const DropDownList = ({
           items.map((element: IItems, keyIndex: number) => {
             return (
               selected.includes(element.value) ? (
-                <li className="flex flex-row justify-between items-center	active:bg-purple-900 hover:bg-purple-100 p-3 rounded-xl text-purple-900 font-bold text-sm active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
+                <li className="flex flex-row justify-between items-center	active:bg-purple hover:bg-light-purple p-3 rounded-xl text-purple font-bold text-sm active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
                   handleSelect(event, element.value)
                 }}>
                   <a>{element.label}</a>
                 </li>
               ) : (
-                <li className="flex flex-row justify-between items-center active:bg-purple-900 text-sm hover:bg-purple-100 p-3 rounded-xl active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
+                <li className="flex flex-row justify-between items-center active:bg-purple text-sm hover:bg-light-purple p-3 rounded-xl active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
                   handleSelect(event, element.value)
                 }}>
                   <a>{element.label}</a>

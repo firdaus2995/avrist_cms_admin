@@ -12,6 +12,10 @@
   "dashboard": {
     "sample": "Ini adalah list dari graphql"
   },
+  "modal": {
+    "confirmation": "Apakah kamu yakin?",
+    "leave-confirmation": "Apakah kamu ingin keluar dan membatalkan semuanya?"
+  },
   "roles": {
     "role-name": "Nama Peran",
     "role-description": "Deskripsi Peran",
@@ -24,6 +28,22 @@
       "title": "Edit Peran",
       "success-msg": "Peran {{name}} berhasil diperbarui",
       "failed-msg": "Peran {{name}} gagal diperbarui"
+    }
+  },
+  "user": {
+    "list": {
+      "title": "Daftar User",
+      "button-add": "Tambah User"
+    },
+    "add": {
+      "title": "Tambah User",
+      "success-msg": "User {{name}} berhasil disimpan",
+      "failed-msg": "User {{name}} gagal disimpan"
+    },
+    "edit": {
+      "title": "Modifikasi User",
+      "success-msg": "User {{name}} berhasil diperbarui",
+      "failed-msg": "User {{name}} gagal diperbarui"
     }
   }
 }

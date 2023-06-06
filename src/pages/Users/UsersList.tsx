@@ -9,6 +9,9 @@ import React, {
 import { 
   Link, 
 } from "react-router-dom";
+import { 
+  t,
+} from "i18next";
 
 import Table from "../../components/molecules/Table";
 import Plus from "../../assets/plus.png";
@@ -30,14 +33,16 @@ import {
 import { 
   useAppDispatch,
 } from "../../store";
-import { openToast } from "../../components/atoms/Toast/slice";
+import { 
+  openToast,
+} from "../../components/atoms/Toast/slice";
 
 export default function UsersList () {
   // TABLE COLUMN
   const columns = [
     {
       header: () => <span className="text-[14px]">User Id</span>,
-      accessorKey: 'id',
+      accessorKey: 'userId',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -49,7 +54,7 @@ export default function UsersList () {
     },
     {
       header: () => <span className="text-[14px]">User Name</span>,
-      accessorKey: 'username',
+      accessorKey: 'fullName',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -73,7 +78,7 @@ export default function UsersList () {
     },
     {
       header: () => <span className="text-[14px]">Role</span>,
-      accessorKey: 'role',
+      accessorKey: 'role.name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -94,7 +99,7 @@ export default function UsersList () {
           </Link>
           <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
             onClick={() => {
-              onClickUserDelete(info.getValue(), info?.row?.original?.name);
+              onClickUserDelete(info.getValue(), info?.row?.original?.fullName);
             }}
           />
         </div>
@@ -127,7 +132,7 @@ export default function UsersList () {
   });
   const { data, isFetching, isError } = fetchQuery;
   // RTK DELETE
-  const [deletedUser, { isLoading } ] = useDeleteUserMutation();
+  const [ deletedUser, { isLoading } ] = useDeleteUserMutation();
 
   useEffect(() => {
     if (data) {
@@ -135,6 +140,13 @@ export default function UsersList () {
       setTotal(data?.userList?.total);
     }
   }, [data])
+
+  useEffect(() => {
+    const refetch = async () => {
+      await fetchQuery.refetch();
+    }
+    void refetch();
+  }, [])
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
@@ -196,12 +208,13 @@ export default function UsersList () {
         icon={WarningIcon}
         btnType=''
       />
-      <TitleCard title="User List" 
+      <TitleCard 
+        title={t('user.list.title')}
         topMargin="mt-2" 
         TopSideButtons={
           <Link to='new' className="btn btn-primary flex flex-row gap-2 rounded-xl">
             <img src={Plus} className="w-[24px] h-[24px]" />
-            Add New User
+            {t("user.list.button-add")}
           </Link>
         }
         SearchBar={
@@ -214,7 +227,7 @@ export default function UsersList () {
         }
       >
         <Table
-          rows={listData || []}
+          rows={listData}
           columns={columns}
           manualPagination={true}
           manualSorting={true}
@@ -228,6 +241,7 @@ export default function UsersList () {
           pageSize={pageLimit}
           setPageSize={(page: number) => {
             setPageLimit(page);
+            setPageIndex(0);
           }}
           setPage={(page: number) => {
             setPageIndex(page);
