@@ -20,7 +20,7 @@ export default function MenuList() {
   const [urlLink, setUrlLink] = useState('');
 
   const [isOpenForm, setIsOpenForm] = useState(false);
-  const [dataScructure, setDataStructure] = useState([]);
+  const [dataScructure, setDataStructure] = useState<any>([]);
 
   function onSave() {
     const dataForm = {

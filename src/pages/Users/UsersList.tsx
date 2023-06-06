@@ -105,7 +105,7 @@ export default function UsersList () {
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState([]);
   // TABLE PAGINATION STATE
-  const [total, setTotal] = useState(null);
+  const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
   const [direction, setDirection] = useState('asc');

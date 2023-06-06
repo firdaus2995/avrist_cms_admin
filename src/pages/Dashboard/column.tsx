@@ -30,7 +30,7 @@ export const COLUMNS = [
     header: () => <span className="text-[14px]">Aksi</span>,
     accessorKey: 'action',
     enableSorting: true,
-    cell: (info: any) => (
+    cell: () => (
       <div className="flex gap-5">
         <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit}
           onClick={(event: React.SyntheticEvent) => {

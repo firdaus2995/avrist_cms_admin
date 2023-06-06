@@ -52,7 +52,7 @@ export default function RolesList() {
   const { data } = fetchQuery;
   const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
   const [searchData, setSearchData] = useState('');
-  const [listData, setListData] = useState([]);
+  const [listData, setListData] = useState<any>([]);
 
   const onConfirm = (id: number, name: string) => {
     setIdDelete(id);
@@ -101,7 +101,7 @@ export default function RolesList() {
 
   useEffect(() => {
     const filtered = data?.roleList?.roles?.filter((val) => (
-      val?.id?.find(x => x === 3) ||
+      val?.id === 3 ||
       val?.name?.includes(searchData) ||
       val?.description?.includes(searchData)
     ));
@@ -164,7 +164,7 @@ export default function RolesList() {
             <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
           </Link>
           <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
-            onClick={(event: React.SyntheticEvent) => {
+            onClick={() => {
               onConfirm(info.getValue(), info?.row?.original?.name);
             }}
           />

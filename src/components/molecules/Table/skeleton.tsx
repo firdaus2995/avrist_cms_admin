@@ -15,7 +15,7 @@ const Loader: React.FC<ILoader> = (props) => {
 
   return data.map((d: any, i: number) => (
     <tr key={i}>
-      {d.map((c: any, i2: number) => (
+      {d.map((_c: any, i2: number) => (
         <td key={i2}>
           <Skeleton variant="text" sx={{ fontSize: "1rem" }} />
         </td>
