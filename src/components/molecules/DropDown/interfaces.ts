@@ -1,4 +1,6 @@
 export interface IDropDown {
+  labelTitle?: string;
+  labelStyle?: string;
   items?: Array<{
     value: string | number | boolean;
     label: string;

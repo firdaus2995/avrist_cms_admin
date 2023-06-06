@@ -23,7 +23,7 @@ import layoutSlice from './components/organisms/Layout/slice';
 import loginSlice from './services/Login/slice';
 import rolesSlice from './services/Roles/rolesSlice';
 import toastSlice from './components/atoms/Toast/slice';
-export const store = configureStore({
+export const store: any = configureStore({
   reducer: {
     layoutSlice,
     navbarSlice,
