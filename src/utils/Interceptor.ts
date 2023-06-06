@@ -17,7 +17,7 @@ const baseQuery = graphqlRequestBaseQuery({
   prepareHeaders: (headers, { getState }) => {
     const token: string = getCredential().accessToken;
     if (token) {
-      headers.set('Authorization', 'Bearer ' + (getState() as RootState).loginSlice.accessToken);
+      headers.set('Authorization', `Bearer ${(getState() as RootState).loginSlice.accessToken}`);
     }
     return headers;
   },
