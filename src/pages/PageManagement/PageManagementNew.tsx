@@ -11,7 +11,7 @@ import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import CancelIcon from "../../assets/cancel.png";
 import { useState } from 'react';
 
-export default function RolesNew() {
+export default function PageManagementNew() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
