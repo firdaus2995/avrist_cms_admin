@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Typography } from '../Typography';
+import Typography from '../Typography';
 import WarningFill from '../../../assets/warning-fill.svg';
 
 // BELUM DIRAPIHKAN
@@ -106,7 +106,7 @@ const AuthInput: React.FC<IAuthInputProps> = ({
 
   return (
     <div className={classNames}>
-      <Typography type="body" size="normal" weight="medium" styleClass="mt-2 mr-5 basis-1/4">
+      <Typography type="body" size="normal" weight="medium" className="mt-2 mr-5 basis-1/4">
         {label}
       </Typography>
       <div className="flex flex-col flex-grow flex-2">
@@ -145,7 +145,7 @@ const AuthInput: React.FC<IAuthInputProps> = ({
         {hasError && (
           <div className="flex flex-row mt-1">
             <img src={WarningFill} className="mr-2" />
-            <Typography type="body" size="xs" weight="regular" styleClass="text-error">
+            <Typography type="body" size="xs" weight="regular" className="text-error">
               {error}
             </Typography>
           </div>

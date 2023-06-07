@@ -2,7 +2,7 @@ import Logo from '../../assets/Avrist-logo.png';
 import Portal1 from '../../assets/login/portal-1.png';
 import Portal2 from '../../assets/login/portal-2.png';
 import Portal3 from '../../assets/login/portal-3.png';
-import { Typography } from '../../components/atoms/Typography';
+import Typography from '../../components/atoms/Typography';
 
 const Header = () => {
   return (
@@ -24,12 +24,14 @@ const LoginPortal = () => {
   return (
     <div className=" bg-light-purple-2">
       <Header />
-      <Typography styleClass="my-20 text-center text-dark-purple" type="heading" weight="bold">
+      <Typography className="my-20 text-center text-dark-purple" type="heading" weight="bold">
         Avrist Content Management System
       </Typography>
       <div className="flex flex-wrap justify-center h-screen">
         {cards.map(item => (
-          <div key={item.id} className="bg-white p-4 shadow-md rounded-2xl w-64 h-64 mx-4 my-4 cursor-pointer">
+          <div
+            key={item.id}
+            className="bg-white p-4 shadow-md rounded-2xl w-64 h-64 mx-4 my-4 cursor-pointer">
             <div className="aspect-w-1 aspect-h-1">
               <div className="w-full h-full">
                 <img
@@ -41,7 +43,7 @@ const LoginPortal = () => {
             </div>
             <div className="p-4">
               <Typography
-                styleClass="text-center text-dark-purple"
+                className="text-center text-dark-purple"
                 type="body"
                 size="m"
                 weight="medium">
