@@ -1,106 +1,119 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-import { useGetRolesQuery, useRoleHapusMutation } from '../../services/Roles/rolesApi';
+import {
+  useGetPageManagementListQuery,
+  useRestorePageMutation,
+} from '../../services/PageManagement/pageManagementApi';
+import Table from '../../components/molecules/Table';
+import type { SortingState } from '@tanstack/react-table';
+import { InputSearch } from '../../components/atoms/Input/InputSearch';
+import PaginationComponent from '../../components/molecules/Pagination';
+import dayjs from 'dayjs';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
-import Table from '../../components/molecules/Table';
-import type { SortingState } from '@tanstack/react-table';
-import WarningIcon from '../../assets/warning.png';
-import { InputSearch } from '../../components/atoms/Input/InputSearch';
-import PaginationComponent from '../../components/molecules/Pagination';
-
-export interface Role {
-  id: number;
-  name: string;
-  description: string;
-  permissions: string;
-}
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [titleConfirm] = useState('');
-  const [messageConfirm] = useState('');
-  const [idDelete] = useState(0);
-  const fetchQuery = useGetRolesQuery({
-    pageIndex: 0,
-    limit: 100,
-    direction: '',
-    search: '',
-    sortBy: '',
-  });
-  const { data } = fetchQuery;
-  const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
-  const [searchData, setSearchData] = useState('');
   const [listData, setListData] = useState<any>([]);
 
+  // GO BACK
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
   };
 
-  const onDelete = () => {
-    hapusRole({ id: idDelete })
+  // TABLE PAGINATION STATE
+  const [total, setTotal] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(5);
+  const [direction, setDirection] = useState('asc');
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('id');
+
+  // RESTORE MODAL STATE
+  const [openRestoreModal, setOpenRestoreModal] = useState(false);
+  const [restoreModalTitle, setRestoreModalTitle] = useState('');
+  const [restoreModalBody, setRestoreModalBody] = useState('');
+  const [restoreId, setRestoreId] = useState(0);
+
+  // RTK GET DATA
+  const fetchQuery = useGetPageManagementListQuery({
+    pageIndex,
+    limit: pageLimit,
+    direction,
+    search,
+    sortBy,
+    isArchive: true,
+  });
+  const { data } = fetchQuery;
+
+  // RTK RESTORE
+  const [restorePage, { isLoading }] = useRestorePageMutation();
+
+  useEffect(() => {
+    if (data) {
+      setListData(data?.pageList?.pages);
+      setTotal(data?.pageList?.total);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const refetch = async () => {
+      await fetchQuery.refetch();
+    };
+    void refetch();
+  }, []);
+
+  // FUNCTION FOR SORTING FOR ATOMIC TABLE
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      setSortBy(sortModel[0].id);
+      setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    }
+  }, []);
+
+  const onClickPageRestore = (id: number, title: string) => {
+    setRestoreId(id);
+    setRestoreModalTitle('Are you sure?');
+    setRestoreModalBody(`Do you want to restore ${title} page?`);
+    setOpenRestoreModal(true);
+  };
+
+  // FUNCTION FOR restore USER
+  const submitRestorePage = () => {
+    restorePage({
+      id: restoreId,
+    })
       .unwrap()
-      .then(async d => {
-        setShowConfirm(false);
+      .then(async (result: any) => {
+        setOpenRestoreModal(false);
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success delete',
-            message: d.roleDelete.message,
+            title: 'Success Restore Page',
+            message: result.pageRestore.message,
           }),
         );
         await fetchQuery.refetch();
       })
-      .catch(err => {
-        setShowConfirm(false);
-
-        console.log(err);
+      .catch(() => {
+        setOpenRestoreModal(false);
         dispatch(
           openToast({
             type: 'error',
-            title: 'Gagal delete',
-            message: 'Oops gagal delete',
+            title: 'Failed Restore Page',
+            message: 'Something went wrong!',
           }),
         );
       });
   };
 
-  useEffect(() => {
-    if (data) {
-      setListData(data?.roleList?.roles);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    void fetchQuery.refetch();
-  }, []);
-
-  useEffect(() => {
-    const filtered = data?.roleList?.roles?.filter((val: Role | undefined) =>
-      String(val?.id).includes(searchData) ||
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-      (val?.name && val?.name.includes(searchData)) ||
-      (val?.description && val?.description.includes(searchData)),
-    );
-  
-    setListData(filtered);
-  }, [searchData]);
-
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
-    if (sortModel.length) {
-      // setSortBy(sortModel[0].id)
-      // setDirection(sortModel[0].desc ? "desc" : "asc")
-    }
-  }, []);
-
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]">Page Name</span>,
-      accessorKey: 'id',
+      accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -112,7 +125,7 @@ export default function PageManagementArchive() {
     },
     {
       header: () => <span className="text-[14px]">Created by</span>,
-      accessorKey: 'name',
+      accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -124,24 +137,24 @@ export default function PageManagementArchive() {
     },
     {
       header: () => <span className="text-[14px]">Created Date</span>,
-      accessorKey: 'name',
+      accessorKey: 'createdAt',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
+            ? dayjs(info.getValue()).format('DD/MM/YYYY')
             : '-'}
         </p>
       ),
     },
     {
       header: () => <span className="text-[14px]">Updated Date</span>,
-      accessorKey: 'description',
+      accessorKey: 'updatedAt',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
+            ? dayjs(info.getValue()).format('DD/MM/YYYY')
             : '-'}
         </p>
       ),
@@ -150,9 +163,15 @@ export default function PageManagementArchive() {
       header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
-      cell: () => (
+      cell: (info: any) => (
         <div className="flex gap-5">
-          <button className="btn btn-primary text-xs btn-sm w-28">Restore</button>
+          <button
+            onClick={() => {
+              onClickPageRestore(info.getValue(), info?.row?.original?.title);
+            }}
+            className="btn btn-primary text-xs btn-sm w-28">
+            Restore
+          </button>
         </div>
       ),
     },
@@ -161,30 +180,25 @@ export default function PageManagementArchive() {
   return (
     <>
       <ModalConfirmLeave
-        open={showConfirm}
+        open={openRestoreModal}
         cancelAction={() => {
-          setShowConfirm(false);
+          setOpenRestoreModal(false);
         }}
-        title={titleConfirm}
+        title={restoreModalTitle}
         cancelTitle="Cancel"
-        message={messageConfirm}
-        submitAction={onDelete}
+        message={restoreModalBody}
+        submitAction={submitRestorePage}
         submitTitle="Yes"
-        loading={hapusLoading}
-        icon={WarningIcon}
-        btnType={''}
+        loading={isLoading}
+        btnType={'btn-primary'}
       />
       <TitleCard
         title="Archive List"
         topMargin="mt-2"
         SearchBar={
           <InputSearch
-            value={searchData}
-            onChange={e => {
-              setSearchData(e.target.value);
-            }}
             onBlur={(e: any) => {
-              console.log(e);
+              setSearch(e.target.value);
             }}
             placeholder="Search"
           />
@@ -193,7 +207,7 @@ export default function PageManagementArchive() {
         hasBack={true}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
-            rows={listData ?? ''}
+            rows={listData}
             columns={COLUMNS}
             loading={false}
             error={false}
@@ -203,11 +217,16 @@ export default function PageManagementArchive() {
           />
         </div>
         <PaginationComponent
-          page={1}
-          setPage={() => null}
-          total={100}
-          pageSize={10}
-          setPageSize={() => null}
+          total={total}
+          page={pageIndex}
+          pageSize={pageLimit}
+          setPageSize={(page: number) => {
+            setPageLimit(page);
+            setPageIndex(0);
+          }}
+          setPage={(page: number) => {
+            setPageIndex(page);
+          }}
         />
       </TitleCard>
     </>

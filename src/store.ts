@@ -1,28 +1,19 @@
-import { 
-  configureStore,
-} from '@reduxjs/toolkit';
-import { 
-  useDispatch, 
-  useSelector,
-} from 'react-redux';
-import type { 
-  TypedUseSelectorHook,
-} from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
+import { useDispatch, useSelector } from 'react-redux';
+import type { TypedUseSelectorHook } from 'react-redux';
 
-import { 
-  loginApi,
-} from './services/Login/loginApi';
-import { 
-  rolesApi,
-} from './services/Roles/rolesApi';
-import { 
-  userApi,
-} from './services/User/userApi';
+import { loginApi } from './services/Login/loginApi';
+import { rolesApi } from './services/Roles/rolesApi';
+import { userApi } from './services/User/userApi';
+import { pageManagementApi } from './services/PageManagement/pageManagementApi';
+
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
 import loginSlice from './services/Login/slice';
 import rolesSlice from './services/Roles/rolesSlice';
 import toastSlice from './components/atoms/Toast/slice';
+import pageManagementSlice from './services/PageManagement/pageManagementSlice';
+
 export const store: any = configureStore({
   reducer: {
     layoutSlice,
@@ -30,15 +21,18 @@ export const store: any = configureStore({
     loginSlice,
     rolesSlice,
     toastSlice,
+    pageManagementSlice,
     [loginApi.reducerPath]: loginApi.reducer,
     [rolesApi.reducerPath]: rolesApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
+    [pageManagementApi.reducerPath]: pageManagementApi.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .concat(loginApi.middleware)
       .concat(rolesApi.middleware)
-      .concat(userApi.middleware),
+      .concat(userApi.middleware)
+      .concat(pageManagementApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
