@@ -183,15 +183,14 @@ export default function PageManagementArchive() {
         open={openRestoreModal}
         cancelAction={() => {
           setOpenRestoreModal(false);
-        }}
+        } }
         title={restoreModalTitle}
         cancelTitle="Cancel"
         message={restoreModalBody}
         submitAction={submitRestorePage}
         submitTitle="Yes"
         loading={isLoading}
-        btnType={'btn-primary'}
-      />
+        btnType={'btn-primary'} icon={undefined}      />
       <TitleCard
         title="Archive List"
         topMargin="mt-2"
