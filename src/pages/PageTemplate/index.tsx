@@ -1,5 +1,5 @@
-import PageList from './PageList';
+// import PageList from './PageList';
 
 export default function Roles() {
-  return <PageList />;
+  return <div />;
 }
