@@ -24,7 +24,7 @@ const PageManagementPage = React.lazy(async () => await import('../pages/PageMan
 const PageManagementArchivePage = React.lazy(
   async () => await import('../pages/PageManagement/PageManagementArchive'),
 );
-// const PageManagementNewPage = React.lazy(async () => await import('../pages/PageManagement/RolesNew'));
+const PageManagementNewPage = React.lazy(async () => await import('../pages/PageManagement/PageManagementNew'));
 // const PageManagementEditPage = React.lazy(async () => await import('../pages/PageManagement/RolesEdit'));
 
 export default function RoutesComponent() {
@@ -60,9 +60,9 @@ export default function RoutesComponent() {
           {/* PAGE MANAGEMENT */}
           <Route path="page-management" element={<PageManagementPage />} />
           <Route path="page-management/archive" element={<PageManagementArchivePage />} />
-          {/* <Route path="page-management/new" element={<RolesNewPage />} />
-          <Route path="page-management/edit/:id" element={<RolesEditPage />} />
-          <Route path="page-management/detail/:id" element={<RolesEditPage />} /> */}
+          <Route path="page-management/new" element={<PageManagementNewPage />} />
+          {/* <Route path="page-management/edit/:id" element={<RolesEditPage />} /> */}
+          {/* <Route path="page-management/detail/:id" element={<RolesEditPage />} /> */}
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

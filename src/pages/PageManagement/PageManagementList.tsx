@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-import { useGetRolesQuery, useRoleHapusMutation } from '../../services/Roles/rolesApi';
+import {
+  useGetPageManagementListQuery,
+  useDeletePageMutation,
+} from '../../services/PageManagement/pageManagementApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
@@ -15,13 +18,7 @@ import ArchiveBox from '../../assets/archive-box.svg';
 import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
-
-export interface Role {
-  id: number;
-  name: string;
-  description: string;
-  permissions: string;
-}
+import dayjs from 'dayjs';
 
 const TopRightButton = () => {
   return (
@@ -85,101 +82,74 @@ const CreateButton = () => {
 
 export default function PageManagementList() {
   const dispatch = useAppDispatch();
+  const [listData, setListData] = useState<any>([]);
+
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
-  const fetchQuery = useGetRolesQuery({
-    pageIndex: 0,
-    limit: 100,
-    direction: '',
-    search: '',
-    sortBy: '',
+
+  // TABLE PAGINATION STATE
+  const [total, setTotal] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(5);
+  const [direction, setDirection] = useState('asc');
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('id');
+
+  // RTK GET DATA
+  const fetchQuery = useGetPageManagementListQuery({
+    pageIndex,
+    limit: pageLimit,
+    direction,
+    search,
+    sortBy,
+    isArchive: false,
   });
   const { data } = fetchQuery;
-  const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
-  const [searchData, setSearchData] = useState('');
-  const [listData, setListData] = useState<any>([]);
 
-  const onConfirm = (id: number, name: string) => {
-    setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(
-      `Do you want to delete role ${name}? \n Once you delete this role, this role won't be recovered`,
-    );
-    setShowConfirm(true);
-  };
-
-  const onDelete = () => {
-    hapusRole({ id: idDelete })
-      .unwrap()
-      .then(async d => {
-        setShowConfirm(false);
-        dispatch(
-          openToast({
-            type: 'success',
-            title: 'Success delete',
-            message: d.roleDelete.message,
-          }),
-        );
-        await fetchQuery.refetch();
-      })
-      .catch(err => {
-        setShowConfirm(false);
-
-        console.log(err);
-        dispatch(
-          openToast({
-            type: 'error',
-            title: 'Gagal delete',
-            message: 'Oops gagal delete',
-          }),
-        );
-      });
-  };
+  // RTK DELETE
+  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
 
   useEffect(() => {
     if (data) {
-      setListData(data?.roleList?.roles);
+      setListData(data?.pageList?.pages);
+      setTotal(data?.pageList?.total);
     }
   }, [data]);
 
   useEffect(() => {
-    void fetchQuery.refetch();
+    const refetch = async () => {
+      await fetchQuery.refetch();
+    };
+    void refetch();
   }, []);
 
-  useEffect(() => {
-    const filtered = data?.roleList?.roles?.filter((val: Role | undefined) =>
-      String(val?.id).includes(searchData) ||
-      // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-      (val?.name && val?.name.includes(searchData)) ||
-      (val?.description && val?.description.includes(searchData)),
-    );
-  
-    setListData(filtered);
-  }, [searchData]);
-
+  // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
-      // setSortBy(sortModel[0].id)
-      // setDirection(sortModel[0].desc ? "desc" : "asc")
+      setSortBy(sortModel[0].id);
+      setDirection(sortModel[0].desc ? 'desc' : 'asc');
     }
   }, []);
 
+  // TABLE COLUMN
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]"></span>,
-      accessorKey: 'status',
+      accessorKey: 'pageStatus',
       enableSorting: false,
-      cell: () => (
+      cell: (info: any) => (
         <span className="inline-block rounded-min text-gray-600 bg-gray-100 px-2 py-1 text-xs font-bold mr-3">
-          Default
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
         </span>
       ),
     },
     {
       header: () => <span className="text-[14px]">Page Name</span>,
-      accessorKey: 'id',
+      accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -191,36 +161,34 @@ export default function PageManagementList() {
     },
     {
       header: () => <span className="text-[14px]">Created by</span>,
-      accessorKey: 'name',
+      accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
+          {info.getValue() && info.getValue() ? info.getValue() : '-'}
         </p>
       ),
     },
     {
       header: () => <span className="text-[14px]">Created Date</span>,
-      accessorKey: 'name',
+      accessorKey: 'createdAt',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
+            ? dayjs(info.getValue()).format('DD/MM/YYYY')
             : '-'}
         </p>
       ),
     },
     {
       header: () => <span className="text-[14px]">Updated Date</span>,
-      accessorKey: 'description',
+      accessorKey: 'updatedAt',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
+            ? dayjs(info.getValue()).format('DD/MM/YYYY')
             : '-'}
         </p>
       ),
@@ -250,7 +218,7 @@ export default function PageManagementList() {
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
               onClick={() => {
-                onConfirm(info.getValue(), info?.row?.original?.name);
+                onClickPageDelete(info.getValue(), info?.row?.original?.title);
               }}
             />
           </div>
@@ -258,6 +226,40 @@ export default function PageManagementList() {
       ),
     },
   ];
+
+  const onClickPageDelete = (id: number, title: string) => {
+    setIdDelete(id);
+    setTitleConfirm('Are you sure?');
+    setMessageConfirm(`Do you want to delete ${title}?`);
+    setShowConfirm(true);
+  };
+
+  // FUNCTION FOR DELETE PAGE
+  const submitDeletePage = () => {
+    deletePage({ id: idDelete })
+      .unwrap()
+      .then(async d => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Delete Page',
+            message: d.pageDelete.message,
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Delete Page',
+            message: 'Something went wrong!',
+          }),
+        );
+      });
+  };
 
   return (
     <>
@@ -269,9 +271,9 @@ export default function PageManagementList() {
         title={titleConfirm}
         cancelTitle="Cancel"
         message={messageConfirm}
-        submitAction={onDelete}
+        submitAction={submitDeletePage}
         submitTitle="Yes"
-        loading={hapusLoading}
+        loading={deletePageLoading}
         icon={WarningIcon}
         btnType={''}
       />
@@ -280,12 +282,8 @@ export default function PageManagementList() {
         topMargin="mt-2"
         SearchBar={
           <InputSearch
-            value={searchData}
-            onChange={e => {
-              setSearchData(e.target.value);
-            }}
             onBlur={(e: any) => {
-              console.log(e);
+              setSearch(e.target.value);
             }}
             placeholder="Search"
           />
@@ -294,14 +292,16 @@ export default function PageManagementList() {
         <div className="flex flex-row justify-between mb-5">
           <div className="flex flex-row">
             <button className="btn btn-primary text-xs w-40">Page List</button>
-            <button className="btn btn-outline text-xs w-40">My Task</button>
+            <button disabled className="btn btn-outline text-xs w-40">
+              My Task
+            </button>
           </div>
           <ArchiveButton />
         </div>
 
         <div className="overflow-x-auto w-full mb-5">
           <Table
-            rows={listData || ''}
+            rows={listData}
             columns={COLUMNS}
             loading={false}
             error={false}
@@ -311,11 +311,16 @@ export default function PageManagementList() {
           />
         </div>
         <PaginationComponent
-          page={1}
-          setPage={() => null}
-          total={100}
-          pageSize={10}
-          setPageSize={() => null}
+          total={total}
+          page={pageIndex}
+          pageSize={pageLimit}
+          setPageSize={(page: number) => {
+            setPageLimit(page);
+            setPageIndex(0);
+          }}
+          setPage={(page: number) => {
+            setPageIndex(page);
+          }}
         />
       </TitleCard>
     </>

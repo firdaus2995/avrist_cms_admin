@@ -5,7 +5,7 @@ import BottomAccessories from '../../assets/login/bottom-accessories.svg';
 import IconContainer from '../../assets/login/icon-container.svg';
 import Logo from '../../assets/Avrist-logo.png';
 import LoginIllustrator from '../../assets/login/login-illustrator.svg';
-import { Typography } from '../../components/atoms/Typography';
+import Typography from '../../components/atoms/Typography';
 import AuthInput from '../../components/atoms/Input/AuthInput';
 // import { Link } from 'react-router-dom';
 
@@ -80,11 +80,7 @@ export default function Login() {
         {/* <LoginForm /> */}
         <div className="bg-white mx-16">
           <h1 className="font-bold text-2xl my-5 text-dark-purple">Login</h1>
-          <Typography
-            type="body"
-            size="normal"
-            weight="regular"
-            styleClass="text-body-text-2 mb-10">
+          <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
             Welcome to Avrist Content Management System, please put your login credentials below to
             start using the app.
           </Typography>
@@ -113,7 +109,7 @@ export default function Login() {
                 type="body"
                 size="s"
                 weight="regular"
-                styleClass="text-primary cursor-pointer mb-8">
+                className="text-primary cursor-pointer mb-8">
                 Forgot Password ?
               </Typography>
               {/* </Link> */}
