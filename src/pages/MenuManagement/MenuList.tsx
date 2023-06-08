@@ -29,7 +29,7 @@ export default function MenuList() {
       type,
       isOpenTab,
     };
-    setDataStructure(data => [...data, dataForm]);
+    setDataStructure((data: any) => [...data, dataForm]);
 
     setIsOpenForm(false);
     setIsAddClicked(false);

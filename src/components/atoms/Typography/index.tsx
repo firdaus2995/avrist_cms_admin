@@ -24,7 +24,7 @@ export const Typography: React.FC<ITypography> = ({
   weight = 'regular',
   children,
 }) => {
-  const fontSizeClasses: IFontSizeClasses = {
+  const fontSizeClasses: any = {
     heading: 'text-6xl',
     heading1: 'text-4xl', // 32px
     heading2: 'text-3xl', // 28px
