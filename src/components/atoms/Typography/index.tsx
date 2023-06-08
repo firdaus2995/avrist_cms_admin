@@ -8,7 +8,11 @@ interface ITypographyProps {
   children: React.ReactNode;
 }
 
-const fontSizeClasses = {
+type IFontSizeClasses = Record<string, string | Record<string, string>>;
+
+type IFontWeightClasses = Record<string, string>;
+
+const fontSizeClasses: IFontSizeClasses = {
   heading: 'text-6xl',
   heading1: 'text-4xl',
   heading2: 'text-3xl',
@@ -25,7 +29,7 @@ const fontSizeClasses = {
   },
 };
 
-const fontWeightClasses = {
+const fontWeightClasses: IFontWeightClasses = {
   bold: 'font-bold',
   medium: 'font-medium',
   regular: 'font-normal',
@@ -38,30 +42,6 @@ const Typography: React.FC<ITypographyProps> = ({
   weight = 'regular',
   children,
 }) => {
-  const fontSizeClasses: any = {
-    heading: 'text-6xl',
-    heading1: 'text-4xl', // 32px
-    heading2: 'text-3xl', // 28px
-    heading3: 'text-2xl', // 24px
-    heading4: 'text-xl', // 20px
-    heading5: 'text-lg', // 16px
-    body: {
-      xl: 'text-xl', // 24px
-      l: 'text-lg', // 20px
-      m: 'text-base', // 18px
-      normal: 'text-base', // 16px
-      s: 'text-sm', // 14px
-      xs: 'text-xs', // 12px
-      //   xxs: 'text-xs', // 10px
-    },
-  };
-
-  const fontWeightClasses: IFontWeightClasses = {
-    bold: 'font-bold',
-    medium: 'font-medium',
-    regular: 'font-normal',
-  };
-
   const getSizeClass = (): string => {
     const fontSizeClass = fontSizeClasses[type];
     if (typeof fontSizeClass === 'string') {
