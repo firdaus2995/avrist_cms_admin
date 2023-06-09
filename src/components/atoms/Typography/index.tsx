@@ -63,3 +63,10 @@ const Typography: React.FC<ITypographyProps> = ({
 };
 
 export default Typography;
+
+{
+  /* <Typography type="heading3" size="l" weight="medium">Heading 3 Text</Typography> */
+}
+{
+  /* <Typography type="body" size="m" weight="bold">Medium Bold Text</Typography> */
+}
