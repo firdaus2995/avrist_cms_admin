@@ -1,20 +1,44 @@
-import { t } from "i18next";
-import { useEffect, useState } from "react";
+import { 
+  t,
+} from "i18next";
+import { 
+  useEffect, 
+  useState,
+} from "react";
+import { 
+  useNavigate, 
+  useParams,
+} from "react-router-dom";
 import dayjs from "dayjs";
 
-import { TitleCard } from "../../components/molecules/Cards/TitleCard";
 import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch } from "../../store";
 import CancelIcon from "../../assets/cancel.png";
 import AddProfilePicture from "../../assets/add-profile-picture.png";
-import { InputText } from "../../components/atoms/Input/InputText";
-import { InputPassword } from "../../components/atoms/Input/InputPassword";
-import { InputDate } from "../../components/atoms/Input/InputDate";
 import Radio from "../../components/molecules/Radio";
 import DropDown from "../../components/molecules/DropDown";
-import { useEditUserMutation, useGetRoleQuery, useGetUserDetailQuery } from "../../services/User/userApi";
-import { openToast } from "../../components/atoms/Toast/slice";
+import { 
+  TitleCard,
+} from "../../components/molecules/Cards/TitleCard";
+import { 
+  useAppDispatch,
+} from "../../store";
+import { 
+  InputText,
+} from "../../components/atoms/Input/InputText";
+import { 
+  InputPassword,
+} from "../../components/atoms/Input/InputPassword";
+import { 
+  InputDate,
+} from "../../components/atoms/Input/InputDate";
+import { 
+  useEditUserMutation, 
+  useGetRoleQuery, 
+  useGetUserDetailQuery,
+} from "../../services/User/userApi";
+import { 
+  openToast,
+} from "../../components/atoms/Toast/slice";
 
 export default function UsersEdit () {
   const navigate = useNavigate();
