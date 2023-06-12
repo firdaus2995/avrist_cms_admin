@@ -1,0 +1,49 @@
+{
+  "toast-success": "Berhasil",
+  "toast-failed": "Gagal",
+  "btn": {
+    "save": "Submit",
+    "cancel": "Cancel"
+  },
+  "token-failed-renew": "Token gagal diperbarui",
+  "sidebar": {
+    "role": "peran"
+  },
+  "dashboard": {
+    "sample": "Ini adalah list dari graphql"
+  },
+  "modal": {
+    "confirmation": "Are you sure?",
+    "leave-confirmation": "Do you want to cancel all the process?"
+  },
+  "roles": {
+    "role-name": "Nama Peran",
+    "role-description": "Deskripsi Peran",
+    "add": {
+      "title": "Tambah Peran",
+      "success-msg": "Peran {{name}} berhasil disimpan",
+      "failed-msg": "Peran {{name}} gagal disimpan"
+    },
+    "edit": {
+      "title": "Edit Peran",
+      "success-msg": "Peran {{name}} berhasil diperbarui",
+      "failed-msg": "Peran {{name}} gagal diperbarui"
+    }
+  },
+  "user": {
+    "list": {
+      "title": "User List",
+      "button-add": "Add New User"
+    },
+    "add": {
+      "title": "Add New User",
+      "success-msg": "Success add User {{name}}",
+      "failed-msg": "Failed add User {{name}}"
+    },
+    "edit": {
+      "title": "Edit User Profile",
+      "success-msg": "Success edit User {{name}}",
+      "failed-msg": "Failed edit User {{name}}"
+    }
+  }
+}

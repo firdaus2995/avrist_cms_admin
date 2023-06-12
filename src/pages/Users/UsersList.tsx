@@ -41,7 +41,7 @@ export default function UsersList () {
   // TABLE COLUMN
   const columns = [
     {
-      header: () => <span className="text-[14px]">User Id</span>,
+      header: () => <span className="text-[14px]">User ID</span>,
       accessorKey: 'userId',
       enableSorting: true,
       cell: (info: any) => (
@@ -89,7 +89,7 @@ export default function UsersList () {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Aksi</span>,
+      header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (

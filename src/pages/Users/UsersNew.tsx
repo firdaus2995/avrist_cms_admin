@@ -139,9 +139,10 @@ export default function UsersNew () {
           {/*  ROW 1 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
-              <InputText  
+              <InputText
                 labelTitle="User ID"
                 labelStyle="font-bold	"
+                labelRequired
                 value={userId}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setUserId(event.target.value);
@@ -166,6 +167,7 @@ export default function UsersNew () {
               <InputText 
                 labelTitle="Fullname"
                 labelStyle="font-bold	"
+                labelRequired
                 value={fullName}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFullName(event.target.value);
@@ -176,6 +178,7 @@ export default function UsersNew () {
               <InputDate
                 labelTitle="Date of Birth"
                 labelStyle="font-bold	"
+                labelRequired
                 value={dob}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setDob(event.target.value);
@@ -186,6 +189,7 @@ export default function UsersNew () {
               <Radio 
                 labelTitle="Gender"
                 labelStyle="font-bold	"
+                labelRequired
                 items={[
                   {
                     value: "MALE",
@@ -210,6 +214,7 @@ export default function UsersNew () {
               <InputText 
                 labelTitle="User Email"
                 labelStyle="font-bold	"
+                labelRequired
                 type="email"
                 value={email}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -228,8 +233,10 @@ export default function UsersNew () {
             <div className="flex flex-1">
               <DropDown
                 labelTitle="Role"
-                labelStyle="font-bold	"              
-                defaultValue="Ayam"
+                labelStyle="font-bold	"
+                labelRequired
+                defaultValue=""
+                labelEmpty="Choose Your Role"
                 items={roleData}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                   if (event) {
