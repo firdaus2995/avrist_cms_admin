@@ -2,8 +2,11 @@ import React from 'react';
 import Bell from '../../../assets/bell.png';
 import Profile from '../../../assets/profile.png';
 import Logo from '../../../assets/Avrist-logo.png';
+import AgiLogo from '../../../assets/agi-logo.png';
+import AvramLogo from '../../../assets/avram-logo.png';
 import { Menu, Transition } from '@headlessui/react';
 import { useAppSelector } from '../../../store';
+import { useGetUserProfileQuery } from '../../../services/User/userApi';
 interface INavbar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -11,6 +14,9 @@ interface INavbar {
 export const Navbar: React.FC<INavbar> = props => {
   const { open, setOpen } = props;
   const { title } = useAppSelector(s => s.navbarSlice);
+ 
+  const fetchUserDetailQuery = useGetUserProfileQuery({});
+  const { data } = fetchUserDetailQuery;
 
   return (
     <div
@@ -34,7 +40,13 @@ export const Navbar: React.FC<INavbar> = props => {
         />
       </svg>
       <h1 className="text-xl font-semibold">{title}</h1>
-      <img src={Logo} alt="Profile" className="w-24 absolute right-0 left-0 mx-auto" />
+      <img 
+      src={
+        data?.userProfile?.company === 'AGI' ?
+         AgiLogo : data?.userProfile?.company === 'Avram' ? 
+         AvramLogo : Logo
+        }
+        alt="Profile" className="w-24 absolute right-0 left-0 mx-auto" />
       <div className="flex gap-[22px] items-center">
         <BellNotif />
         {/* <ProfilePicture /> */}
