@@ -129,6 +129,8 @@ export default function UsersList () {
     sortBy,
     direction,
     search,
+  }, {
+    refetchOnMountOrArgChange: true,
   });
   const { data, isFetching, isError } = fetchQuery;
   // RTK DELETE
@@ -138,15 +140,8 @@ export default function UsersList () {
     if (data) {
       setListData(data?.userList?.users);
       setTotal(data?.userList?.total);
-    }
+    };
   }, [data])
-
-  useEffect(() => {
-    const refetch = async () => {
-      await fetchQuery.refetch();
-    }
-    void refetch();
-  }, [])
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {

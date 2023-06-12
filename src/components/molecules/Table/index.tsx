@@ -85,7 +85,10 @@ const Table: React.FC<IDataGrid> = props => {
         </thead>
         <tbody className="relative ">
           {loading ? (
-            <Skeleton columnsLength={columns.length} />
+            <Skeleton 
+              columnsLength={columns.length}
+              rowsLength={rows.length}
+            />
           ) : rows.length ? (
             table.getRowModel().rows.map((row, i) => {
               return (
