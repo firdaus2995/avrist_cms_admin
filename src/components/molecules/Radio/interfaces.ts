@@ -1,6 +1,7 @@
 export interface IRadio {
   labelTitle?: string;
   labelStyle?: string;
+  labelRequired?: boolean;
   items?: Array<{
     value: string | number | boolean;
     label: string;

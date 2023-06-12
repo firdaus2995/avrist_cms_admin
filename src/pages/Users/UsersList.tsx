@@ -41,7 +41,7 @@ export default function UsersList () {
   // TABLE COLUMN
   const columns = [
     {
-      header: () => <span className="text-[14px]">User Id</span>,
+      header: () => <span className="text-[14px]">User ID</span>,
       accessorKey: 'userId',
       enableSorting: true,
       cell: (info: any) => (
@@ -89,7 +89,7 @@ export default function UsersList () {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Aksi</span>,
+      header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -129,6 +129,8 @@ export default function UsersList () {
     sortBy,
     direction,
     search,
+  }, {
+    refetchOnMountOrArgChange: true,
   });
   const { data, isFetching, isError } = fetchQuery;
   // RTK DELETE
@@ -138,15 +140,8 @@ export default function UsersList () {
     if (data) {
       setListData(data?.userList?.users);
       setTotal(data?.userList?.total);
-    }
+    };
   }, [data])
-
-  useEffect(() => {
-    const refetch = async () => {
-      await fetchQuery.refetch();
-    }
-    void refetch();
-  }, [])
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
