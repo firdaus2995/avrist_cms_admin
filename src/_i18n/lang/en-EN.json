@@ -1,16 +1,16 @@
 {
-  "toast-success": "Berhasil",
-  "toast-failed": "Gagal",
+  "toast-success": "Success",
+  "toast-failed": "Failed",
   "btn": {
     "save": "Submit",
     "cancel": "Cancel"
   },
-  "token-failed-renew": "Token gagal diperbarui",
+  "token-failed-renew": "Token failed to renew",
   "sidebar": {
-    "role": "peran"
+    "role": "Role"
   },
   "dashboard": {
-    "sample": "Ini adalah list dari graphql"
+    "sample": "This is GraphQL Sample"
   },
   "modal": {
     "confirmation": "Are you sure?",
