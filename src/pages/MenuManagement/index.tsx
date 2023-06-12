@@ -1,5 +1,5 @@
-// import MenuList from './MenuList';
+import MenuList from './MenuList';
 
 export default function Roles() {
-  return <div />;
+  return <MenuList />;
 }
