@@ -15,13 +15,15 @@ import {
 const DropDown = ({
   labelTitle,
   labelStyle,
+  labelEmpty,
+  labelRequired,
   items,
   defaultValue,
   onSelect,
 }: IDropDown) => {
   const componentRef = useRef<any>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [selectedLabel, setSelectedLabel] = useState<string | number | boolean>("Select");
+  const [selectedLabel, setSelectedLabel] = useState<string | number | boolean>(labelEmpty ?? "Select");
   const [selected, setSelected] = useState<string | number | boolean | null>(null);
 
   useEffect(() => {
@@ -65,7 +67,7 @@ const DropDown = ({
   return (
     <div className="w-full relative" ref={componentRef}>
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <button onClick={(event: React.SyntheticEvent) => {
         event.preventDefault();

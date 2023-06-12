@@ -7,4 +7,13 @@
   padding: 0;
   color: transparent;
   background: transparent;
+  z-index: 1000;
 }
+.input-date::-webkit-datetime-edit-day-field:focus,
+.input-date::-webkit-datetime-edit-month-field:focus,
+.input-date::-webkit-datetime-edit-year-field:focus {
+  background-color: transparent;
+  color: black;
+  outline: none;
+}
+.input-date[value=""]:not(:focus) { color: transparent; }

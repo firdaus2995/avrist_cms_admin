@@ -43,17 +43,15 @@ export const InputPassword: React.FC<IInputPassword> = ({
           }}
           className={`rounded-3xl w-full h-full outline-0 ${disabled ? 'text-[#637488]' : ''}`}
         />
-        {
-          !disabled && (
-            <img src={PasswordHide} className="w-[24px] h-[24px] cursor-pointer" onClick={() => {
-              if (type === "password") {
-                setType("text")
-              } else {
-                setType("password");
-              };
-            }}/>
-          )
-        }
+        <img src={PasswordHide} className="w-[24px] h-[24px] cursor-pointer" onClick={() => {
+          if (!disabled) {
+            if (type === "password") {
+              setType("text")
+            } else {
+              setType("password");
+            };
+          }
+        }}/>
       </div>
     </div>
   );

@@ -156,6 +156,7 @@ export default function UsersEdit () {
               <InputText 
                 labelTitle="Fullname"
                 labelStyle="font-bold	"
+                labelRequired
                 value={fullName}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFullName(event.target.value);
@@ -166,6 +167,7 @@ export default function UsersEdit () {
               <InputDate
                 labelTitle="Date of Birth"
                 labelStyle="font-bold	"
+                labelRequired
                 value={dob}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setDob(event.target.value);
@@ -176,6 +178,7 @@ export default function UsersEdit () {
               <Radio 
                 labelTitle="Gender"
                 labelStyle="font-bold	"
+                labelRequired
                 items={[
                   {
                     value: "MALE",
@@ -201,6 +204,7 @@ export default function UsersEdit () {
               <InputText 
                 labelTitle="User Email"
                 labelStyle="font-bold	"
+                labelRequired
                 type="email"
                 value={email}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -219,7 +223,8 @@ export default function UsersEdit () {
             <div className="flex flex-1">
               <DropDown
                 labelTitle="Role"
-                labelStyle="font-bold	"              
+                labelStyle="font-bold	"       
+                labelRequired       
                 defaultValue={roleId}
                 items={roleData}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
