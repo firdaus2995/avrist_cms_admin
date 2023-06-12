@@ -33,6 +33,7 @@ export default function RoutesComponent() {
     <Routes>
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<LoginPage />} />
         {/* <Route path="/forgot-password" element={<LoginPortal />} /> */}
         <Route path="/loginportal" element={<LoginPortal />} />
       </Route>
