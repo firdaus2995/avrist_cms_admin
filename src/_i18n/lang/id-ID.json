@@ -16,6 +16,12 @@
     "confirmation": "Apakah kamu yakin?",
     "leave-confirmation": "Apakah kamu ingin keluar dan membatalkan semuanya?"
   },
+  "page-template": {
+    "list": {
+      "title": "Daftar Page Template",
+      "button-add": "Tambah Page Template"
+    }
+  },
   "roles": {
     "role-name": "Nama Peran",
     "role-description": "Deskripsi Peran",

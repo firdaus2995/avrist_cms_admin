@@ -109,13 +109,13 @@ export default function UsersList () {
   
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState([]);
+  const [search, setSearch] = useState('');
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
   const [direction, setDirection] = useState('asc');
   const [sortBy, setSortBy] = useState('id');
-  const [search, setSearch] = useState('');
   // DELETE MODAL STATE
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
@@ -167,6 +167,7 @@ export default function UsersList () {
           }),
         );
         await fetchQuery.refetch();
+        setPageIndex(0);
       })
       .catch(() => {
         setOpenDeleteModal(false);

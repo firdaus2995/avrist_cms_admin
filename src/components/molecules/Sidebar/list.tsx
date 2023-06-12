@@ -51,7 +51,7 @@ export const sidebarList = [
     id: 6,
     title: 'Page Template',
     icon: PageTemplateIcon,
-    path: '/pageTemplate',
+    path: '/page-template',
   },
   {
     id: 7,

@@ -6,7 +6,7 @@ import {
 } from "graphql-request";
 
 import customFetchBase from "../../utils/Interceptor";
-export const userApi = createApi({
+export const userApi: any = createApi({
   reducerPath: 'userApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({

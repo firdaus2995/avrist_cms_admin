@@ -16,6 +16,12 @@
     "confirmation": "Are you sure?",
     "leave-confirmation": "Do you want to cancel all the process?"
   },
+  "page-template": {
+    "list": {
+      "title": "Page Template",
+      "button-add": "Page Registration"
+    }
+  },
   "roles": {
     "role-name": "Nama Peran",
     "role-description": "Deskripsi Peran",
