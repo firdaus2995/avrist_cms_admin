@@ -11,7 +11,7 @@ interface IInputText {
   type?: HTMLInputTypeAttribute;
   containerStyle?: string;
   value?: string;
-  placeholder?: string;
+  placeholder?: string | null;
   disabled?: boolean;
   suffix?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -33,7 +33,7 @@ export const InputText: React.FC<IInputText> = ({
   return (
     <div className={`form-control w-full ${containerStyle} `}>
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text'}>{labelRequired ? '*' : ''}</span></span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text text-lg'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <div className={`input input-bordered w-full rounded-3xl focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
         <input

@@ -144,6 +144,7 @@ export default function UsersNew () {
                 labelStyle="font-bold	"
                 labelRequired
                 value={userId}
+                placeholder={t('user.add.placeholder-user-id')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setUserId(event.target.value);
                 }}
@@ -154,6 +155,7 @@ export default function UsersNew () {
                 labelTitle="Password"
                 labelStyle="font-bold	"
                 value={password}
+                placeholder={t('user.add.placeholder-user-password')}
                 disabled
               />
             </div>
@@ -169,6 +171,7 @@ export default function UsersNew () {
                 labelStyle="font-bold	"
                 labelRequired
                 value={fullName}
+                placeholder={t('user.add.placeholder-user-fullname')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFullName(event.target.value);
                 }}
@@ -217,6 +220,7 @@ export default function UsersNew () {
                 labelRequired
                 type="email"
                 value={email}
+                placeholder={t('user.add.placeholder-user-email')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setEmail(event.target.value);
                 }}

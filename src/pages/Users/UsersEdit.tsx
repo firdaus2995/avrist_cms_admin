@@ -61,7 +61,9 @@ export default function UsersEdit () {
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
   
   // RTK GET ROLE
-  const fetchUserDetailQuery = useGetUserDetailQuery({id});
+  const fetchUserDetailQuery = useGetUserDetailQuery({id}, {
+    refetchOnMountOrArgChange: true,
+  });
   const fetchRoleQuery = useGetRoleQuery({});
   const { data } = fetchUserDetailQuery;
   const { data: fetchedRole } = fetchRoleQuery;  
@@ -159,6 +161,7 @@ export default function UsersEdit () {
                 labelTitle="User ID"
                 labelStyle="font-bold	"
                 value={userId}
+                placeholder={t('user.edit.placeholder-user-id')}
                 disabled
               />
             </div>
@@ -167,6 +170,7 @@ export default function UsersEdit () {
                 labelTitle="Password"
                 labelStyle="font-bold	"
                 value={password}
+                placeholder={t('user.edit.placeholder-user-password')}
                 disabled
               />
             </div>
@@ -182,6 +186,7 @@ export default function UsersEdit () {
                 labelStyle="font-bold	"
                 labelRequired
                 value={fullName}
+                placeholder={t('user.edit.placeholder-user-fullname')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFullName(event.target.value);
                 }}
@@ -231,6 +236,7 @@ export default function UsersEdit () {
                 labelRequired
                 type="email"
                 value={email}
+                placeholder={t('user.edit.placeholder-user-email')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setEmail(event.target.value);
                 }}
