@@ -2,7 +2,7 @@
 . "$(dirname -- "$0")/_/husky.sh"
 
 message="$(cat $1)"
-requiredPattern="(ACW2)+-[0-9]+: ([a-zA-Z0-9]+)"
+requiredPattern="ACW2-([0-9]+)(\/([0-9]+))*: ([a-zA-Z0-9\s]+)"
 if ! [[ $message =~ $requiredPattern ]];
 then
   echo " "
