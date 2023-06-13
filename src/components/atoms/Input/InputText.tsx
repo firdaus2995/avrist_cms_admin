@@ -6,11 +6,12 @@ import PropTypes from 'prop-types';
 interface IInputText {
   labelTitle: string;
   labelStyle?: string;
+  labelRequired?: boolean;
   inputStyle?: string;
   type?: HTMLInputTypeAttribute;
   containerStyle?: string;
   value?: string;
-  placeholder?: string;
+  placeholder?: string | null;
   disabled?: boolean;
   suffix?: React.ReactNode;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -19,6 +20,7 @@ interface IInputText {
 export const InputText: React.FC<IInputText> = ({
   labelTitle,
   labelStyle = '',
+  labelRequired,
   type,
   containerStyle = '',
   value,
@@ -31,7 +33,7 @@ export const InputText: React.FC<IInputText> = ({
   return (
     <div className={`form-control w-full ${containerStyle} `}>
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text text-lg'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <div className={`input input-bordered w-full rounded-3xl focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
         <input
@@ -55,6 +57,7 @@ export const InputText: React.FC<IInputText> = ({
 InputText.propTypes = {
   labelTitle: PropTypes.string.isRequired,
   labelStyle: PropTypes.string,
+  labelRequired: PropTypes.bool,
   type: PropTypes.string,
   containerStyle: PropTypes.string,
   value: PropTypes.string,

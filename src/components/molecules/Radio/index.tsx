@@ -7,6 +7,7 @@ import {
 const Radio = ({
   labelTitle,
   labelStyle,
+  labelRequired,
   items,
   defaultSelected,
   onSelect,
@@ -31,7 +32,7 @@ const Radio = ({
   return (
     <div className="w-full flex flex-col">
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text text-lg'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <div className="flex flex-row gap-2 h-[48px] items-center">
         {
@@ -39,7 +40,7 @@ const Radio = ({
             return (
               <div className="form-control" key={keyIndex} >
                 <label className="label cursor-pointer flex flex-row gap-2">
-                  <input type="radio" name="radio-10" className="radio" value={element.value} checked={checked === element.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                  <input type="radio" name="radio-10" className="radio checked:bg-purple" value={element.value} checked={checked === element.value} onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                     handleSelect(event, element.value)
                   }} />
                   <span className="label-text">{element.label}</span> 

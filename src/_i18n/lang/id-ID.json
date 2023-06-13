@@ -38,12 +38,18 @@
     "add": {
       "title": "Tambah User",
       "success-msg": "User {{name}} berhasil disimpan",
-      "failed-msg": "User {{name}} gagal disimpan"
+      "failed-msg": "User {{name}} gagal disimpan",
+      "placeholder-user-id": "Masukan User ID",
+      "placeholder-user-fullname": "Masukan Fullname",
+      "placeholder-user-email": "Masukan Email"
     },
     "edit": {
       "title": "Modifikasi User",
       "success-msg": "User {{name}} berhasil diperbarui",
-      "failed-msg": "User {{name}} gagal diperbarui"
+      "failed-msg": "User {{name}} gagal diperbarui",
+      "placeholder-user-id": "Masukan User ID",
+      "placeholder-user-fullname": "Masukan Fullname",
+      "placeholder-user-email": "Masukan Email"
     }
   }
 }

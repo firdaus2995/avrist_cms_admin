@@ -1,20 +1,44 @@
-import { t } from "i18next";
-import { useEffect, useState } from "react";
+import { 
+  t,
+} from "i18next";
+import { 
+  useEffect, 
+  useState,
+} from "react";
+import { 
+  useNavigate, 
+  useParams,
+} from "react-router-dom";
 import dayjs from "dayjs";
 
-import { TitleCard } from "../../components/molecules/Cards/TitleCard";
 import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
-import { useNavigate, useParams } from "react-router-dom";
-import { useAppDispatch } from "../../store";
 import CancelIcon from "../../assets/cancel.png";
 import AddProfilePicture from "../../assets/add-profile-picture.png";
-import { InputText } from "../../components/atoms/Input/InputText";
-import { InputPassword } from "../../components/atoms/Input/InputPassword";
-import { InputDate } from "../../components/atoms/Input/InputDate";
 import Radio from "../../components/molecules/Radio";
 import DropDown from "../../components/molecules/DropDown";
-import { useEditUserMutation, useGetRoleQuery, useGetUserDetailQuery } from "../../services/User/userApi";
-import { openToast } from "../../components/atoms/Toast/slice";
+import { 
+  TitleCard,
+} from "../../components/molecules/Cards/TitleCard";
+import { 
+  useAppDispatch,
+} from "../../store";
+import { 
+  InputText,
+} from "../../components/atoms/Input/InputText";
+import { 
+  InputPassword,
+} from "../../components/atoms/Input/InputPassword";
+import { 
+  InputDate,
+} from "../../components/atoms/Input/InputDate";
+import { 
+  useEditUserMutation, 
+  useGetRoleQuery, 
+  useGetUserDetailQuery,
+} from "../../services/User/userApi";
+import { 
+  openToast,
+} from "../../components/atoms/Toast/slice";
 
 export default function UsersEdit () {
   const navigate = useNavigate();
@@ -37,7 +61,9 @@ export default function UsersEdit () {
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
   
   // RTK GET ROLE
-  const fetchUserDetailQuery = useGetUserDetailQuery({id});
+  const fetchUserDetailQuery = useGetUserDetailQuery({id}, {
+    refetchOnMountOrArgChange: true,
+  });
   const fetchRoleQuery = useGetRoleQuery({});
   const { data } = fetchUserDetailQuery;
   const { data: fetchedRole } = fetchRoleQuery;  
@@ -135,6 +161,7 @@ export default function UsersEdit () {
                 labelTitle="User ID"
                 labelStyle="font-bold	"
                 value={userId}
+                placeholder={t('user.edit.placeholder-user-id')}
                 disabled
               />
             </div>
@@ -143,6 +170,7 @@ export default function UsersEdit () {
                 labelTitle="Password"
                 labelStyle="font-bold	"
                 value={password}
+                placeholder={t('user.edit.placeholder-user-password')}
                 disabled
               />
             </div>
@@ -156,7 +184,9 @@ export default function UsersEdit () {
               <InputText 
                 labelTitle="Fullname"
                 labelStyle="font-bold	"
+                labelRequired
                 value={fullName}
+                placeholder={t('user.edit.placeholder-user-fullname')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFullName(event.target.value);
                 }}
@@ -166,6 +196,7 @@ export default function UsersEdit () {
               <InputDate
                 labelTitle="Date of Birth"
                 labelStyle="font-bold	"
+                labelRequired
                 value={dob}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setDob(event.target.value);
@@ -176,6 +207,7 @@ export default function UsersEdit () {
               <Radio 
                 labelTitle="Gender"
                 labelStyle="font-bold	"
+                labelRequired
                 items={[
                   {
                     value: "MALE",
@@ -201,8 +233,10 @@ export default function UsersEdit () {
               <InputText 
                 labelTitle="User Email"
                 labelStyle="font-bold	"
+                labelRequired
                 type="email"
                 value={email}
+                placeholder={t('user.edit.placeholder-user-email')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setEmail(event.target.value);
                 }}
@@ -219,7 +253,8 @@ export default function UsersEdit () {
             <div className="flex flex-1">
               <DropDown
                 labelTitle="Role"
-                labelStyle="font-bold	"              
+                labelStyle="font-bold	"       
+                labelRequired       
                 defaultValue={roleId}
                 items={roleData}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {

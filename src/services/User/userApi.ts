@@ -170,7 +170,30 @@ export const userApi = createApi({
         `,
         variables: payload,
       })
-    })
+    }),
+    getUserProfile: builder.query({
+      query: payload => ({
+        document: gql`
+          query{
+            userProfile {
+                id
+                userId
+                fullName
+                email
+                dob
+                gender
+                company
+                isActive
+                role {
+                    id
+                    name
+                }
+            }
+        }
+        `,
+        variables: payload,
+      })
+    }),
   })
 })
 
@@ -181,4 +204,5 @@ export const {
   useDeleteUserMutation,
   useCreateUserMutation,
   useEditUserMutation,
+  useGetUserProfileQuery,
 } = userApi;
