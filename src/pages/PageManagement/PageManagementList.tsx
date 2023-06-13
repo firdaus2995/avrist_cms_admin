@@ -15,9 +15,11 @@ import TableView from '../../assets/table-view.png';
 import TableDelete from '../../assets/table-delete.png';
 import FilterIcon from '../../assets/filter.svg';
 import ArchiveBox from '../../assets/archive-box.svg';
+import TimelineLog from '../../assets/timeline-log.svg';
 import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
+import StatusBadge from './components/StatusBadge';
 import dayjs from 'dayjs';
 
 const TopRightButton = () => {
@@ -140,11 +142,18 @@ export default function PageManagementList() {
       accessorKey: 'pageStatus',
       enableSorting: false,
       cell: (info: any) => (
-        <span className="inline-block rounded-min text-gray-600 bg-gray-100 px-2 py-1 text-xs font-bold mr-3">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </span>
+        <>
+          <StatusBadge
+            status={
+              info.getValue() && info.getValue() !== '' && info.getValue() !== null
+                ? info.getValue()
+                : '-'
+            }
+          />
+          <div className="ml-3 cursor-pointer tooltip" data-tip="Log">
+            <img src={TimelineLog} className="w-6 h-6" />
+          </div>
+        </>
       ),
     },
     {
@@ -290,11 +299,9 @@ export default function PageManagementList() {
         }
         TopSideButtons={<TopRightButton />}>
         <div className="flex flex-row justify-between mb-5">
-          <div className="flex flex-row">
+          <div className="btn-group">
             <button className="btn btn-primary text-xs w-40">Page List</button>
-            <button disabled className="btn btn-outline text-xs w-40">
-              My Task
-            </button>
+            <button className="btn btn-disabled text-xs w-40">My Task</button>
           </div>
           <ArchiveButton />
         </div>
