@@ -1,20 +1,39 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { TitleCard } from "../../components/molecules/Cards/TitleCard";
-import { t } from "i18next";
-import { Link } from "react-router-dom";
-import { InputSearch } from "../../components/atoms/Input/InputSearch";
+import { 
+  t } from "i18next";
+import { 
+  Link } from "react-router-dom";
+
 import Table from "../../components/molecules/Table";
-import { SortingState } from "@tanstack/table-core";
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
 import PaginationComponent from "../../components/molecules/Pagination";
-import { useDeletePageTemplateMutation, useEditPageTemplateMutation, useGetPageTemplateQuery } from "../../services/PageTemplate/pageTemplateApi";
-import { useAppDispatch } from "../../store";
 import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
 import WarningIcon from "../../assets/warning.png";
-import { openToast } from "../../components/atoms/Toast/slice";
 import ModalForm from "../../components/molecules/ModalForm";
-import { InputText } from "../../components/atoms/Input/InputText";
+import { 
+  TitleCard,
+} from "../../components/molecules/Cards/TitleCard";
+import { 
+  InputSearch,
+} from "../../components/atoms/Input/InputSearch";
+import { 
+  SortingState,
+} from "@tanstack/table-core";
+import { 
+  useDeletePageTemplateMutation, 
+  useEditPageTemplateMutation, 
+  useGetPageTemplateQuery,
+} from "../../services/PageTemplate/pageTemplateApi";
+import { 
+  useAppDispatch,
+} from "../../store";
+import { 
+  openToast,
+} from "../../components/atoms/Toast/slice";
+import { 
+  InputText,
+} from "../../components/atoms/Input/InputText";
 
 export default function PageTemplatesNew () {
   // TABLE COLUMN

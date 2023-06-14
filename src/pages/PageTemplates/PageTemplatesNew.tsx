@@ -1,14 +1,31 @@
-import { t } from "i18next";
-import { TitleCard } from "../../components/molecules/Cards/TitleCard";
-import { InputText } from "../../components/atoms/Input/InputText";
-import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../store";
-import { useState } from "react";
+import { 
+  t,
+} from "i18next";
+import { 
+  useNavigate,
+} from "react-router-dom";
+import { 
+  useState,
+} from "react";
+
 import UploadIcon from "../../assets/upload-file.svg";
 import CancelIcon from "../../assets/cancel.png";
 import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
-import { useCreatePageTemplateMutation } from "../../services/PageTemplate/pageTemplateApi";
-import { openToast } from "../../components/atoms/Toast/slice";
+import { 
+  TitleCard,
+} from "../../components/molecules/Cards/TitleCard";
+import { 
+  InputText,
+} from "../../components/atoms/Input/InputText";
+import { 
+  useAppDispatch,
+} from "../../store";
+import { 
+  useCreatePageTemplateMutation,
+} from "../../services/PageTemplate/pageTemplateApi";
+import { 
+  openToast,
+} from "../../components/atoms/Toast/slice";
 
 export default function PageTemplatesNew () {
   const navigate = useNavigate();
