@@ -13,23 +13,23 @@ export const userApi: any = createApi({
     getUserDetail: builder.query<any, any>({
       query: payload => ({
         document: gql`
-        query userById($id: Int!) {
-          userById(id: $id) {
-            id
-            userId
-            fullName
-            email
-            dob
-            gender
-            company
-            isActive
-            role {
+          query userById($id: Int!) {
+            userById(id: $id) {
               id
-              name
+              userId
+              fullName
+              email
+              dob
+              gender
+              company
+              isActive
+              role {
+                id
+                name
+              }
             }
           }
-        }
-      `,
+        `,
         variables: payload,
       }),
     }),

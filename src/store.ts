@@ -6,6 +6,7 @@ import { loginApi } from './services/Login/loginApi';
 import { rolesApi } from './services/Roles/rolesApi';
 import { userApi } from './services/User/userApi';
 import { pageManagementApi } from './services/PageManagement/pageManagementApi';
+import { pageTemplateApi } from './services/PageTemplate/pageTemplateApi';
 
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
@@ -26,13 +27,15 @@ export const store: any = configureStore({
     [rolesApi.reducerPath]: rolesApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
     [pageManagementApi.reducerPath]: pageManagementApi.reducer,
+    [pageTemplateApi.reducerPath]: pageTemplateApi.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .concat(loginApi.middleware)
       .concat(rolesApi.middleware)
       .concat(userApi.middleware)
-      .concat(pageManagementApi.middleware),
+      .concat(pageManagementApi.middleware)
+      .concat(pageTemplateApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

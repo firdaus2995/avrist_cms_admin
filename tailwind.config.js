@@ -17,7 +17,8 @@ export default {
         'error': '#EC2247',
         'error-stroke': '#AE1D1D',
         'secondary-warning': '#FF8E3C',
-        'required-text': '#DB3838',
+        'reddist': '#DB3838',
+        'dark-reddist': '#AE1D1D',
       },
       // Custom fonts
       fontFamily: {

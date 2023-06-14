@@ -3,6 +3,7 @@
   "toast-failed": "Gagal",
   "btn": {
     "save": "Simpan",
+    "save-alternate": "Simpan",
     "cancel": "Batal"
   },
   "token-failed-renew": "Token gagal diperbarui",
@@ -20,6 +21,16 @@
     "list": {
       "title": "Daftar Page Template",
       "button-add": "Tambah Page Template"
+    },
+    "add": {
+      "title": "Tambah Page Template",
+      "success-msg": "Page Template {{name}} berhasil disimpan",
+      "failed-msg": "Page Template {{name}} gagal disimpan"
+    },
+    "edit": {
+      "title": "Modifikasi Page Template",
+      "success-msg": "Page Template {{name}} berhasil diperbarui",
+      "failed-msg": "Page Template {{name}} gagal diperbarui"
     }
   },
   "roles": {

@@ -104,7 +104,7 @@ export default function UsersNew () {
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('roles.add.failed-msg', { name: payload.fullName }),
+            message: t('user.add.failed-msg', { name: payload.fullName }),
           }),
         );
       });
@@ -133,7 +133,7 @@ export default function UsersNew () {
         icon={CancelIcon}
         btnType='btn-warning'
       />
-      <form className="flex flex-col w-100" >
+      <form className="flex flex-col w-100">
         <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130}/>
         <div className="flex flex-col mt-[60px] gap-5">
           {/*  ROW 1 */}
@@ -251,21 +251,23 @@ export default function UsersNew () {
             </div>
           </div>
         </div>
+        <div className="mt-[200px] flex justify-end items-end gap-2">
+          <button className="btn btn-outline btn-md" onClick={(event: any) => {
+            event.preventDefault();
+            setLeaveTitleModalShow(t('modal.confirmation'));
+            setMessageLeaveModalShow(t('modal.leave-confirmation'));
+            setShowLeaveModal(true);          
+          }}>
+            {isLoading ? 'Loading...' : t('btn.cancel')}
+          </button>
+          <button className="btn btn-success btn-md" onClick={(event: any) => {
+            event.preventDefault();
+            onSave();
+          }}>
+            {isLoading ? 'Loading...' : t('btn.save')}
+          </button>
+        </div>
       </form>
-      <div className="mt-[200px] flex justify-end items-end gap-2">
-        <button className="btn btn-outline btn-md" onClick={() => {
-          setLeaveTitleModalShow(t('modal.confirmation'));
-          setMessageLeaveModalShow(t('modal.leave-confirmation'));
-          setShowLeaveModal(true);          
-        }}>
-          {isLoading ? 'Loading...' : t('btn.cancel')}
-        </button>
-        <button className="btn btn-success btn-md" onClick={() => {
-          onSave();
-        }}>
-          {isLoading ? 'Loading...' : t('btn.save')}
-        </button>
-      </div>
     </TitleCard>
   );
 };

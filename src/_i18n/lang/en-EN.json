@@ -3,6 +3,7 @@
   "toast-failed": "Failed",
   "btn": {
     "save": "Submit",
+    "save-alternate": "Save",
     "cancel": "Cancel"
   },
   "token-failed-renew": "Token failed to renew",
@@ -20,6 +21,16 @@
     "list": {
       "title": "Page Template",
       "button-add": "Page Registration"
+    },
+    "add": {
+      "title": "Page Template Registration",
+      "success-msg": "Success register User Page Template {{name}}",
+      "failed-msg": "Failed add register Page Template {{name}}"
+    },
+    "edit": {
+      "title": "Edit Page Template Profile",
+      "success-msg": "Success edit Page Template {{name}}",
+      "failed-msg": "Failed edit Page Template {{name}}"
     }
   },
   "roles": {

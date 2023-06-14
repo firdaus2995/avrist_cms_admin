@@ -67,7 +67,7 @@ const DropDown = ({
   return (
     <div className="w-full relative" ref={componentRef}>
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text text-lg'}>{labelRequired ? '*' : ''}</span></span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <button onClick={(event: React.SyntheticEvent) => {
         event.preventDefault();
