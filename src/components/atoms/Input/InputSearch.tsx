@@ -24,7 +24,7 @@ export const InputSearch: React.FC<IInputSearch> = ({
   width,
 }) => {
   return (
-    <div className={`flex flex-row items-center ${width ? `w-[${width}px]` : 'w-[375px]'} border-[1px] border-[#BBBBBB] focus-within:border-[1px] focus-within:border-purple-600 rounded-xl	px-5 py-3 ${containerStyle}`}>
+    <div className={`flex flex-row items-center ${width ? `w-[${width}px]` : 'w-[375px]'} border-[1px] border-[#BBBBBB] focus-within:border-[1px] focus-within:border-bright-purple rounded-xl	px-5 py-3 ${containerStyle}`}>
       <input
         type={type ?? 'text'}
         value={value}

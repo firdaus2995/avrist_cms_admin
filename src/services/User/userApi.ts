@@ -6,30 +6,30 @@ import {
 } from "graphql-request";
 
 import customFetchBase from "../../utils/Interceptor";
-export const userApi = createApi({
+export const userApi: any = createApi({
   reducerPath: 'userApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
     getUserDetail: builder.query<any, any>({
       query: payload => ({
         document: gql`
-        query userById($id: Int!) {
-          userById(id: $id) {
-            id
-            userId
-            fullName
-            email
-            dob
-            gender
-            company
-            isActive
-            role {
+          query userById($id: Int!) {
+            userById(id: $id) {
               id
-              name
+              userId
+              fullName
+              email
+              dob
+              gender
+              company
+              isActive
+              role {
+                id
+                name
+              }
             }
           }
-        }
-      `,
+        `,
         variables: payload,
       }),
     }),

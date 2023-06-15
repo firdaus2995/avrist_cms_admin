@@ -67,7 +67,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
           };
         };
       } else {
-        if (parentItem?.path === pathName) {
+        if (parentItem?.path === pathName || `/${pathName.split('/')[1]}` === parentItem?.path) {
           return parentItem.id;
         };
       };
