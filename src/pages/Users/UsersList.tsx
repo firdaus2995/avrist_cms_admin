@@ -144,9 +144,13 @@ export default function UsersList () {
   }, [data])
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {    
     if (sortModel.length) {
-      setSortBy(sortModel[0].id);
+      const listedColumn: any = {
+        userId: 'username',
+        fullName: 'name',
+      };
+      setSortBy(listedColumn[sortModel[0].id] ?? sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
     };
   }, []);
