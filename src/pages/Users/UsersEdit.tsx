@@ -61,7 +61,9 @@ export default function UsersEdit () {
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
   
   // RTK GET ROLE
-  const fetchUserDetailQuery = useGetUserDetailQuery({id});
+  const fetchUserDetailQuery = useGetUserDetailQuery({id}, {
+    refetchOnMountOrArgChange: true,
+  });
   const fetchRoleQuery = useGetRoleQuery({});
   const { data } = fetchUserDetailQuery;
   const { data: fetchedRole } = fetchRoleQuery;  
@@ -159,6 +161,7 @@ export default function UsersEdit () {
                 labelTitle="User ID"
                 labelStyle="font-bold	"
                 value={userId}
+                placeholder={t('user.edit.placeholder-user-id')}
                 disabled
               />
             </div>
@@ -167,6 +170,7 @@ export default function UsersEdit () {
                 labelTitle="Password"
                 labelStyle="font-bold	"
                 value={password}
+                placeholder={t('user.edit.placeholder-user-password')}
                 disabled
               />
             </div>
@@ -182,6 +186,7 @@ export default function UsersEdit () {
                 labelStyle="font-bold	"
                 labelRequired
                 value={fullName}
+                placeholder={t('user.edit.placeholder-user-fullname')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFullName(event.target.value);
                 }}
@@ -231,6 +236,7 @@ export default function UsersEdit () {
                 labelRequired
                 type="email"
                 value={email}
+                placeholder={t('user.edit.placeholder-user-email')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setEmail(event.target.value);
                 }}
@@ -260,21 +266,23 @@ export default function UsersEdit () {
             </div>
           </div>
         </div>
+        <div className="mt-[200px] flex justify-end items-end gap-2">
+          <button className="btn btn-outline btn-md" onClick={(event: any) => {
+            event.preventDefault();
+            setLeaveTitleModalShow(t('modal.confirmation'));
+            setMessageLeaveModalShow(t('modal.leave-confirmation'));
+            setShowLeaveModal(true);          
+          }}>
+            {isLoading ? 'Loading...' : t('btn.cancel')}
+          </button>
+          <button className="btn btn-success btn-md" onClick={(event: any) => {
+            event.preventDefault();
+            onSave();
+          }}>
+            {isLoading ? 'Loading...' : t('btn.save')}
+          </button>
+        </div>
       </form>
-      <div className="mt-[200px] flex justify-end items-end gap-2">
-        <button className="btn btn-outline btn-md" onClick={() => {
-          setLeaveTitleModalShow(t('modal.confirmation'));
-          setMessageLeaveModalShow(t('modal.leave-confirmation'));
-          setShowLeaveModal(true);          
-        }}>
-          {isLoading ? 'Loading...' : t('btn.cancel')}
-        </button>
-        <button className="btn btn-success btn-md" onClick={() => {
-          onSave();
-        }}>
-          {isLoading ? 'Loading...' : t('btn.save')}
-        </button>
-      </div>
     </TitleCard>
   );
 };

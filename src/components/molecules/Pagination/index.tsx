@@ -44,7 +44,7 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
       <div className="flex gap-5 items-center">
         <Menu as="div" className="relative inline-block text-left">
           <div>
-            <Menu.Button className="inline-flex w-[200px] justify-between rounded-xl p-3 text-sm font-medium text-[#333333] border-[1px] border-[#BBBBBB] active:border-purple-900">
+            <Menu.Button className="inline-flex w-[200px] justify-between rounded-xl p-3 text-sm font-medium text-[#333333] border-[1px] border-[#BBBBBB] active:border-purple">
               {pageSize} / Page
               <ChevronDownIcon className="ml-2 -mr-1 h-5 w-5 text-[#798F9F] " aria-hidden="true" />
             </Menu.Button>
@@ -67,8 +67,8 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
                           setPageSize(d);
                         }}
                         className={`${
-                          active ? 'bg-purple-100' : ''
-                        } ${pageSize === d ? 'text-purple-900 font-bold' : ''} group flex w-full items-center justify-between rounded-xl px-2 py-2 text-sm`}>
+                          active ? 'bg-light-purple' : ''
+                        } ${pageSize === d ? 'text-purple font-bold' : ''} group flex w-full items-center justify-between rounded-xl px-2 py-2 text-sm`}>
                         {d}
                         {
                           pageSize === d && (

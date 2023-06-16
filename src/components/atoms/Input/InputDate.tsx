@@ -24,7 +24,7 @@ export const InputDate: React.FC<IInputDate> = ({
   return (
     <div className={`form-control w-full ${containerStyle} `}>
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text'}>{labelRequired ? '*' : ''}</span></span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <div className={`relative rounded-3xl flex flex-row items-center justify-center input input-bordered w-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
         <input

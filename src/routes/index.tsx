@@ -19,7 +19,10 @@ const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesE
 
 const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
 
-const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplate'));
+// IMPORT PAGE TEMPLATES PAGE
+const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
+const PageTemplateNewPage = React.lazy(async () => await import('../pages/PageTemplates/PageTemplatesNew'));
+
 const PageManagementPage = React.lazy(async () => await import('../pages/PageManagement'));
 const PageManagementArchivePage = React.lazy(
   async () => await import('../pages/PageManagement/PageManagementArchive'),
@@ -33,6 +36,7 @@ export default function RoutesComponent() {
     <Routes>
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/forgot-password" element={<LoginPage />} />
         {/* <Route path="/forgot-password" element={<LoginPortal />} /> */}
         <Route path="/loginportal" element={<LoginPortal />} />
       </Route>
@@ -56,7 +60,8 @@ export default function RoutesComponent() {
           {/* MENU MANAGEMENT PAGES ROUTE */}
           <Route path="menu" element={<MenuManagementPage />} />
           {/* PAGE TEMPLATE PAGES ROUTE */}
-          <Route path="pageTemplate" element={<PageTemplatePage />} />
+          <Route path="page-template" element={<PageTemplatePage />} />
+          <Route path="page-template/new" element={<PageTemplateNewPage />} />
           {/* PAGE MANAGEMENT */}
           <Route path="page-management" element={<PageManagementPage />} />
           <Route path="page-management/archive" element={<PageManagementArchivePage />} />

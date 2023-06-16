@@ -9,7 +9,7 @@ interface IInputPassword {
   labelStyle?: string;
   containerStyle?: string;
   value?: string;
-  placeholder?: string;
+  placeholder?: string | null;
   disabled?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
