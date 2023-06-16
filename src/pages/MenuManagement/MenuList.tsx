@@ -38,7 +38,9 @@ export default function MenuList() {
   const [isOpenTab, setIsOpenTab] = useState(false);
   const [urlLink, setUrlLink] = useState('');
 
-  const fetchQuery = useGetMenuListQuery();
+  const fetchQuery = useGetMenuListQuery({}, {
+    refetchOnMountOrArgChange: true,
+  });
   const {data} = fetchQuery;
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [dataScructure, setDataStructure] = useState<any>([]);
@@ -78,7 +80,7 @@ export default function MenuList() {
             message: d.roleDelete.message,
           }),
         );
-        await fetchQuery.refetch();
+        navigate(0);
       })
       .catch(err => {
         setShowComfirm(false);
@@ -258,7 +260,7 @@ export default function MenuList() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu');
+        navigate(0);
       })
       .catch(() => {
         setIsOpenForm(false);
@@ -292,7 +294,7 @@ export default function MenuList() {
               title: t('toast-success'),
             }),
           );
-          await fetchQuery.refetch()
+        navigate(0);
         })
         .catch(() => {
           setIsOpenModal(false);
