@@ -55,7 +55,6 @@ export default function MenuList() {
   useEffect(() => {
     if(data){
         setDataStructure(data?.menuList?.menus)
-        console.log(store.getState().loginSlice.refreshToken)
     }
   }, [data])
 
@@ -249,7 +248,8 @@ export default function MenuList() {
     };
     createMenu(payload)
       .unwrap()
-      .then((d: any) => {
+      .then(( d: any) => {
+        console.log('edited')
         setIsOpenForm(false);
         setIsAddClicked(false);
         dispatch(
@@ -283,7 +283,8 @@ export default function MenuList() {
       };
       editMenu(payload)
         .unwrap()
-        .then((d: any) => {
+        .then(async (d: any) => {
+          console.log('edited')
           setIsOpenModal(false);
           dispatch(
             openToast({
@@ -291,7 +292,7 @@ export default function MenuList() {
               title: t('toast-success'),
             }),
           );
-          navigate('/menu');
+          await fetchQuery.refetch()
         })
         .catch(() => {
           setIsOpenModal(false);
