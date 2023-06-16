@@ -1,42 +1,113 @@
 // import { useParams } from 'react-router-dom';
 // import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 // import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { InputText } from '../../components/atoms/Input/InputText';
 import DropDown from '../../components/molecules/DropDown';
 import { CheckBox } from '../../components/atoms/Input/CheckBox';
 import LifeInsurance from '../../assets/lifeInsurance.png';
 import SortableTreeComponent from '../../components/atoms/SortableTree';
+import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
+import { store, useAppDispatch } from '../../store';
+import { openToast } from '../../components/atoms/Toast/slice';
+import { useNavigate } from 'react-router-dom';
+import { 
+    t,
+  } from "i18next";
+import Modal from '../../components/atoms/Modal';
+import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import WarningIcon from "../../assets/warning.png";
+import { GraphQLInputObjectType } from 'graphql';
 
 export default function MenuList() {
-  // const { t } = useTranslation();
   // const params = useParams();
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const [isAddClick, setIsAddClicked] = useState(false);
+  const [isOpenModal, setIsOpenModal] = useState(false);
+
+  const [showComfirm, setShowComfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setmessageConfirm] = useState('');
+  const [idDelete, setIdDelete] = useState('');
 
   const [title, setTitle] = useState('');
+  const [editedTitle, setEditedTitle] = useState('');
   const [page, setPage] = useState<any | null>('');
   const [type, setType] = useState<any | null>('');
   const [isOpenTab, setIsOpenTab] = useState(false);
   const [urlLink, setUrlLink] = useState('');
 
+  const fetchQuery = useGetMenuListQuery({}, {
+    refetchOnMountOrArgChange: true,
+  });
+  const {data} = fetchQuery;
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [dataScructure, setDataStructure] = useState<any>([]);
 
+  const [ createMenu ] = useCreateMenuMutation();
+  const [ editMenu ] = useEditMenuMutation();
+  const [ deleteMenu ] = useDeleteMenuMutation();
+  const [ updateStructure ] = useUpdateMenuStructureMutation();
+
+  useEffect(() => {
+    void fetchQuery.refetch()
+  }, [])
+
+  useEffect(() => {
+    if(data){
+        setDataStructure(data?.menuList?.menus)
+    }
+  }, [data])
+
+  const onConfirm = (id: string) => {
+    setIdDelete(id);
+    setTitleConfirm('Are you sure?');
+    setmessageConfirm(`Do you want to delete menu ${id}? \n Once you delete this menu, this menu won't be recovered`);
+    setShowComfirm(true);
+  };
+
+  const onDelete = () => {
+    deleteMenu({ id: idDelete })
+      .unwrap()
+      .then(async d => {
+        setShowComfirm(false);
+        setIsOpenModal(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success delete',
+            message: d.roleDelete.message,
+          }),
+        );
+        navigate(0);
+      })
+      .catch(err => {
+        setShowComfirm(false);
+        setIsOpenModal(false);
+
+        console.log(err);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Gagal delete',
+            message: 'Oops gagal delete',
+          }),
+        );
+      });
+  };
+
   function onSave() {
     const dataForm = {
-      id: `${title}_id`,
       title,
       page,
       type,
       urlLink,
       isOpenTab,
-      isDirectory: true,
-        expanded: true,
     };
     setDataStructure((data: any) => [...data, dataForm]);
 
-    setIsOpenForm(false);
-    setIsAddClicked(false);
+    
   }
 
   function clearForm() {
@@ -44,6 +115,196 @@ export default function MenuList() {
     setPage('');
     setType('');
     setIsOpenTab(false);
+  }
+
+  const onEdit = (data: any) => {
+    setTitle(data.node.title);
+    setEditedTitle(data.node.title);
+    setType(data.node.menuType);
+    setUrlLink(data.node.externalUrl);
+    setPage(data.node.pageId);
+    setIsOpenTab(data.node.isNewTab);
+
+    setIsOpenModal(true);
+    modalEdit()
+  }
+
+  const modalEdit = () => {
+    return (
+        <Modal open={isOpenModal} toggle={() => null} title="" width={840} height={480}>
+            <div className='grid grid-cols-2 gap-10 p-4 border-b-2'>
+                <div className='p-2 absolute right-5 top-5'>
+                    <svg 
+                        role='button'
+                        onClick={() => { setIsOpenModal(false); }}
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        strokeWidth={1.5} 
+                        stroke="currentColor" 
+                        className="w-6 h-6">
+                        <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </div>
+                <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
+                Page Title
+                <InputText 
+                    labelTitle='' 
+                    value={title}
+                    inputStyle='rounded-3xl' 
+                    onChange={(e) => { setTitle(e.target.value); }} />
+                </div>
+                <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
+                Type
+                <DropDown
+                    defaultValue={type}
+                    items={[
+                    {
+                        value: 'PAGE',
+                        label: 'Page',
+                    },
+                    {
+                        value: 'LINK',
+                        label: 'Link',
+                    },
+                    ]}
+                    onSelect={(_e, val) => { setType(val); }}
+                />
+                </div>
+                {type === 'PAGE' ? (
+                <div className='flex flex-row whitespace-nowrap items-center gap-20 text-lg font-bold'>
+                    Page
+                    <DropDown
+                    defaultValue={page}
+                    items={[
+                        {
+                        value: 1,
+                        label: 'Page 1',
+                        },
+                        {
+                        value: 2,
+                        label: 'Page 2',
+                        },
+                    ]}
+                    onSelect={(_e, val) => { setPage(val); }}
+                    />
+                </div>
+                ) : (
+                <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
+                    URL Link
+                    <InputText 
+                    labelTitle='' 
+                    value={urlLink}
+                    inputStyle='rounded-3xl' 
+                    onChange={(e) => { setUrlLink(e.target.value); }} />
+                </div>
+                )}
+                <p></p>
+                <div className='w-40 ml-28'>
+                <CheckBox
+                    defaultValue={isOpenTab}
+                    updateFormValue={(e) => { setIsOpenTab(e.value); } }
+                    labelTitle='Open in New Tab' updateType={''} />
+                </div>
+                <div className='place-self-end flex flex-row items-center gap-5 transition ease-in-out hover:-translate-y-1 delay-150'>
+                    <svg 
+                        role='button'
+                        onClick={() => {onConfirm(editedTitle)}}
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        strokeWidth={1.5} 
+                        stroke="currentColor" 
+                        className="w-6 h-6 text-red-500">
+                        <path 
+                            strokeLinecap="round" 
+                            strokeLinejoin="round" 
+                            d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+
+                    <div 
+                        role='button'
+                        aria-disabled
+                        onClick={() => {
+                            onEditMenu();
+                        }}
+                        className='py-2 w-28  px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white'>
+                        Save
+                    </div>
+                </div>
+            </div>
+        </Modal>
+    )
+  }
+
+  const onCreate = () => {
+    const payload = {
+      title,
+      menuType: type,
+      externalUrl: urlLink,
+      isNewTab: isOpenTab,
+      pageId: page,
+    };
+    createMenu(payload)
+      .unwrap()
+      .then(( d: any) => {
+        console.log('edited')
+        setIsOpenForm(false);
+        setIsAddClicked(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+          }),
+        );
+        navigate(0);
+      })
+      .catch(() => {
+        setIsOpenForm(false);
+        setIsAddClicked(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+          }),
+        );
+      });
+  };
+
+  function onEditMenu() {
+    const payload = {
+        title,
+        editedTitle,
+        menuType: type,
+        externalUrl: urlLink,
+        isNewTab: isOpenTab,
+        pageId: page,
+      };
+      editMenu(payload)
+        .unwrap()
+        .then(async (d: any) => {
+          console.log('edited')
+          setIsOpenModal(false);
+          dispatch(
+            openToast({
+              type: 'success',
+              title: t('toast-success'),
+            }),
+          );
+        navigate(0);
+        })
+        .catch(() => {
+          setIsOpenModal(false);
+          dispatch(
+            openToast({
+              type: 'error',
+              title: t('toast-failed'),
+            }),
+          );
+        });
   }
 
   const renderAddButtons = () => {
@@ -134,11 +395,11 @@ export default function MenuList() {
               defaultValue={page}
               items={[
                 {
-                  value: 'Page 1',
+                  value: 3,
                   label: 'Page 1',
                 },
                 {
-                  value: 'Page 2',
+                  value: 4,
                   label: 'Page 2',
                 },
               ]}
@@ -166,7 +427,7 @@ export default function MenuList() {
           role='button'
           aria-disabled
           onClick={() => {
-            onSave();
+            onCreate();
           }}
           className='py-4 w-28 place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white'>
           Save
@@ -174,6 +435,44 @@ export default function MenuList() {
       </div>
     )
   }
+
+  const onUpdateDataStructure = () => {
+    const data = dataScructure;
+
+    data.forEach(function(obj: {
+        [x: string]: any; child: any; children: any; 
+}) {
+        if (obj.children) {
+            obj.child = obj.children;
+            delete obj.children;
+        }
+        delete obj.expanded;
+    });
+
+    // console.log(JSON.stringify(data)); return
+
+    updateStructure({menuList: data})
+      .unwrap()
+      .then((d: any) => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('user.add.success-msg', { name: d.userCreate.fullName }),
+          }),
+        );
+        navigate('/menu');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('roles.add.failed-msg', { name: payload.title }),
+          }),
+        );
+      });
+  };
 
   return (
     <>
@@ -190,26 +489,45 @@ export default function MenuList() {
       {!isOpenForm && (
         <>
           {dataScructure?.length > 0 && (
-            <SortableTreeComponent data={dataScructure} onChange={function (_data: any): void {
-                throw new Error('Function not implemented.');
-              } } />
+            <SortableTreeComponent 
+                data={dataScructure} 
+                onClick={(data: any) => { onEdit(data); }} 
+                onChange={function (_data: any): void {
+                    setDataStructure(_data)
+                } } 
+            />
           )}
           {renderAddButtons()}
         </>
       )}
 
-      <div className='flex justify-end absolute bottom-10 right-10'>
+      {/* <div className='flex justify-end absolute bottom-10 right-10'>
         <div className='flex flex-row p-2 gap-2'>
           <button
             className="btn btn-outline text-xs btn-sm w-28">
             Cancel
           </button>
           <button
+            onClick={() => {
+                onUpdateDataStructure();
+            }}
             className="btn btn-success text-xs btn-sm w-28">
             Submit
           </button>
         </div>
-      </div>
+      </div> */}
+      {modalEdit()}
+      <ModalConfirmLeave
+        open={showComfirm}
+        cancelAction={() => {
+          setShowComfirm(false);
+        } }
+        title={titleConfirm}
+        cancelTitle="Cancel"
+        message={messageConfirm}
+        submitAction={onDelete}
+        submitTitle="Yes"
+        icon={WarningIcon} btnType={''}      />
     </>
   );
 }

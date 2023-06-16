@@ -34,15 +34,15 @@
     }
   },
   "roles": {
-    "role-name": "Nama Peran",
-    "role-description": "Deskripsi Peran",
+    "role-name": "Role Name",
+    "role-description": "Role Description",
     "add": {
-      "title": "Tambah Peran",
+      "title": "Add New Role",
       "success-msg": "Peran {{name}} berhasil disimpan",
       "failed-msg": "Peran {{name}} gagal disimpan"
     },
     "edit": {
-      "title": "Edit Peran",
+      "title": "Edit Role",
       "success-msg": "Peran {{name}} berhasil diperbarui",
       "failed-msg": "Peran {{name}} gagal diperbarui"
     }

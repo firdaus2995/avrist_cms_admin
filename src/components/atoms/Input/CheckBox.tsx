@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 interface ICheckBox {
@@ -36,7 +36,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
         <input
           type="checkbox"
           className="checkbox checkbox-primary mr-3"
-          checked={value}
+          checked={defaultValue}
           disabled={disabled}
           onChange={_e => {
             updateToogleValue();

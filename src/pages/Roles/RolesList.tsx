@@ -6,12 +6,12 @@ import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import Table from '../../components/molecules/Table';
-import type { SortingState } from '@tanstack/react-table';
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
 import WarningIcon from "../../assets/warning.png";
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
+import { SortingState } from '@tanstack/react-table';
 
 const CreateButton = () => {
   return (
@@ -42,17 +42,26 @@ export default function RolesList() {
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setmessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
-  const fetchQuery = useGetRolesQuery({
-    pageIndex: 0,
-    limit: 100,
-    direction: '',
-    search: '',
-    sortBy: '',
-  });
-  const { data } = fetchQuery;
+  
   const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
-  const [searchData, setSearchData] = useState('');
+  const [search, setSearch] = useState('');
   const [listData, setListData] = useState<any>([]);
+  const [total, setTotal] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(5);
+  const [direction, setDirection] = useState('asc');
+  const [sortBy, setSortBy] = useState('id');
+
+  const fetchQuery = useGetRolesQuery({
+    pageIndex,
+    limit: pageLimit,
+    direction,
+    search,
+    sortBy,
+  }, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data, isFetching, isError } = fetchQuery;
 
   const onConfirm = (id: number, name: string) => {
     setIdDelete(id);
@@ -92,30 +101,13 @@ export default function RolesList() {
   useEffect(() => {
     if(data){
       setListData(data?.roleList?.roles)
+      setTotal(data?.roleList?.total);
     }
   }, [data])
 
   useEffect(() => {
     void fetchQuery.refetch()
   }, [])
-
-  useEffect(() => {
-    const filtered = data?.roleList?.roles?.filter((val) => (
-      val?.id === 3 ||
-      val?.name?.includes(searchData) ||
-      val?.description?.includes(searchData)
-    ));
-
-    setListData(filtered)
-
-  }, [searchData])
-
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
-    if (sortModel.length) {
-      // setSortBy(sortModel[0].id)
-      // setDirection(sortModel[0].desc ? "desc" : "asc")
-    }
-  }, []);
 
   const COLUMNS = [
     {
@@ -173,6 +165,14 @@ export default function RolesList() {
     },
   ];
 
+  // FUNCTION FOR SORTING FOR ATOMIC TABLE
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      setSortBy(sortModel[0].id);
+      setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    };
+  }, []);
+
   return (
     <>
       <ModalConfirmLeave
@@ -192,10 +192,8 @@ export default function RolesList() {
         topMargin="mt-2" 
         SearchBar={
           <InputSearch 
-            value={searchData} 
-            onChange={(e) => { setSearchData(e.target.value); }} 
             onBlur={(e: any) => {
-              console.log(e);
+              setSearch(e.target.value);
             }}
             placeholder="Search"
           />
@@ -205,19 +203,24 @@ export default function RolesList() {
           <Table
             rows={listData || ''}
             columns={COLUMNS}
-            loading={false}
-            error={false}
+            loading={isFetching}
+            error={isError}
             manualPagination={true}
             manualSorting={true}
             onSortModelChange={handleSortModelChange}
           />
         </div>
         <PaginationComponent
-          page={1}
-          setPage={() => null}
-          total={100}
-          pageSize={10}
-          setPageSize={() => null}
+          total={total}
+          page={pageIndex}
+          pageSize={pageLimit}
+          setPageSize={(page: number) => {
+            setPageLimit(page);
+            setPageIndex(0);
+          }}
+          setPage={(page: number) => {
+            setPageIndex(page);
+          }}
         />
       </TitleCard>
     </>
