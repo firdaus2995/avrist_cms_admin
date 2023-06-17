@@ -6,32 +6,12 @@ import { ISortableTree } from './types';
 <style>.button {}</style>;
 
 export default function SortableTreeComponent(props: ISortableTree) {
-  const { data, onChange } = props;
+  const { data, onChange, onClick } = props;
   const [treeData, setTreeData] = useState(data);
 
   function updateTreeData(treeData: SetStateAction<any[]>) {
     setTreeData(treeData);
   }
-
-  const alertNodeInfo = (rowInfo: {
-    node: any;
-    path: any;
-    treeIndex: any;
-    lowerSiblingCounts?: number[];
-    isSearchMatch?: boolean;
-    isSearchFocus?: boolean;
-  }) => {
-    const objectString = Object.keys(rowInfo.node)
-      .map(k => (k === 'children' ? 'children: Array' : `${k}: '${rowInfo.node[k]}'`))
-      .join(',\n   ');
-
-    alert(
-      'Info passed to the icon and button generators:\n\n' +
-        `node: {\n   ${objectString}\n},\n` +
-        `path: [${rowInfo.path.join(', ')}],\n` +
-        `treeIndex: ${rowInfo.treeIndex}`,
-    );
-  };
 
   return (
     <div className="mt-10">
@@ -44,19 +24,28 @@ export default function SortableTreeComponent(props: ISortableTree) {
           }}
           canDrag={({ node }) => !node.dragDisabled}
           maxDepth={3}
-          // canDrop={({ nextParent,nextPath }) =>(!nextParent?.noChildren) && nextPath.length>1 }
           generateNodeProps={rowInfo => ({
             // title: rowInfo.node.label,
             // subtitle: rowInfo.node.subTitle,
+            children: rowInfo.node.child,
             buttons: [
               <div key={1}>
-                <button
-                  className="btn btn-active btn-ghost btn-xs m-2"
-                  onClick={_event => {
-                    alertNodeInfo(rowInfo);
-                  }}>
-                  Info
-                </button>
+                <div className='p-2'>
+                  <svg 
+                    role='button'
+                    onClick={() => { onClick(rowInfo); }}
+                    xmlns="http://www.w3.org/2000/svg" 
+                    fill="none" 
+                    viewBox="0 0 24 24" 
+                    strokeWidth={1.5} 
+                    stroke="currentColor" 
+                    className="w-6 h-6">
+                    <path 
+                      strokeLinecap="round" 
+                      strokeLinejoin="round"
+                      d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  </svg>
+                </div>
               </div>,
             ],
             style: {

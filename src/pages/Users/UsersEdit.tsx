@@ -266,21 +266,23 @@ export default function UsersEdit () {
             </div>
           </div>
         </div>
+        <div className="mt-[200px] flex justify-end items-end gap-2">
+          <button className="btn btn-outline btn-md" onClick={(event: any) => {
+            event.preventDefault();
+            setLeaveTitleModalShow(t('modal.confirmation'));
+            setMessageLeaveModalShow(t('modal.leave-confirmation'));
+            setShowLeaveModal(true);          
+          }}>
+            {isLoading ? 'Loading...' : t('btn.cancel')}
+          </button>
+          <button className="btn btn-success btn-md" onClick={(event: any) => {
+            event.preventDefault();
+            onSave();
+          }}>
+            {isLoading ? 'Loading...' : t('btn.save')}
+          </button>
+        </div>
       </form>
-      <div className="mt-[200px] flex justify-end items-end gap-2">
-        <button className="btn btn-outline btn-md" onClick={() => {
-          setLeaveTitleModalShow(t('modal.confirmation'));
-          setMessageLeaveModalShow(t('modal.leave-confirmation'));
-          setShowLeaveModal(true);          
-        }}>
-          {isLoading ? 'Loading...' : t('btn.cancel')}
-        </button>
-        <button className="btn btn-success btn-md" onClick={() => {
-          onSave();
-        }}>
-          {isLoading ? 'Loading...' : t('btn.save')}
-        </button>
-      </div>
     </TitleCard>
   );
 };

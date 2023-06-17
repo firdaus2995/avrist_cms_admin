@@ -32,7 +32,7 @@ const Radio = ({
   return (
     <div className="w-full flex flex-col">
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text text-lg'}>{labelRequired ? '*' : ''}</span></span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <div className="flex flex-row gap-2 h-[48px] items-center">
         {

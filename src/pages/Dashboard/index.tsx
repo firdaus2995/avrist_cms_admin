@@ -2,7 +2,6 @@ import { useTranslation } from 'react-i18next';
 import DropDown from '../../components/molecules/DropDown';
 import DropDownList from '../../components/molecules/DropDownList';
 import CkEditor from '../../components/atoms/Ckeditor';
-import SortableTreeComponent from '../../components/atoms/SortableTree';
 import Table from '../../components/molecules/Table';
 import { COLUMNS } from './column';
 import { useCallback } from 'react';
@@ -68,9 +67,6 @@ export default function Dashboard() {
         />
       </div>
       <CkEditor />
-      <SortableTreeComponent data={seed} onChange={function (_data: any): void {
-        throw new Error('Function not implemented.');
-      } } />
       <br />
       <br />
       <Table
@@ -85,33 +81,6 @@ export default function Dashboard() {
     </div>
   );
 }
-
-const seed = [
-  {
-    id: '123',
-    title: 'Company',
-    subtitle: 'zzz',
-    isDirectory: true,
-    expanded: true,
-    children: [
-      { id: '456', title: 'Human Resource', subtitle: 'zzz' },
-      {
-        id: '789',
-        title: 'Bussiness',
-        subtitle: 'zzz',
-        expanded: true,
-        children: [
-          {
-            id: '234',
-            title: 'Store A',
-            subtitle: 'zzz',
-          },
-          { id: '567', title: 'Store B', subtitle: 'zzz' },
-        ],
-      },
-    ],
-  },
-];
 
 const dummy = [
   {

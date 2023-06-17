@@ -7,6 +7,7 @@ interface IInputText {
   labelTitle: string;
   labelStyle?: string;
   labelRequired?: boolean;
+  labelWidth?: number;
   inputStyle?: string;
   type?: HTMLInputTypeAttribute;
   containerStyle?: string;
@@ -14,6 +15,10 @@ interface IInputText {
   placeholder?: string | null;
   disabled?: boolean;
   suffix?: React.ReactNode;
+  direction?: string;
+  roundStyle?: string;
+  themeColor?: string;
+  inputWidth?: number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -21,6 +26,7 @@ export const InputText: React.FC<IInputText> = ({
   labelTitle,
   labelStyle = '',
   labelRequired,
+  labelWidth = 225,
   type,
   containerStyle = '',
   value,
@@ -29,13 +35,17 @@ export const InputText: React.FC<IInputText> = ({
   onChange,
   suffix,
   inputStyle,
+  direction,
+  roundStyle = '3xl',
+  themeColor,
+  inputWidth,
 }) => {
   return (
-    <div className={`form-control w-full ${containerStyle} `}>
-      <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-required-text text-lg'}>{labelRequired ? '*' : ''}</span></span>
+    <div className={`form-control w-full ${containerStyle} ${direction === 'row' ? 'flex-row' : ''}`}>
+      <label className={`label ${direction === 'row' ? `w-[${labelWidth}px]` : ''}`}>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span></span>
       </label>
-      <div className={`input input-bordered w-full rounded-3xl focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
+      <div className={`input input-bordered ${inputWidth ? `w-[${inputWidth}px]` : 'w-full'} ${`rounded-${roundStyle}`} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
         <input
           type={type ?? 'text'}
           value={value}
@@ -58,6 +68,7 @@ InputText.propTypes = {
   labelTitle: PropTypes.string.isRequired,
   labelStyle: PropTypes.string,
   labelRequired: PropTypes.bool,
+  labelWidth: PropTypes.number,
   type: PropTypes.string,
   containerStyle: PropTypes.string,
   value: PropTypes.string,
@@ -65,5 +76,9 @@ InputText.propTypes = {
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
   suffix: PropTypes.any,
+  direction: PropTypes.string,
   inputStyle: PropTypes.string,
+  roundStyle: PropTypes.string,
+  themeColor: PropTypes.string,
+  inputWidth: PropTypes.number,
 };

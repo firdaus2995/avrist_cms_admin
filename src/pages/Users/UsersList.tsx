@@ -109,13 +109,13 @@ export default function UsersList () {
   
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState([]);
+  const [search, setSearch] = useState('');
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
   const [direction, setDirection] = useState('asc');
   const [sortBy, setSortBy] = useState('id');
-  const [search, setSearch] = useState('');
   // DELETE MODAL STATE
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
@@ -144,9 +144,13 @@ export default function UsersList () {
   }, [data])
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {    
     if (sortModel.length) {
-      setSortBy(sortModel[0].id);
+      const listedColumn: any = {
+        userId: 'username',
+        fullName: 'name',
+      };
+      setSortBy(listedColumn[sortModel[0].id] ?? sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
     };
   }, []);
@@ -167,6 +171,7 @@ export default function UsersList () {
           }),
         );
         await fetchQuery.refetch();
+        setPageIndex(0);
       })
       .catch(() => {
         setOpenDeleteModal(false);

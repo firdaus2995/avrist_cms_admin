@@ -6,6 +6,7 @@ import { loginApi } from './services/Login/loginApi';
 import { rolesApi } from './services/Roles/rolesApi';
 import { userApi } from './services/User/userApi';
 import { pageManagementApi } from './services/PageManagement/pageManagementApi';
+import { pageTemplateApi } from './services/PageTemplate/pageTemplateApi';
 
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
@@ -13,6 +14,7 @@ import loginSlice from './services/Login/slice';
 import rolesSlice from './services/Roles/rolesSlice';
 import toastSlice from './components/atoms/Toast/slice';
 import pageManagementSlice from './services/PageManagement/pageManagementSlice';
+import { menuApi } from './services/Menu/menuApi';
 
 export const store: any = configureStore({
   reducer: {
@@ -25,14 +27,18 @@ export const store: any = configureStore({
     [loginApi.reducerPath]: loginApi.reducer,
     [rolesApi.reducerPath]: rolesApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
+    [menuApi.reducerPath]: menuApi.reducer,
     [pageManagementApi.reducerPath]: pageManagementApi.reducer,
+    [pageTemplateApi.reducerPath]: pageTemplateApi.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
       .concat(loginApi.middleware)
       .concat(rolesApi.middleware)
       .concat(userApi.middleware)
-      .concat(pageManagementApi.middleware),
+      .concat(menuApi.middleware)
+      .concat(pageManagementApi.middleware)
+      .concat(pageTemplateApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

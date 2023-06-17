@@ -20,10 +20,10 @@ export default function ModalConfirmLeave(props: IModalConfirm) {
         <p className="text-xl font-bold mb-3 text-center">{title}</p>
         <div className="text-sm mb-7 text-center whitespace-pre-wrap">{message}</div>
         <div className="flex justify-center gap-3 w-full">
-          <button className="btn btn-outline btn-md" onClick={cancelAction}>
+          <button className="btn btn-outline w-[105px] min-h-0 h-[40px]" onClick={cancelAction}>
             {cancelTitle}
           </button>
-          <button className={`btn ${btnType || 'btn-error'} btn-md`} onClick={submitAction}>
+          <button className={`btn ${btnType || 'bg-reddist hover:bg-dark-reddist'} w-[105px] min-h-0 h-[40px]`} onClick={submitAction}>
             {loading ? 'Loading...' : submitTitle}
           </button>
         </div>
