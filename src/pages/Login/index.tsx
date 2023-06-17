@@ -1,13 +1,13 @@
 import { useState } from 'react';
-import { useLoginMutation } from '../../services/Login/loginApi';
-import { storeDataStorage } from '../../utils/SessionStorage';
-import BottomAccessories from '../../assets/login/bottom-accessories.svg';
-import IconContainer from '../../assets/login/icon-container.svg';
-import Logo from '../../assets/Avrist-logo.png';
-import LoginIllustrator from '../../assets/login/login-illustrator.svg';
-import BackArrowLeft from '../../assets/back-arrow-left.svg';
-import Typography from '../../components/atoms/Typography';
-import AuthInput from '../../components/atoms/Input/AuthInput';
+import { useLoginMutation } from '@/services/Login/loginApi';
+import { storeDataStorage } from '@/utils/SessionStorage';
+import BottomAccessories from '@/assets/login/bottom-accessories.svg';
+import IconContainer from '@/assets/login/icon-container.svg';
+import Logo from '@/assets/Avrist-logo.png';
+import LoginIllustrator from '@/assets/login/login-illustrator.svg';
+import BackArrowLeft from '@/assets/back-arrow-left.svg';
+import Typography from '@/components/atoms/Typography';
+import AuthInput from '@/components/atoms/Input/AuthInput';
 import { Link, useLocation } from 'react-router-dom';
 
 export default function Login() {
