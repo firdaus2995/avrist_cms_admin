@@ -7,7 +7,7 @@ import DropDown from '../../components/molecules/DropDown';
 import { CheckBox } from '../../components/atoms/Input/CheckBox';
 import LifeInsurance from '../../assets/lifeInsurance.png';
 import SortableTreeComponent from '../../components/atoms/SortableTree';
-import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery } from '../../services/Menu/menuApi';
+import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
@@ -17,6 +17,7 @@ import {
 import Modal from '../../components/atoms/Modal';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import WarningIcon from "../../assets/warning.png";
+// import { GraphQLInputObjectType } from 'graphql';
 
 export default function MenuList() {
   // const params = useParams();
@@ -47,6 +48,7 @@ export default function MenuList() {
   const [ createMenu ] = useCreateMenuMutation();
   const [ editMenu ] = useEditMenuMutation();
   const [ deleteMenu ] = useDeleteMenuMutation();
+  const [ updateStructure ] = useUpdateMenuStructureMutation();
 
   useEffect(() => {
     void fetchQuery.refetch()
@@ -94,6 +96,19 @@ export default function MenuList() {
         );
       });
   };
+
+  // function onSave() {
+  //   const dataForm = {
+  //     title,
+  //     page,
+  //     type,
+  //     urlLink,
+  //     isOpenTab,
+  //   };
+  //   setDataStructure((data: any) => [...data, dataForm]);
+
+    
+  // }
 
   function clearForm() {
     setTitle('');
@@ -235,7 +250,7 @@ export default function MenuList() {
     };
     createMenu(payload)
       .unwrap()
-      .then(() => {
+      .then(( d: any) => {
         console.log('edited')
         setIsOpenForm(false);
         setIsAddClicked(false);
@@ -270,7 +285,7 @@ export default function MenuList() {
       };
       editMenu(payload)
         .unwrap()
-        .then(async () => {
+        .then(async (d: any) => {
           console.log('edited')
           setIsOpenModal(false);
           dispatch(
@@ -421,6 +436,44 @@ export default function MenuList() {
     )
   }
 
+  const onUpdateDataStructure = () => {
+    const data = dataScructure;
+
+    data.forEach(function(obj: {
+        [x: string]: any; child: any; children: any; 
+}) {
+        if (obj.children) {
+            obj.child = obj.children;
+            delete obj.children;
+        }
+        delete obj.expanded;
+    });
+
+    // console.log(JSON.stringify(data)); return
+
+    updateStructure({menuList: data})
+      .unwrap()
+      .then((d: any) => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('user.add.success-msg', { name: d.userCreate.fullName }),
+          }),
+        );
+        navigate('/menu');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('roles.add.failed-msg', { name: payload.title }),
+          }),
+        );
+      });
+  };
+
   return (
     <>
       {/* <TitleCard title='Avrist Life Insurance' topMargin="mt-2">
@@ -448,7 +501,7 @@ export default function MenuList() {
         </>
       )}
 
-      {/* <div className='flex justify-end absolute bottom-10 right-10'>
+      <div className='flex justify-end absolute bottom-10 right-10'>
         <div className='flex flex-row p-2 gap-2'>
           <button
             className="btn btn-outline text-xs btn-sm w-28">
@@ -462,7 +515,7 @@ export default function MenuList() {
             Submit
           </button>
         </div>
-      </div> */}
+      </div>
       {modalEdit()}
       <ModalConfirmLeave
         open={showComfirm}

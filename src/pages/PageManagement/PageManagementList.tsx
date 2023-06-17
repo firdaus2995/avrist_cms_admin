@@ -20,6 +20,7 @@ import WarningIcon from '../../assets/warning.png';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
 import StatusBadge from './components/StatusBadge';
+import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
 
 const TopRightButton = () => {
@@ -90,6 +91,8 @@ export default function PageManagementList() {
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
+  const [idLog, setIdLog] = useState(null);
+  const [logTitle, setLogTitle] = useState(null);
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -150,8 +153,15 @@ export default function PageManagementList() {
                 : '-'
             }
           />
-          <div className="ml-3 cursor-pointer tooltip" data-tip="Log">
+          <div
+            className="ml-3 cursor-pointer tooltip"
+            data-tip="Log"
+            onClick={() => {
+              setIdLog(info?.row?.original?.id);
+              setLogTitle(info?.row?.original?.title);
+            }}>
             <img src={TimelineLog} className="w-6 h-6" />
+            {/* <p>{info?.row?.original?.id}</p> */}
           </div>
         </>
       ),
@@ -269,9 +279,16 @@ export default function PageManagementList() {
         );
       });
   };
-
   return (
     <>
+      <ModalLog
+        id={idLog}
+        open={!!idLog}
+        toggle={() => {
+          setIdLog(null);
+        }}
+        title={`Log Approval - ${logTitle}`}
+      />
       <ModalConfirmLeave
         open={showConfirm}
         cancelAction={() => {
