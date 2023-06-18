@@ -4,7 +4,7 @@ interface ITypographyProps {
   className?: string;
   type?: 'heading' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'heading5' | 'body';
   size?: 'xl' | 'l' | 'm' | 'normal' | 's' | 'xs';
-  weight?: 'bold' | 'medium' | 'regular' | 'light';
+  weight?: 'bold' | 'medium' | 'regular' | 'light' | 'semi';
   children: React.ReactNode;
 }
 
