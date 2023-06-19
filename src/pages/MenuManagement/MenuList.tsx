@@ -250,7 +250,7 @@ export default function MenuList() {
     };
     createMenu(payload)
       .unwrap()
-      .then(( d: any) => {
+      .then(() => {
         console.log('edited')
         setIsOpenForm(false);
         setIsAddClicked(false);
@@ -285,7 +285,7 @@ export default function MenuList() {
       };
       editMenu(payload)
         .unwrap()
-        .then(async (d: any) => {
+        .then(async () => {
           console.log('edited')
           setIsOpenModal(false);
           dispatch(
@@ -441,7 +441,7 @@ export default function MenuList() {
 
     data.forEach(function(obj: {
         [x: string]: any; child: any; children: any; 
-}) {
+    }) {
         if (obj.children) {
             obj.child = obj.children;
             delete obj.children;
@@ -468,7 +468,7 @@ export default function MenuList() {
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('roles.add.failed-msg', { name: payload.title }),
+            message: t('roles.add.failed-msg', { name: data.title }),
           }),
         );
       });
