@@ -157,7 +157,31 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    pageLogApproval: builder.query<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          query pageLogApproval($id: Int!) {
+            pageLogApproval(id: $id) {
+              logs {
+                date
+                value {
+                  pageStatus
+                  comment
+                  createdByName
+                  logCreatedAt
+                }
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
-export const { useGetPageManagementListQuery, useDeletePageMutation, useRestorePageMutation } =
-  pageManagementApi;
+export const {
+  useGetPageManagementListQuery,
+  useDeletePageMutation,
+  useRestorePageMutation,
+  usePageLogApprovalQuery,
+} = pageManagementApi;

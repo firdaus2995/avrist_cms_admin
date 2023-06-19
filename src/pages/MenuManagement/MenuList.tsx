@@ -8,7 +8,7 @@ import { CheckBox } from '../../components/atoms/Input/CheckBox';
 import LifeInsurance from '../../assets/lifeInsurance.png';
 import SortableTreeComponent from '../../components/atoms/SortableTree';
 import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
-import { store, useAppDispatch } from '../../store';
+import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
 import { 

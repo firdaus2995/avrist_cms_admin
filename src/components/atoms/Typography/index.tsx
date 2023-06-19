@@ -4,7 +4,7 @@ interface ITypographyProps {
   className?: string;
   type?: 'heading' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'heading5' | 'body';
   size?: 'xl' | 'l' | 'm' | 'normal' | 's' | 'xs';
-  weight?: 'bold' | 'medium' | 'regular';
+  weight?: 'bold' | 'medium' | 'regular' | 'light' | 'semi';
   children: React.ReactNode;
 }
 
@@ -31,8 +31,10 @@ const fontSizeClasses: IFontSizeClasses = {
 
 const fontWeightClasses: IFontWeightClasses = {
   bold: 'font-bold',
+  semi: 'font-semibold',
   medium: 'font-medium',
   regular: 'font-normal',
+  light: 'font-light',
 };
 
 const Typography: React.FC<ITypographyProps> = ({
