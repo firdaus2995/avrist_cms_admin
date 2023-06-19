@@ -106,6 +106,7 @@ export default function PageTemplatesNew () {
             direction="row"
             roundStyle="xl"
             inputWidth={350}
+            placeholder="Content"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setPageName(event.target.value);
             }}
@@ -118,6 +119,7 @@ export default function PageTemplatesNew () {
             direction="row"
             roundStyle="xl"
             inputWidth={350}
+            placeholder="Content"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setPageDescription(event.target.value);
             }}
@@ -130,6 +132,7 @@ export default function PageTemplatesNew () {
             direction="row"
             roundStyle="xl"
             inputWidth={350}
+            placeholder="Content"
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               setPageFileName(event.target.value);
             }}
