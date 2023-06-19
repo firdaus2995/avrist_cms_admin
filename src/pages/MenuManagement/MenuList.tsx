@@ -17,7 +17,7 @@ import {
 import Modal from '../../components/atoms/Modal';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import WarningIcon from "../../assets/warning.png";
-import { GraphQLInputObjectType } from 'graphql';
+import CancelIcon from "../../assets/cancel.png";
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 
 export default function MenuList() {
@@ -28,6 +28,7 @@ export default function MenuList() {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const [showComfirm, setShowComfirm] = useState(false);
+  const [showCancel, setShowCancel] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setmessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState('');
@@ -45,6 +46,7 @@ export default function MenuList() {
   const {data} = fetchQuery;
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [dataScructure, setDataStructure] = useState<any>([]);
+  const [dataScructureInit, setDataStructureInit] = useState<any>([]);
 
   const [ createMenu ] = useCreateMenuMutation();
   const [ editMenu ] = useEditMenuMutation();
@@ -52,11 +54,11 @@ export default function MenuList() {
   const [ updateStructure ] = useUpdateMenuStructureMutation();
 
   // TABLE PAGINATION STATE
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
-  const [direction, setDirection] = useState('asc');
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('id');
+  const [pageIndex] = useState(0);
+  const [pageLimit] = useState(5);
+  const [direction] = useState('asc');
+  const [search] = useState('');
+  const [sortBy] = useState('id');
   const [listPage, setListPage] = useState([]);
 
   // RTK GET DATA
@@ -91,6 +93,7 @@ export default function MenuList() {
   useEffect(() => {
     if(data){
         setDataStructure(data?.menuList?.menus)
+        setDataStructureInit(data?.menuList?.menus)
     }
   }, [data])
 
@@ -454,27 +457,25 @@ export default function MenuList() {
 
     // console.log(JSON.stringify(data)); return
 
-    updateStructure({menuList: data})
-      .unwrap()
-      .then((d: any) => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-            message: t('user.add.success-msg', { name: d.userCreate.fullName }),
-          }),
-        );
-        navigate('/menu');
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-            message: t('roles.add.failed-msg', { name: payload.title }),
-          }),
-        );
-      });
+  updateStructure({menuList: data})
+    .unwrap()
+    .then((d: any) => {
+      dispatch(
+        openToast({
+          type: 'success',
+          title: t('toast-success'),
+        }),
+      );
+      navigate('/menu');
+    })
+    .catch(() => {
+      dispatch(
+        openToast({
+          type: 'error',
+          title: t('toast-failed'),
+        }),
+      );
+    });
   };
 
   return (
@@ -504,21 +505,26 @@ export default function MenuList() {
         </>
       )}
 
-      <div className='flex justify-end absolute bottom-10 right-10'>
-        <div className='flex flex-row p-2 gap-2'>
-          <button
-            className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
-          </button>
-          <button
-            onClick={() => {
+      {dataScructure !== dataScructureInit && (
+        <div className='flex justify-end absolute bottom-10 right-10'>
+          <div className='flex flex-row p-2 gap-2'>
+            <button
+              onClick={() => {
+                setShowCancel(true);
+              }}
+              className="btn btn-outline text-xs btn-sm w-28 h-10">
+              Cancel
+            </button>
+            <button
+              onClick={() => {
                 onUpdateDataStructure();
-            }}
-            className="btn btn-success text-xs btn-sm w-28 h-10">
-            Submit
-          </button>
+              }}
+              className="btn btn-success text-xs btn-sm w-28 h-10">
+              Submit
+            </button>
+          </div>
         </div>
-      </div>
+      )}
       {modalEdit()}
       <ModalConfirmLeave
         open={showComfirm}
@@ -531,6 +537,17 @@ export default function MenuList() {
         submitAction={onDelete}
         submitTitle="Yes"
         icon={WarningIcon} btnType={''}      />
+      <ModalConfirmLeave
+        open={showCancel}
+        cancelAction={() => {
+          setShowCancel(false);
+        } }
+        title={"Are you sure?"}
+        cancelTitle="Cancel"
+        message={"Do you want to cancel all of the process?"}
+        submitAction={() => {navigate(0);}}
+        submitTitle="Yes"
+        icon={CancelIcon} btnType={'btn-warning'}      />
     </>
   );
 }

@@ -103,15 +103,15 @@ export const menuApi = createApi({
     updateMenuStructure: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-        mutation menuStructureUpdate($menuList: [Menu]!){
-          menuStructureUpdate(
-              request: {
-                  menuList: $menuList
-              }
-          ) {    
-              message
+          mutation menuStructureUpdate($menuList: [Menu]!){
+            menuStructureUpdate(
+                request: {
+                    menuList: $menuList
+                }
+            ) {    
+                message
+            }
           }
-      }
         `,
         variables: payload,
       })
