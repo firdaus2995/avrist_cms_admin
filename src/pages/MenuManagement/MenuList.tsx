@@ -92,8 +92,12 @@ export default function MenuList() {
 
   useEffect(() => {
     if(data){
-        setDataStructure(data?.menuList?.menus)
-        setDataStructureInit(data?.menuList?.menus)
+      const listData = data?.menuList?.menus;
+
+      const result = listData.map((e,i) => ({...e, "children":listData[i].child}));
+
+      setDataStructure(result)
+      setDataStructureInit(result)
     }
   }, [data])
 
