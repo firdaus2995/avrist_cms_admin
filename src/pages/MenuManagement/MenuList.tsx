@@ -447,7 +447,7 @@ export default function MenuList() {
 
     data.forEach(function(obj: {
         [x: string]: any; child: any; children: any; 
-}) {
+    }) {
         if (obj.children) {
             obj.child = obj.children;
             delete obj.children;

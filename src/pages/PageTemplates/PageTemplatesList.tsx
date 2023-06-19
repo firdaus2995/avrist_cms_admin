@@ -39,7 +39,7 @@ export default function PageTemplatesNew () {
   // TABLE COLUMN
   const columns = [
     {
-      header: () => <span className="text-[14px]">Page Id</span>,
+      header: () => <span className="text-[14px]">Page ID</span>,
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -75,7 +75,7 @@ export default function PageTemplatesNew () {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Aksi</span>,
+      header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
