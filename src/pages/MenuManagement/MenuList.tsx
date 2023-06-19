@@ -18,6 +18,7 @@ import Modal from '../../components/atoms/Modal';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import WarningIcon from "../../assets/warning.png";
 import { GraphQLInputObjectType } from 'graphql';
+import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 
 export default function MenuList() {
   // const params = useParams();
@@ -50,6 +51,39 @@ export default function MenuList() {
   const [ deleteMenu ] = useDeleteMenuMutation();
   const [ updateStructure ] = useUpdateMenuStructureMutation();
 
+  // TABLE PAGINATION STATE
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(5);
+  const [direction, setDirection] = useState('asc');
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('id');
+  const [listPage, setListPage] = useState([]);
+
+  // RTK GET DATA
+  const fetchQueryPage = useGetPageManagementListQuery({
+    pageIndex,
+    limit: pageLimit,
+    direction,
+    search,
+    sortBy,
+    isArchive: false,
+  });
+
+  useEffect(() => {
+    const data = fetchQueryPage?.data?.pageList?.pages;
+
+    const listData = data?.map((val: { id: any; title: any; }) => {
+      const list = {
+        'value': val.id,
+        'label': val.title
+      }
+
+      return list;
+    })
+
+    setListPage(listData)
+  }, [fetchQueryPage])
+  
   useEffect(() => {
     void fetchQuery.refetch()
   }, [])
@@ -96,19 +130,6 @@ export default function MenuList() {
         );
       });
   };
-
-  function onSave() {
-    const dataForm = {
-      title,
-      page,
-      type,
-      urlLink,
-      isOpenTab,
-    };
-    setDataStructure((data: any) => [...data, dataForm]);
-
-    
-  }
 
   function clearForm() {
     setTitle('');
@@ -179,16 +200,7 @@ export default function MenuList() {
                     Page
                     <DropDown
                     defaultValue={page}
-                    items={[
-                        {
-                        value: 1,
-                        label: 'Page 1',
-                        },
-                        {
-                        value: 2,
-                        label: 'Page 2',
-                        },
-                    ]}
+                    items={listPage}
                     onSelect={(_e, val) => { setPage(val); }}
                     />
                 </div>
@@ -250,7 +262,7 @@ export default function MenuList() {
     };
     createMenu(payload)
       .unwrap()
-      .then(( d: any) => {
+      .then(() => {
         console.log('edited')
         setIsOpenForm(false);
         setIsAddClicked(false);
@@ -285,7 +297,7 @@ export default function MenuList() {
       };
       editMenu(payload)
         .unwrap()
-        .then(async (d: any) => {
+        .then(async () => {
           console.log('edited')
           setIsOpenModal(false);
           dispatch(
@@ -364,7 +376,7 @@ export default function MenuList() {
     return (
       <div className='grid grid-cols-2 gap-10 p-4 border-b-2'>
         <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
-          Page Title
+          <span className={`label-text text-base-content`}>Page Title<span className={'text-reddist text-lg'}>*</span></span>
           <InputText 
             labelTitle='' 
             value={title}
@@ -390,19 +402,10 @@ export default function MenuList() {
         </div>
         {type === 'Page' ? (
           <div className='flex flex-row whitespace-nowrap items-center gap-20 text-lg font-bold'>
-            Page
+            <span className={`label-text text-base-content`}>Page<span className={'text-reddist text-lg'}>*</span></span>
             <DropDown
               defaultValue={page}
-              items={[
-                {
-                  value: 3,
-                  label: 'Page 1',
-                },
-                {
-                  value: 4,
-                  label: 'Page 2',
-                },
-              ]}
+              items={listPage}
               onSelect={(_e, val) => { setPage(val); }}
             />
           </div>
@@ -501,21 +504,21 @@ export default function MenuList() {
         </>
       )}
 
-      {/* <div className='flex justify-end absolute bottom-10 right-10'>
+      <div className='flex justify-end absolute bottom-10 right-10'>
         <div className='flex flex-row p-2 gap-2'>
           <button
-            className="btn btn-outline text-xs btn-sm w-28">
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
             Cancel
           </button>
           <button
             onClick={() => {
                 onUpdateDataStructure();
             }}
-            className="btn btn-success text-xs btn-sm w-28">
+            className="btn btn-success text-xs btn-sm w-28 h-10">
             Submit
           </button>
         </div>
-      </div> */}
+      </div>
       {modalEdit()}
       <ModalConfirmLeave
         open={showComfirm}
