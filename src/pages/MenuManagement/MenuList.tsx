@@ -17,7 +17,8 @@ import {
 import Modal from '../../components/atoms/Modal';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import WarningIcon from "../../assets/warning.png";
-// import { GraphQLInputObjectType } from 'graphql';
+import CancelIcon from "../../assets/cancel.png";
+import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 
 export default function MenuList() {
   // const params = useParams();
@@ -27,6 +28,7 @@ export default function MenuList() {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   const [showComfirm, setShowComfirm] = useState(false);
+  const [showCancel, setShowCancel] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setmessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState('');
@@ -44,19 +46,58 @@ export default function MenuList() {
   const {data} = fetchQuery;
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [dataScructure, setDataStructure] = useState<any>([]);
+  const [dataScructureInit, setDataStructureInit] = useState<any>([]);
 
   const [ createMenu ] = useCreateMenuMutation();
   const [ editMenu ] = useEditMenuMutation();
   const [ deleteMenu ] = useDeleteMenuMutation();
   const [ updateStructure ] = useUpdateMenuStructureMutation();
 
+  // TABLE PAGINATION STATE
+  const [pageIndex] = useState(0);
+  const [pageLimit] = useState(5);
+  const [direction] = useState('asc');
+  const [search] = useState('');
+  const [sortBy] = useState('id');
+  const [listPage, setListPage] = useState([]);
+
+  // RTK GET DATA
+  const fetchQueryPage = useGetPageManagementListQuery({
+    pageIndex,
+    limit: pageLimit,
+    direction,
+    search,
+    sortBy,
+    isArchive: false,
+  });
+
+  useEffect(() => {
+    const data = fetchQueryPage?.data?.pageList?.pages;
+
+    const listData = data?.map((val: { id: any; title: any; }) => {
+      const list = {
+        'value': val.id,
+        'label': val.title
+      }
+
+      return list;
+    })
+
+    setListPage(listData)
+  }, [fetchQueryPage])
+  
   useEffect(() => {
     void fetchQuery.refetch()
   }, [])
 
   useEffect(() => {
     if(data){
-        setDataStructure(data?.menuList?.menus)
+      const listData = data?.menuList?.menus;
+
+      const result = listData.map((e,i) => ({...e, "children":listData[i].child}));
+
+      setDataStructure(result)
+      setDataStructureInit(result)
     }
   }, [data])
 
@@ -96,19 +137,6 @@ export default function MenuList() {
         );
       });
   };
-
-  // function onSave() {
-  //   const dataForm = {
-  //     title,
-  //     page,
-  //     type,
-  //     urlLink,
-  //     isOpenTab,
-  //   };
-  //   setDataStructure((data: any) => [...data, dataForm]);
-
-    
-  // }
 
   function clearForm() {
     setTitle('');
@@ -179,16 +207,7 @@ export default function MenuList() {
                     Page
                     <DropDown
                     defaultValue={page}
-                    items={[
-                        {
-                        value: 1,
-                        label: 'Page 1',
-                        },
-                        {
-                        value: 2,
-                        label: 'Page 2',
-                        },
-                    ]}
+                    items={listPage}
                     onSelect={(_e, val) => { setPage(val); }}
                     />
                 </div>
@@ -364,7 +383,7 @@ export default function MenuList() {
     return (
       <div className='grid grid-cols-2 gap-10 p-4 border-b-2'>
         <div className='flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold'>
-          Page Title
+          <span className={`label-text text-base-content`}>Page Title<span className={'text-reddist text-lg'}>*</span></span>
           <InputText 
             labelTitle='' 
             value={title}
@@ -390,19 +409,10 @@ export default function MenuList() {
         </div>
         {type === 'Page' ? (
           <div className='flex flex-row whitespace-nowrap items-center gap-20 text-lg font-bold'>
-            Page
+            <span className={`label-text text-base-content`}>Page<span className={'text-reddist text-lg'}>*</span></span>
             <DropDown
               defaultValue={page}
-              items={[
-                {
-                  value: 3,
-                  label: 'Page 1',
-                },
-                {
-                  value: 4,
-                  label: 'Page 2',
-                },
-              ]}
+              items={listPage}
               onSelect={(_e, val) => { setPage(val); }}
             />
           </div>
@@ -451,27 +461,25 @@ export default function MenuList() {
 
     // console.log(JSON.stringify(data)); return
 
-    updateStructure({menuList: data})
-      .unwrap()
-      .then((d: any) => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-            message: t('user.add.success-msg', { name: d.userCreate.fullName }),
-          }),
-        );
-        navigate('/menu');
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-            message: t('roles.add.failed-msg', { name: data.title }),
-          }),
-        );
-      });
+  updateStructure({menuList: data})
+    .unwrap()
+    .then((d: any) => {
+      dispatch(
+        openToast({
+          type: 'success',
+          title: t('toast-success'),
+        }),
+      );
+      navigate('/menu');
+    })
+    .catch(() => {
+      dispatch(
+        openToast({
+          type: 'error',
+          title: t('toast-failed'),
+        }),
+      );
+    });
   };
 
   return (
@@ -501,21 +509,26 @@ export default function MenuList() {
         </>
       )}
 
-      <div className='flex justify-end absolute bottom-10 right-10'>
-        <div className='flex flex-row p-2 gap-2'>
-          <button
-            className="btn btn-outline text-xs btn-sm w-28">
-            Cancel
-          </button>
-          <button
-            onClick={() => {
+      {dataScructure !== dataScructureInit && (
+        <div className='flex justify-end absolute bottom-10 right-10'>
+          <div className='flex flex-row p-2 gap-2'>
+            <button
+              onClick={() => {
+                setShowCancel(true);
+              }}
+              className="btn btn-outline text-xs btn-sm w-28 h-10">
+              Cancel
+            </button>
+            <button
+              onClick={() => {
                 onUpdateDataStructure();
-            }}
-            className="btn btn-success text-xs btn-sm w-28">
-            Submit
-          </button>
+              }}
+              className="btn btn-success text-xs btn-sm w-28 h-10">
+              Submit
+            </button>
+          </div>
         </div>
-      </div>
+      )}
       {modalEdit()}
       <ModalConfirmLeave
         open={showComfirm}
@@ -528,6 +541,17 @@ export default function MenuList() {
         submitAction={onDelete}
         submitTitle="Yes"
         icon={WarningIcon} btnType={''}      />
+      <ModalConfirmLeave
+        open={showCancel}
+        cancelAction={() => {
+          setShowCancel(false);
+        } }
+        title={"Are you sure?"}
+        cancelTitle="Cancel"
+        message={"Do you want to cancel all of the process?"}
+        submitAction={() => {navigate(0);}}
+        submitTitle="Yes"
+        icon={CancelIcon} btnType={'btn-warning'}      />
     </>
   );
 }
