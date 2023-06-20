@@ -94,7 +94,7 @@ export default function MenuList() {
     if(data){
       const listData = data?.menuList?.menus;
 
-      const result = listData.map((e,i) => ({...e, "children":listData[i].child}));
+      const result = listData.map((e: any, i: any) => ({...e, "children":listData[i].child}));
 
       setDataStructure(result)
       setDataStructureInit(result)
@@ -463,7 +463,7 @@ export default function MenuList() {
 
   updateStructure({menuList: data})
     .unwrap()
-    .then((d: any) => {
+    .then(() => {
       dispatch(
         openToast({
           type: 'success',
