@@ -12,6 +12,7 @@ interface IAuthInputProps {
   styleClass?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   passwordMode?: boolean;
+  labelWidth?: string;
 }
 
 interface IPasswordInputProps {
@@ -100,13 +101,14 @@ const AuthInput: React.FC<IAuthInputProps> = ({
   onChange,
   value,
   passwordMode,
+  labelWidth,
 }) => {
   const hasError = !!error;
   const classNames = `flex justify-between ${styleClass}`;
 
   return (
     <div className={classNames}>
-      <Typography type="body" size="normal" weight="medium" className="mt-2 mr-5 basis-1/4">
+      <Typography type="body" size="normal" weight="medium" className={`mt-2 mr-5 ${labelWidth || 'basis-1/4'}`}>
         {label}
       </Typography>
       <div className="flex flex-col flex-grow flex-2">
