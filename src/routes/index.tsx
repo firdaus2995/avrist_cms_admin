@@ -41,7 +41,7 @@ export default function RoutesComponent() {
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/forgot-password" element={<LoginPage />} />
-        <Route path="/forgot-password/:uuid" element={<LoginPage />} />
+        <Route path="/forgot-password/:token" element={<LoginPage />} />
         <Route path="/login-portal" element={<LoginPortal />} />
       </Route>
       <Route element={<ProtectedRoute token={accessToken} />}>

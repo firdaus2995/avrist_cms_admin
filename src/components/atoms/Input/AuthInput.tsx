@@ -108,7 +108,7 @@ const AuthInput: React.FC<IAuthInputProps> = ({
 
   return (
     <div className={classNames}>
-      <Typography type="body" size="normal" weight="medium" className={`mt-2 mr-5 ${labelWidth || 'basis-1/4'}`}>
+      <Typography type="body" size="normal" weight="medium" className={`mt-2 mr-5 ${labelWidth ?? 'basis-1/4'}`}>
         {label}
       </Typography>
       <div className="flex flex-col flex-grow flex-2">

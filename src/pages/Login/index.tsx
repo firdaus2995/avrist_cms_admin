@@ -1,4 +1,4 @@
-import { useLocation, useParams } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { LeftContent } from './components/LeftContent';
 import LoginForm from './components/LoginForm';
 import ResetPasswordForm from './components/ForgotPasswordFrom';
@@ -11,8 +11,6 @@ export default function Login() {
   const isForgotPasswordScreen = currentRoute === '/forgot-password';
   const isNewPasswordScreen = currentRoute.startsWith('/forgot-password/');
 
-  const { uuid } = useParams();
-
   return (
     <div className="h-screen md:flex">
       {/* LEFT CONTENT */}
@@ -23,7 +21,7 @@ export default function Login() {
         <div className="bg-white mx-16 w-full">
           {isLoginScreen && <LoginForm />}
           {isForgotPasswordScreen && <ResetPasswordForm />}
-          {isNewPasswordScreen && <ResetPasswordForm uuid={uuid} />}
+          {isNewPasswordScreen && <NewPasswordForm />}
         </div>
       </div>
     </div>

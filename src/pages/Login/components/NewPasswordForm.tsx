@@ -1,34 +1,42 @@
 import { useState } from 'react';
-import { useLoginMutation } from '@/services/Login/loginApi';
+import { useSetNewPasswordMutation } from '@/services/User/userApi';
 import AuthInput from '@/components/atoms/Input/AuthInput';
-// import { Link } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { useAppDispatch } from '@/store';
-import { storeDataStorage } from '@/utils/SessionStorage';
 import Typography from '@/components/atoms/Typography';
+import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 
-const NewPasswordForm = (props: any) => {
+const NewPasswordForm = () => {
   const dispatch = useAppDispatch();
+  const { uuid } = useParams();
 
-  const [login] = useLoginMutation();
+  const navigate = useNavigate();
+
+  const [setNewPassword, { isLoading }] = useSetNewPasswordMutation();
+
   const [authValue, setAuthValue] = useState({
-    username: '',
-    password: '',
-    errors: { username: '', password: '' },
+    newPassword: '',
+    confirmNewPassword: '',
+    errors: { newPassword: '', confirmNewPassword: '' },
   });
 
-  const handlePasswordChange = (e: { target: { value: any } }) => {
-    setAuthValue({ ...authValue, password: e.target.value });
+  const handleNewPasswordChange = (e: { target: { value: any } }) => {
+    setAuthValue({ ...authValue, newPassword: e.target.value });
   };
 
-  const handleLoginSubmit = (e: { preventDefault: () => void }) => {
+  const handleConfirmNewPasswordChange = (e: { target: { value: any } }) => {
+    setAuthValue({ ...authValue, confirmNewPassword: e.target.value });
+  };
+
+  const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
     // Check if username and password are empty
-    if (!authValue.username || !authValue.password) {
+    if (!authValue.newPassword || !authValue.confirmNewPassword) {
       const updatedErrors = {
-        username: !authValue.username ? 'This field is required' : '',
-        password: !authValue.password ? 'This field is required' : '',
+        newPassword: !authValue.newPassword ? 'This field is required' : '',
+        confirmNewPassword: !authValue.confirmNewPassword ? 'This field is required' : '',
       };
       setAuthValue(prevState => ({
         ...prevState,
@@ -37,29 +45,27 @@ const NewPasswordForm = (props: any) => {
       return;
     }
 
-    login({ userId: authValue.username, password: authValue.password })
+    setNewPassword({ requestId: uuid, newPassword: authValue.newPassword })
       .unwrap()
-      .then(res => {
-        storeDataStorage('accessToken', res.login.accessToken);
-        storeDataStorage('refreshToken', res.login.refreshToken);
-        storeDataStorage('roles', res.login.roles);
-
-        window.location.assign('/');
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success!',
+            message: 'Your new password successfully saved!',
+          }),
+        );
+        navigate('/', { replace: true });
       })
-      .catch(err => {
-        setAuthValue(prevState => ({
-          ...prevState,
-          errors: { username: '', password: 'Sign-in failed' },
-        }));
-        console.log('Sign-in failed:', err);
-        // Handle sign-in failure here
+      .catch((_err: any) => {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Sign-in Failed',
-            message: 'Sign-in failed',
+            title: 'Failed',
+            message: 'Invalid Url',
           }),
         );
+        navigate('/forgot-password', { replace: true });
       });
   };
 
@@ -69,14 +75,14 @@ const NewPasswordForm = (props: any) => {
       <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
         Enter your new password for Avrist Content Management System.
       </Typography>
-      <form onSubmit={handleLoginSubmit} className="mx-0 lg:mx-10">
+      <form onSubmit={handleSubmit} className="mx-0 lg:mx-10">
         <AuthInput
           key="password"
           label="New Password"
           placeholder="Enter Password"
-          error={authValue.errors.password}
-          onChange={handlePasswordChange}
-          value={authValue.password}
+          error={authValue.errors.newPassword}
+          onChange={handleNewPasswordChange}
+          value={authValue.newPassword}
           passwordMode={true}
           styleClass="mb-5"
           labelWidth="basis-1/3"
@@ -85,15 +91,15 @@ const NewPasswordForm = (props: any) => {
           key="password"
           label="Confirm New Password"
           placeholder="Enter Password"
-          error={authValue.errors.password}
-          onChange={handlePasswordChange}
-          value={authValue.password}
+          error={authValue.errors.confirmNewPassword}
+          onChange={handleConfirmNewPasswordChange}
+          value={authValue.confirmNewPassword}
           passwordMode={true}
           labelWidth="basis-1/3"
         />
         <div className="flex flex-col items-end my-10">
           <button type="submit" className="btn btn-primary btn-wide">
-            Create New Password
+            {isLoading ? <LoadingCircle className="fill-white" /> : 'Create New Password'}
           </button>
         </div>
       </form>

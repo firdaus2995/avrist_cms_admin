@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import AuthInput from '@/components/atoms/Input/AuthInput';
 import { Link } from 'react-router-dom';
 import { useGetForgotPasswordMutation } from '@/services/User/userApi';
@@ -9,6 +9,9 @@ import BackArrowLeft from '@/assets/back-arrow-left.svg';
 import { LoadingCircle } from '../../../components/atoms/Loading/loadingCircle';
 
 const ResetPasswordForm = (props: any) => {
+  useEffect(() => {
+    console.log('ini UUID => ', props?.uuid);
+  }, []);
   const dispatch = useAppDispatch();
 
   const [getForgotPassword, { isLoading }] = useGetForgotPasswordMutation();
@@ -80,7 +83,7 @@ const ResetPasswordForm = (props: any) => {
           <div className="flex flex-row">
             Didn’t receive the email?
             {isLoading ? (
-              <LoadingCircle classname="ml-2" />
+              <LoadingCircle className="ml-2" />
             ) : (
               <strong
                 onClick={handleForgotPasswordSubmit}
@@ -112,7 +115,7 @@ const ResetPasswordForm = (props: any) => {
           </Link>
           {!isVerify && (
             <button type="submit" className="btn btn-primary btn-wide">
-              {isLoading ? <LoadingCircle classname="fill-white" /> : 'Reset'}
+              {isLoading ? <LoadingCircle className="fill-white" /> : 'Reset'}
             </button>
           )}
         </div>
