@@ -221,7 +221,7 @@ export const userApi: any = createApi({
         variables: payload,
       }),
     }),
-    setNewPassword: builder.mutation<any, any>({
+    setNewPassword: builder.mutation<any, { requestId: string; newPassword: string }>({
       query: payload => ({
         document: gql`
           mutation userResetPassword($requestId: String!, $newPassword: String!) {

@@ -9,7 +9,7 @@ import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 
 const NewPasswordForm = () => {
   const dispatch = useAppDispatch();
-  const { uuid } = useParams();
+  const { token } = useParams();
 
   const navigate = useNavigate();
 
@@ -22,21 +22,33 @@ const NewPasswordForm = () => {
   });
 
   const handleNewPasswordChange = (e: { target: { value: any } }) => {
-    setAuthValue({ ...authValue, newPassword: e.target.value });
+    const { value } = e.target;
+    setAuthValue(prevState => ({
+      ...prevState,
+      newPassword: value,
+      errors: { ...prevState.errors, newPassword: '' },
+    }));
   };
 
   const handleConfirmNewPasswordChange = (e: { target: { value: any } }) => {
-    setAuthValue({ ...authValue, confirmNewPassword: e.target.value });
+    const { value } = e.target;
+    setAuthValue(prevState => ({
+      ...prevState,
+      confirmNewPassword: value,
+      errors: { ...prevState.errors, confirmNewPassword: '' },
+    }));
   };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
 
-    // Check if username and password are empty
-    if (!authValue.newPassword || !authValue.confirmNewPassword) {
+    const { newPassword, confirmNewPassword } = authValue;
+
+    // Check if newPassword and confirmNewPassword are empty
+    if (!newPassword || !confirmNewPassword) {
       const updatedErrors = {
-        newPassword: !authValue.newPassword ? 'This field is required' : '',
-        confirmNewPassword: !authValue.confirmNewPassword ? 'This field is required' : '',
+        newPassword: !newPassword ? 'This field is required' : '',
+        confirmNewPassword: !confirmNewPassword ? 'This field is required' : '',
       };
       setAuthValue(prevState => ({
         ...prevState,
@@ -45,14 +57,27 @@ const NewPasswordForm = () => {
       return;
     }
 
-    setNewPassword({ requestId: uuid, newPassword: authValue.newPassword })
+    // Check if newPassword and confirmNewPassword match
+    if (newPassword !== confirmNewPassword) {
+      const updatedErrors = {
+        newPassword: `Confirm password doesn’t match. Please try again!`,
+        confirmNewPassword: `Confirm password doesn’t match. Please try again!`,
+      };
+      setAuthValue(prevState => ({
+        ...prevState,
+        errors: updatedErrors,
+      }));
+      return;
+    }
+
+    setNewPassword({ requestId: token, newPassword })
       .unwrap()
       .then(() => {
         dispatch(
           openToast({
             type: 'success',
             title: 'Success!',
-            message: 'Your new password successfully saved!',
+            message: 'Your new password was successfully saved!',
           }),
         );
         navigate('/', { replace: true });
@@ -62,10 +87,10 @@ const NewPasswordForm = () => {
           openToast({
             type: 'error',
             title: 'Failed',
-            message: 'Invalid Url',
+            message: 'Invalid Links',
           }),
         );
-        navigate('/forgot-password', { replace: true });
+        navigate('/forgot-password', { replace: true, state: { resetFailed: true } });
       });
   };
 
@@ -88,7 +113,7 @@ const NewPasswordForm = () => {
           labelWidth="basis-1/3"
         />
         <AuthInput
-          key="password"
+          key="confirmPassword"
           label="Confirm New Password"
           placeholder="Enter Password"
           error={authValue.errors.confirmNewPassword}

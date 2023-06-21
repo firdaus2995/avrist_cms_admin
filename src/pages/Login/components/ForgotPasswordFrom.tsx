@@ -1,19 +1,17 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import AuthInput from '@/components/atoms/Input/AuthInput';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { useGetForgotPasswordMutation } from '@/services/User/userApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { useAppDispatch } from '@/store';
 import Typography from '@/components/atoms/Typography';
 import BackArrowLeft from '@/assets/back-arrow-left.svg';
-import { LoadingCircle } from '../../../components/atoms/Loading/loadingCircle';
+import WarningRed from '@/assets/warning-red.svg';
+import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 
 const ResetPasswordForm = (props: any) => {
-  useEffect(() => {
-    console.log('ini UUID => ', props?.uuid);
-  }, []);
   const dispatch = useAppDispatch();
-
+  const { state: pageState } = useLocation();
   const [getForgotPassword, { isLoading }] = useGetForgotPasswordMutation();
   const [resetPasswordValue, setResetPasswordValue] = useState({
     email: '',
@@ -68,6 +66,16 @@ const ResetPasswordForm = (props: any) => {
       <h1 className="font-bold text-2xl my-5 text-dark-purple">
         {!isVerify ? `Forgot Password` : `Verify Email`}
       </h1>
+      {pageState?.resetFailed && (
+        <div className="flex flex-row p-2 bg-toast-error border-2 border-toast-error-border min-h-min-content mb-5">
+          <img src={WarningRed} className="mr-4" />
+          <Typography type="body" size="s" weight="regular" className="text-body-text-2">
+            Sorry, your request password link is no longer valid. Please request another reset
+            password to receive a new link.
+          </Typography>
+        </div>
+      )}
+
       <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
         {!isVerify ? (
           'Enter your email address to reset your password.'
