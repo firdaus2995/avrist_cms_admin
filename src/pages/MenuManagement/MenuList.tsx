@@ -509,26 +509,26 @@ export default function MenuList() {
         </>
       )}
 
-      {dataScructure !== dataScructureInit && (
-        <div className='flex justify-end absolute bottom-10 right-10'>
-          <div className='flex flex-row p-2 gap-2'>
-            <button
-              onClick={() => {
-                setShowCancel(true);
-              }}
-              className="btn btn-outline text-xs btn-sm w-28 h-10">
-              Cancel
-            </button>
-            <button
-              onClick={() => {
-                onUpdateDataStructure();
-              }}
-              className="btn btn-success text-xs btn-sm w-28 h-10">
-              Submit
-            </button>
-          </div>
+      <div className='flex justify-end absolute bottom-10 right-10'>
+        <div className='flex flex-row p-2 gap-2'>
+          <button
+            onClick={() => {
+              setShowCancel(true);
+            }}
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
+            Cancel
+          </button>
+          <button
+            disabled={dataScructure === dataScructureInit}
+            onClick={() => {
+              onUpdateDataStructure();
+            }}
+            className="btn btn-success text-xs btn-sm w-28 h-10">
+            Submit
+          </button>
         </div>
-      )}
+      </div>
+
       {modalEdit()}
       <ModalConfirmLeave
         open={showComfirm}

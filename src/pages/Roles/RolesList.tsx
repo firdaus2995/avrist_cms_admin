@@ -149,7 +149,7 @@ export default function RolesList() {
     {
       header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
-      enableSorting: true,
+      enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-5">
           <Link to={`edit/${info.getValue()}`}>
