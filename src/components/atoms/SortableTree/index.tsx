@@ -49,8 +49,8 @@ export default function SortableTreeComponent(props: ISortableTree) {
               </div>,
             ],
             style: {
-              height: '50px',
-              width: '80vh',
+              height: '100%',
+              width: '100vh',
             },
           })}
         />
