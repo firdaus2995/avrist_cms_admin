@@ -1,14 +1,14 @@
 import React from "react"
 
-export const LoadingCircle: React.FC<{ classname?: string }> = ({
-  classname
+export const LoadingCircle: React.FC<{ className?: string }> = ({
+  className
 }) => {
   return (
     <>
       <svg
         aria-hidden="true"
         className={`mr-2 w-5 h-5 text-gray-200 animate-spin dark:text-gray-600 fill-primary ${
-          classname !== undefined && classname !== "" ? classname : ""
+          className !== undefined && className !== "" ? className : ""
         }`}
         viewBox="0 0 100 101"
         fill="none"
