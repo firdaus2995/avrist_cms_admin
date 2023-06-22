@@ -9,7 +9,7 @@ import BackArrowLeft from '@/assets/back-arrow-left.svg';
 import WarningRed from '@/assets/warning-red.svg';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 
-const ResetPasswordForm = (props: any) => {
+const ResetPasswordForm = () => {
   const dispatch = useAppDispatch();
   const { state: pageState } = useLocation();
   const [getForgotPassword, { isLoading }] = useGetForgotPasswordMutation();
