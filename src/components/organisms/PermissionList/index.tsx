@@ -1,7 +1,7 @@
 import PermissionCollapse from '../../molecules/PermissionCollapse';
 import PermissionImg from '../../../assets/permission.png';
 import { IPermisionList } from './types';
-import { useAppSelector, useAppDispatch, store } from '../../../store';
+import { useAppSelector, useAppDispatch } from '../../../store';
 import { setPermissions } from '../../../services/Roles/rolesSlice';
 export default function PermissionList(props: IPermisionList) {
   const { permissionList, loading, disabled } = props;

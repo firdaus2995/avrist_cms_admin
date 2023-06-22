@@ -6,19 +6,21 @@ export default {
       // Custom colors variables - color second options
       colors: {
         'dark-purple': '#4F2C74',
-        'purple': '#5E217C',
+        purple: '#5E217C',
         'bright-purple': '#81219A',
-        'lavender': '#9B86BA',
+        lavender: '#9B86BA',
         'light-purple': '#E5DFEC',
         'light-purple-2': '#F9F5FD',
         'body-text-2': '#464B53',
         'body-text-3': '#818494',
-        'grey':'#BBBBBB',
-        'error': '#EC2247',
+        grey: '#BBBBBB',
+        error: '#EC2247',
         'error-stroke': '#AE1D1D',
         'secondary-warning': '#FF8E3C',
-        'reddist': '#DB3838',
+        reddist: '#DB3838',
         'dark-reddist': '#AE1D1D',
+        'toast-error': '#FFF6F6',
+        'toast-error-border': '#EBD2CE',
       },
       // Custom fonts
       fontFamily: {
