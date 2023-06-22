@@ -50,7 +50,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
             ],
             style: {
               height: '100%',
-              width: '100vh',
+              width: '80vh',
             },
           })}
         />

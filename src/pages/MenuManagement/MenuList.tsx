@@ -536,7 +536,7 @@ export default function MenuList() {
           setShowComfirm(false);
         } }
         title={titleConfirm}
-        cancelTitle="Cancel"
+        cancelTitle="No"
         message={messageConfirm}
         submitAction={onDelete}
         submitTitle="Yes"
@@ -547,7 +547,7 @@ export default function MenuList() {
           setShowCancel(false);
         } }
         title={"Are you sure?"}
-        cancelTitle="Cancel"
+        cancelTitle="No"
         message={"Do you want to cancel all of the process?"}
         submitAction={() => {navigate(0);}}
         submitTitle="Yes"
