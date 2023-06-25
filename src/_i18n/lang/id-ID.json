@@ -68,5 +68,11 @@
       "placeholder-user-fullname": "Masukan Fullname",
       "placeholder-user-email": "Masukan Email"
     }
+  },
+  "action": {
+    "action": "Aksi",
+    "view": "Lihat",
+    "edit": "Ubah",
+    "delete": "Hapus"
   }
 }

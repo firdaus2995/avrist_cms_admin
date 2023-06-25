@@ -5,57 +5,22 @@ import {
   useGetPageManagementListQuery,
   useDeletePageMutation,
 } from '@/services/PageManagement/pageManagementApi';
+import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '@/assets/table-edit.png';
-import TableView from '@/assets/table-view.png';
 import TableDelete from '@/assets/table-delete.png';
-import FilterIcon from '@/assets/filter.svg';
-import ArchiveBox from '@/assets/archive-box.svg';
-import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
-import StatusBadge from './components/StatusBadge';
-import ModalLog from './components/ModalLog';
-import dayjs from 'dayjs';
 
 const TopRightButton = () => {
   return (
     <div className="flex flex-row">
-      <FilterButton />
       <CreateButton />
-    </div>
-  );
-};
-
-// nanti dipisah
-const ArchiveButton = () => {
-  return (
-    <div className="inline-block float-right">
-      <Link to="archive">
-        <button className=" border-secondary-warning border-[1px] rounded-xl w-36 py-3">
-          <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-secondary-warning">
-            <img src={ArchiveBox} className="w-6 h-6 mr-1" />
-            Archive
-          </div>
-        </button>
-      </Link>
-    </div>
-  );
-};
-
-const FilterButton = () => {
-  return (
-    <div className="inline-block float-right mr-5">
-      <button className=" border-grey border-[1px] rounded-xl px-3 py-3">
-        <div className="flex flex-row gap-2 items-center justify-center">
-          <img src={FilterIcon} className="w-6 h-6" />
-        </div>
-      </button>
     </div>
   );
 };
@@ -75,7 +40,7 @@ const CreateButton = () => {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Create New Page
+            Add New Content Type
           </div>
         </button>
       </Link>
@@ -83,7 +48,8 @@ const CreateButton = () => {
   );
 };
 
-export default function PageManagementList() {
+export default function ContentTypeList() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
 
@@ -91,8 +57,6 @@ export default function PageManagementList() {
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
-  const [idLog, setIdLog] = useState(null);
-  const [logTitle, setLogTitle] = useState(null);
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -141,33 +105,7 @@ export default function PageManagementList() {
   // TABLE COLUMN
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]"></span>,
-      accessorKey: 'pageStatus',
-      enableSorting: false,
-      cell: (info: any) => (
-        <>
-          <StatusBadge
-            status={
-              info.getValue() && info.getValue() !== '' && info.getValue() !== null
-                ? info.getValue()
-                : '-'
-            }
-          />
-          <div
-            className="ml-3 cursor-pointer tooltip"
-            data-tip="Log"
-            onClick={() => {
-              setIdLog(info?.row?.original?.id);
-              setLogTitle(info?.row?.original?.title);
-            }}>
-            <img src={TimelineLog} className="w-6 h-6" />
-            {/* <p>{info?.row?.original?.id}</p> */}
-          </div>
-        </>
-      ),
-    },
-    {
-      header: () => <span className="text-[14px]">Page Name</span>,
+      header: () => <span className="text-[14px]">Content Type Name</span>,
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -179,7 +117,7 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Created by</span>,
+      header: () => <span className="text-[14px]">Category</span>,
       accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -189,50 +127,20 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Created Date</span>,
-      accessorKey: 'createdAt',
-      enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? dayjs(info.getValue()).format('DD/MM/YYYY')
-            : '-'}
-        </p>
-      ),
-    },
-    {
-      header: () => <span className="text-[14px]">Updated Date</span>,
-      accessorKey: 'updatedAt',
-      enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? dayjs(info.getValue()).format('DD/MM/YYYY')
-            : '-'}
-        </p>
-      ),
-    },
-    {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-5">
-          <div className="tooltip" data-tip="View">
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableView}
-            />
-          </div>
           <Link to={`edit/${info.getValue()}`}>
-            <div className="tooltip" data-tip="Edit">
+            <div className="tooltip" data-tip={t('action.edit')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
                 src={TableEdit}
               />
             </div>
           </Link>
-          <div className="tooltip" data-tip="Delete">
+          <div className="tooltip" data-tip={t('action.delete')}>
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
@@ -281,14 +189,6 @@ export default function PageManagementList() {
   };
   return (
     <>
-      <ModalLog
-        id={idLog}
-        open={!!idLog}
-        toggle={() => {
-          setIdLog(null);
-        }}
-        title={`Log Approval - ${logTitle}`}
-      />
       <ModalConfirmLeave
         open={showConfirm}
         cancelAction={() => {
@@ -304,7 +204,7 @@ export default function PageManagementList() {
         btnType={''}
       />
       <TitleCard
-        title="Page List"
+        title="Content Type List"
         topMargin="mt-2"
         SearchBar={
           <InputSearch
@@ -315,14 +215,6 @@ export default function PageManagementList() {
           />
         }
         TopSideButtons={<TopRightButton />}>
-        <div className="flex flex-row justify-between mb-5">
-          <div className="btn-group">
-            <button className="btn btn-primary text-xs w-40">Page List</button>
-            <button className="btn btn-disabled text-xs w-40">My Task</button>
-          </div>
-          <ArchiveButton />
-        </div>
-
         <div className="overflow-x-auto w-full mb-5">
           <Table
             rows={listData}

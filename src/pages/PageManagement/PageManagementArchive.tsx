@@ -1,18 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useGetPageManagementListQuery,
   useRestorePageMutation,
-} from '../../services/PageManagement/pageManagementApi';
-import Table from '../../components/molecules/Table';
+} from '@/services/PageManagement/pageManagementApi';
+import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-import { InputSearch } from '../../components/atoms/Input/InputSearch';
-import PaginationComponent from '../../components/molecules/Pagination';
+import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import PaginationComponent from '@/components/molecules/Pagination';
 import dayjs from 'dayjs';
-import { useAppDispatch } from '../../store';
-import { openToast } from '../../components/atoms/Toast/slice';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
+import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
@@ -183,14 +183,16 @@ export default function PageManagementArchive() {
         open={openRestoreModal}
         cancelAction={() => {
           setOpenRestoreModal(false);
-        } }
+        }}
         title={restoreModalTitle}
         cancelTitle="Cancel"
         message={restoreModalBody}
         submitAction={submitRestorePage}
         submitTitle="Yes"
         loading={isLoading}
-        btnType={'btn-primary'} icon={undefined}      />
+        btnType={'btn-primary'}
+        icon={undefined}
+      />
       <TitleCard
         title="Archive List"
         topMargin="mt-2"

@@ -33,7 +33,7 @@ export const sidebarList = [
       {
         id: 41,
         title: 'Content Type Builder',
-        path: '',
+        path: '/content-type',
       },
       {
         id: 42,

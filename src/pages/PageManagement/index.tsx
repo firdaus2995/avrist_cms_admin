@@ -1,5 +1,5 @@
 import PageManagementList from './PageManagementList';
 
-export default function Roles() {
+export default function index() {
   return <PageManagementList />;
 }

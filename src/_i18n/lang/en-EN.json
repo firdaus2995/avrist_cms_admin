@@ -70,5 +70,11 @@
       "placeholder-user-fullname": "Enter Fullname",
       "placeholder-user-email": "Enter Email"
     }
+  },
+  "action": {
+    "action": "Action",
+    "view": "View",
+    "edit": "Edit",
+    "delete": "Delete"
   }
 }
