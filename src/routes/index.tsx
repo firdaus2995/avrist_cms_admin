@@ -32,8 +32,12 @@ const PageManagementArchivePage = React.lazy(
 const PageManagementNewPage = React.lazy(
   async () => await import('../pages/PageManagement/PageManagementNew'),
 );
+
 const ContentTypePage = React.lazy(async () => await import('@/pages/ContentType'));
 const ContentTypeNewPage = React.lazy(async () => await import('@/pages/ContentType/ContentTypeNew'));
+const ContentTypeDetailPage = React.lazy(
+  async () => await import('@/pages/ContentType/ContentTypeDetail'),
+);
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
@@ -74,6 +78,7 @@ export default function RoutesComponent() {
           {/* CONTENT TYPE */}
           <Route path="content-type" element={<ContentTypePage />} />
           <Route path="content-type/new" element={<ContentTypeNewPage />} />
+          <Route path="content-type/:id" element={<ContentTypeDetailPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
