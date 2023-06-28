@@ -1,4 +1,4 @@
-import { SetStateAction, useState } from 'react';
+import { useState } from 'react';
 import SortableTree from '@nosferatu500/react-sortable-tree';
 import '@nosferatu500/react-sortable-tree/style.css';
 import { ISortableTree } from './types';
@@ -10,9 +10,19 @@ import DotsThreeCircle from "@/assets/dots-three-circle.svg";
 
 export default function SortableTreeComponent(props: ISortableTree) {
   const { data, onChange, onClick } = props;
-  const [treeData, setTreeData] = useState(data);
+  const [treeData, setTreeData] = useState(() => {
+    if (data.length > 0) {
+      const treeDataNew = data.map((node: any) => ({
+        ...node,
+        expanded: true,
+      }))
+      return treeDataNew;
+    } else {
+      return []
+    }
+  });
 
-  function updateTreeData(treeData: SetStateAction<any[]>) {
+  function updateTreeData(treeData: any) {
     setTreeData(treeData);
   }
 
@@ -36,7 +46,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
               <div key={1}>
                 <div className='p-2'>
                   <img src={DotsThreeCircle} 
-                    className='w-[24px] h-[24px]'
+                    className='w-[24px] h-[24px] cursor-pointer'
                     onClick={() => {
                       onClick(rowInfo);
                     }}
