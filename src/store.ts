@@ -15,6 +15,7 @@ import rolesSlice from './services/Roles/rolesSlice';
 import toastSlice from './components/atoms/Toast/slice';
 import pageManagementSlice from './services/PageManagement/pageManagementSlice';
 import { menuApi } from './services/Menu/menuApi';
+import { contentTypeApi } from './services/ContentType/contentTypeApi';
 
 export const store: any = configureStore({
   reducer: {
@@ -30,6 +31,7 @@ export const store: any = configureStore({
     [menuApi.reducerPath]: menuApi.reducer,
     [pageManagementApi.reducerPath]: pageManagementApi.reducer,
     [pageTemplateApi.reducerPath]: pageTemplateApi.reducer,
+    [contentTypeApi.reducerPath]: contentTypeApi.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
@@ -39,6 +41,7 @@ export const store: any = configureStore({
       .concat(menuApi.middleware)
       .concat(pageManagementApi.middleware)
       .concat(pageTemplateApi.middleware)
+      .concat(contentTypeApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;
