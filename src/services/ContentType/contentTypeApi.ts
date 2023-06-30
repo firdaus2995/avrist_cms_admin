@@ -38,6 +38,46 @@ export const contentTypeApi = createApi({
         variables: payload,
       }),
     }),
+    getPostTypeDetail: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query postTypeDetail($id: Int!, $pageIndex: Int!, $limit: Int!) {
+            postTypeDetail(
+              request: {
+                postTypeGroup: "CONTENT_TYPE"
+                id: $id
+                pageIndex: $pageIndex
+                limit: $limit
+              }
+            ) {
+              id
+              name
+              postTypeGroup
+              slug
+              isUseCategory
+              total
+              attributeList {
+                id
+                name
+                fieldType
+                fieldId
+                config
+                parentId
+                attributeList {
+                  id
+                  name
+                  fieldType
+                  fieldId
+                  config
+                  parentId
+                }
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
-export const { useGetPostTypeListQuery } = contentTypeApi;
+export const { useGetPostTypeListQuery, useGetPostTypeDetailQuery } = contentTypeApi;
