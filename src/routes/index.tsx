@@ -38,6 +38,7 @@ const ContentTypeNewPage = React.lazy(async () => await import('@/pages/ContentT
 const ContentTypeDetailPage = React.lazy(
   async () => await import('@/pages/ContentType/ContentTypeDetail'),
 );
+const ContentTypeEditPage = React.lazy(async () => await import('@/pages/ContentType/ContentTypeEdit'));
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
@@ -78,6 +79,7 @@ export default function RoutesComponent() {
           {/* CONTENT TYPE */}
           <Route path="content-type" element={<ContentTypePage />} />
           <Route path="content-type/new" element={<ContentTypeNewPage />} />
+          <Route path="content-type/edit/:id" element={<ContentTypeEditPage />} />
           <Route path="content-type/:id" element={<ContentTypeDetailPage />} />
         </Route>
       </Route>

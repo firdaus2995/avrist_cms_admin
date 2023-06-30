@@ -117,6 +117,31 @@ export const contentTypeApi = createApi({
         variables: payload,
       }),
     }),
+    postTypeUpdate: builder.mutation<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          mutation postTypeUpdate($id: Int! $name: String! $slug: String! $isUseCategory: Boolean $attributeRequests: [PostMetaTemplateRequest]!){
+            postTypeUpdate(
+                id: $id,
+                request: {
+                    name: $name
+                    postTypeGroup: "CONTENT_TYPE"
+                    slug: $slug
+                    isUseCategory: $isUseCategory
+                    attributeRequests: $attributeRequests
+                }
+            ) {
+                id
+                name
+                postTypeGroup
+                slug
+                isUseCategory
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -124,5 +149,6 @@ export const {
   useGetConfigQuery,
   usePostTypeCreateMutation,
   useGetPostTypeListQuery,
-  useGetPostTypeDetailQuery
+  useGetPostTypeDetailQuery,
+  usePostTypeUpdateMutation,
 } = contentTypeApi;

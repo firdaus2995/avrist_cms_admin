@@ -1,7 +1,7 @@
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../store';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import CancelIcon from "../../assets/cancel.png";
 import { ChangeEvent, Key, SetStateAction, useEffect, useState } from 'react';
@@ -10,12 +10,14 @@ import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
 import Modal from '@/components/atoms/Modal';
-import { useGetConfigQuery, usePostTypeCreateMutation } from '@/services/ContentType/contentTypeApi';
+import { useGetConfigQuery, useGetPostTypeDetailQuery, usePostTypeUpdateMutation } from '@/services/ContentType/contentTypeApi';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import Radio from '@/components/molecules/Radio';
 import { openToast } from '@/components/atoms/Toast/slice';
 
-export default function ContentTypeNew() {
+export default function ContentTypeEdit() {
+  const params = useParams();
+  const [id] = useState<any>(Number(params.id));
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -39,8 +41,31 @@ export default function ContentTypeNew() {
   const [editedIndex, setEditedIndex] =  useState();
 
   const fetchConfigQuery = useGetConfigQuery({});
-  const { data } = fetchConfigQuery;
-  const [ postCreate ] = usePostTypeCreateMutation();
+  const [ postUpdate ] = usePostTypeUpdateMutation();
+
+  // TABLE PAGINATION STATE
+  const [total, setTotal] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(5);
+
+  const [listItems, setListItems] = useState([]);
+
+  // RTK GET DATA
+  const fetchQuery = useGetPostTypeDetailQuery({
+    id,
+    pageIndex,
+    limit: pageLimit,
+  });
+  const { data } = fetchQuery;
+
+  useEffect(() => {
+    if (data) {
+      setIsUseCategory(data?.postTypeDetail?.isUseCategory);
+      setName(data?.postTypeDetail?.name);
+      setSlug(data?.postTypeDetail?.slug);
+      setListItems(data?.postTypeDetail?.attributeList)
+    }
+  },[data])
 
   useEffect(() => {
     const refetch = async () => {
@@ -50,10 +75,10 @@ export default function ContentTypeNew() {
   }, [])
 
   useEffect(() => {
-    if(data?.getConfig?.value){
-      setListAttributes(JSON.parse(data?.getConfig?.value).attributes)
+    if(fetchConfigQuery?.data?.getConfig?.value){
+      setListAttributes(JSON.parse(fetchConfigQuery?.data?.getConfig?.value).attributes)
     }
-  }, [data])
+  }, [fetchConfigQuery])
   
   function getFieldId(value: string) {
     const str = value?.replace(/\s+/g, '-').toLowerCase();
@@ -77,22 +102,6 @@ export default function ContentTypeNew() {
     }
   }
   
-  const [listItems, setListItems] = useState([
-    {
-      fieldType: 'TEXT_FIELD',
-      name: 'Title',
-      fieldId: '',
-      config: [],
-      isDeleted: false,
-    },
-    {
-      fieldType: 'TEXT_AREA',
-      name: 'Short Description',
-      fieldId: '',
-      config: [],
-      isDeleted: false,
-    }
-  ]);
 
   function onAddList() {
     if (openedAttribute?.code === 'looping') {
@@ -100,7 +109,6 @@ export default function ContentTypeNew() {
         fieldType: openedAttribute?.code?.toUpperCase(),
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        isDeleted: true,
         loopTypeRequest,
       };
     setListItems(list => [...list, data]);
@@ -109,7 +117,6 @@ export default function ContentTypeNew() {
         fieldType: openedAttribute?.code?.toUpperCase(),
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        isDeleted: true,
         config: openedAttribute?.config.length > 0 ? config : [],
       };
     setListItems(list => [...list, data]);
@@ -181,10 +188,9 @@ export default function ContentTypeNew() {
                 edited[0].label = val.name;
                 edited[0].fieldId = val.fieldId ? val.fieldId : getFieldId(val.name);
                 openAddModal(edited[0], true);
-                }} className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
-              {val.isDeleted && (
+                }} 
+                className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
                 <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}/>
-              )}
             </div>
           </div>
         ))}
@@ -245,60 +251,29 @@ export default function ContentTypeNew() {
     )
   }
 
-  // Fungsi untuk mengubah fieldId menjadi lowercase jika kosong
-  function lowercaseIfEmpty(str: string) {
-    if (str === "") {
-      return str;
-    }
-    return str.toLowerCase();
-  }
-
-  // Fungsi untuk menghapus atribut isDeleted dari objek
-  function removeIsDeleted(obj: { [x: string]: any; fieldId?: any; fieldType?: string; name?: string; config?: never[]; isDeleted: any; }) {
-    const { isDeleted, ...rest } = obj;
-    return rest;
-  }
-
   function onSaveContent () {
     
-    // Mengisi fieldId dengan lowercase jika kosong
-    const updatedData = listItems.map(obj => {
-      if (obj.fieldId === "") {
-        return {
-          ...obj,
-          fieldId: lowercaseIfEmpty(obj.fieldType)
-        };
-      }
-      return obj;
-    });
-
-    // Menghapus atribut isDeleted dari objek
-    const newData = updatedData.map(obj => removeIsDeleted(obj));
-
-    // Mengubah format config pada loopTypeRequest
-    newData.forEach(obj => {
-      if (obj.fieldType === "LOOPING") {
-        obj.loopTypeRequest.forEach((item: { config: any[]; }) => {
-          item.config = item.config.reduce((acc: Record<string, any>, curr: { code: string; media_type: any; value: any; }) => {
-            if (curr.code === 'media_type') {
-              acc[curr.code] = curr.media_type;
-            }else{
-              acc[curr.code] = curr.value;
-            }
-            return acc;
-          }, {});
+    const updatedData = listItems.map(item => {
+      const { id, parentId, attributeList, ...rest } = item;
+      if (attributeList !== null) {
+        rest.loopTypeRequest = attributeList.map(attribute => {
+          const { id, parentId, ...attributeRest } = attribute;
+          return attributeRest;
         });
       }
+      return rest;
     });
 
     const payload = {
+      id: data?.postTypeDetail?.id,
       name,
       slug,
       isUseCategory,
-      attributeRequests: newData
+      attributeRequests: updatedData
     }
 
-    postCreate(payload)
+    console.log(payload)
+    postUpdate(payload)
     .unwrap()
     .then(() => {
       dispatch(
