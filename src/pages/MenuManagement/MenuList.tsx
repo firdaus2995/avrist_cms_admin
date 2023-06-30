@@ -498,11 +498,11 @@ export default function MenuList() {
         <>
           {dataScructure?.length > 0 && (
             <SortableTreeComponent 
-                data={dataScructure} 
-                onClick={(data: any) => { onEdit(data); }} 
-                onChange={function (_data: any): void {
-                    setDataStructure(_data)
-                } } 
+              data={dataScructure} 
+              onClick={(data: any) => { onEdit(data); }} 
+              onChange={function (_data: any): void {
+                  setDataStructure(_data)
+              }} 
             />
           )}
           {renderAddButtons()}
