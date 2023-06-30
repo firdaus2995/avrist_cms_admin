@@ -5,7 +5,7 @@ import { useAppDispatch } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import CancelIcon from "../../assets/cancel.png";
-import { Key, SetStateAction, useEffect, useState } from 'react';
+import { ChangeEvent, Key, SetStateAction, useEffect, useState } from 'react';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import TableEdit from "../../assets/table-edit.png";
@@ -40,7 +40,7 @@ export default function ContentTypeNew() {
 
   const fetchConfigQuery = useGetConfigQuery({});
   const { data } = fetchConfigQuery;
-  const { postTypeCreate } = usePostTypeCreateMutation();
+  const [ postCreate ] = usePostTypeCreateMutation();
 
   useEffect(() => {
     const refetch = async () => {
@@ -71,7 +71,6 @@ export default function ContentTypeNew() {
     setOpenedAttribute(val);
     setIsOpenModalAttribute(false);
     setIsOpenModalAddAttribute(true);
-    console.log(openedAttribute)
   }
   
   const [listItems, setListItems] = useState([
@@ -117,7 +116,7 @@ export default function ContentTypeNew() {
 
   const onLeave = () => {
     setShowComfirm(false);
-    navigate('/roles');
+    navigate('/content-type');
   }
 
   const renderListItems = () => {
@@ -129,7 +128,7 @@ export default function ContentTypeNew() {
             <div className='w-1/4 text-center'>{val.fieldId ? val.fieldId : getFieldId(val.name)}</div>
             <div className='w-1/4 text-right capitalize'>{getType(val.fieldType)}</div>
             <div className='w-1/4 flex flex-row gap-5 items-center justify-center'>
-              <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
+              <img role='button' onClick={() => console.log(val)} className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
               {val.isDeleted && (
                 <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}/>
               )}
@@ -194,7 +193,7 @@ export default function ContentTypeNew() {
   }
 
   // Fungsi untuk mengubah fieldId menjadi lowercase jika kosong
-  function lowercaseIfEmpty(str) {
+  function lowercaseIfEmpty(str: string) {
     if (str === "") {
       return str;
     }
@@ -202,7 +201,7 @@ export default function ContentTypeNew() {
   }
 
   // Fungsi untuk menghapus atribut isDeleted dari objek
-  function removeIsDeleted(obj) {
+  function removeIsDeleted(obj: { [x: string]: any; fieldId?: any; fieldType?: string; name?: string; config?: never[]; isDeleted: any; }) {
     const { isDeleted, ...rest } = obj;
     return rest;
   }
@@ -226,8 +225,8 @@ export default function ContentTypeNew() {
     // Mengubah format config pada loopTypeRequest
     newData.forEach(obj => {
       if (obj.fieldType === "LOOPING") {
-        obj.loopTypeRequest.forEach(item => {
-          item.config = item.config.reduce((acc, curr) => {
+        obj.loopTypeRequest.forEach((item: { config: any[]; }) => {
+          item.config = item.config.reduce((acc: Record<string, any>, curr: { code: string; media_type: any; value: any; }) => {
             if (curr.code === 'media_type') {
               acc[curr.code] = curr.media_type;
             }else{
@@ -240,13 +239,13 @@ export default function ContentTypeNew() {
     });
 
     const payload = {
-      name: name,
-      slug: slug,
-      isUseCategory: isUseCategory,
+      name,
+      slug,
+      isUseCategory,
       attributeRequests: newData
     }
 
-    postTypeCreate(payload)
+    postCreate(payload)
     .unwrap()
     .then(() => {
       dispatch(
@@ -304,7 +303,6 @@ export default function ContentTypeNew() {
                 role='button'
                 onClick={() => {
                   setConfig({});
-                  console.log(config)
                   openAddModal(val);}} 
                 className='flex flex-row justify-between m-2 bg-light-purple-2 p-4'>
                 <div className='flex flex-col'>
@@ -319,7 +317,7 @@ export default function ContentTypeNew() {
     )
   }
 
-  function changeValue(arr) {
+  function changeValue(arr: Array<{ [x: string]: any; child: any; children: any; }>) {
     arr.forEach(function(obj: {
         [x: string]: any; child: any; children: any; 
     }) {
@@ -353,12 +351,9 @@ export default function ContentTypeNew() {
                     d="M6 18L18 6M6 6l12 12" />
             </svg>
         </div>
-        <TitleCard 
-          title="Attribute Type"
-          topMargin="mt-4">
-        </TitleCard>
+        <div className='p-4 font-bold'>List Attribute</div>
         <div className='flex flex-col overflow-auto'>
-          {listAttributes?.map((val: any, idx: Key | null | undefined) => (
+          {listAttributes?.filter((val) => val.code !== 'looping').map((val: any, idx: Key | null | undefined) => (
             <div 
               key={idx}
               role='button'
@@ -384,9 +379,9 @@ export default function ContentTypeNew() {
     )
   }
 
-  const updateFieldChanged = (name, index, event) => {
+  const updateFieldChanged = (name: string, index: number, event: ChangeEvent<HTMLInputElement>) => {
     const newArr = loopTypeRequest.map((item, i) => {
-      if (index == i) {
+      if (index === i) {
         return { ...item, [name]: event.target.value };
       } else {
         return item;
@@ -448,7 +443,7 @@ export default function ContentTypeNew() {
             {openedAttribute?.code !== 'looping' ? (
               openedAttribute?.config?.length > 0 && (
                 <div className='flex flex-row gap-4 my-5'>
-                  {openedAttribute?.config?.map((val, idx) => (
+                  {openedAttribute?.config?.map((val: { type: string; label: any; code: string | number; value: any; }, idx: Key | null | undefined) => (
                     val?.type === 'text_field' ? (
                       <div key={idx}>
                         <InputText 
@@ -494,7 +489,27 @@ export default function ContentTypeNew() {
                   {loopTypeRequest?.length > 0 ? (
                     loopTypeRequest?.map((val, idx) => (
                       <div key={idx} className='flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2'>
-                        <div className='p-4 capitalize font-bold border-b-2 mb-4'>{getType(val?.code)}</div>
+                        <div className='flex flex-row justify-between w-full border-b-2 mb-4'>
+                          <div className='p-4 capitalize font-bold '>{getType(val?.fieldType)}</div>
+                          <svg 
+                            role='button'
+                            onClick={() => {
+                              const updated = loopTypeRequest?.filter((val, index) => index !== idx) 
+                              setLoopTypeRequest(updated)
+                            }}
+                            xmlns="http://www.w3.org/2000/svg" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            strokeWidth={1.5} 
+                            stroke="currentColor" 
+                            className="w-6 h-6 text-red-500 mt-2 mr-2">
+                            <path 
+                              strokeLinecap="round" 
+                              strokeLinejoin="round" 
+                              d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                          </svg>
+
+                        </div>
                         <div className='flex flex-col w-1/2'>
                           <InputText 
                             labelTitle='Name' 
@@ -515,7 +530,7 @@ export default function ContentTypeNew() {
                         </div>
                         {val?.config?.length > 0 && (
                           <div className='flex flex-row gap-4 my-5'>
-                            {val?.config?.map((val, index) => (
+                            {val?.config?.map((val: { type: string; label: any; value: string | undefined; media_type: string | number | boolean | undefined; }, index: Key | null | undefined) => (
                               val?.type === 'text_field' ? (
                                 <div key={index}>
                                   <InputText 
@@ -594,7 +609,8 @@ export default function ContentTypeNew() {
              <button
                 className="btn btn-outline btn-md"
                 onClick={() => {
-                  console.log(listAttributes)
+                  // setIsOpenModalAddAttribute(false);\
+                  console.log(loopTypeRequest)
                 }}>
                 {t('btn.cancel')}
               </button>
@@ -637,14 +653,15 @@ export default function ContentTypeNew() {
               setTitleConfirm('Are you sure?');
               setmessageConfirm(`Do you want to cancel all the process?`);
               setShowComfirm(true);
-              console.log(listItems)
             }}>
             {t('btn.cancel')}
           </button>
           <button
-            onClick={() => {onSaveContent()}}
+            onClick={() => {
+                onSaveContent() 
+              }}
             className="btn btn-success btn-md">
-            {onSaveLoading ? 'Loading...' : t('btn.save')}
+            {t('btn.save')}
           </button>
         </div>
       </TitleCard>
