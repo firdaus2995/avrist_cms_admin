@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import {
-  useGetPageManagementListQuery,
-  useDeletePageMutation,
-} from '@/services/PageManagement/pageManagementApi';
+import { useDeletePageMutation } from '@/services/PageManagement/pageManagementApi';
+import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeApi';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
@@ -16,6 +14,7 @@ import TableDelete from '@/assets/table-delete.png';
 import WarningIcon from '@/assets/warning.png';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
+import Typography from '@/components/atoms/Typography';
 
 const TopRightButton = () => {
   return (
@@ -67,13 +66,12 @@ export default function ContentTypeList() {
   const [sortBy, setSortBy] = useState('id');
 
   // RTK GET DATA
-  const fetchQuery = useGetPageManagementListQuery({
+  const fetchQuery = useGetPostTypeListQuery({
     pageIndex,
     limit: pageLimit,
     direction,
     search,
     sortBy,
-    isArchive: false,
   });
   const { data } = fetchQuery;
 
@@ -82,8 +80,8 @@ export default function ContentTypeList() {
 
   useEffect(() => {
     if (data) {
-      setListData(data?.pageList?.pages);
-      setTotal(data?.pageList?.total);
+      setListData(data?.postTypeList?.postTypeList);
+      setTotal(data?.postTypeList?.total);
     }
   }, [data]);
 
@@ -106,24 +104,28 @@ export default function ContentTypeList() {
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]">Content Type Name</span>,
-      accessorKey: 'title',
+      accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
+        <Link to={`${info?.row?.original?.id}`}>
+          <Typography
+            type="body"
+            size="s"
+            weight="semi"
+            className="truncate cursor-pointer text-primary">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? info.getValue()
+              : '-'}
+          </Typography>
+        </Link>
       ),
     },
     {
       header: () => <span className="text-[14px]">Category</span>,
-      accessorKey: 'createdBy.name',
+      accessorKey: 'isUseCategory',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() ? info.getValue() : '-'}
-        </p>
+        <p className="text-[14px] truncate">{info.getValue() ? 'True' : 'False'}</p>
       ),
     },
     {

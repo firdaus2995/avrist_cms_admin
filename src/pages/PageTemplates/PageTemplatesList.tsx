@@ -6,6 +6,7 @@ import {
 
 import Table from "../../components/molecules/Table";
 import TableEdit from "../../assets/table-edit.png";
+import TableView from "../../assets/table-view.png";
 import TableDelete from "../../assets/table-delete.png";
 import PaginationComponent from "../../components/molecules/Pagination";
 import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
@@ -80,6 +81,13 @@ export default function PageTemplatesNew () {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-5">
+          <button>
+            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableView} 
+              onClick={() => {
+                onClickPageTemplateView(info.getValue());
+              }}
+            />
+          </button>
           <button>
             <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} 
               onClick={() => {
@@ -179,6 +187,12 @@ export default function PageTemplatesNew () {
       })
   }
 
+  // FUNCTION FOR VIEW PAGE TEMPLATE
+  const onClickPageTemplateView = (id: number) => {
+    console.log(id);
+  };
+
+  // FUNCTION FOR DELETE PAGE TEMPLATE
   const onClickPageTemplateDelete = (id: number) => {
     setDeletedId(id);
     setDeleteModalTitle(`Are you sure?`);
