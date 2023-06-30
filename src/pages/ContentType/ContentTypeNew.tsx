@@ -183,7 +183,13 @@ export default function ContentTypeNew() {
                 openAddModal(edited[0], true);
                 }} className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
               {val.isDeleted && (
-                <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}/>
+                <img
+                  role='button'
+                  onClick={() => {
+                    const updated = listItems?.filter((val, index) => index !== idx) 
+                    setListItems(updated)
+
+                }} className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}/>
               )}
             </div>
           </div>
