@@ -19,6 +19,7 @@ import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
 import WarningIcon from "../../assets/warning.png";
 import CancelIcon from "../../assets/cancel.png";
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 
 export default function MenuList() {
   // const params = useParams();
@@ -484,8 +485,9 @@ export default function MenuList() {
 
   return (
     <>
-      {/* <TitleCard title='Avrist Life Insurance' topMargin="mt-2">
-      </TitleCard> */}
+      <TitleCard 
+        title=''
+      >
       <div className='p-5 text-2xl font-bold mb-5 gap-2 text-primary flex flex-row'>
         <img src={LifeInsurance} className='w-8' />
         Avrist Life Insurance
@@ -540,7 +542,8 @@ export default function MenuList() {
         message={messageConfirm}
         submitAction={onDelete}
         submitTitle="Yes"
-        icon={WarningIcon} btnType={''}      />
+        icon={WarningIcon} btnType={''}
+      />
       <ModalConfirmLeave
         open={showCancel}
         cancelAction={() => {
@@ -551,7 +554,9 @@ export default function MenuList() {
         message={"Do you want to cancel all of the process?"}
         submitAction={() => {navigate(0);}}
         submitTitle="Yes"
-        icon={CancelIcon} btnType={'btn-warning'}      />
+        icon={CancelIcon} btnType={'btn-warning'}
+      />
+      </TitleCard>
     </>
   );
 }
