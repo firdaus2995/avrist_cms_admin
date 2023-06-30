@@ -70,6 +70,7 @@ export default function ContentTypeEdit() {
   useEffect(() => {
     const refetch = async () => {
       await fetchConfigQuery.refetch();
+      await fetchQuery.refetch();
     };
     void refetch();
   }, [])
