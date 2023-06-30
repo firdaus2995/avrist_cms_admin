@@ -1,0 +1,25 @@
+.rst__lineBlock {
+  display: none;
+}
+
+.rstcustom__expandButton {
+  display: none;
+}
+
+.rstcustom__collapseButton {
+  display: none;
+}
+
+.rstcustom__lineChildren {
+  display: none;
+}
+
+.rstcustom__rowContents {
+  border: 1px solid #9B86BA;
+  border-radius: 12px;
+  box-shadow: none;
+}
+
+.rstcustom__rowTitle {
+  font-size: 14px;
+}
