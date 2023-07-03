@@ -38,7 +38,7 @@ export const sidebarList = [
       {
         id: 42,
         title: 'Content Manager',
-        path: '',
+        path: '/content-manager',
       },
     ],
   },

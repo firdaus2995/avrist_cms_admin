@@ -40,6 +40,8 @@ const ContentTypeDetailPage = React.lazy(
 );
 const ContentTypeEditPage = React.lazy(async () => await import('@/pages/ContentType/ContentTypeEdit'));
 
+const ContentManagerPage = React.lazy(async () => await import('@/pages/ContentManager'));
+
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
   return (
@@ -81,6 +83,8 @@ export default function RoutesComponent() {
           <Route path="content-type/new" element={<ContentTypeNewPage />} />
           <Route path="content-type/edit/:id" element={<ContentTypeEditPage />} />
           <Route path="content-type/:id" element={<ContentTypeDetailPage />} />
+          {/* CONTENT MANAGER */}
+          <Route path="content-manager" element={<ContentManagerPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
