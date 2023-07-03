@@ -44,9 +44,9 @@ export default function ContentTypeEdit() {
   const [ postUpdate ] = usePostTypeUpdateMutation();
 
   // TABLE PAGINATION STATE
-  const [total, setTotal] = useState(0);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
+  // const [total, setTotal] = useState(0);
+  const [pageIndex] = useState(0);
+  const [pageLimit] = useState(5);
 
   const [listItems, setListItems] = useState([]);
 
