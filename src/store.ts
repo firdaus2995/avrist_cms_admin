@@ -7,7 +7,6 @@ import { rolesApi } from './services/Roles/rolesApi';
 import { userApi } from './services/User/userApi';
 import { pageManagementApi } from './services/PageManagement/pageManagementApi';
 import { pageTemplateApi } from './services/PageTemplate/pageTemplateApi';
-import { contentTypeApi } from './services/ContentType/contentTypeApi';
 
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
@@ -16,6 +15,7 @@ import rolesSlice from './services/Roles/rolesSlice';
 import toastSlice from './components/atoms/Toast/slice';
 import pageManagementSlice from './services/PageManagement/pageManagementSlice';
 import { menuApi } from './services/Menu/menuApi';
+import { contentTypeApi } from './services/ContentType/contentTypeApi';
 
 export const store: any = configureStore({
   reducer: {

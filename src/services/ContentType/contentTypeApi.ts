@@ -6,6 +6,45 @@ export const contentTypeApi = createApi({
   reducerPath: 'contentTypeApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
+    getConfig: builder.query({
+      query: payload => ({
+        document: gql`
+          query {
+            getConfig(variable: "CONTENT_TYPE_ATTRIBUTE_LIST") {    
+                id
+                variable
+                value
+                description
+            }
+        }
+        `,
+        variables: payload,
+      })
+    }),
+    postTypeCreate: builder.mutation<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          mutation postTypeCreate($name: String! $slug: String! $isUseCategory: Boolean $attributeRequests: [PostMetaTemplateRequest]!){
+            postTypeCreate(
+                request: {
+                    name: $name
+                    postTypeGroup: "CONTENT_TYPE"
+                    slug: $slug
+                    isUseCategory: $isUseCategory
+                    attributeRequests: $attributeRequests
+                }
+            ) {
+                id
+                name
+                postTypeGroup
+                slug
+                isUseCategory
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
     getPostTypeList: builder.query<any, any>({
       query: payload => ({
         document: gql`
@@ -78,6 +117,38 @@ export const contentTypeApi = createApi({
         variables: payload,
       }),
     }),
-  }),
-});
-export const { useGetPostTypeListQuery, useGetPostTypeDetailQuery } = contentTypeApi;
+    postTypeUpdate: builder.mutation<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          mutation postTypeUpdate($id: Int! $name: String! $slug: String! $isUseCategory: Boolean $attributeRequests: [PostMetaTemplateRequest]!){
+            postTypeUpdate(
+                id: $id,
+                request: {
+                    name: $name
+                    postTypeGroup: "CONTENT_TYPE"
+                    slug: $slug
+                    isUseCategory: $isUseCategory
+                    attributeRequests: $attributeRequests
+                }
+            ) {
+                id
+                name
+                postTypeGroup
+                slug
+                isUseCategory
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
+  })
+})
+
+export const {
+  useGetConfigQuery,
+  usePostTypeCreateMutation,
+  useGetPostTypeListQuery,
+  useGetPostTypeDetailQuery,
+  usePostTypeUpdateMutation,
+} = contentTypeApi;
