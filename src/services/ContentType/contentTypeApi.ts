@@ -21,7 +21,7 @@ export const contentTypeApi = createApi({
         variables: payload,
       })
     }),
-    postTypeCreate: builder.mutation<any, { id: number }>({
+    postTypeCreate: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
           mutation postTypeCreate($name: String! $slug: String! $isUseCategory: Boolean $attributeRequests: [PostMetaTemplateRequest]!){
