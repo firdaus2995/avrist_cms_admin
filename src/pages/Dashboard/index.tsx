@@ -6,6 +6,9 @@ import Table from '../../components/molecules/Table';
 import { COLUMNS } from './column';
 import { useCallback } from 'react';
 import type { SortingState } from '@tanstack/react-table';
+import { DndProvider } from 'react-dnd';
+import { HTML5Backend } from 'react-dnd-html5-backend';
+import { Container } from './components/Container';
 
 export default function Dashboard() {
   const { t } = useTranslation();
@@ -15,9 +18,13 @@ export default function Dashboard() {
       // setDirection(sortModel[0].desc ? "desc" : "asc")
     }
   }, []);
-  
+
   return (
-    <div className='overflow-auto'>
+    <div className="overflow-auto">
+      <DndProvider backend={HTML5Backend}>
+        <Container />
+      </DndProvider>
+
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <br />
       <button className="btn btn-primary btn-sm ">This button made with daisyui</button>
