@@ -16,7 +16,7 @@ function selectBackgroundColor(isActive: boolean, canDrop: boolean) {
   }
 }
 
-export const Dustbin: FC<DustbinProps> = ({ allowedDropEffect }) => {
+export const DropTarget: FC<DustbinProps> = ({ allowedDropEffect }) => {
   const [droppedItems, setDroppedItems] = useState<string[]>([]);
 
   const [{ canDrop, isOver }, drop] = useDrop(

@@ -1,8 +1,10 @@
-import { FC } from 'react';
-import { useDrag, DragSourceMonitor } from 'react-dnd';
+import type { FC } from 'react';
+import type { DragSourceMonitor } from 'react-dnd';
+import { useDrag } from 'react-dnd';
+
 import { ItemTypes } from './ItemTypes';
 
-export interface BoxProps {
+export interface IDragItem {
   name: string;
 }
 
@@ -12,7 +14,7 @@ interface DropResult {
   name: string;
 }
 
-export const Box: FC<BoxProps> = ({ name }) => {
+export const DragItem: FC<IDragItem> = ({ name }) => {
   const [{ opacity }, drag] = useDrag(
     () => ({
       type: ItemTypes.BOX,
@@ -45,9 +47,8 @@ export const Box: FC<BoxProps> = ({ name }) => {
   return (
     <div
       ref={drag}
-      className={`border border-dashed border-gray-400 bg-white p-2 mr-6 mb-6 float-left ${
-        opacity === 1 ? '' : 'opacity-40'
-      }`}>
+      className="border border-dashed border-gray-400 bg-white p-2.5 mr-6 mb-6 float-left"
+      style={{ opacity }}>
       {name}
     </div>
   );
