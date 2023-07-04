@@ -34,11 +34,16 @@ const PageManagementNewPage = React.lazy(
 );
 
 const ContentTypePage = React.lazy(async () => await import('@/pages/ContentType'));
-// const ContentTypeNewPage = React.lazy(async () => await import('@/pages/ContentType/ContentTypeNew'));
+const ContentTypeNewPage = React.lazy(async () => await import('@/pages/ContentType/ContentTypeNew'));
 const ContentTypeDetailPage = React.lazy(
   async () => await import('@/pages/ContentType/ContentTypeDetail'),
 );
-// const ContentTypeEditPage = React.lazy(async () => await import('@/pages/ContentType/ContentTypeEdit'));
+const ContentTypeEditPage = React.lazy(async () => await import('@/pages/ContentType/ContentTypeEdit'));
+
+const ContentManagerPage = React.lazy(async () => await import('@/pages/ContentManager'));
+const ContentManagerDetailPage = React.lazy(
+  async () => await import('@/pages/ContentManager/ContentManagerDetail'),
+);
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
@@ -78,9 +83,12 @@ export default function RoutesComponent() {
           <Route path="page-management/new" element={<PageManagementNewPage />} />
           {/* CONTENT TYPE */}
           <Route path="content-type" element={<ContentTypePage />} />
-          {/* <Route path="content-type/new" element={<ContentTypeNewPage />} /> */}
-          {/* <Route path="content-type/edit/:id" element={<ContentTypeEditPage />} /> */}
+          <Route path="content-type/new" element={<ContentTypeNewPage />} />
+          <Route path="content-type/edit/:id" element={<ContentTypeEditPage />} />
           <Route path="content-type/:id" element={<ContentTypeDetailPage />} />
+          {/* CONTENT MANAGER */}
+          <Route path="content-manager" element={<ContentManagerPage />} />
+          <Route path="content-manager/:id" element={<ContentManagerDetailPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
