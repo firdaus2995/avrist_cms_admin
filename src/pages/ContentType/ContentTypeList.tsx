@@ -14,6 +14,7 @@ import TableDelete from '@/assets/table-delete.png';
 import WarningIcon from '@/assets/warning.png';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
+import Typography from '@/components/atoms/Typography';
 
 const TopRightButton = () => {
   return (
@@ -79,7 +80,6 @@ export default function ContentTypeList() {
 
   useEffect(() => {
     if (data) {
-      console.log('ini data ', data);
       setListData(data?.postTypeList?.postTypeList);
       setTotal(data?.postTypeList?.total);
     }
@@ -107,11 +107,17 @@ export default function ContentTypeList() {
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
+        <Link to={`${info?.row?.original?.id}`}>
+          <Typography
+            type="body"
+            size="s"
+            weight="semi"
+            className="truncate cursor-pointer text-primary">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? info.getValue()
+              : '-'}
+          </Typography>
+        </Link>
       ),
     },
     {

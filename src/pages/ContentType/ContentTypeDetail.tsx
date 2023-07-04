@@ -1,13 +1,14 @@
-import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
+import { useGetPostTypeDetailQuery } from '../../services/ContentType/contentTypeApi';
 import Table from '@/components/molecules/Table';
-import type { SortingState } from '@tanstack/react-table';
-import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 
 export default function ContentTypeDetail() {
+  const params = useParams();
+  const [id] = useState<any>(Number(params.id));
+  const [name, setName] = useState<any>('');
   const [listData, setListData] = useState<any>([]);
 
   // GO BACK
@@ -20,25 +21,20 @@ export default function ContentTypeDetail() {
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
-  const [direction, setDirection] = useState('asc');
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('id');
 
   // RTK GET DATA
-  const fetchQuery = useGetPageManagementListQuery({
+  const fetchQuery = useGetPostTypeDetailQuery({
+    id,
     pageIndex,
     limit: pageLimit,
-    direction,
-    search,
-    sortBy,
-    isArchive: true,
   });
   const { data } = fetchQuery;
 
   useEffect(() => {
     if (data) {
-      setListData(data?.pageList?.pages);
-      setTotal(data?.pageList?.total);
+      setName(data?.postTypeDetail?.name);
+      setListData(data?.postTypeDetail?.attributeList);
+      setTotal(data?.postTypeDetail?.total);
     }
   }, [data]);
 
@@ -49,18 +45,10 @@ export default function ContentTypeDetail() {
     void refetch();
   }, []);
 
-  // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
-    if (sortModel.length) {
-      setSortBy(sortModel[0].id);
-      setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }
-  }, []);
-
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]">Attribute Name</span>,
-      accessorKey: 'title',
+      accessorKey: 'name',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -72,7 +60,7 @@ export default function ContentTypeDetail() {
     },
     {
       header: () => <span className="text-[14px]">Attribute Type</span>,
-      accessorKey: 'createdBy.name',
+      accessorKey: 'fieldType',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -86,19 +74,7 @@ export default function ContentTypeDetail() {
 
   return (
     <>
-      <TitleCard
-        title="Homepage Avrist Life"
-        topMargin="mt-2"
-        SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              setSearch(e.target.value);
-            }}
-            placeholder="Search"
-          />
-        }
-        onBackClick={goBack}
-        hasBack={true}>
+      <TitleCard title={name} topMargin="mt-2" onBackClick={goBack} hasBack={true}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
             rows={listData}
@@ -107,7 +83,6 @@ export default function ContentTypeDetail() {
             error={false}
             manualPagination={true}
             manualSorting={true}
-            onSortModelChange={handleSortModelChange}
           />
         </div>
         <PaginationComponent
