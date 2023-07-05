@@ -10,10 +10,11 @@ import TableView from "../../assets/table-view.png";
 import TableDelete from "../../assets/table-delete.png";
 import ModalConfirmLeave from "@/components/molecules/ModalConfirm";
 import WarningIcon from "../../assets/warning.png";
+import PaginationComponent from "@/components/molecules/Pagination";
+import CopyLink from "../../assets/copylink.svg";
 import { InputSearch } from "@/components/atoms/Input/InputSearch";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { useAppDispatch } from "@/store";
-import PaginationComponent from "@/components/molecules/Pagination";
 
 export default function EmailFormBuilderList () {  
   // TABLE COLUMN
@@ -35,11 +36,14 @@ export default function EmailFormBuilderList () {
       accessorKey: 'link',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
+        <div className="flex gap-5">
+          <p className="text-[14px] truncate">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? info.getValue()
+              : '-'}
+          </p>
+          <img className="cursor-pointer" src={CopyLink} onClick={() => navigator.clipboard.writeText(info?.row?.original?.link)} />
+        </div>
       ),
     },
     {
@@ -83,12 +87,12 @@ export default function EmailFormBuilderList () {
     {
       id: 2,
       formName: 'Form Name 2',
-      link: 'Form Link 1',
+      link: 'Form Link 2',
     },
     {
       id: 3,
       formName: 'Form Name 3',
-      link: 'Form Link 1',
+      link: 'Form Link 3',
     },  
   ]);
   const [search, setSearch] = useState('');
