@@ -33,6 +33,12 @@
       "failed-msg": "Page Template {{name}} gagal diperbarui"
     }
   },
+  "email-form-builder": {
+    "list": {
+      "title": "Daftar Email Form Builder",
+      "button-add": "Tambah Form Baru"
+    }
+  },
   "roles": {
     "role-name": "Nama Peran",
     "role-description": "Deskripsi Peran",
