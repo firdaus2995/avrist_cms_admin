@@ -94,6 +94,16 @@ export default function ContentTypeEdit() {
     }
   }, [fetchConfigQuery]);
 
+  useEffect(() => {
+    if (fetchConfigQuery?.data?.getConfig?.value) {
+      const filteredAttributes = JSON.parse(fetchConfigQuery?.data?.getConfig?.value).attributes.filter((attribute: { label: any; description: any; }) => {
+        const { label, description } = attribute;
+        return label.toLowerCase().includes(search.toLowerCase()) || description.toLowerCase().includes(search.toLowerCase());
+      });
+      setListAttributes(filteredAttributes);
+    }
+  }, [search]);
+
   function getFieldId(value: string) {
     const str = value?.replace(/\s+/g, '-').toLowerCase();
 
@@ -383,7 +393,7 @@ export default function ContentTypeEdit() {
             SearchBar={
               <InputSearch
                 value={search}
-                onBlur={(e: any) => {
+                onChange={(e: any) => {
                   setSearch(e.target.value);
                 }}
                 placeholder="Search"
@@ -1047,7 +1057,7 @@ export default function ContentTypeEdit() {
       {modalListAttribute()}
       {modalAddAttribute()}
       {modalEditAttribute()}
-      <TitleCard title={'New Content Type'} topMargin="mt-2">
+      <TitleCard title={'Edit Content Type'} topMargin="mt-2">
         <ModalConfirmLeave
           open={showComfirm}
           cancelAction={() => {
