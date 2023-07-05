@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { SortingState } from "@tanstack/react-table";
 import { t } from "i18next";
 import { Link, useNavigate } from "react-router-dom";
@@ -35,16 +35,20 @@ export default function EmailFormBuilderList () {
       header: () => <span className="text-[14px]">Link</span>,
       accessorKey: 'link',
       enableSorting: true,
-      cell: (info: any) => (
-        <div className="flex gap-5">
-          <p className="text-[14px] truncate">
-            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-              ? info.getValue()
-              : '-'}
-          </p>
-          <img className="cursor-pointer" src={CopyLink} onClick={() => navigator.clipboard.writeText(info?.row?.original?.link)} />
-        </div>
-      ),
+      cell: (info: any) => {
+        return (
+          <div className="flex gap-5">
+            <p className="text-[14px] truncate">
+              {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+                ? info.getValue()
+                : '-'}
+            </p>
+            <img className="cursor-pointer" src={CopyLink} onClick={() => {
+              void navigator.clipboard.writeText(info?.row?.original?.link);
+            }} />
+          </div>
+        )
+      }
     },
     {
       header: () => <span className="text-[14px]">Action</span>,
@@ -138,6 +142,11 @@ export default function EmailFormBuilderList () {
     setDeleteModayBody(`Do you want to delete this form?`);
     setOpenDeleteModal(true);
   };
+
+  // DELETE THIS AFTER INTEGRATION
+  useEffect(() => {
+    console.log(dispatch, setListData, search, setTotal, direction, sortBy);
+  }, []);
 
   return (
     <React.Fragment>

@@ -23,7 +23,7 @@ interface TPaginationComponent {
   page: number;
   total: number;
   pageSize: number;
-  rangePageSize?: Array<number>;
+  rangePageSize?: number[];
   setPage: (d: number) => void;
   setPageSize: (d: number) => void;
 }

@@ -16,8 +16,8 @@ import Skeleton from './skeleton';
 interface IDataGrid {
   columns: Array<ColumnDef<any>>;
   rows: any[];
-  loading: boolean;
-  error: boolean;
+  loading?: boolean;
+  error?: boolean;
   manualSorting: boolean;
   manualPagination: boolean;
   onSortModelChange?: (v: SortingState) => void;
