@@ -19,19 +19,19 @@ import countPage from '../../../utils/countPage';
 import TableNext from '../../../assets/table-next.png';
 import TablePrev from '../../../assets/table-prev.png';
 
-const rangePageSize = [5, 10, 25, 50, 100];
-
 interface TPaginationComponent {
   page: number;
   total: number;
   pageSize: number;
+  rangePageSize?: Array<number>;
   setPage: (d: number) => void;
   setPageSize: (d: number) => void;
 }
 const PaginationComponent: React.FC<TPaginationComponent> = ({
   page, 
   total, 
-  pageSize, 
+  pageSize,
+  rangePageSize = [5, 10, 25, 50, 100], 
   setPage, 
   setPageSize,
 }) => {

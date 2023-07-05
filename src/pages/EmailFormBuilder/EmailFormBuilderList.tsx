@@ -13,6 +13,7 @@ import WarningIcon from "../../assets/warning.png";
 import { InputSearch } from "@/components/atoms/Input/InputSearch";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { useAppDispatch } from "@/store";
+import PaginationComponent from "@/components/molecules/Pagination";
 
 export default function EmailFormBuilderList () {  
   // TABLE COLUMN
@@ -94,7 +95,7 @@ export default function EmailFormBuilderList () {
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
   const [direction, setDirection] = useState('asc');
   const [sortBy, setSortBy] = useState('id');
   // DELETE MODAL STATE
@@ -177,7 +178,21 @@ export default function EmailFormBuilderList () {
           // loading={isFetching}
           // error={isError}
         />
-
+        <PaginationComponent
+          total={total}
+          page={pageIndex}
+          pageSize={pageLimit}
+          rangePageSize={
+            [10, 20, 30]
+          }
+          setPageSize={(page: number) => {
+            setPageLimit(page);
+            setPageIndex(0);
+          }}
+          setPage={(page: number) => {
+            setPageIndex(page);
+          }}          
+        />
       </TitleCard>
     </React.Fragment>
   )
