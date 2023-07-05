@@ -1,43 +1,42 @@
-import { useEffect, useState } from 'react';
-import { useGetPostTypeDetailQuery } from '../../../services/ContentType/contentTypeApi';
+import { useState } from 'react';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
+import { useTranslation } from 'react-i18next';
+import { Link } from 'react-router-dom';
+import TableEdit from '@/assets/table-edit.png';
 
-export default function CategoryTab(props: { id: any; }) {
-  const {id} = props;
-  const [listData, setListData] = useState<any>([]);
+export default function CategoryTab(_props: { id: any; }) {
+  const { t } = useTranslation();
+  const [listData] = useState<any>([
+    {
+      id: 1,
+      status: 'waiting_review',
+      title: 'Homepage Avrist Life',
+      desc: 'Landing Page'
+    },
+    {
+      id: 2,
+      status: 'waiting_approval',
+      title: 'Homepage Avrist Life 2',
+      desc: 'Landing Page'
+    },
+    {
+      id: 3,
+      status: 'draft',
+      title: 'title',
+      desc: 'description'
+    }
+  ]);
 
   // TABLE PAGINATION STATE
-  const [total, setTotal] = useState(0);
+  const [total] = useState(3);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
 
-  // RTK GET DATA
-  const fetchQuery = useGetPostTypeDetailQuery({
-    id,
-    pageIndex,
-    limit: pageLimit,
-  });
-  const { data } = fetchQuery;
-
-  useEffect(() => {
-    if (data) {
-      setListData(data?.postTypeDetail?.attributeList);
-      setTotal(data?.postTypeDetail?.total);
-    }
-  }, [data]);
-
-  useEffect(() => {
-    const refetch = async () => {
-      await fetchQuery.refetch();
-    };
-    void refetch();
-  }, []);
-
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Attribute Name</span>,
-      accessorKey: 'name',
+      header: () => <span className="text-[14px]">Category Name</span>,
+      accessorKey: 'title',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -48,8 +47,8 @@ export default function CategoryTab(props: { id: any; }) {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Attribute Type</span>,
-      accessorKey: 'fieldType',
+      header: () => <span className="text-[14px]">Category Description</span>,
+      accessorKey: 'desc',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -57,6 +56,23 @@ export default function CategoryTab(props: { id: any; }) {
             ? info.getValue()
             : '-'}
         </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">{t('action.action')}</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (_info: any) => (
+        <div className="flex gap-5">
+          <Link to={`edit/${_info.getValue()}`}>
+            <div className="tooltip" data-tip={t('action.edit')}>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+              />
+            </div>
+          </Link>
+        </div>
       ),
     },
   ];

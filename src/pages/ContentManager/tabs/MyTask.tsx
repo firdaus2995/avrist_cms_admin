@@ -2,10 +2,9 @@ import { useState } from 'react';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
-import TableDelete from '@/assets/table-delete.png';
 import { useTranslation } from 'react-i18next';
 
-export default function MyTaskTab(props: { id: any; }) {
+export default function MyTaskTab(_props: { id: any; }) {
   const { t } = useTranslation();
   const [listData] = useState<any>([
     {
