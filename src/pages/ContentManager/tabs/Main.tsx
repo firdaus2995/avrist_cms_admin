@@ -4,9 +4,16 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import TableDelete from '@/assets/table-delete.png';
 import { useTranslation } from 'react-i18next';
 import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
+import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import WarningIcon from '@/assets/warning.png';
 
 export default function MainTab(_props: { id: any; }) {
   const { t } = useTranslation();
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setMessageConfirm] = useState('');
+  const [, setIdDelete] = useState(0);
+
   const [listData] = useState<any>([
     {
       id: 1,
@@ -88,7 +95,7 @@ export default function MainTab(_props: { id: any; }) {
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
               onClick={() => {
-                console.log('a')
+                onClickPageDelete(_info.getValue(), _info?.row?.original?.title);
               }}
             />
           </div>
@@ -97,8 +104,29 @@ export default function MainTab(_props: { id: any; }) {
     },
   ];
 
+  const onClickPageDelete = (id: number, title: string) => {
+    setIdDelete(id);
+    setTitleConfirm('Are you sure?');
+    setMessageConfirm(`Do you want to delete data ${title}?`);
+    setShowConfirm(true);
+  };
+
   return (
     <>
+      <ModalConfirmLeave
+        open={showConfirm}
+        cancelAction={() => {
+          setShowConfirm(false);
+        }}
+        title={titleConfirm}
+        cancelTitle="Cancel"
+        message={messageConfirm}
+        submitAction={() => { setShowConfirm(false); }}
+        submitTitle="Yes"
+        // loading={deletePageLoading}
+        icon={WarningIcon}
+        btnType={''}
+      />
         <div className="overflow-x-auto w-full mb-5">
           <Table
             rows={listData}
