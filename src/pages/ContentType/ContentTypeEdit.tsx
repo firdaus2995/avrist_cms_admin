@@ -361,7 +361,7 @@ export default function ContentTypeEdit() {
   const modalListAttribute = () => {
     return (
       <Modal open={isOpenModalAttribute} toggle={() => null} title="" width={840} height={480}>
-        <div className="flex flex-col overflow-hidden">
+        <div className="flex flex-col">
           <div className="p-2 absolute right-2 top-2">
             <svg
               role="button"
@@ -389,7 +389,7 @@ export default function ContentTypeEdit() {
                 placeholder="Search"
               />
             }><></></TitleCard>
-          <div className="flex flex-col overflow-auto">
+          <div className="flex flex-col overflow-y-auto h-[35vh] scrollbar scrollbar-w-3 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl scrollbar-thumb-light-purple scrollbar-track-light-purple-2">
             {listAttributes?.map((val: any, idx: Key | null | undefined) => (
               <div
                 key={idx}
