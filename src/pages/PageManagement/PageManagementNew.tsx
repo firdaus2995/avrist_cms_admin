@@ -1,104 +1,128 @@
-import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-import { useTranslation } from 'react-i18next';
-import { useGetPermissionHirarkyQuery, useRoleCreateMutation } from '../../services/Roles/rolesApi';
-import { useAppSelector, useAppDispatch } from '../../store';
-import { openToast } from '../../components/atoms/Toast/slice';
-import { useNavigate } from 'react-router-dom';
-import { resetForm } from '../../services/Roles/rolesSlice';
-import PermissionList from '../../components/organisms/PermissionList';
-import PermissionForm from '../../components/organisms/PermissionForm';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
-import CancelIcon from "../../assets/cancel.png";
-import { useState } from 'react';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import Typography from '@/components/atoms/Typography';
+import { InputText } from '@/components/atoms/Input/InputText';
+import CkEditor from '@/components/atoms/Ckeditor';
+import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import DropDown from '@/components/molecules/DropDown';
 
 export default function PageManagementNew() {
-  const dispatch = useAppDispatch();
-  const navigate = useNavigate();
-  const { t } = useTranslation();
-  const { data, isFetching } = useGetPermissionHirarkyQuery(null);
-  const { name, description, permissions } = useAppSelector(state => state.rolesSlice);
-  const [roleCreate, { isLoading: onSaveLoading }] = useRoleCreateMutation();
-  const [showComfirm, setShowComfirm] = useState(false);
-  const [titleConfirm, setTitleConfirm] = useState('');
-  const [messageConfirm, setmessageConfirm] = useState('');
-
-  const onSave = () => {
-    const payload = {
-      name,
-      description,
-      permissions: permissions.join(','),
-    };
-    roleCreate(payload)
-      .unwrap()
-      .then(d => {
-        dispatch(resetForm());
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-            message: t('roles.add.success-msg', { name: d.roleCreate.name }),
-          }),
-        );
-        dispatch(resetForm());
-        navigate('/roles');
-      })
-      .catch(err => {
-        console.log(err);
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-            message: t('roles.add.failed-msg', { name: payload.name }),
-          }),
-        );
-      });
-  };
-
-  const onLeave = () => {
-    setShowComfirm(false);
-    navigate('/roles');
-  }
-
-  return (
-    <>
-      <TitleCard title={t('roles.add.title')} topMargin="mt-2">
-        <ModalConfirmLeave
-          open={showComfirm}
-          cancelAction={() => {
-            setShowComfirm(false);
-          }}
-          title={titleConfirm}
-          cancelTitle="No"
-          message={messageConfirm}
-          submitAction={onLeave}
-          submitTitle="Yes"
-          icon={CancelIcon}
-          btnType='btn-warning'
-        />
-        <PermissionForm />
-        <PermissionList
-          permissionList={data?.permissionHierarchy.list ?? []}
-          loading={isFetching}
-        />
-        <div className="flex float-right gap-3">
-          <button
-            className="btn btn-outline btn-md"
-            onClick={() => {
-              setTitleConfirm('Are you sure?');
-              setmessageConfirm(`Do you want to cancel all the process?`);
-              setShowComfirm(true);
-            }}>
-            {t('btn.cancel')}
+  const Footer = () => {
+    return (
+      <div className="flex justify-end mt-10">
+        <div className="flex flex-row p-2 gap-2">
+          <button onClick={() => {}} className="btn btn-outline text-xs btn-sm w-28 h-10">
+            Cancel
           </button>
-          <button
-            className="btn btn-success btn-md"
-            onClick={() => {
-              onSave();
-            }}>
-            {onSaveLoading ? 'Loading...' : t('btn.save')}
+          <button onClick={() => {}} className="btn btn-success text-xs btn-sm w-28 h-10">
+            Submit
           </button>
         </div>
-      </TitleCard>
-    </>
+      </div>
+    );
+  };
+  const Label = ({ title, value }: any) => {
+    return (
+      <div className="flex flex-row">
+        <Typography type="body" size="m" weight="medium" className="my-2 w-48">
+          {title}
+        </Typography>
+        <Typography type="body" size="s" weight="regular" className="text-body-text-2 my-2 mr-5">
+          {value}
+        </Typography>
+      </div>
+    );
+  };
+  return (
+    <TitleCard title="New Page Management" border={true}>
+      <div className="ml-2 mt-6">
+        <div>
+          <Typography type="heading4" weight="bold" className="mb-5">
+            General Information
+          </Typography>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <InputText
+              labelTitle="Page Name"
+              labelStyle="font-semi text-base"
+              labelRequired
+              direction="row"
+              themeColor="lavender"
+              roundStyle="xl"
+              onChange={() => {}}
+            />
+            <InputText
+              labelTitle="Metatilte"
+              labelStyle="font-semi text-base"
+              labelRequired
+              direction="row"
+              themeColor="lavender"
+              roundStyle="xl"
+              onChange={() => {}}
+            />
+            <InputText
+              labelTitle="Slug"
+              labelStyle="font-semi text-base"
+              labelRequired
+              direction="row"
+              themeColor="lavender"
+              roundStyle="xl"
+              onChange={() => {}}
+            />
+            <InputText
+              labelTitle="Meta Description"
+              labelStyle="font-semi text-base"
+              labelRequired
+              direction="row"
+              themeColor="lavender"
+              roundStyle="xl"
+              onChange={() => {}}
+            />
+            <InputText
+              labelTitle="Short Description"
+              labelStyle="font-semi text-base"
+              labelRequired
+              direction="row"
+              themeColor="lavender"
+              roundStyle="xl"
+              onChange={() => {}}
+            />
+          </div>
+
+          <div className="my-10">
+            <Label title="Content" />
+            <CkEditor />
+          </div>
+
+          <div className="btn-group flex mb-10">
+            <button className="btn btn-primary text-xs flex-1">Page List</button>
+            <button className="btn btn-disabled text-xs flex-1">My Task</button>
+          </div>
+
+          <div className="flex flex-row items-center justify-between">
+            <Typography type="heading4" weight="bold" className="mb-2">
+              Choose your template
+            </Typography>
+            <InputSearch onBlur={() => {}} placeholder="Search" />
+          </div>
+
+          <div className="flex flex-row items-center w-96">
+            <Label title="Content" />
+            <DropDown
+              defaultValue="item1"
+              items={[
+                {
+                  value: 'item1',
+                  label: 'Items 1',
+                },
+                {
+                  value: 'item2',
+                  label: 'Items 2',
+                },
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+      <Footer />
+    </TitleCard>
   );
 }
