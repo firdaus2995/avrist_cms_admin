@@ -1,8 +1,19 @@
-import { Route, Routes, Navigate, Outlet } from 'react-router-dom';
-import React, { Suspense } from 'react';
+import { 
+  Route, 
+  Routes, 
+  Navigate, 
+  Outlet,
+} from 'react-router-dom';
+import React, { 
+  Suspense,
+} from 'react';
+
 import Layout from '../components/organisms/Layout';
 import Loading from '../components/atoms/Loading';
-import { useAppSelector } from '../store';
+import { 
+  useAppSelector,
+} from '../store';
+
 const LoginPage = React.lazy(async () => await import('../pages/Login'));
 const LoginPortal = React.lazy(async () => await import('../pages/LoginPortal'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
@@ -23,6 +34,15 @@ const MenuManagementPage = React.lazy(async () => await import('../pages/MenuMan
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
 const PageTemplateNewPage = React.lazy(
   async () => await import('../pages/PageTemplates/PageTemplatesNew'),
+);
+
+// IMPORT EMAIL FORM BUILDER PAGE
+const EmailFormBuilderListPage = React.lazy(async () => await import('../pages/EmailFormBuilder'));
+const EmailFormBuilderNewPage = React.lazy(
+  async () => await import('../pages/EmailFormBuilder/EmailFormBuilderNew'),
+);
+const EmailFormBuilderEditPage = React.lazy(
+  async () => await import('../pages/EmailFormBuilder/EmailFormBuilderEdit'),
 );
 
 const PageManagementPage = React.lazy(async () => await import('../pages/PageManagement'));
@@ -84,6 +104,10 @@ export default function RoutesComponent() {
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route path="page-template" element={<PageTemplatePage />} />
           <Route path="page-template/new" element={<PageTemplateNewPage />} />
+          {/* EMAIL FORM BUILDER PAGES ROUTE */}
+          <Route path="email-form-builder" element={<EmailFormBuilderListPage />} />
+          <Route path="email-form-builder/new" element={<EmailFormBuilderNewPage />} />
+          <Route path="email-form-builder/edit/:id" element={<EmailFormBuilderEditPage />} />
           {/* PAGE MANAGEMENT */}
           <Route path="page-management" element={<PageManagementPage />} />
           <Route path="page-management/archive" element={<PageManagementArchivePage />} />

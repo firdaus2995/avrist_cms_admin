@@ -68,6 +68,16 @@ export default function ContentTypeNew() {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (data?.getConfig?.value) {
+      const filteredAttributes = JSON.parse(data?.getConfig?.value).attributes.filter((attribute: { label: any; description: any; }) => {
+        const { label, description } = attribute;
+        return label.toLowerCase().includes(search.toLowerCase()) || description.toLowerCase().includes(search.toLowerCase());
+      });
+      setListAttributes(filteredAttributes);
+    }
+  }, [search]);
+
   function getFieldId(value: string) {
     const str = value?.replace(/\s+/g, '-').toLowerCase();
 
@@ -425,7 +435,7 @@ export default function ContentTypeNew() {
             SearchBar={
               <InputSearch
                 value={search}
-                onBlur={(e: any) => {
+                onChange={(e: any) => {
                   setSearch(e.target.value);
                 }}
                 placeholder="Search"

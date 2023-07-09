@@ -1,8 +1,17 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { 
+  useCallback, 
+  useEffect, 
+  useState,
+} from "react";
 import { 
-  t } from "i18next";
+  t,
+} from "i18next";
 import { 
-  Link } from "react-router-dom";
+  Link,
+} from "react-router-dom";
+import { 
+  SortingState,
+} from "@tanstack/table-core";
 
 import Table from "../../components/molecules/Table";
 import TableEdit from "../../assets/table-edit.png";
@@ -19,9 +28,6 @@ import {
   InputSearch,
 } from "../../components/atoms/Input/InputSearch";
 import { 
-  SortingState,
-} from "@tanstack/table-core";
-import { 
   useDeletePageTemplateMutation, 
   useEditPageTemplateMutation, 
   useGetPageTemplateQuery,
@@ -36,7 +42,7 @@ import {
   InputText,
 } from "../../components/atoms/Input/InputText";
 
-export default function PageTemplatesNew () {
+export default function PageTemplatesList () {
   // TABLE COLUMN
   const columns = [
     {
@@ -157,6 +163,11 @@ export default function PageTemplatesNew () {
     };
   }, []);
 
+  // FUNCTION FOR VIEW PAGE TEMPLATE
+  const onClickPageTemplateView = (id: number) => {
+    console.log(id);
+  };
+
   // FUNCTION FOR DELETE PAGE TEMPLATE
   const submitDeleteUser = () => {
     deletedPageTemplate({
@@ -185,14 +196,8 @@ export default function PageTemplatesNew () {
           }),
         );
       })
-  }
-
-  // FUNCTION FOR VIEW PAGE TEMPLATE
-  const onClickPageTemplateView = (id: number) => {
-    console.log(id);
   };
 
-  // FUNCTION FOR DELETE PAGE TEMPLATE
   const onClickPageTemplateDelete = (id: number) => {
     setDeletedId(id);
     setDeleteModalTitle(`Are you sure?`);

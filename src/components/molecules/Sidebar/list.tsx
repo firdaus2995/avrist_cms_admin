@@ -5,6 +5,7 @@ import PageTemplateIcon from '../../../assets/sidebar/Page-template-icon.png';
 import SidebarIcon from '../../../assets/sidebar/Sidebar-icon.png';
 import TemplateIcon from '../../../assets/sidebar/Template-icon.png';
 import UserIcon from '../../../assets/sidebar/User-icon.png';
+import EmailIcon from '../../../assets/sidebar/Email-icon.svg';
 
 export const sidebarList = [
   {
@@ -55,6 +56,12 @@ export const sidebarList = [
   },
   {
     id: 7,
+    title: 'Email Form Builder',
+    icon: EmailIcon,
+    path: '/email-form-builder',
+  },
+  {
+    id: 8,
     title: 'User Management',
     icon: UserIcon,
     list: [
