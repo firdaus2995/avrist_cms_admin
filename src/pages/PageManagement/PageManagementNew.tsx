@@ -4,6 +4,7 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import CkEditor from '@/components/atoms/Ckeditor';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import DropDown from '@/components/molecules/DropDown';
+import TemplateHome from '@/assets/template-home.jpg';
 
 export default function PageManagementNew() {
   const Footer = () => {
@@ -103,10 +104,20 @@ export default function PageManagementNew() {
             </Typography>
             <InputSearch onBlur={() => {}} placeholder="Search" />
           </div>
+          <div className="flex justify-center">
+            <div className="w-7/12 grid grid-cols-1 sm:grid-cols-3">
+              <img src={TemplateHome} className="scale-75" />
+              <img src={TemplateHome} className="scale-75" />
+              <img src={TemplateHome} className="scale-75" />
+              <img src={TemplateHome} className="scale-75" />
+              <img src={TemplateHome} className="scale-75" />
+              <img src={TemplateHome} className="scale-75" />
+            </div>
+          </div>
 
           <div className="flex items-center justify-center">
             <div className="flex flex-row items-center justify-center">
-              <Typography type="body" size="m" weight="medium" className="my-2 w-48">
+              <Typography type="body" size="m" weight="semi" className="w-96 mt-5">
                 Choose Content Type
               </Typography>
               <DropDown

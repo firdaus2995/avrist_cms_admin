@@ -72,11 +72,11 @@ const DropDown = ({
       <button onClick={(event: React.SyntheticEvent) => {
         event.preventDefault();
         setOpen(!open); 
-      }} tabIndex={0} className="flex flex-row justify-between items-center p-3 w-full h-[48px] border-[1px] border-neutral-300 rounded-3xl bg-transparent box-border text-left text-sm focus:border-bright-purple">
+      }} tabIndex={0} className="flex flex-row justify-between items-center p-3 w-full h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple">
         {selectedLabel}
         <img src={open ? ChevronUp : ChevronDown} className="w-6 h-6" />
       </button>
-      <ul tabIndex={0} className={`absolute p-2 mt-0.5 shadow bg-base-100 rounded-box w-full max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-3xl ${!open && `hidden`}`}>
+      <ul tabIndex={0} className={`absolute p-2 mt-0.5 shadow bg-base-100 rounded-box w-full max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-xl ${!open && `hidden`}`}>
         {
           items.map((element: IItems, keyIndex: number) => {
             return (
