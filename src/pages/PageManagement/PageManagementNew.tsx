@@ -104,21 +104,25 @@ export default function PageManagementNew() {
             <InputSearch onBlur={() => {}} placeholder="Search" />
           </div>
 
-          <div className="flex flex-row items-center w-96">
-            <Label title="Content" />
-            <DropDown
-              defaultValue="item1"
-              items={[
-                {
-                  value: 'item1',
-                  label: 'Items 1',
-                },
-                {
-                  value: 'item2',
-                  label: 'Items 2',
-                },
-              ]}
-            />
+          <div className="flex items-center justify-center">
+            <div className="flex flex-row items-center justify-center">
+              <Typography type="body" size="m" weight="medium" className="my-2 w-48">
+                Choose Content Type
+              </Typography>
+              <DropDown
+                defaultValue="item1"
+                items={[
+                  {
+                    value: 'item1',
+                    label: 'Items 1',
+                  },
+                  {
+                    value: 'item2',
+                    label: 'Items 2',
+                  },
+                ]}
+              />
+            </div>
           </div>
         </div>
       </div>
