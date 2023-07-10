@@ -34,6 +34,12 @@
       "failed-msg": "Failed edit Page Template {{name}}"
     }
   },
+  "email-form-builder": {
+    "list": {
+      "title": "Email Form Builder",
+      "button-add": "Add New Form"
+    }
+  },
   "roles": {
     "role-name": "Role Name",
     "role-description": "Role Description",
