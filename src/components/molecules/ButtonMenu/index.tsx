@@ -17,7 +17,7 @@ export const ButtonMenu: React.FC<IButtonMenu> = () => {
         <li>
           <label tabIndex={0} className="btn btn-outline btn-primary m-1 w-44">
             <img src={CheckCircle} />
-            Aprrove
+            Approve
           </label>
         </li>
         <li>

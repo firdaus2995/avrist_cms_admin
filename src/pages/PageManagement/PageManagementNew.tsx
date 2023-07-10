@@ -86,6 +86,7 @@ export default function PageManagementNew() {
               roundStyle="xl"
               onChange={() => {}}
             />
+            
           </div>
 
           <div className="my-10">

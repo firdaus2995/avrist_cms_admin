@@ -44,7 +44,7 @@ export default function PreviewModal(props: any) {
               <LoadingCircle />
             </div>
           )} */}
-          <div className="mb-10">
+          <div className="mb-10 p-1">
             <InputText
               labelTitle="Name"
               labelStyle="font-bold	"
