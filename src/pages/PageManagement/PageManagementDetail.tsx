@@ -2,6 +2,8 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import StatusBadge from './components/StatusBadge';
 import Typography from '@/components/atoms/Typography';
 import TemplateHome from '@/assets/template-home.jpg';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
+import { ButtonMenu } from '../../components/molecules/ButtonMenu';
 
 export default function PageManagementDetail() {
   const Badge = () => {
@@ -38,7 +40,11 @@ export default function PageManagementDetail() {
     );
   };
   return (
-    <TitleCard title="Homepage - Page Template" titleComponent={<Badge />} border={true}>
+    <TitleCard
+      title="Homepage - Page Template"
+      titleComponent={<Badge />}
+      border={true}
+      TopSideButtons={<ButtonMenu title={''} />}>
       <div className="ml-2 mt-6">
         <div>
           <Typography type="heading4" weight="bold" className="mb-2">
@@ -61,6 +67,15 @@ export default function PageManagementDetail() {
           </div>
           <Label title="Content Type" value="Homepage Avrist Life" />
           <Label title="Category" value="Solusi Individu" />
+          <div className="flex mt-3">
+            <CheckBox
+              updateFormValue={e => {
+                console.log(e.value);
+              }}
+              labelTitle="I Already Review This Page"
+              updateType={''}
+            />
+          </div>
         </div>
       </div>
       <Footer />
