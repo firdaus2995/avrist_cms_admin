@@ -161,7 +161,6 @@ export default function PageManagementList() {
               setLogTitle(info?.row?.original?.title);
             }}>
             <img src={TimelineLog} className="w-6 h-6" />
-            {/* <p>{info?.row?.original?.id}</p> */}
           </div>
         </>
       ),

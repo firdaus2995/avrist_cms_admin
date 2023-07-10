@@ -11,6 +11,8 @@ interface ITitleCard {
   hasBack?: boolean;
   backTitle?: string;
   onBackClick?: any;
+  border?: boolean;
+  titleComponent?: React.ReactNode;
 }
 
 export const TitleCard: React.FC<ITitleCard> = ({
@@ -22,12 +24,16 @@ export const TitleCard: React.FC<ITitleCard> = ({
   hasBack,
   backTitle,
   onBackClick,
+  border,
+  titleComponent,
 }) => {
   return (
     <div className={`card w-full p-6 bg-base-100 ${topMargin ?? 'mt-6'}`}>
       {hasBack ? (
         <div className="mb-5">
-          <button onClick={onBackClick} className="btn btn-ghost btn-sm font-normal text-body-text-3">
+          <button
+            onClick={onBackClick}
+            className="btn btn-ghost btn-sm font-normal text-body-text-3">
             <img src={ArrowLeft} className="w-6 h-6 mr-1 -ml-2" />
             {backTitle ?? 'Back'}
           </button>
@@ -36,14 +42,17 @@ export const TitleCard: React.FC<ITitleCard> = ({
         <div />
       )}
       <Subtitle styleClass={TopSideButtons !== undefined ? 'inline-block' : ''}>
-        {title}
+        <div className="flex flex-row items-center">
+          {title}
+          {titleComponent}
+        </div>
         <div className="flex gap-5">
           {SearchBar !== undefined && SearchBar}
           {TopSideButtons !== undefined && TopSideButtons}
         </div>
       </Subtitle>
 
-      <div className=" mt-6"></div>
+      <div className={`mt-5 ${border && 'border-b-2'}`}></div>
 
       <div className="h-full w-full pb-6 bg-base-100">{children}</div>
     </div>
