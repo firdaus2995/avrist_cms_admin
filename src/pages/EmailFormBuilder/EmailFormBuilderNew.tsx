@@ -10,15 +10,22 @@ import { InputText } from "@/components/atoms/Input/InputText";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
+import EFBComponent from "./component";
+import EFBPreview from "./previewComponent";
+import Drag from "./dnd/drag";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
+import Drop from "./dnd/Drop";
 // import { useAppDispatch } from "@/store";
 
 export default function EmailFormBuilderNew () {
   const navigate = useNavigate();
   // const dispatch = useAppDispatch();
   // FORM STATE
-  const [formName, setFormName] = useState("");
-  const [checkSubmitterEmail, setCheckSubmitterEmail] = useState(false);
-  const [multipleInput, setMultipleInput] = useState([]);
+  const [formName, setFormName] = useState<any>("");
+  const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
+  const [multipleInput, setMultipleInput] = useState<any>([]);
+  const [components, setComponents] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
@@ -43,6 +50,78 @@ export default function EmailFormBuilderNew () {
     const items: any = copyArray(multipleInput);
     items.splice(index, 1);
     setMultipleInput(items);
+  };
+
+  const handlerAddComponent = (item: any) => {
+    switch (item) {
+      case "TEXTFIELD":
+        return {
+          type: item,
+          name: "Text Field Name",
+          placeholder: "Enter your field",    
+        };
+      case "TEXTAREA":
+        return {
+          type: item,
+          name: "Text Area Name",
+          placeholder: "Enter your field",    
+        };
+      case "DROPDOWN":
+        return {
+          type: item,
+          name: "Dropdown Name",
+          items: ["Ayam", "Babi"]
+        };
+      case "RADIO":
+        return {
+          type: item,
+          name: "Radio Name",
+          items: ["Ayam", "Babi"],
+          other: true,
+        };
+      case "CHECKBOX":
+        return {
+          type: item,
+          name: "Checkbox Name",
+          items: ["Ayam", "Babi"],
+          other: true,
+        };
+      case "EMAIL":
+        return {
+          type: item,
+          name: "Email Name",
+          placeholder: "Enter your email",
+        };
+      case "LABEL":
+        return {
+          type: item,
+          name: "Label Name",
+        }
+      case "NUMBER":
+        return {
+          type: item,
+          name: "Number Name",
+          placeholder: "Enter your field"
+        };
+      case "DOCUMENT":
+        return {
+          type: item,
+          name: "Document Name",
+        };
+      case "IMAGE":
+        return {
+          type: item,
+          name: "Image Name",
+        };
+      default:
+        return false;
+    };
+  };
+
+  const handlerDeleteComponent = (index: number) => {
+    const currentComponents: any = copyArray(components);
+    currentComponents.splice(index, 1);
+    setComponents(currentComponents);
   };
 
   return (
@@ -106,23 +185,179 @@ export default function EmailFormBuilderNew () {
           <Divider />
 
           {/* BOT SECTION */}
-          <div className="mt-4 flex flex-row w-100 h-[500px] gap-2">
-            <div className="flex flex-1 border-[1px] border-light-grey rounded-2xl p-4">
-              <div className="flex flex-col gap-4">
-                <h2 className="font-bold ">Component List</h2>
+          <DndProvider backend={HTML5Backend}>
+            <div className="mt-4 flex flex-row w-100 h-[600px] gap-2">
+              <div className="h-full flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
+                <h2 className="font-bold p-3">Component List</h2>
+                <div className="flex flex-col gap-3 overflow-auto p-2 border-[1px] border-transparent">
+                  <Drag
+                    name="TEXTFIELD"
+                  >
+                    <EFBComponent.TextField />
+                  </Drag>
+                  <Drag
+                    name="TEXTAREA"
+                  >
+                    <EFBComponent.TextArea />
+                  </Drag>
+                  <Drag
+                    name="DROPDOWN"
+                  >
+                    <EFBComponent.Dropdown />
+                  </Drag>
+                  <Drag
+                    name="RADIO"
+                  >
+                    <EFBComponent.Radio />
+                  </Drag>
+                  <Drag
+                    name="CHECKBOX"
+                  >
+                    <EFBComponent.Checkbox />
+                  </Drag>
+                  <Drag
+                    name="EMAIL"
+                  >
+                    <EFBComponent.Email />
+                  </Drag>
+                  <Drag
+                    name="LABEL"
+                  >
+                    <EFBComponent.Label />
+                  </Drag>
+                  <Drag
+                    name="NUMBER"
+                  >
+                    <EFBComponent.Number />
+                  </Drag>
+                  <Drag
+                    name="DOCUMENT"
+                  >
+                    <EFBComponent.Document />
+                  </Drag>
+                  <Drag
+                    name="IMAGE"
+                  >
+                    <EFBComponent.Image />
+                  </Drag>
+                </div>
               </div>
+              <div className="flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
+                <h2 className="font-bold p-3">Form Preview</h2>
+                <Drop
+                  onDropped={(item: any) => {
+                    let component: any = handlerAddComponent(item.name);                    
+                    if (component) {
+                      setComponents((prevItem: any) => [...prevItem, component]);
+                    };
+                  }}
+                >
+                  {
+                    components.map((element: any, index: number) => {
+                      switch (element.type) {
+                        case "TEXTFIELD":
+                          return (
+                            <EFBPreview.Textfield 
+                              key={index}
+                              name={element.name}
+                              placeholder={element.placeholder}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "TEXTAREA":
+                          return (
+                            <EFBPreview.TextArea 
+                              key={index}
+                              name={element.name}
+                              placeholder={element.placeholder}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "DROPDOWN":
+                          return (
+                            <EFBPreview.Dropdown 
+                              key={index}
+                              name={element.name}
+                              items={element.items}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "RADIO":
+                          return (
+                            <EFBPreview.Radio 
+                              key={index}
+                              name={element.name}
+                              items={element.items}
+                              other={element.other}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "CHECKBOX":
+                          return (
+                            <EFBPreview.Checkbox
+                              key={index}
+                              name={element.name}
+                              items={element.items}
+                              other={element.other}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "EMAIL":
+                          return (
+                            <EFBPreview.Email
+                              key={index}
+                              name={element.name}
+                              placeholder={element.placeholder}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "LABEL":
+                          return (
+                            <EFBPreview.Label
+                              key={index}
+                              name={element.name}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "NUMBER":
+                          return (
+                            <EFBPreview.Number
+                              key={index}
+                              name={element.name}
+                              placeholder={element.placeholder}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "DOCUMENT":
+                          return (
+                            <EFBPreview.Document
+                              key={index}
+                              name={element.name}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        case "IMAGE":
+                          return (
+                            <EFBPreview.Image
+                              key={index}
+                              name={element.name}
+                              onDelete={() => handlerDeleteComponent(index)}
+                            />
+                          );
+                        default:
+                          return (
+                            <div>ERROR</div>
+                          )
+                      };
+                    })
+                  }
+                </Drop>
+              </div>
+              <div className="flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
+                <h2 className="font-bold p-3">Configuration Bar</h2>
+              </div>    
             </div>
-            <div className="flex flex-1 border-[1px] border-light-grey rounded-2xl p-4">
-              <div className="flex flex-col gap-4">
-                <h2 className="font-bold ">Form Preview</h2>
-              </div>
-            </div>
-            <div className="flex flex-1 border-[1px] border-light-grey rounded-2xl p-4">
-              <div className="flex flex-col gap-4">
-                <h2 className="font-bold ">Configuration Bar</h2>
-              </div>
-            </div>    
-          </div>
+          </DndProvider>
 
           {/* BUTTONS SECTION */}
           <div className="mt-[50px] flex justify-end items-end gap-2">

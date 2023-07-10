@@ -83,7 +83,7 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
         {
           items.map((item: any, index: number) => {
             return (
-              <div key={index} className="relative flex items-center w-[400px] h-[46px] px-[16px] py-[10px] bg-light-purple rounded-xl">
+              <div key={index} className="relative flex items-center w-[400px] h-[46px] px-[16px] py-[10px] bg-light-purple-2 rounded-xl">
                 {item}
                 <img className="absolute top-[-5px] right-[-5px] cursor-pointer" src={CloseSolid} onClick={() => {
                   onDelete(index);

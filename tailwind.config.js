@@ -15,6 +15,8 @@ export default {
         'body-text-3': '#818494',
         grey: '#BBBBBB',
         'light-grey': '#D6D6D6',
+        'dark-grey': '#798F9F',
+        'other-grey': '#ABB5C4',
         error: '#EC2247',
         'error-stroke': '#AE1D1D',
         'secondary-warning': '#FF8E3C',
