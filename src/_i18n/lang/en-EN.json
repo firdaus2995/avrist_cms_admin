@@ -4,6 +4,7 @@
   "btn": {
     "save": "Submit",
     "save-alternate": "Save",
+    "create": "Create",
     "cancel": "Cancel"
   },
   "token-failed-renew": "Token failed to renew",

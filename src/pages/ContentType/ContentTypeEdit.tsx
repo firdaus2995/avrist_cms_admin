@@ -96,9 +96,14 @@ export default function ContentTypeEdit() {
 
   useEffect(() => {
     if (fetchConfigQuery?.data?.getConfig?.value) {
-      const filteredAttributes = JSON.parse(fetchConfigQuery?.data?.getConfig?.value).attributes.filter((attribute: { label: any; description: any; }) => {
+      const filteredAttributes = JSON.parse(
+        fetchConfigQuery?.data?.getConfig?.value,
+      ).attributes.filter((attribute: { label: any; description: any }) => {
         const { label, description } = attribute;
-        return label.toLowerCase().includes(search.toLowerCase()) || description.toLowerCase().includes(search.toLowerCase());
+        return (
+          label.toLowerCase().includes(search.toLowerCase()) ||
+          description.toLowerCase().includes(search.toLowerCase())
+        );
       });
       setListAttributes(filteredAttributes);
     }
@@ -219,35 +224,39 @@ export default function ContentTypeEdit() {
             <div
               key={idx}
               className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
-              <div className="w-1/4 text-left">{val.name}</div>
-              <div className="w-1/4 text-center">
+              <div className="w-1/4 text-left font-semibold">{val.name}</div>
+              <div className="w-1/4 text-center font-semibold">
                 {val.fieldId ? val.fieldId : getFieldId(val.name)}
               </div>
               <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
               <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
-                <img
-                  role="button"
-                  onClick={() => {
-                    setEditedIndex(idx);
-                    const edited = listAttributes?.filter(
-                      (value: { code: string }) => value.code === getFieldId(val.fieldType),
-                    );
-                    edited[0].label = val.name;
-                    edited[0].fieldId = val.fieldId ? val.fieldId : getFieldId(val.name);
-                    openAddModal(edited[0], true);
-                  }}
-                  className={`cursor-pointer select-none flex items-center justify-center`}
-                  src={TableEdit}
-                />
-                <img
-                  role="button"
-                  onClick={() => {
-                    const updated = listItems?.filter((_val: any, index: any) => index !== idx);
-                    setListItems(updated);
-                  }}
-                  className={`cursor-pointer select-none flex items-center justify-center`}
-                  src={TableDelete}
-                />
+                {idx && idx > 1 ? (
+                  <>
+                    <img
+                      role="button"
+                      onClick={() => {
+                        setEditedIndex(idx);
+                        const edited = listAttributes?.filter(
+                          (value: { code: string }) => value.code === getFieldId(val.fieldType),
+                        );
+                        edited[0].label = val.name;
+                        edited[0].fieldId = val.fieldId ? val.fieldId : getFieldId(val.name);
+                        openAddModal(edited[0], true);
+                      }}
+                      className={`cursor-pointer select-none flex items-center justify-center`}
+                      src={TableEdit}
+                    />
+                    <img
+                      role="button"
+                      onClick={() => {
+                        const updated = listItems?.filter((_val: any, index: any) => index !== idx);
+                        setListItems(updated);
+                      }}
+                      className={`cursor-pointer select-none flex items-center justify-center`}
+                      src={TableDelete}
+                    />
+                  </>
+                ) : null}
               </div>
             </div>
           ),
@@ -326,8 +335,10 @@ export default function ContentTypeEdit() {
     const updatedData = listItems.map(
       (item: { [x: string]: any; id: any; parentId: any; attributeList: any }) => {
         const { id, parentId, attributeList, ...rest } = item;
-        if (attributeList !== null) {
-          rest.loopTypeRequest = attributeList.map(
+        if (loopTypeRequest.length > 0) {
+          rest.loopTypeRequest = loopTypeRequest;
+        } else if (attributeList !== null) {
+          rest.loopTypeRequest = attributeList?.map(
             (attribute: { [x: string]: any; id: any; parentId: any }) => {
               const { id, parentId, ...attributeRest } = attribute;
               return attributeRest;
@@ -346,7 +357,6 @@ export default function ContentTypeEdit() {
       attributeRequests: updatedData,
     };
 
-    console.log(payload);
     postUpdate(payload)
       .unwrap()
       .then(() => {
@@ -370,7 +380,7 @@ export default function ContentTypeEdit() {
 
   const modalListAttribute = () => {
     return (
-      <Modal open={isOpenModalAttribute} toggle={() => null} title="" width={840} height={480}>
+      <Modal open={isOpenModalAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
           <div className="p-2 absolute right-2 top-2">
             <svg
@@ -398,7 +408,9 @@ export default function ContentTypeEdit() {
                 }}
                 placeholder="Search"
               />
-            }><></></TitleCard>
+            }>
+            <></>
+          </TitleCard>
           <div className="flex flex-col overflow-y-auto h-[35vh] scrollbar scrollbar-w-3 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl scrollbar-thumb-light-purple scrollbar-track-light-purple-2">
             {listAttributes?.map((val: any, idx: Key | null | undefined) => (
               <div
@@ -422,7 +434,7 @@ export default function ContentTypeEdit() {
   };
 
   function changeValue(arr: any[]) {
-    arr.forEach(function (obj: { code: any; value: any; }) {
+    arr.forEach(function (obj: { code: any; value: any }) {
       if (obj.code) {
         obj.value = obj.code;
         delete obj.code;
@@ -498,10 +510,10 @@ export default function ContentTypeEdit() {
 
   const modalAddAttribute = () => {
     return (
-      <Modal open={isOpenModalAddAttribute} toggle={() => null} title="" width={840} height={480}>
+      <Modal open={isOpenModalAddAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
-          <div className="flex flex-row justify-between bg-light-purple-2 items-center p-2">
-            <div className="font-bold capitalize">{getType(openedAttribute?.code)}</div>
+          <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
+            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.code)}</div>
             <div className="p-2">
               <svg
                 role="button"
@@ -513,12 +525,12 @@ export default function ContentTypeEdit() {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6 opacity-50">
+                className="w-5 h-5 opacity-50">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
           </div>
-          <div className="flex flex-col mx-10">
+          <div className="flex flex-col mx-10 mt-16">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
               Add New {getType(openedAttribute?.code)}
             </div>
@@ -776,10 +788,10 @@ export default function ContentTypeEdit() {
 
   const modalEditAttribute = () => {
     return (
-      <Modal open={isOpenModalEditAttribute} toggle={() => null} title="" width={840} height={480}>
+      <Modal open={isOpenModalEditAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
-          <div className="flex flex-row justify-between bg-light-purple-2 items-center p-2">
-            <div className="font-bold capitalize">{getType(openedAttribute?.code)}</div>
+          <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
+            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.code)}</div>
             <div className="p-2">
               <svg
                 role="button"
@@ -791,12 +803,12 @@ export default function ContentTypeEdit() {
                 viewBox="0 0 24 24"
                 strokeWidth={1.5}
                 stroke="currentColor"
-                className="w-6 h-6 opacity-50">
+                className="w-5 h-5 opacity-50">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </div>
           </div>
-          <div className="flex flex-col mx-10">
+          <div className="flex flex-col mx-10 mt-10">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
               {getType(openedAttribute?.code)}
             </div>
@@ -1088,7 +1100,7 @@ export default function ContentTypeEdit() {
               onSaveContent();
             }}
             className="btn btn-success btn-md">
-            {t('btn.save')}
+            {t('btn.create')}
           </button>
         </div>
       </TitleCard>

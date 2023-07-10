@@ -3,40 +3,9 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useGetPostTypeDetailQuery } from '../../services/ContentType/contentTypeApi';
 import ArchiveBox from '@/assets/archive-box.svg';
-import MyTaskTab from './tabs/MyTask';
-import MainTab from './tabs/Main';
-import CategoryTab from './tabs/Category';
-
-const TopRightButton = () => {
-  return (
-    <div className="flex flex-row">
-      <CreateButton />
-    </div>
-  );
-};
-
-const CreateButton = () => {
-  return (
-    <div className="inline-block float-right">
-      <Link to="new">
-        <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
-          <div className="flex flex-row gap-2 items-center justify-center">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            Add New Data
-          </div>
-        </button>
-      </Link>
-    </div>
-  );
-};
+import MyTaskTab from './tabs/MyTaks/MyTask';
+import MainTab from './tabs/Main/Main';
+import CategoryTab from './tabs/Category/Category';
 
 const ArchiveButton = () => {
   return (
@@ -105,6 +74,37 @@ export default function ContentManagerDetail() {
     },
   ];
 
+  const TopRightButton = () => {
+    return (
+      <div className="flex flex-row">
+        <CreateButton />
+      </div>
+    );
+  };
+  
+  const CreateButton = () => {
+    return (
+      <div className="inline-block float-right">
+        <Link to={activeTab === 1 ? "main/new" : activeTab === 2 ? "my-task/new" : "category/new"}>
+          <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
+            <div className="flex flex-row gap-2 items-center justify-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              {activeTab === 1 ? 'Add New Data' : 'Add New Category'}
+            </div>
+          </button>
+        </Link>
+      </div>
+    );
+  };
+
   return (
     <>
       <TitleCard
@@ -112,7 +112,7 @@ export default function ContentManagerDetail() {
         topMargin="mt-2"
         onBackClick={goBack}
         hasBack={true}
-        TopSideButtons={<TopRightButton />}>
+        TopSideButtons={activeTab !== 2 && <TopRightButton />}>
         <div className="flex flex-row justify-between mb-5">
           <div className="btn-group">
             {listTabs.map(val => (
@@ -121,12 +121,12 @@ export default function ContentManagerDetail() {
                 onClick={() => {
                   setActiveTab(val.isActive);
                 }}
-                className={`btn ${activeTab === val.isActive ? 'btn-primary' : 'btn-outline'} text-xs w-40`}>
+                className={`btn ${activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-500'} text-xs w-40`}>
                 {val.name}
               </button>
             ))}
           </div>
-          <ArchiveButton />
+          {activeTab === 1 && <ArchiveButton /> }
         </div>
         {activeTab === 1 && <MainTab id={id} />}
         {activeTab === 2 && <MyTaskTab id={id} />}

@@ -31,7 +31,7 @@ export const TextArea: React.FC<ITextArea> = ({
         onChange={e => {
           onChange(e);
         }}
-        className="input input-bordered w-full h-24 py-3"
+        className="input input-bordered w-full h-24 py-3 rounded-xl"
       />
     </div>
   );

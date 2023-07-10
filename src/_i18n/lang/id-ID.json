@@ -4,6 +4,7 @@
   "btn": {
     "save": "Simpan",
     "save-alternate": "Simpan",
+    "create": "Tambah",
     "cancel": "Batal"
   },
   "token-failed-renew": "Token gagal diperbarui",
