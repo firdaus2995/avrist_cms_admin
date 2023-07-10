@@ -5,27 +5,28 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import TableEdit from '@/assets/table-edit.png';
 
-export default function CategoryTab(_props: { id: any; }) {
+export default function CategoryTab(_props: { id: any }) {
   const { t } = useTranslation();
+
   const [listData] = useState<any>([
     {
       id: 1,
       status: 'waiting_review',
       title: 'Homepage Avrist Life',
-      desc: 'Landing Page'
+      desc: 'Landing Page',
     },
     {
       id: 2,
       status: 'waiting_approval',
       title: 'Homepage Avrist Life 2',
-      desc: 'Landing Page'
+      desc: 'Landing Page',
     },
     {
       id: 3,
       status: 'draft',
       title: 'title',
-      desc: 'description'
-    }
+      desc: 'description',
+    },
   ]);
 
   // TABLE PAGINATION STATE
@@ -35,9 +36,9 @@ export default function CategoryTab(_props: { id: any; }) {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Category Name</span>,
+      header: () => <span className="text-[14px] font-black">Category Name</span>,
       accessorKey: 'title',
-      enableSorting: false,
+      enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
@@ -47,9 +48,9 @@ export default function CategoryTab(_props: { id: any; }) {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Category Description</span>,
+      header: () => <span className="text-[14px] font-black">Category Description</span>,
       accessorKey: 'desc',
-      enableSorting: false,
+      enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
@@ -59,12 +60,12 @@ export default function CategoryTab(_props: { id: any; }) {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('action.action')}</span>,
+      header: () => <span className="text-[14px] font-black">{t('action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (_info: any) => (
         <div className="flex gap-5">
-          <Link to={`edit/${_info.getValue()}`}>
+          <Link to={`category/edit/${_info.getValue()}`}>
             <div className="tooltip" data-tip={t('action.edit')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
@@ -79,28 +80,28 @@ export default function CategoryTab(_props: { id: any; }) {
 
   return (
     <>
-        <div className="overflow-x-auto w-full mb-5">
-          <Table
-            rows={listData}
-            columns={COLUMNS}
-            loading={false}
-            error={false}
-            manualPagination={true}
-            manualSorting={true}
-          />
-        </div>
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
-          }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
+      <div className="overflow-x-auto w-full mb-5">
+        <Table
+          rows={listData}
+          columns={COLUMNS}
+          loading={false}
+          error={false}
+          manualPagination={true}
+          manualSorting={true}
         />
+      </div>
+      <PaginationComponent
+        total={total}
+        page={pageIndex}
+        pageSize={pageLimit}
+        setPageSize={(page: number) => {
+          setPageLimit(page);
+          setPageIndex(0);
+        }}
+        setPage={(page: number) => {
+          setPageIndex(page);
+        }}
+      />
     </>
   );
 }

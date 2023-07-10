@@ -5,9 +5,10 @@ import TableDelete from '@/assets/table-delete.png';
 import { useTranslation } from 'react-i18next';
 import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
 import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
 
-export default function MainTab(_props: { id: any; }) {
+export default function MainTab(_props: { id: any }) {
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -19,20 +20,20 @@ export default function MainTab(_props: { id: any; }) {
       id: 1,
       status: 'waiting_review',
       title: 'Homepage Avrist Life',
-      desc: 'Landing Page'
+      desc: 'Landing Page',
     },
     {
       id: 2,
       status: 'waiting_approval',
       title: 'Homepage Avrist Life 2',
-      desc: 'Landing Page'
+      desc: 'Landing Page',
     },
     {
       id: 3,
       status: 'draft',
       title: 'title',
-      desc: 'description'
-    }
+      desc: 'description',
+    },
   ]);
 
   // TABLE PAGINATION STATE
@@ -54,13 +55,17 @@ export default function MainTab(_props: { id: any; }) {
                 : '-'
             }
           />
+          <div className="ml-3 cursor-pointer tooltip" data-tip="Log">
+            <img src={TimelineLog} className="w-6 h-6" />
+            {/* <p>{info?.row?.original?.id}</p> */}
+          </div>
         </>
       ),
     },
     {
-      header: () => <span className="text-[14px]">Title</span>,
+      header: () => <span className="text-[14px] font-black">Title</span>,
       accessorKey: 'title',
-      enableSorting: false,
+      enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
@@ -70,9 +75,9 @@ export default function MainTab(_props: { id: any; }) {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Short Description</span>,
+      header: () => <span className="text-[14px] font-black">Short Description</span>,
       accessorKey: 'desc',
-      enableSorting: false,
+      enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
@@ -82,13 +87,17 @@ export default function MainTab(_props: { id: any; }) {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('action.action')}</span>,
+      header: () => <span className="text-[14px] font-black">{t('action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (_info: any) => (
         <div className="flex gap-5">
           <div className="tooltip" data-tip={'View Detail'}>
-            <button className='btn btn-outline btn-primary'>View Detail</button>
+            <div
+              role="button"
+              className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
+              View Detail
+            </div>
           </div>
           <div className="tooltip" data-tip={t('action.delete')}>
             <img
@@ -119,36 +128,38 @@ export default function MainTab(_props: { id: any; }) {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="Cancel"
+        cancelTitle="No"
         message={messageConfirm}
-        submitAction={() => { setShowConfirm(false); }}
+        submitAction={() => {
+          setShowConfirm(false);
+        }}
         submitTitle="Yes"
         // loading={deletePageLoading}
         icon={WarningIcon}
         btnType={''}
       />
-        <div className="overflow-x-auto w-full mb-5">
-          <Table
-            rows={listData}
-            columns={COLUMNS}
-            loading={false}
-            error={false}
-            manualPagination={true}
-            manualSorting={true}
-          />
-        </div>
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
-          }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
+      <div className="overflow-x-auto w-full mb-5">
+        <Table
+          rows={listData}
+          columns={COLUMNS}
+          loading={false}
+          error={false}
+          manualPagination={true}
+          manualSorting={true}
         />
+      </div>
+      <PaginationComponent
+        total={total}
+        page={pageIndex}
+        pageSize={pageLimit}
+        setPageSize={(page: number) => {
+          setPageLimit(page);
+          setPageIndex(0);
+        }}
+        setPage={(page: number) => {
+          setPageIndex(page);
+        }}
+      />
     </>
   );
 }
