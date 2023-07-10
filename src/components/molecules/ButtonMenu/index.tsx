@@ -5,7 +5,7 @@ import RejectUser from '@/assets/RejectUser.svg';
 interface IButtonMenu {
   title: string;
 }
-export const ButtonMenu: React.FC<IButtonMenu> = ({ title }) => {
+export const ButtonMenu: React.FC<IButtonMenu> = () => {
   return (
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="btn btn-outline btn-primary m-1 w-44">
