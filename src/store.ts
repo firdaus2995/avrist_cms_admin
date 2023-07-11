@@ -16,6 +16,7 @@ import toastSlice from './components/atoms/Toast/slice';
 import pageManagementSlice from './services/PageManagement/pageManagementSlice';
 import { menuApi } from './services/Menu/menuApi';
 import { contentTypeApi } from './services/ContentType/contentTypeApi';
+import { emailFormBuilderApi } from './services/EmailFormBuilder/emailFormBuilderApi';
 
 export const store: any = configureStore({
   reducer: {
@@ -32,6 +33,7 @@ export const store: any = configureStore({
     [pageManagementApi.reducerPath]: pageManagementApi.reducer,
     [pageTemplateApi.reducerPath]: pageTemplateApi.reducer,
     [contentTypeApi.reducerPath]: contentTypeApi.reducer,
+    [emailFormBuilderApi.reducerPath]: emailFormBuilderApi.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
@@ -42,6 +44,7 @@ export const store: any = configureStore({
       .concat(pageManagementApi.middleware)
       .concat(pageTemplateApi.middleware)
       .concat(contentTypeApi.middleware)
+      .concat(emailFormBuilderApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

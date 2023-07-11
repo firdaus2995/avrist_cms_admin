@@ -16,6 +16,7 @@ import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
 import PreviewModal from './components/PreviewModal';
+// import { useGetEmailFormDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 
 export default function EmailFormBuilderList() {
   // TABLE COLUMN
