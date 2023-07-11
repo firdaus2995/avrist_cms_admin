@@ -56,7 +56,7 @@ export const InputText: React.FC<IInputText> = ({
               onChange(e);
             };
           }}
-          className={`w-full h-full rounded-3xl outline-0 ${inputStyle} ${disabled ? 'text-[#637488]' : ''}`}
+          className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${disabled ? 'text-[#637488]' : ''}`}
         />
         <div className='relative right-8'>{suffix ?? ''}</div>
       </div>

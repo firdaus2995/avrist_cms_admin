@@ -1,22 +1,23 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { SortingState } from "@tanstack/react-table";
-import { t } from "i18next";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useCallback, useEffect, useState } from 'react';
+import { SortingState } from '@tanstack/react-table';
+import { t } from 'i18next';
+import { Link, useNavigate } from 'react-router-dom';
 
-import Plus from "../../assets/plus.png";
-import Table from "@/components/molecules/Table";
-import TableEdit from "../../assets/table-edit.png";
-import TableView from "../../assets/table-view.png";
-import TableDelete from "../../assets/table-delete.png";
-import ModalConfirmLeave from "@/components/molecules/ModalConfirm";
-import WarningIcon from "../../assets/warning.png";
-import PaginationComponent from "@/components/molecules/Pagination";
-import CopyLink from "../../assets/copylink.svg";
-import { InputSearch } from "@/components/atoms/Input/InputSearch";
-import { TitleCard } from "@/components/molecules/Cards/TitleCard";
-import { useAppDispatch } from "@/store";
+import Plus from '../../assets/plus.png';
+import Table from '@/components/molecules/Table';
+import TableEdit from '../../assets/table-edit.png';
+import TableView from '../../assets/table-view.png';
+import TableDelete from '../../assets/table-delete.png';
+import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import WarningIcon from '../../assets/warning.png';
+import PaginationComponent from '@/components/molecules/Pagination';
+import CopyLink from '../../assets/copylink.svg';
+import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { useAppDispatch } from '@/store';
+import PreviewModal from './components/PreviewModal';
 
-export default function EmailFormBuilderList () {  
+export default function EmailFormBuilderList() {
   // TABLE COLUMN
   const columns = [
     {
@@ -43,12 +44,16 @@ export default function EmailFormBuilderList () {
                 ? info.getValue()
                 : '-'}
             </p>
-            <img className="cursor-pointer" src={CopyLink} onClick={() => {
-              void navigator.clipboard.writeText(info?.row?.original?.link);
-            }} />
+            <img
+              className="cursor-pointer"
+              src={CopyLink}
+              onClick={() => {
+                void navigator.clipboard.writeText(info?.row?.original?.link);
+              }}
+            />
           </div>
-        )
-      }
+        );
+      },
     },
     {
       header: () => <span className="text-[14px]">Action</span>,
@@ -57,20 +62,26 @@ export default function EmailFormBuilderList () {
       cell: (info: any) => (
         <div className="flex gap-5">
           <button>
-            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableView} 
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableView}
               onClick={() => {
                 onClickEmailFormBuilderView(info.getValue());
               }}
             />
           </button>
           <button>
-            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} 
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableEdit}
               onClick={() => {
                 onClickEmailFormBuilderEdit(info.getValue());
               }}
             />
           </button>
-          <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
+          <img
+            className={`cursor-pointer select-none flex items-center justify-center`}
+            src={TableDelete}
             onClick={() => {
               onClickEmailFormBuilderDelete(info.getValue());
             }}
@@ -79,8 +90,8 @@ export default function EmailFormBuilderList () {
       ),
     },
   ];
-  
-  const navigate  = useNavigate();
+
+  const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState([
     {
@@ -97,7 +108,7 @@ export default function EmailFormBuilderList () {
       id: 3,
       formName: 'Form Name 3',
       link: 'Form Link 3',
-    },  
+    },
   ]);
   const [search, setSearch] = useState('');
   // TABLE PAGINATION STATE
@@ -111,32 +122,34 @@ export default function EmailFormBuilderList () {
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
   const [deleteModalBody, setDeleteModayBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
+  // PREVIEW MODAL
+  const [previewId, setPreviewId] = useState(null);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    };
+    }
   }, []);
 
   // FUNCTION FOR DELETE PAGE TEMPLATE
   const submitDeleteEmailFormBuilder = () => {
     console.log(deletedId);
   };
-  
+
   // TABLE FUNCTION FOR VIEW EMAIL FORM BUILDER
-  const onClickEmailFormBuilderView = (id: number) => {
-    console.log(id);
+  const onClickEmailFormBuilderView = (id: any) => {
+    setPreviewId(id);
   };
 
   // TABLE FUNCTION FOR EDIT EMAIL FORM BUILDER
-  const onClickEmailFormBuilderEdit= (id: number) => {
+  const onClickEmailFormBuilderEdit = (id: number) => {
     navigate(`edit/${id}`);
   };
 
   // TABLE FUNCTION FOR DELETE EMAIL FORM BUILDER
-  const onClickEmailFormBuilderDelete= (id: number) => {
+  const onClickEmailFormBuilderDelete = (id: number) => {
     setDeletedId(id);
     setDeleteModalTitle(`Are you sure?`);
     setDeleteModayBody(`Do you want to delete this form?`);
@@ -150,6 +163,14 @@ export default function EmailFormBuilderList () {
 
   return (
     <React.Fragment>
+      <PreviewModal
+        id={previewId}
+        open={!!previewId}
+        toggle={() => {
+          setPreviewId(null);
+        }}
+        title={`Judul Preview`}
+      />
       <ModalConfirmLeave
         open={openDeleteModal}
         title={deleteModalTitle}
@@ -162,26 +183,25 @@ export default function EmailFormBuilderList () {
         }}
         // loading={isLoadingDelete}
         icon={WarningIcon}
-        btnType=''
+        btnType=""
       />
       <TitleCard
         title={t('email-form-builder.list.title')}
-        topMargin="mt-2" 
+        topMargin="mt-2"
         TopSideButtons={
-          <Link to='new' className="btn btn-primary flex flex-row gap-2 rounded-xl">
+          <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
             <img src={Plus} className="w-[24px] h-[24px]" />
-            {t("email-form-builder.list.button-add")}
+            {t('email-form-builder.list.button-add')}
           </Link>
         }
         SearchBar={
-          <InputSearch 
+          <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
             placeholder="Search"
           />
-        }
-      >
+        }>
         <Table
           rows={listData}
           columns={columns}
@@ -195,18 +215,16 @@ export default function EmailFormBuilderList () {
           total={total}
           page={pageIndex}
           pageSize={pageLimit}
-          rangePageSize={
-            [10, 20, 30]
-          }
+          rangePageSize={[10, 20, 30]}
           setPageSize={(page: number) => {
             setPageLimit(page);
             setPageIndex(0);
           }}
           setPage={(page: number) => {
             setPageIndex(page);
-          }}          
+          }}
         />
       </TitleCard>
     </React.Fragment>
-  )
+  );
 }
