@@ -25,11 +25,11 @@ const Drop: React.FC<IDrop> = ({
 
   const backgroundColorGenerator = () => {
     if (canDrop && isOver) {
-      return 'border-[1px] border-dashed border-purple bg-lavender'
+      return 'border-[1px] border-dashed border-light-grey bg-light-purple';
     } else if (canDrop) {
-      return 'border-[1px] border-dashed border-light-grey bg-light-purple-2'
+      return 'border-[1px] border-dashed border-light-grey';
     } else {
-      return 'border-[1px] border-transparent'
+      return 'border-[1px] border-transparent';
     }
   }
 

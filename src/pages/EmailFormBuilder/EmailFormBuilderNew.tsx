@@ -1,7 +1,13 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router";
 import { t } from "i18next";
+import { DndProvider } from "react-dnd";
+import { HTML5Backend } from "react-dnd-html5-backend";
 
+import Drag from "./dnd/Drag";
+import Drop from "./dnd/Drop";
+import EFBComponent from "./component";
+import EFBPreview from "./previewComponent";
 import CancelIcon from "../../assets/cancel.png";
 import ModalConfirmLeave from "@/components/molecules/ModalConfirm";
 import { Divider } from "@/components/atoms/Divider";
@@ -10,12 +16,6 @@ import { InputText } from "@/components/atoms/Input/InputText";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
-import EFBComponent from "./component";
-import EFBPreview from "./previewComponent";
-import Drag from "./dnd/drag";
-import { DndProvider } from "react-dnd";
-import { HTML5Backend } from "react-dnd-html5-backend";
-import Drop from "./dnd/Drop";
 // import { useAppDispatch } from "@/store";
 
 export default function EmailFormBuilderNew () {
@@ -26,6 +26,7 @@ export default function EmailFormBuilderNew () {
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
   const [multipleInput, setMultipleInput] = useState<any>([]);
   const [components, setComponents] = useState<any>([]);
+  const [activeComponent, setActiveComponent] = useState<any>(null);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
@@ -261,7 +262,17 @@ export default function EmailFormBuilderNew () {
                               key={index}
                               name={element.name}
                               placeholder={element.placeholder}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "TEXTAREA":
@@ -270,7 +281,17 @@ export default function EmailFormBuilderNew () {
                               key={index}
                               name={element.name}
                               placeholder={element.placeholder}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "DROPDOWN":
@@ -279,7 +300,17 @@ export default function EmailFormBuilderNew () {
                               key={index}
                               name={element.name}
                               items={element.items}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "RADIO":
@@ -289,7 +320,17 @@ export default function EmailFormBuilderNew () {
                               name={element.name}
                               items={element.items}
                               other={element.other}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "CHECKBOX":
@@ -299,7 +340,17 @@ export default function EmailFormBuilderNew () {
                               name={element.name}
                               items={element.items}
                               other={element.other}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "EMAIL":
@@ -308,7 +359,17 @@ export default function EmailFormBuilderNew () {
                               key={index}
                               name={element.name}
                               placeholder={element.placeholder}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "LABEL":
@@ -316,7 +377,17 @@ export default function EmailFormBuilderNew () {
                             <EFBPreview.Label
                               key={index}
                               name={element.name}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "NUMBER":
@@ -325,7 +396,17 @@ export default function EmailFormBuilderNew () {
                               key={index}
                               name={element.name}
                               placeholder={element.placeholder}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "DOCUMENT":
@@ -333,7 +414,17 @@ export default function EmailFormBuilderNew () {
                             <EFBPreview.Document
                               key={index}
                               name={element.name}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         case "IMAGE":
@@ -341,7 +432,17 @@ export default function EmailFormBuilderNew () {
                             <EFBPreview.Image
                               key={index}
                               name={element.name}
-                              onDelete={() => handlerDeleteComponent(index)}
+                              isActive={activeComponent?.index === index}
+                              onClick={() => {
+                                setActiveComponent({
+                                  index: index,
+                                  data: element,
+                                })
+                              }}
+                              onDelete={() => {
+                                handlerDeleteComponent(index);
+                                setActiveComponent(null);
+                              }}
                             />
                           );
                         default:
