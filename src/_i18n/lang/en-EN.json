@@ -25,7 +25,7 @@
     },
     "add": {
       "title": "Page Template Registration",
-      "success-msg": "Success register User Page Template {{name}}",
+      "success-msg": "Success register Page Template {{name}}",
       "failed-msg": "Failed add register Page Template {{name}}"
     },
     "edit": {
@@ -38,6 +38,11 @@
     "list": {
       "title": "Email Form Builder",
       "button-add": "Add New Form"
+    },
+    "add": {
+      "title": "New Form",
+      "success-msg": "Success register {{name}} Email Form Builder",
+      "failed-msg": "Failed register {{name}} Email Form Builder"
     }
   },
   "roles": {
