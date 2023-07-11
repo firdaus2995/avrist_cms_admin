@@ -32,7 +32,8 @@ const Number: React.FC<INumber> = ({
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer"
-          onClick={() => {
+          onClick={(event: React.SyntheticEvent) => {
+            event.stopPropagation()
             onDelete();
           }}
         />

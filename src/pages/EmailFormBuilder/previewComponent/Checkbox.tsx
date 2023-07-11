@@ -62,7 +62,8 @@ const Checkbox: React.FC<ICheckbox> = ({
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer self-start"
-          onClick={() => {
+          onClick={(event: React.SyntheticEvent) => {
+            event.stopPropagation()
             onDelete();
           }}
         />

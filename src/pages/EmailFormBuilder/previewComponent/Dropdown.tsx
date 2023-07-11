@@ -23,6 +23,14 @@ const Dropdown: React.FC<IDropdown> = ({
   const componentRef = useRef<any>(null);
   const [open, setOpen] = useState<boolean>(false);
   const [selected, setSelected] = useState<any>((items && items[0]) ? items[0] : "Empty");
+  
+  useEffect(() => {
+    if (items.length > 0) {
+      setSelected(items[0]);
+    } else {
+      setSelected("Empty");
+    };
+  }, [items]);
 
   useEffect(() => {
     const handleClickOutside: any = (event: React.SyntheticEvent) => {
@@ -96,7 +104,8 @@ const Dropdown: React.FC<IDropdown> = ({
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer"
-          onClick={() => {
+          onClick={(event: React.SyntheticEvent) => {
+            event.stopPropagation()
             onDelete();
           }}
         />

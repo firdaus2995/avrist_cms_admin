@@ -50,7 +50,8 @@ const Radio: React.FC<IRadio> = ({
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer self-start"
-          onClick={() => {
+          onClick={(event: React.SyntheticEvent) => {
+            event.stopPropagation()
             onDelete();
           }}
         />

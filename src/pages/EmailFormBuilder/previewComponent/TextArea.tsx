@@ -34,7 +34,8 @@ const TextArea: React.FC<ITextArea> = ({
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer self-start"
-          onClick={() => {
+          onClick={(event: React.SyntheticEvent) => {
+            event.stopPropagation()
             onDelete();
           }}
         />

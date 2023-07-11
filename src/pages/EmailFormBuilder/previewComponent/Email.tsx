@@ -32,7 +32,8 @@ const Email: React.FC<IEmail> = ({
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer"
-          onClick={() => {
+          onClick={(event: React.SyntheticEvent) => {
+            event.stopPropagation()
             onDelete();
           }}
         />

@@ -30,7 +30,8 @@ const Image: React.FC<IImage> = ({
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer self-start"
-          onClick={() => {
+          onClick={(event: React.SyntheticEvent) => {
+            event.stopPropagation()
             onDelete();
           }}
         />

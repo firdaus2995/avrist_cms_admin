@@ -9,6 +9,7 @@ interface ICheckBox {
   defaultValue?: boolean;
   placeholder?: string;
   disabled?: boolean;
+  inputStyle?: string;
   updateType?: string;
   labelContainerStyle?: string;
   updateFormValue: (formValue: { updateType: string; value: boolean }) => void;
@@ -21,6 +22,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
   defaultValue,
   updateType = "",
   disabled,
+  inputStyle,
   updateFormValue,
   labelContainerStyle,
 }) => {
@@ -36,7 +38,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
       <label className={`label cursor-pointer ${labelContainerStyle}`}>
         <input
           type="checkbox"
-          className="checkbox checkbox-primary mr-3"
+          className={`checkbox checkbox-primary mr-3 ${inputStyle}`}
           checked={defaultValue}
           disabled={disabled}
           onChange={_e => {
