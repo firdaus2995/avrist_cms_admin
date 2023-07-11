@@ -27,7 +27,7 @@ export default {
       },
       // Custom fonts
       fontFamily: {
-        sans: ['DIN', 'Open Sans', 'sans-serif'],
+        // sans: ['DIN', 'Open Sans', 'sans-serif'],
       },
     },
   },
