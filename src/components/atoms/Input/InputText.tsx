@@ -88,4 +88,5 @@ InputText.propTypes = {
   roundStyle: PropTypes.string,
   themeColor: PropTypes.string,
   inputWidth: PropTypes.number,
+  inputHeight: PropTypes.number,
 };

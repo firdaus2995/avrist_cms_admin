@@ -22,7 +22,7 @@ const Dropdown: React.FC<IDropdown> = ({
 }) => {
   const componentRef = useRef<any>(null);
   const [open, setOpen] = useState<boolean>(false);
-  const [selected, setSelected] = useState<any>((items && items[0]) ? items[0] : "Empty");
+  const [selected, setSelected] = useState<any>("Empty");
   
   useEffect(() => {
     if (items.length > 0) {

@@ -5,7 +5,7 @@ import Radio from "./Radio";
 import Checkbox from "./Checkbox";
 import Email from "./Email";
 import Label from "./Label";
-import Number from "./Number";;
+import Number from "./Number";
 import Document from "./Document";
 import Image from "./Image";
 

@@ -43,7 +43,7 @@ export default function EmailFormBuilderNew () {
   };
 
   const functionChangeState = (type: string, value: any) => {
-    let currentComponents: any = copyArray(components);
+    const currentComponents: any = copyArray(components);
     currentComponents[activeComponent?.index][type] = value;
     setComponents(currentComponents);
     setActiveComponent((prevComponent: any) => (
@@ -152,7 +152,7 @@ export default function EmailFormBuilderNew () {
   const handlerFocusComponent = (element: any, index: any) => {
     if (activeComponent?.index !== index) {
       setActiveComponent({
-        index: index,
+        index,
         data: element,
       });
     };
@@ -496,7 +496,7 @@ export default function EmailFormBuilderNew () {
           <EFBConfiguration.Image 
             name={activeComponent?.data?.name}
             multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required}
+            required={activeComponent?.data?.required} 
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -584,7 +584,7 @@ export default function EmailFormBuilderNew () {
                 <h2 className="font-bold p-3">Form Preview</h2>
                 <Drop
                   onDropped={(item: any) => {
-                    let component: any = handlerAddComponent(item.name);                    
+                    const component: any = handlerAddComponent(item.name);                    
                     if (component) {
                       setComponents((prevItem: any) => [...prevItem, component]);
                     };

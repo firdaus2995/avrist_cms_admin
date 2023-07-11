@@ -60,6 +60,7 @@ CheckBox.propTypes = {
   placeholder: PropTypes.string,
   updateFormValue: PropTypes.any,
   updateType: PropTypes.any,
+  inputStyle: PropTypes.string,
   labelContainerStyle: PropTypes.string,
   disabled: PropTypes.bool,
 };
