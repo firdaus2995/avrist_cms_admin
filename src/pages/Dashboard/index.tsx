@@ -4,13 +4,22 @@ import DropDownList from '../../components/molecules/DropDownList';
 import CkEditor from '../../components/atoms/Ckeditor';
 import Table from '../../components/molecules/Table';
 import { COLUMNS } from './column';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import type { SortingState } from '@tanstack/react-table';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Container } from './components/Container';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import ModalDocumentOrangeIcon from "../../assets/modal/document-orange.svg";
+import { TextArea } from '@/components/atoms/Input/TextArea';
+import Selection from '@/components/molecules/Selection';
 
 export default function Dashboard() {
+  // TEXT AREA MODAL
+  const [openModalTextArea, setOpenModalTextArea] = useState<any>(false);
+  const [modalTextAreaTitle, setModalTextAreaTitle] = useState("");
+  const [modalTextAreaValue, setModalTextAreaValue] = useState("");
+
   const { t } = useTranslation();
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
@@ -24,6 +33,22 @@ export default function Dashboard() {
       <DndProvider backend={HTML5Backend}>
         <Container />
       </DndProvider>
+
+      <br/>
+      <br/>
+
+      {/* SELECTION */}
+      <Selection  
+        title='Response'
+        items={['Approve', 'Reject']}
+        containerStyle={'!w-[200px]'}
+        onClickItem={(item: string) => {
+          console.log(item);
+        }}
+      />
+
+      <br/>
+      <br/>
 
       <h1 className="text-3xl font-bold underline">Hello world!</h1>
       <br />
@@ -85,6 +110,50 @@ export default function Dashboard() {
         manualSorting={true}
         onSortModelChange={handleSortModelChange}
       />
+
+      {/* MODAL TEXT AREA */}
+      <button 
+        className="btn btn-primary btn-sm"
+        onClick={() => {
+          setOpenModalTextArea(true);
+          setModalTextAreaTitle("Hello World");
+        }}
+      >
+        Open Modal Text Area
+      </button>
+      <ModalConfirm
+        open={openModalTextArea}
+        modalHeight={420}
+        modalWidth={600}
+        title={modalTextAreaTitle}
+        icon={ModalDocumentOrangeIcon}
+        iconSize={26}
+        cancelTitle="No"
+        submitTitle="Yes"
+        submitAction={() => {
+          console.log("Submitted");
+        }}
+        cancelAction={() => {
+          setOpenModalTextArea(false);
+        }}
+        btnSubmitStyle='btn-warning text-white  '
+      >
+        <TextArea
+          value={modalTextAreaValue}
+          rows={5}
+          labelTitle="Comment"
+          placeholder=""
+          containerStyle="w-4/5 rounded-lg"
+          textAreaStyle='resize-none'
+          onChange={e => {
+            setModalTextAreaValue(e.target.value);
+          }}
+        />
+      </ModalConfirm>
+
+      <br />
+      <br />
+
     </div>
   );
 }

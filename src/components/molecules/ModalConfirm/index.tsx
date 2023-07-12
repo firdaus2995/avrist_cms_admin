@@ -1,29 +1,40 @@
 import Modal from '../../atoms/Modal';
 import { IModalConfirm } from './types';
-export default function ModalConfirmLeave(props: IModalConfirm) {
+export default function ModalConfirm(props: IModalConfirm) {
   const {
     open,
+    modalHeight,
+    modalWidth,
+    icon,
+    iconSize = 48,
+    title,
+    message,
     submitTitle,
     cancelTitle,
-    message,
-    title,
     loading,
     submitAction,
     cancelAction,
-    icon,
-    btnType,
+    btnSubmitStyle,
+    children,
   } = props;
   return (
-    <Modal open={open} toggle={() => null} title="" width={432} height={320}>
-      <div className="py-2 flex items-center justify-center flex-col">
-        {icon ? <img src={icon} alt="iconModal" className="h-12 mb-3" /> : <div />}
-        <p className="text-xl font-bold mb-3 text-center">{title}</p>
-        <div className="text-sm mb-7 text-center whitespace-pre-wrap">{message}</div>
-        <div className="flex justify-center gap-3 w-full">
+    <Modal open={open} toggle={() => null} title="" width={modalWidth ?? 432} height={modalHeight ?? 320}>
+      <div className="py-2 flex flex-col items-center justify-center gap-3">
+        {icon ? <img src={icon} alt="iconModal" className={`h-[${iconSize}px]`} /> : <div />}
+        <p className="text-xl font-bold text-center">{title}</p>
+        {
+          message && (
+            <div className="text-sm text-center whitespace-pre-wrap">{message}</div>
+          )
+        }
+        {
+          children && children
+        }
+        <div className="flex justify-center gap-3 w-full mt-3">
           <button className="btn btn-outline w-[105px] min-h-0 h-[40px]" onClick={cancelAction}>
             {cancelTitle}
           </button>
-          <button className={`btn ${btnType || 'bg-reddist hover:bg-dark-reddist'} w-[105px] min-h-0 h-[40px]`} onClick={submitAction}>
+          <button className={`btn ${btnSubmitStyle ?? ""} w-[105px] min-h-0 h-[40px]`} onClick={submitAction}>
             {loading ? 'Loading...' : submitTitle}
           </button>
         </div>

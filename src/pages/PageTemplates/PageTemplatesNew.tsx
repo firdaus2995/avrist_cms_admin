@@ -10,7 +10,7 @@ import {
 
 import UploadIcon from "../../assets/upload-file.svg";
 import CancelIcon from "../../assets/cancel.png";
-import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
+import ModalConfirm from "../../components/molecules/ModalConfirm";
 import { 
   TitleCard,
 } from "../../components/molecules/Cards/TitleCard";
@@ -83,7 +83,7 @@ export default function PageTemplatesNew () {
       title={t('page-template.add.title')}
       topMargin="mt-2"
     >
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showLeaveModal}
         cancelAction={() => {
           setShowLeaveModal(false);
@@ -94,7 +94,7 @@ export default function PageTemplatesNew () {
         submitAction={onLeave}
         submitTitle="Yes"
         icon={CancelIcon}
-        btnType='btn-warning'
+        btnSubmitStyle='btn-warning'
       />
       <form className="flex flex-col w-100 mt-[35px]">
         <div className="flex flex-col gap-[30px]">

@@ -8,6 +8,6 @@ export interface IModalLog {
     icon: any;
     submitAction: () => void;
     cancelAction: () => void;
-    btnType: string;
+    btnSubmitStyle: string;
   }
   

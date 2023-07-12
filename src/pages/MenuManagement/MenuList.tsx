@@ -15,7 +15,7 @@ import {
     t,
   } from "i18next";
 import Modal from '../../components/atoms/Modal';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
 import WarningIcon from "../../assets/warning.png";
 import CancelIcon from "../../assets/cancel.png";
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
@@ -532,7 +532,7 @@ export default function MenuList() {
       </div>
 
       {modalEdit()}
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showComfirm}
         cancelAction={() => {
           setShowComfirm(false);
@@ -542,9 +542,9 @@ export default function MenuList() {
         message={messageConfirm}
         submitAction={onDelete}
         submitTitle="Yes"
-        icon={WarningIcon} btnType={''}
+        icon={WarningIcon} btnSubmitStyle={''}
       />
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showCancel}
         cancelAction={() => {
           setShowCancel(false);
@@ -554,7 +554,7 @@ export default function MenuList() {
         message={"Do you want to cancel all of the process?"}
         submitAction={() => {navigate(0);}}
         submitTitle="Yes"
-        icon={CancelIcon} btnType={'btn-warning'}
+        icon={CancelIcon} btnSubmitStyle={'btn-warning'}
       />
       </TitleCard>
     </>

@@ -2,7 +2,7 @@ import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../store';
 import { useNavigate } from 'react-router-dom';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import {
   ChangeEvent,
@@ -1108,7 +1108,7 @@ export default function ContentTypeNew() {
       {modalAddAttribute()}
       {modalEditAttribute()}
       <TitleCard title={'New Content Type'} topMargin="mt-2">
-        <ModalConfirmLeave
+        <ModalConfirm
           open={showComfirm}
           cancelAction={() => {
             setShowComfirm(false);
@@ -1119,7 +1119,7 @@ export default function ContentTypeNew() {
           submitAction={onLeave}
           submitTitle="Yes"
           icon={CancelIcon}
-          btnType="btn-warning"
+          btnSubmitStyle="btn-warning"
         />
         {renderForm()}
         {renderListItems()}

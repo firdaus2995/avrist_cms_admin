@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { resetForm } from '../../services/Roles/rolesSlice';
 import PermissionList from '../../components/organisms/PermissionList';
 import PermissionForm from '../../components/organisms/PermissionForm';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from "../../assets/cancel.png";
 import { useState } from 'react';
 
@@ -62,7 +62,7 @@ export default function RolesNew() {
   return (
     <>
       <TitleCard title={t('roles.add.title')} topMargin="mt-2">
-        <ModalConfirmLeave
+        <ModalConfirm
           open={showComfirm}
           cancelAction={() => {
             setShowComfirm(false);
@@ -73,7 +73,7 @@ export default function RolesNew() {
           submitAction={onLeave}
           submitTitle="Yes"
           icon={CancelIcon}
-          btnType='btn-warning'
+          btnSubmitStyle='btn-warning'
         />
         <PermissionForm />
         <PermissionList

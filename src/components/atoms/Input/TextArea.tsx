@@ -1,8 +1,10 @@
 import PropTypes from 'prop-types';
 interface ITextArea {
+  rows?: number;
   labelTitle: string;
   labelStyle?: string;
   containerStyle?: string;
+  textAreaStyle?: string;
   value?: string;
   placeholder?: string;
   disabled?: boolean;
@@ -10,9 +12,11 @@ interface ITextArea {
 }
 
 export const TextArea: React.FC<ITextArea> = ({
+  rows,
   labelTitle,
   labelStyle = '',
   containerStyle = '',
+  textAreaStyle,
   value,
   placeholder,
   disabled,
@@ -24,22 +28,24 @@ export const TextArea: React.FC<ITextArea> = ({
         <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
       </label>
       <textarea
-        rows={6}
+        rows={rows ?? 4}
         value={value}
         disabled={disabled}
         placeholder={placeholder ?? ''}
         onChange={e => {
           onChange(e);
         }}
-        className="input input-bordered w-full h-24 py-3 rounded-xl"
+        className={`textarea textarea-bordered w-full py-3 rounded-xl ${textAreaStyle}`}
       />
     </div>
   );
 };
 
 TextArea.propTypes = {
+  rows: PropTypes.number,
   labelTitle: PropTypes.string.isRequired,
   labelStyle: PropTypes.string,
+  textAreaStyle: PropTypes.string,
   containerStyle: PropTypes.string,
   value: PropTypes.string,
   placeholder: PropTypes.string,

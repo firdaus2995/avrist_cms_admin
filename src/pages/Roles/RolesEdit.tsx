@@ -15,7 +15,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 
 import PermissionForm from '../../components/organisms/PermissionForm';
 import PermissionList from '../../components/organisms/PermissionList';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from "../../assets/cancel.png";
 
 export default function RolesEdit() {
@@ -94,7 +94,7 @@ export default function RolesEdit() {
         ) : (
           <PermissionForm disabled={!editMode} />
         )}
-        <ModalConfirmLeave
+        <ModalConfirm
           open={showComfirm}
           cancelAction={() => {
             setShowComfirm(false);
@@ -105,7 +105,7 @@ export default function RolesEdit() {
           submitAction={onLeave}
           submitTitle="Yes"
           icon={CancelIcon}
-          btnType='btn-warning'
+          btnSubmitStyle='btn-warning'
         />
 
         <PermissionList
