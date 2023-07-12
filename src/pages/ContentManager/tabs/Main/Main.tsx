@@ -3,10 +3,11 @@ import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import TableDelete from '@/assets/table-delete.png';
 import { useTranslation } from 'react-i18next';
-import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
 import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
+import StatusBadge from '../../components/StatusBadge';
+import ModalLog from '../../components/ModalLog';
 
 export default function MainTab(_props: { id: any }) {
   const { t } = useTranslation();
@@ -41,6 +42,9 @@ export default function MainTab(_props: { id: any }) {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
 
+  const [idLog, setIdLog] = useState(null);
+  const [logTitle, setLogTitle] = useState(null);
+
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]"></span>,
@@ -55,7 +59,11 @@ export default function MainTab(_props: { id: any }) {
                 : '-'
             }
           />
-          <div className="ml-3 cursor-pointer tooltip" data-tip="Log">
+          <div className="ml-3 cursor-pointer tooltip" data-tip="Log"
+          onClick={() => {
+            setIdLog(info?.row?.original?.id);
+            setLogTitle(info?.row?.original?.title);
+          }}>
             <img src={TimelineLog} className="w-6 h-6" />
             {/* <p>{info?.row?.original?.id}</p> */}
           </div>
@@ -137,6 +145,14 @@ export default function MainTab(_props: { id: any }) {
         // loading={deletePageLoading}
         icon={WarningIcon}
         btnType={''}
+      />
+      <ModalLog
+        id={idLog}
+        open={!!idLog}
+        toggle={() => {
+          setIdLog(null);
+        }}
+        title={`Log Approval - ${logTitle}`}
       />
       <div className="overflow-x-auto w-full mb-5">
         <Table

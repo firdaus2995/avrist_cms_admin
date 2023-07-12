@@ -73,6 +73,7 @@ const ContentManagerDetailPage = React.lazy(
 );
 const CategoryNew = React.lazy(async () => await import('@/pages/ContentManager/tabs/Category/CategoryNew'));
 const CategoryEdit = React.lazy(async () => await import('@/pages/ContentManager/tabs/Category/CategoryEdit'));
+const ContentManagerArchivePage = React.lazy(async () => await import('@/pages/ContentManager/ContentManagerArchive'));
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
@@ -125,6 +126,7 @@ export default function RoutesComponent() {
           <Route path="content-manager/:id" element={<ContentManagerDetailPage />} />
           <Route path="content-manager/:id/category/new" element={<CategoryNew />} />
           <Route path="content-manager/:id/category/edit/:id" element={<CategoryEdit />} />
+          <Route path="content-manager/:id/archive" element={<ContentManagerArchivePage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
