@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import UserLog from '../../../../assets/user-log.svg';
+import UserLog from '@/assets/user-log.svg';
 import dayjs from 'dayjs';
-import Typography from '../../../../components/atoms/Typography';
-import { usePageLogApprovalQuery } from '../../../../services/PageManagement/pageManagementApi';
-import { LoadingCircle } from '../../../../components/atoms/Loading/loadingCircle';
+import Typography from '@/components/atoms/Typography';
+import { usePageLogApprovalQuery } from '@/services/PageManagement/pageManagementApi';
+import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 
 export default function ModalLog(props: any) {
   const { open, title, toggle, id } = props;
