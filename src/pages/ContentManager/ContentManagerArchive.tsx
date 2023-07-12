@@ -12,7 +12,7 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import dayjs from 'dayjs';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
@@ -167,7 +167,7 @@ export default function PageManagementArchive() {
 
   return (
     <>
-      <ModalConfirmLeave
+      <ModalConfirm
         open={openRestoreModal}
         cancelAction={() => {
           setOpenRestoreModal(false);
@@ -178,7 +178,7 @@ export default function PageManagementArchive() {
         submitAction={submitRestorePage}
         submitTitle="Yes"
         loading={isLoading}
-        btnType={'btn-primary'}
+        btnSubmitStyle={'btn-primary'}
         icon={undefined}
       />
       <TitleCard
