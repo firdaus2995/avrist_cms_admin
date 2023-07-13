@@ -56,7 +56,7 @@ export default function PageManagementDetail() {
         submitAction={() => { } }
         submitTitle="Yes"
         // icon={WarningIcon}
-        btnType={''} icon={undefined}      />
+        icon={undefined}      />
       <TitleCard
         title="Homepage - Page Template"
         titleComponent={<Badge />}
