@@ -17,7 +17,7 @@ export const emailFormBuilderApi = createApi({
             $search: String
           ) {
             postTypeList(
-              postTypeGroup: "EMAIL_FORM",
+              postTypeGroup: "EMAIL_FORM"
               pageableRequest: {
                 pageIndex: $pageIndex
                 limit: $limit
@@ -28,15 +28,15 @@ export const emailFormBuilderApi = createApi({
             ) {
               total
               postTypeList {
-                  id
-                  name
-                  slug
+                id
+                name
+                slug
               }
             }
           }
         `,
         variables: payload,
-      })
+      }),
     }),
     deletePostType: builder.mutation<any, any>({
       query: payload => ({
@@ -85,4 +85,8 @@ export const emailFormBuilderApi = createApi({
   }),
 });
 
-export const { useDeletePostTypeMutation, useGetEmailFormDetailQuery } = emailFormBuilderApi;
+export const {
+  useGetEmailFormBuilderQuery,
+  useDeletePostTypeMutation,
+  useGetEmailFormDetailQuery,
+} = emailFormBuilderApi;
