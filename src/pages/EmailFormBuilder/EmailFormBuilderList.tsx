@@ -12,17 +12,18 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
 import PaginationComponent from '@/components/molecules/Pagination';
 import CopyLink from '../../assets/copylink.svg';
+import PreviewModal from './components/PreviewModal';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
-import PreviewModal from './components/PreviewModal';
+import { useGetEmailFormBuilderQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 
 export default function EmailFormBuilderList() {
   // TABLE COLUMN
   const columns = [
     {
       header: () => <span className="text-[14px]">Form Name</span>,
-      accessorKey: 'formName',
+      accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -34,7 +35,7 @@ export default function EmailFormBuilderList() {
     },
     {
       header: () => <span className="text-[14px]">Link</span>,
-      accessorKey: 'link',
+      accessorKey: 'slug',
       enableSorting: true,
       cell: (info: any) => {
         return (
@@ -93,23 +94,7 @@ export default function EmailFormBuilderList() {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [listData, setListData] = useState([
-    {
-      id: 1,
-      formName: 'Form Name 1',
-      link: 'Form Link 1',
-    },
-    {
-      id: 2,
-      formName: 'Form Name 2',
-      link: 'Form Link 2',
-    },
-    {
-      id: 3,
-      formName: 'Form Name 3',
-      link: 'Form Link 3',
-    },
-  ]);
+  const [listData, setListData] = useState([]);
   const [search, setSearch] = useState('');
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -124,6 +109,25 @@ export default function EmailFormBuilderList() {
   const [deletedId, setDeletedId] = useState(0);
   // PREVIEW MODAL
   const [previewId, setPreviewId] = useState(null);
+
+  // RTK GET DATA
+  const fetchQuery = useGetEmailFormBuilderQuery({
+    pageIndex,
+    limit: pageLimit,
+    sortBy,
+    direction,
+    search,
+  }, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data, isFetching, isError } = fetchQuery;
+
+  useEffect(() => {
+    if (data) {
+      setListData(data?.postTypeList?.postTypeList);
+      setTotal(data?.postTypeList?.total);
+    };
+  }, [data])
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
@@ -208,8 +212,8 @@ export default function EmailFormBuilderList() {
           manualPagination={true}
           manualSorting={true}
           onSortModelChange={handleSortModelChange}
-          // loading={isFetching}
-          // error={isError}
+          loading={isFetching}
+          error={isError}
         />
         <PaginationComponent
           total={total}
