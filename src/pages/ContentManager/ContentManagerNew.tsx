@@ -74,7 +74,7 @@ export default function ContentManagerNew() {
               placeholder={'Enter description'}
               // value={description}
               containerStyle="rounded-3xl"
-              onChange={e => {
+              onChange={() => {
                 // setDescription(e.target.value);
               }}
             />

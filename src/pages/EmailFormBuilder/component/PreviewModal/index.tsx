@@ -8,7 +8,7 @@ import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 export default function PreviewModal(props: any) {
   const { open, toggle, id } = props;
 
-  const [previewData, setPreviewData] = useState({});
+  const [previewData, setPreviewData] = useState<any>({});
 
   const { data, isLoading } = useGetEmailFormDetailQuery({ id, pageIndex: 0, limit: 99 });
 
