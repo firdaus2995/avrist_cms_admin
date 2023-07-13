@@ -6,7 +6,7 @@ import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeA
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '@/assets/table-edit.png';
@@ -191,7 +191,7 @@ export default function ContentTypeList() {
   };
   return (
     <>
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showConfirm}
         cancelAction={() => {
           setShowConfirm(false);
@@ -203,7 +203,7 @@ export default function ContentTypeList() {
         submitTitle="Yes"
         loading={deletePageLoading}
         icon={WarningIcon}
-        btnType={''}
+        btnSubmitStyle={''}
       />
       <TitleCard
         title="Content Type List"

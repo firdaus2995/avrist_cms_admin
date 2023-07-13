@@ -19,7 +19,7 @@ import PaginationComponent from "../../components/molecules/Pagination";
 import WarningIcon from "../../assets/warning.png";
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
-import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
+import ModalConfirm from "../../components/molecules/ModalConfirm";
 import { 
   TitleCard,
 } from "../../components/molecules/Cards/TitleCard";
@@ -194,7 +194,7 @@ export default function UsersList () {
 
   return (
     <React.Fragment>
-      <ModalConfirmLeave
+      <ModalConfirm
         open={openDeleteModal}
         cancelAction={() => {
           setOpenDeleteModal(false);
@@ -206,7 +206,7 @@ export default function UsersList () {
         submitAction={submitDeleteUser}
         loading={isLoading}
         icon={WarningIcon}
-        btnType=''
+        btnSubmitStyle=''
       />
       <TitleCard 
         title={t('user.list.title')}

@@ -7,7 +7,7 @@ import { HTML5Backend } from "react-dnd-html5-backend";
 import Drag from "./dnd/Drag";
 import Drop from "./dnd/Drop";
 import CancelIcon from "../../assets/cancel.png";
-import ModalConfirmLeave from "@/components/molecules/ModalConfirm";
+import ModalConfirm from "@/components/molecules/ModalConfirm";
 import EFBComponent from "./component";
 import EFBPreview from "./previewComponent";
 import EFBConfiguration from "./configuration";
@@ -515,7 +515,7 @@ export default function EmailFormBuilderNew () {
         title={t('email-form-builder.add.title')}
         topMargin="mt-2"
       >
-        <ModalConfirmLeave
+        <ModalConfirm
           open={showLeaveModal}
           cancelAction={() => {
             setShowLeaveModal(false);
@@ -526,7 +526,7 @@ export default function EmailFormBuilderNew () {
           submitAction={onLeave}
           submitTitle="Yes"
           icon={CancelIcon}
-          btnType='btn-warning'
+          btnSubmitStyle='btn-warning'
         />
         <form className="flex flex-col w-100 mt-[35px] gap-5">
           {/* TOP SECTION */}
