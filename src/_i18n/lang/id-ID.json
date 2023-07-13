@@ -38,6 +38,11 @@
     "list": {
       "title": "Daftar Email Form Builder",
       "button-add": "Tambah Form Baru"
+    },
+    "add": {
+      "title": "Tambah Email Form Builder",
+      "success-msg": "Email Form Builder {{name}} berhasil disimpan",
+      "failed-msg": "Email Form Builder {{name}} gagal disimpan"
     }
   },
   "roles": {

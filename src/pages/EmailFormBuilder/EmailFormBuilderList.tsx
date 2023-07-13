@@ -8,7 +8,7 @@ import Table from '@/components/molecules/Table';
 import TableEdit from '../../assets/table-edit.png';
 import TableView from '../../assets/table-view.png';
 import TableDelete from '../../assets/table-delete.png';
-import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
 import PaginationComponent from '@/components/molecules/Pagination';
 import CopyLink from '../../assets/copylink.svg';
@@ -171,7 +171,7 @@ export default function EmailFormBuilderList() {
         }}
         title={`Judul Preview`}
       />
-      <ModalConfirmLeave
+      <ModalConfirm
         open={openDeleteModal}
         title={deleteModalTitle}
         message={deleteModalBody}
@@ -183,7 +183,7 @@ export default function EmailFormBuilderList() {
         }}
         // loading={isLoadingDelete}
         icon={WarningIcon}
-        btnType=""
+        btnSubmitStyle=""
       />
       <TitleCard
         title={t('email-form-builder.list.title')}
