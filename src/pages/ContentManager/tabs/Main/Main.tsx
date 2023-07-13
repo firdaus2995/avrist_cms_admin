@@ -3,10 +3,10 @@ import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import TableDelete from '@/assets/table-delete.png';
 import { useTranslation } from 'react-i18next';
-import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
-import StatusBadge from '../../components/StatusBadge';
 import ModalLog from '../../components/ModalLog';
 
 export default function MainTab(_props: { id: any }) {
@@ -130,7 +130,7 @@ export default function MainTab(_props: { id: any }) {
 
   return (
     <>
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showConfirm}
         cancelAction={() => {
           setShowConfirm(false);
@@ -144,7 +144,7 @@ export default function MainTab(_props: { id: any }) {
         submitTitle="Yes"
         // loading={deletePageLoading}
         icon={WarningIcon}
-        btnType={''}
+        btnSubmitStyle={''}
       />
       <ModalLog
         id={idLog}

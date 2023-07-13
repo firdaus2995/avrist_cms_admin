@@ -2,7 +2,7 @@ import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '../../store';
 import { useNavigate, useParams } from 'react-router-dom';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import {
   ChangeEvent,
@@ -59,7 +59,7 @@ export default function ContentTypeEdit() {
 
   // TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
-  const [pageLimit] = useState(5);
+  const [pageLimit] = useState(100);
 
   const [listItems, setListItems] = useState<any>([]);
 
@@ -1070,7 +1070,7 @@ export default function ContentTypeEdit() {
       {modalAddAttribute()}
       {modalEditAttribute()}
       <TitleCard title={'Edit Content Type'} topMargin="mt-2">
-        <ModalConfirmLeave
+        <ModalConfirm
           open={showComfirm}
           cancelAction={() => {
             setShowComfirm(false);
@@ -1081,7 +1081,7 @@ export default function ContentTypeEdit() {
           submitAction={onLeave}
           submitTitle="Yes"
           icon={CancelIcon}
-          btnType="btn-warning"
+          btnSubmitStyle="btn-warning"
         />
         {renderForm()}
         {renderListItems()}
@@ -1096,6 +1096,7 @@ export default function ContentTypeEdit() {
             {t('btn.cancel')}
           </button>
           <button
+            disabled={listItems.length === 0}
             onClick={() => {
               onSaveContent();
             }}

@@ -18,7 +18,7 @@ import TableEdit from "../../assets/table-edit.png";
 import TableView from "../../assets/table-view.png";
 import TableDelete from "../../assets/table-delete.png";
 import PaginationComponent from "../../components/molecules/Pagination";
-import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
+import ModalConfirm from "../../components/molecules/ModalConfirm";
 import WarningIcon from "../../assets/warning.png";
 import ModalForm from "../../components/molecules/ModalForm";
 import { 
@@ -248,7 +248,7 @@ export default function PageTemplatesList () {
   
   return (
     <React.Fragment>
-      <ModalConfirmLeave
+      <ModalConfirm
         open={openDeleteModal}
         title={deleteModalTitle}
         message={deleteModalBody}
@@ -260,7 +260,7 @@ export default function PageTemplatesList () {
         }}
         loading={isLoadingDelete}
         icon={WarningIcon}
-        btnType=''
+        btnSubmitStyle=''
       />
       <ModalForm
         open={openEditModal}

@@ -7,7 +7,7 @@ import {
 } from '@/services/PageManagement/pageManagementApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '@/assets/table-edit.png';
@@ -288,7 +288,7 @@ export default function PageManagementList() {
         }}
         title={`Log Approval - ${logTitle}`}
       />
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showConfirm}
         cancelAction={() => {
           setShowConfirm(false);
@@ -300,7 +300,7 @@ export default function PageManagementList() {
         submitTitle="Yes"
         loading={deletePageLoading}
         icon={WarningIcon}
-        btnType={''}
+        btnSubmitStyle={''}
       />
       <TitleCard
         title="Page List"

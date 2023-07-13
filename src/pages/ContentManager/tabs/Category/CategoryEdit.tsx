@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
-import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 import WarningIcon from '@/assets/warning.png';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -58,7 +58,7 @@ export default function CategoryEdit() {
 
   return (
     <>
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showConfirm}
         cancelAction={() => {
           setShowConfirm(false);
@@ -72,7 +72,7 @@ export default function CategoryEdit() {
         submitTitle="Yes"
         // loading={deletePageLoading}
         icon={WarningIcon}
-        btnType={''}
+        btnSubmitStyle={''}
       />
       <TitleCard title={'Edit Category'} topMargin="mt-2">
         {renderForm()}

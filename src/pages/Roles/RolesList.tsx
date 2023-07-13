@@ -4,7 +4,7 @@ import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useGetRolesQuery, useRoleHapusMutation } from '../../services/Roles/rolesApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
-import ModalConfirmLeave from '../../components/molecules/ModalConfirm';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
 import Table from '../../components/molecules/Table';
 import TableEdit from "../../assets/table-edit.png";
 import TableDelete from "../../assets/table-delete.png";
@@ -175,7 +175,7 @@ export default function RolesList() {
 
   return (
     <>
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showComfirm}
         cancelAction={() => {
           setShowComfirm(false);
@@ -186,7 +186,7 @@ export default function RolesList() {
         submitAction={onDelete}
         submitTitle="Yes"
         loading={hapusLoading}
-        icon={WarningIcon} btnType={''}      />
+        icon={WarningIcon} btnSubmitStyle={''}      />
       <TitleCard 
         title="Role List" 
         topMargin="mt-2" 

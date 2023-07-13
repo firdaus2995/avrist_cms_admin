@@ -11,7 +11,7 @@ import {
 } from "react-router-dom";
 import dayjs from "dayjs";
 
-import ModalConfirmLeave from "../../components/molecules/ModalConfirm";
+import ModalConfirm from "../../components/molecules/ModalConfirm";
 import CancelIcon from "../../assets/cancel.png";
 import AddProfilePicture from "../../assets/add-profile-picture.png";
 import Radio from "../../components/molecules/Radio";
@@ -138,7 +138,7 @@ export default function UsersEdit () {
       title={t('user.edit.title')}
       topMargin="mt-2" 
     >
-      <ModalConfirmLeave
+      <ModalConfirm
         open={showLeaveModal}
         cancelAction={() => {
           setShowLeaveModal(false);
@@ -149,7 +149,7 @@ export default function UsersEdit () {
         submitAction={onLeave}
         submitTitle="Yes"
         icon={CancelIcon}
-        btnType='btn-warning'
+        btnSubmitStyle='btn-warning'
       />
       <form className="flex flex-col w-100" >
         <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130}/>
