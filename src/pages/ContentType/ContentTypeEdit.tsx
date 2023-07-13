@@ -59,7 +59,7 @@ export default function ContentTypeEdit() {
 
   // TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
-  const [pageLimit] = useState(5);
+  const [pageLimit] = useState(100);
 
   const [listItems, setListItems] = useState<any>([]);
 
@@ -1096,6 +1096,7 @@ export default function ContentTypeEdit() {
             {t('btn.cancel')}
           </button>
           <button
+            disabled={listItems.length === 0}
             onClick={() => {
               onSaveContent();
             }}

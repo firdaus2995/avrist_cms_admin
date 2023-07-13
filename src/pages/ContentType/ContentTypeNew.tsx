@@ -388,12 +388,57 @@ export default function ContentTypeNew() {
       }
     });
 
+    const convertData = (data: any[]) => {
+      return data.map((item: any) => {
+        const newItem = { ...item };
+        if (newItem.config && Object.keys(newItem.config).length === 0) {
+          delete newItem.config;
+        }
+        if (
+          newItem.config &&
+          (newItem.config.media_type === '' ||
+            newItem.config.max_length === '' ||
+            newItem.config.min_length === '')
+        ) {
+          delete newItem.config;
+        }
+        if (newItem.config) {
+          newItem.config = JSON.stringify(newItem.config);
+        }
+        if (newItem.loopTypeRequest) {
+          newItem.loopTypeRequest = newItem.loopTypeRequest.map((loopItem: any) => {
+            const newLoopItem = { ...loopItem };
+            if (newLoopItem.config && Object.keys(newLoopItem.config).length === 0) {
+              delete newLoopItem.config;
+            }
+            if (
+              newLoopItem.config &&
+              (newLoopItem.config.media_type === '' ||
+                newLoopItem.config.max_length === '' ||
+                newLoopItem.config.min_length === '')
+            ) {
+              delete newLoopItem.config;
+            }
+            if (newLoopItem.config) {
+              newLoopItem.config = JSON.stringify(newLoopItem.config);
+            }
+            return newLoopItem;
+          });
+        }
+        return newItem;
+      });
+    };
+
+    const convertedData = convertData(newData);
+
     const payload = {
       name,
       slug,
       isUseCategory,
-      attributeRequests: newData,
+      attributeRequests: convertedData,
     };
+
+    console.log(payload)
 
     postCreate(payload)
       .unwrap()
