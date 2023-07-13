@@ -12,7 +12,7 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
 import PaginationComponent from '@/components/molecules/Pagination';
 import CopyLink from '../../assets/copylink.svg';
-import PreviewModal from './components/PreviewModal';
+import PreviewModal from './component/PreviewModal';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
@@ -152,7 +152,7 @@ export default function EmailFormBuilderList() {
   const submitDeleteEmailFormBuilder = () => {
     deletePostType({ id: deletedId })
       .unwrap()
-      .then(d => {
+      .then(async d => {
         setOpenDeleteModal(false);
         dispatch(
           openToast({
@@ -161,7 +161,7 @@ export default function EmailFormBuilderList() {
             message: d.pageDelete.message,
           }),
         );
-        // await fetchQuery.refetch();
+        await fetchQuery.refetch();
       })
       .catch(() => {
         setOpenDeleteModal(false);
@@ -206,7 +206,6 @@ export default function EmailFormBuilderList() {
         toggle={() => {
           setPreviewId(null);
         }}
-        title={`Judul Preview`}
       />
       <ModalConfirm
         open={openDeleteModal}
