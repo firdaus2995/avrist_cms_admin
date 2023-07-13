@@ -85,7 +85,7 @@ export default function ContentManagerDetail() {
   const CreateButton = () => {
     return (
       <div className="inline-block float-right">
-        <Link to={activeTab === 1 ? "main/new" : activeTab === 2 ? "my-task/new" : "category/new"}>
+        <Link to={activeTab === 1 ? "data/new" : activeTab === 2 ? "my-task/new" : "category/new"}>
           <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
             <div className="flex flex-row gap-2 items-center justify-center">
               <svg

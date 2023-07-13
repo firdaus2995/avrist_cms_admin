@@ -1,18 +1,9 @@
-import { 
-  Route, 
-  Routes, 
-  Navigate, 
-  Outlet,
-} from 'react-router-dom';
-import React, { 
-  Suspense,
-} from 'react';
+import { Route, Routes, Navigate, Outlet } from 'react-router-dom';
+import React, { Suspense } from 'react';
 
 import Layout from '../components/organisms/Layout';
 import Loading from '../components/atoms/Loading';
-import { 
-  useAppSelector,
-} from '../store';
+import { useAppSelector } from '../store';
 
 const LoginPage = React.lazy(async () => await import('../pages/Login'));
 const LoginPortal = React.lazy(async () => await import('../pages/LoginPortal'));
@@ -71,9 +62,19 @@ const ContentManagerPage = React.lazy(async () => await import('@/pages/ContentM
 const ContentManagerDetailPage = React.lazy(
   async () => await import('@/pages/ContentManager/ContentManagerDetail'),
 );
-const CategoryNew = React.lazy(async () => await import('@/pages/ContentManager/tabs/Category/CategoryNew'));
-const CategoryEdit = React.lazy(async () => await import('@/pages/ContentManager/tabs/Category/CategoryEdit'));
-const ContentManagerArchivePage = React.lazy(async () => await import('@/pages/ContentManager/ContentManagerArchive'));
+const ContentManagerNewPage = React.lazy(
+  async () => await import('@/pages/ContentManager/ContentManagerNew'),
+);
+
+const CategoryNew = React.lazy(
+  async () => await import('@/pages/ContentManager/tabs/Category/CategoryNew'),
+);
+const CategoryEdit = React.lazy(
+  async () => await import('@/pages/ContentManager/tabs/Category/CategoryEdit'),
+);
+const ContentManagerArchivePage = React.lazy(
+  async () => await import('@/pages/ContentManager/ContentManagerArchive'),
+);
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
@@ -127,6 +128,7 @@ export default function RoutesComponent() {
           <Route path="content-manager/:id/category/new" element={<CategoryNew />} />
           <Route path="content-manager/:id/category/edit/:id" element={<CategoryEdit />} />
           <Route path="content-manager/:id/archive" element={<ContentManagerArchivePage />} />
+          <Route path="content-manager/:id/data/new" element={<ContentManagerNewPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />
