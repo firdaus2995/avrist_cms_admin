@@ -3,7 +3,7 @@ import { SortingState } from '@tanstack/react-table';
 import { t } from 'i18next';
 import { Link, useNavigate } from 'react-router-dom';
 
-import Plus from '../../assets/plus.png';
+import Plus from '@/assets/plus.png';
 import Table from '@/components/molecules/Table';
 import TableEdit from '../../assets/table-edit.png';
 import TableView from '../../assets/table-view.png';
@@ -16,9 +16,17 @@ import PreviewModal from './components/PreviewModal';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
-import { useGetEmailFormBuilderQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
+import {
+  useDeletePostTypeMutation,
+  // useGetEmailFormDetailQuery,
+  useGetEmailFormBuilderQuery,
+} from '@/services/EmailFormBuilder/emailFormBuilderApi';
+import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function EmailFormBuilderList() {
+  // RTK DELETE
+  const [deletePostType, { isLoading: deletePostTypeLoading }] = useDeletePostTypeMutation();
+
   // TABLE COLUMN
   const columns = [
     {
@@ -105,29 +113,32 @@ export default function EmailFormBuilderList() {
   // DELETE MODAL STATE
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
-  const [deleteModalBody, setDeleteModayBody] = useState('');
+  const [deleteModalBody, setDeleteModalBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
   // PREVIEW MODAL
   const [previewId, setPreviewId] = useState(null);
 
   // RTK GET DATA
-  const fetchQuery = useGetEmailFormBuilderQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search,
-  }, {
-    refetchOnMountOrArgChange: true,
-  });
+  const fetchQuery = useGetEmailFormBuilderQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data, isFetching, isError } = fetchQuery;
 
   useEffect(() => {
     if (data) {
       setListData(data?.postTypeList?.postTypeList);
       setTotal(data?.postTypeList?.total);
-    };
-  }, [data])
+    }
+  }, [data]);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
@@ -139,7 +150,29 @@ export default function EmailFormBuilderList() {
 
   // FUNCTION FOR DELETE PAGE TEMPLATE
   const submitDeleteEmailFormBuilder = () => {
-    console.log(deletedId);
+    deletePostType({ id: deletedId })
+      .unwrap()
+      .then(d => {
+        setOpenDeleteModal(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Delete Email Form',
+            message: d.pageDelete.message,
+          }),
+        );
+        // await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setOpenDeleteModal(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Delete Email Form',
+            message: 'Something went wrong!',
+          }),
+        );
+      });
   };
 
   // TABLE FUNCTION FOR VIEW EMAIL FORM BUILDER
@@ -156,7 +189,7 @@ export default function EmailFormBuilderList() {
   const onClickEmailFormBuilderDelete = (id: number) => {
     setDeletedId(id);
     setDeleteModalTitle(`Are you sure?`);
-    setDeleteModayBody(`Do you want to delete this form?`);
+    setDeleteModalBody(`Do you want to delete this form?`);
     setOpenDeleteModal(true);
   };
 
@@ -185,7 +218,7 @@ export default function EmailFormBuilderList() {
         cancelAction={() => {
           setOpenDeleteModal(false);
         }}
-        // loading={isLoadingDelete}
+        loading={deletePostTypeLoading}
         icon={WarningIcon}
         btnSubmitStyle=""
       />
