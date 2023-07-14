@@ -13,6 +13,10 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import ModalDocumentOrangeIcon from "../../assets/modal/document-orange.svg";
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import Selection from '@/components/molecules/Selection';
+import ApproveIcon from "../../assets/CheckCircle.svg";
+import RejectIcon from "../../assets/RejectUser.svg";
+import ApproveIconWhite from "../../assets/CheckCircleWhite.svg";
+import RejectIconWhite from "../../assets/RejectUserWhite.svg";
 
 export default function Dashboard() {
   // TEXT AREA MODAL
@@ -40,7 +44,20 @@ export default function Dashboard() {
       {/* SELECTION */}
       <Selection  
         title='Response'
-        items={['Approve', 'Reject']}
+        items={[
+          {
+            value: 'APPROVE',
+            label: 'Approve',
+            icon: ApproveIcon,
+            hoverIcon: ApproveIconWhite
+          },
+          {
+            value: 'REJECT',
+            label: 'Reject',
+            icon: RejectIcon,
+            hoverIcon: RejectIconWhite,
+          },
+        ]}
         containerStyle={'!w-[200px]'}
         onClickItem={(item: string) => {
           console.log(item);
