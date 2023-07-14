@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import TableDelete from '@/assets/table-delete.png';
@@ -8,42 +8,53 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
 import ModalLog from '../../components/ModalLog';
+import { useGetContentDataQuery } from '@/services/ContentManager/contentManagerApi';
+import { SortingState } from '@tanstack/react-table';
 
-export default function MainTab(_props: { id: any }) {
+export default function MainTab(props: { id: any; }) {
+  const { id } = props;
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
   const [, setIdDelete] = useState(0);
 
-  const [listData] = useState<any>([
-    {
-      id: 1,
-      status: 'waiting_review',
-      title: 'Homepage Avrist Life',
-      desc: 'Landing Page',
-    },
-    {
-      id: 2,
-      status: 'waiting_approval',
-      title: 'Homepage Avrist Life 2',
-      desc: 'Landing Page',
-    },
-    {
-      id: 3,
-      status: 'draft',
-      title: 'title',
-      desc: 'description',
-    },
-  ]);
+  const [listData, setListData] = useState<any>([]);
 
   // TABLE PAGINATION STATE
-  const [total] = useState(3);
+  const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
+  const [direction, setDirection] = useState('asc');
+  const [sortBy, setSortBy] = useState('id');
+
+  // RTK GET DATA
+  const fetchQuery = useGetContentDataQuery({
+    id,
+    pageIndex,
+    limit: pageLimit,
+    sortBy,
+    direction,
+  });
+  const { data } = fetchQuery;
 
   const [idLog, setIdLog] = useState(null);
   const [logTitle, setLogTitle] = useState(null);
+
+  useEffect(() => {
+    if (data) {
+      setListData(data?.contentDataList?.contentDataList);
+      setTotal(data?.contentDataList?.total);
+    }
+  }, [data]);
+
+  // FUNCTION FOR SORTING FOR ATOMIC TABLE
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      setSortBy(sortModel[0].id);
+      setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    }
+  }, []);
 
   const COLUMNS = [
     {
@@ -84,7 +95,19 @@ export default function MainTab(_props: { id: any }) {
     },
     {
       header: () => <span className="text-[14px] font-black">Short Description</span>,
-      accessorKey: 'desc',
+      accessorKey: 'shortDesc',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px] font-black">Category Name</span>,
+      accessorKey: 'categoryName',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -162,6 +185,7 @@ export default function MainTab(_props: { id: any }) {
           error={false}
           manualPagination={true}
           manualSorting={true}
+          onSortModelChange={handleSortModelChange}
         />
       </div>
       <PaginationComponent
