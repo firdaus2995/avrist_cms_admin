@@ -57,7 +57,7 @@ export default function EmailFormBuilderList() {
               className="cursor-pointer"
               src={CopyLink}
               onClick={() => {
-                void navigator.clipboard.writeText(info?.row?.original?.link);
+                void navigator.clipboard.writeText(info.getValue());
               }}
             />
           </div>
