@@ -1,7 +1,7 @@
 import React from "react";
 
-import Radio from "../../../components/molecules/Radio";
-import AlignIcon from "../../../assets/dummy/align.svg";
+import Radio from "../../../../components/molecules/Radio";
+import AlignIcon from "../../../../assets/dummy/align.svg";
 import { InputText } from "@/components/atoms/Input/InputText";
 
 interface ILabel {

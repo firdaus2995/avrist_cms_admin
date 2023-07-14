@@ -1,14 +1,14 @@
-import EmailIcon from "../../../assets/efb/email.svg";
+import TextAreaIcon from "../../../../assets/efb/text.svg";
 
-const Email = () => {
+const TextArea = () => {
   return (
     <div className="min-h-[65px] flex flex-row justify-between items-center py-2 px-4 bg-light-purple-2 rounded-xl">
-      <p className="font-bold text-sm">Email</p>
+      <p className="font-bold text-sm">Text Area</p>
       <div className="w-[28px] h-[28px] flex justify-center items-center">
-        <img src={EmailIcon} className="w-[28px] h-[28px]" />
+        <img src={TextAreaIcon} className="w-[28px] h-[28px]" />
       </div>
     </div>
   )
 };
 
-export default Email;
+export default TextArea;

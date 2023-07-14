@@ -1,7 +1,7 @@
 import React from "react";
 import { v4 as uuidv4 } from "uuid";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
 
 interface IRadio {
   name: string;

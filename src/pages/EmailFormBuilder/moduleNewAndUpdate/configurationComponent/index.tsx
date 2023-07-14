@@ -8,8 +8,9 @@ import Label from "./Label";
 import Number from "./Number";
 import Document from "./Document";
 import Image from "./Image";
+import SubmitterEmail from "./SubmitterEmail";
 
-const EFBComponent = {
+const EFBConfiguration = {
   TextField,
   TextArea,
   Dropdown,
@@ -20,6 +21,7 @@ const EFBComponent = {
   Number,
   Document,
   Image,
+  SubmitterEmail,
 };
 
-export default EFBComponent;
+export default EFBConfiguration;

@@ -1,8 +1,8 @@
 import React from "react";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
 
-interface ITextArea {
+interface IEmail {
   name: string;
   placeholder: string;
   isActive: boolean;
@@ -10,7 +10,7 @@ interface ITextArea {
   onDelete: () => void;
 }
 
-const TextArea: React.FC<ITextArea> = ({
+const Email: React.FC<IEmail> = ({
   name,
   placeholder,
   isActive,
@@ -24,16 +24,14 @@ const TextArea: React.FC<ITextArea> = ({
     >
       <p className="font-bold text-sm">{name}</p>
       <div className="flex flex-row gap-2">
-        <textarea 
-          rows={3}
-          placeholder={placeholder}
-          className="resize-none w-full text-sm textarea textarea-bordered outline-0 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#D2D4D7]"
-        >
-          
-        </textarea>
+        <input
+          type="text" 
+          placeholder={placeholder} 
+          className="h-[40px] w-full text-sm input input-bordered outline-0 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#D2D4D7]" 
+        />
         <img 
           src={DeleteComponentIcon}
-          className="cursor-pointer self-start"
+          className="cursor-pointer"
           onClick={(event: React.SyntheticEvent) => {
             event.stopPropagation()
             onDelete();
@@ -44,4 +42,4 @@ const TextArea: React.FC<ITextArea> = ({
   )
 };
 
-export default TextArea;
+export default Email;

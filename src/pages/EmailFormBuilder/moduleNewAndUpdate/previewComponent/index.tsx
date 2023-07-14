@@ -8,6 +8,7 @@ import Label from "./Label";
 import Number from "./Number";
 import Document from "./Document";
 import Image from "./Image";
+import SubmitterEmail from "./SubmitterEmail";
 
 const EFBPreview = {
   TextField,
@@ -20,6 +21,7 @@ const EFBPreview = {
   Number,
   Document,
   Image,
+  SubmitterEmail,
 };
 
 export default EFBPreview;

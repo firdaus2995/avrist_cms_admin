@@ -9,7 +9,7 @@ import Number from "./Number";
 import Document from "./Document";
 import Image from "./Image";
 
-const EFBConfiguration = {
+const EFBList = {
   TextField,
   TextArea,
   Dropdown,
@@ -22,4 +22,4 @@ const EFBConfiguration = {
   Image,
 };
 
-export default EFBConfiguration;
+export default EFBList;

@@ -1,16 +1,16 @@
 import React from "react";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
-import UploadDocumentIcon from "../../../assets/efb/preview-document.svg"
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
+import UploadDocumentIcon from "../../../../assets/efb/preview-document.svg"
 
-interface IImage {
+interface IDocument {
   name: string;
   isActive: boolean;
   onClick: () => void;
   onDelete: () => void;
 }
 
-const Image: React.FC<IImage> = ({
+const Document: React.FC<IDocument> = ({
   name,
   isActive,
   onClick,
@@ -40,4 +40,4 @@ const Image: React.FC<IImage> = ({
   )
 };
 
-export default Image;
+export default Document;

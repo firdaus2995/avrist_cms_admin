@@ -1,8 +1,8 @@
 import React from "react";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
 
-interface ITextField {
+interface INumber {
   name: string;
   placeholder: string;
   isActive: boolean;
@@ -10,7 +10,7 @@ interface ITextField {
   onDelete: () => void;
 }
 
-const TextField: React.FC<ITextField> = ({
+const Number: React.FC<INumber> = ({
   name,
   placeholder,
   isActive,
@@ -25,7 +25,7 @@ const TextField: React.FC<ITextField> = ({
       <p className="font-bold text-sm">{name}</p>
       <div className="flex flex-row gap-2">
         <input
-          type="text" 
+          type="number" 
           placeholder={placeholder} 
           className="h-[40px] w-full text-sm input input-bordered outline-0 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#D2D4D7]" 
         />
@@ -42,4 +42,4 @@ const TextField: React.FC<ITextField> = ({
   )
 };
 
-export default TextField;
+export default Number;

@@ -1,17 +1,18 @@
 import React from "react";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
-import UploadDocumentIcon from "../../../assets/efb/preview-document.svg"
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
 
-interface IDocument {
+interface ITextArea {
   name: string;
+  placeholder: string;
   isActive: boolean;
   onClick: () => void;
   onDelete: () => void;
 }
 
-const Document: React.FC<IDocument> = ({
+const TextArea: React.FC<ITextArea> = ({
   name,
+  placeholder,
   isActive,
   onClick,
   onDelete,
@@ -23,10 +24,13 @@ const Document: React.FC<IDocument> = ({
     >
       <p className="font-bold text-sm">{name}</p>
       <div className="flex flex-row gap-2">
-        <div className="w-full h-[135px] flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg bg-white gap-2 p-2">
-          <img src={UploadDocumentIcon} />
-          <span className="text-xs text-center">Drag and Drop Files or click to Browse</span>
-        </div>
+        <textarea 
+          rows={3}
+          placeholder={placeholder}
+          className="resize-none w-full text-sm textarea textarea-bordered outline-0 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#D2D4D7]"
+        >
+          
+        </textarea>
         <img 
           src={DeleteComponentIcon}
           className="cursor-pointer self-start"
@@ -40,4 +44,4 @@ const Document: React.FC<IDocument> = ({
   )
 };
 
-export default Document;
+export default TextArea;

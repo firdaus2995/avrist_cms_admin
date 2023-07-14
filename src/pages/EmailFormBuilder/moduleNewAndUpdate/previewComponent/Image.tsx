@@ -1,18 +1,17 @@
 import React from "react";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
+import UploadDocumentIcon from "../../../../assets/efb/preview-document.svg"
 
-interface INumber {
+interface IImage {
   name: string;
-  placeholder: string;
   isActive: boolean;
   onClick: () => void;
   onDelete: () => void;
 }
 
-const Number: React.FC<INumber> = ({
+const Image: React.FC<IImage> = ({
   name,
-  placeholder,
   isActive,
   onClick,
   onDelete,
@@ -24,14 +23,13 @@ const Number: React.FC<INumber> = ({
     >
       <p className="font-bold text-sm">{name}</p>
       <div className="flex flex-row gap-2">
-        <input
-          type="number" 
-          placeholder={placeholder} 
-          className="h-[40px] w-full text-sm input input-bordered outline-0 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#D2D4D7]" 
-        />
+        <div className="w-full h-[135px] flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg bg-white gap-2 p-2">
+          <img src={UploadDocumentIcon} />
+          <span className="text-xs text-center">Drag and Drop Files or click to Browse</span>
+        </div>
         <img 
           src={DeleteComponentIcon}
-          className="cursor-pointer"
+          className="cursor-pointer self-start"
           onClick={(event: React.SyntheticEvent) => {
             event.stopPropagation()
             onDelete();
@@ -42,4 +40,4 @@ const Number: React.FC<INumber> = ({
   )
 };
 
-export default Number;
+export default Image;

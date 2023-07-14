@@ -1,4 +1,4 @@
-import CheckIcon from "../../../assets/efb/check.svg";
+import CheckIcon from "../../../../assets/efb/check.svg";
 
 const Checkbox = () => {
   return (

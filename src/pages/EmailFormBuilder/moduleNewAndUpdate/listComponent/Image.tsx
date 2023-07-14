@@ -1,4 +1,4 @@
-import ImageIcon from "../../../assets/efb/image.svg";
+import ImageIcon from "../../../../assets/efb/image.svg";
 
 const Image = () => {
   return (

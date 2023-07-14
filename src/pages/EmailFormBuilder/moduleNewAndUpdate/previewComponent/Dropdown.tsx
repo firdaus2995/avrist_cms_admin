@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
-import ChevronUp from "../../../assets/chevronup.png"
-import ChevronDown from "../../../assets/chevrondown.png";
-import CheckMark from "../../../assets/checkmark.png";
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
+import ChevronUp from "../../../../assets/chevronup.png"
+import ChevronDown from "../../../../assets/chevrondown.png";
+import CheckMark from "../../../../assets/checkmark.png";
 
 interface IDropdown {
   name: string;

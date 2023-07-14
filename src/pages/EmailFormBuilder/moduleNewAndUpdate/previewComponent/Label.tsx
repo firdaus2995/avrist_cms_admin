@@ -1,6 +1,6 @@
 import React from "react";
 
-import DeleteComponentIcon from "../../../assets/efb/preview-delete.svg"
+import DeleteComponentIcon from "../../../../assets/efb/preview-delete.svg"
 
 interface ILabel {
   name: string;
