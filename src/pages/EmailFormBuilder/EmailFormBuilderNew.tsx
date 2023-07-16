@@ -432,6 +432,7 @@ export default function EmailFormBuilderNew () {
                 key={index}
                 name={element.name}
                 isActive={activeComponent?.index === index}
+                alignment={element.alignment}
                 onClick={() => {
                   handlerFocusComponent(element, index)
                 }}

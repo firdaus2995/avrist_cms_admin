@@ -1,7 +1,12 @@
 import React from "react";
 
 import Radio from "../../../../components/molecules/Radio";
-import AlignIcon from "../../../../assets/dummy/align.svg";
+import TextAlignLeft from "../../../../assets/text-align-left.svg";
+import TextAlignCenter from "../../../../assets/text-align-center.svg";
+import TextAlignRight from "../../../../assets/text-align-right.svg";
+import TextAlignLeftWhite from "../../../../assets/text-align-left-white.svg";
+import TextAlignCenterWhite from "../../../../assets/text-align-center-white.svg";
+import TextAlignRightWhite from "../../../../assets/text-align-right-white.svg";
 import { InputText } from "@/components/atoms/Input/InputText";
 
 interface ILabel {
@@ -54,11 +59,32 @@ const TextField: React.FC<ILabel> = ({
           }
         }}
       />
-      {
-        alignment && (
-          <img src={AlignIcon} />
-        )
-      }
+      <div className="flex flex-row p-2 rounded-lg bg-[#EDEDED]">
+        <div 
+          className={`h-[30px] flex flex-1 justify-center items-center bg-[#D6D4D3] ${alignment === "LEFT" ? 'bg-[#3E84F7]' : ''} cursor-pointer rounded-tl-lg rounded-bl-lg`}
+          onClick={() => {
+            valueChange('alignment', 'LEFT');
+          }}
+        >
+          <img src={alignment === "LEFT" ? TextAlignLeftWhite : TextAlignLeft} />
+        </div>
+        <div 
+          className={`h-[30px] flex flex-1 justify-center items-center bg-[#D6D4D3] ${alignment === "CENTER" ? 'bg-[#3E84F7]' : ''} cursor-pointer border-l-[1px] border-r-[1px] border-[#BCBAB9]`}
+          onClick={() => {
+            valueChange('alignment', 'CENTER');
+          }}
+        >
+          <img src={alignment === "CENTER" ? TextAlignCenterWhite : TextAlignCenter} />
+        </div>
+        <div 
+          className={`h-[30px] flex flex-1 justify-center items-center bg-[#D6D4D3] ${alignment === "RIGHT" ? 'bg-[#3E84F7]' : ''} cursor-pointer rounded-tr-lg rounded-br-lg`}
+          onClick={() => {
+            valueChange('alignment', 'RIGHT');
+          }}
+        >
+          <img src={alignment === "RIGHT" ? TextAlignRightWhite : TextAlignRight} />
+        </div>
+      </div>
     </React.Fragment>
   )
 }
