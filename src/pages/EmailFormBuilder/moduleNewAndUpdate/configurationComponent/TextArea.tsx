@@ -10,6 +10,7 @@ interface ITextArea {
   maxLength: number;
   multiple: boolean;
   required: boolean;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
@@ -20,6 +21,7 @@ const TextArea: React.FC<ITextArea> = ({
   maxLength,
   multiple,
   required,
+  errors,
   valueChange,
 }) => {
   return (
@@ -32,6 +34,7 @@ const TextArea: React.FC<ITextArea> = ({
         placeholder="Enter your text area name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}

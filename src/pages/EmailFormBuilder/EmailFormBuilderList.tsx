@@ -17,16 +17,12 @@ import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
 import {
-  useDeletePostTypeMutation,
-  // useGetEmailFormDetailQuery,
   useGetEmailFormBuilderQuery,
+  useDeleteEmailFormBuilderMutation,
 } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function EmailFormBuilderList() {
-  // RTK DELETE
-  const [deletePostType, { isLoading: deletePostTypeLoading }] = useDeletePostTypeMutation();
-
   // TABLE COLUMN
   const columns = [
     {
@@ -132,6 +128,9 @@ export default function EmailFormBuilderList() {
     },
   );
   const { data, isFetching, isError } = fetchQuery;
+
+  // RTK DELETE
+  const [deletePostType, { isLoading: deletePostTypeLoading }] = useDeleteEmailFormBuilderMutation();
 
   useEffect(() => {
     if (data) {

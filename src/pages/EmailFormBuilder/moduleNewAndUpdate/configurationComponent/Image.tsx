@@ -7,6 +7,7 @@ interface IImage {
   name: string;
   multiple: boolean;
   required: boolean;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
@@ -14,6 +15,7 @@ const Image: React.FC<IImage> = ({
   name,
   multiple,
   required,
+  errors,
   valueChange,
 }) => {
   return (
@@ -26,6 +28,7 @@ const Image: React.FC<IImage> = ({
         placeholder="Enter your image name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}

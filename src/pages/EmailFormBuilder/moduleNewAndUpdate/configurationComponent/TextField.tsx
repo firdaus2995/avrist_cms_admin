@@ -8,6 +8,7 @@ interface ITextField {
   placeholder: string;
   multiple: boolean;
   required: boolean;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
@@ -16,6 +17,7 @@ const TextField: React.FC<ITextField> = ({
   placeholder,
   multiple,
   required,
+  errors,
   valueChange,
 }) => {
   return (
@@ -28,6 +30,7 @@ const TextField: React.FC<ITextField> = ({
         placeholder="Enter your text field name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}

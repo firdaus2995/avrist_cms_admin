@@ -7,14 +7,16 @@ import { InputText } from "@/components/atoms/Input/InputText";
 interface ILabel {
   name: string;
   position: string;
-  // alignment: string;
+  alignment: string;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
 const TextField: React.FC<ILabel> = ({
   name,
   position,
-  // alignment,
+  alignment,
+  errors,
   valueChange,
 }) => {
   return (
@@ -27,6 +29,7 @@ const TextField: React.FC<ILabel> = ({
         placeholder="Enter your text field name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}
@@ -51,7 +54,11 @@ const TextField: React.FC<ILabel> = ({
           }
         }}
       />
-      <img src={AlignIcon} />
+      {
+        alignment && (
+          <img src={AlignIcon} />
+        )
+      }
     </React.Fragment>
   )
 }

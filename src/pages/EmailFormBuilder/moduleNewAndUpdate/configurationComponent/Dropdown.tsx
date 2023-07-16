@@ -8,6 +8,7 @@ interface IDropdown {
   items: string[];
   multiple: boolean;
   required: boolean;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
@@ -16,6 +17,7 @@ const Dropdown: React.FC<IDropdown> = ({
   items,
   multiple,
   required,
+  errors,
   valueChange,
 }) => {
   return (
@@ -28,6 +30,7 @@ const Dropdown: React.FC<IDropdown> = ({
         placeholder="Enter your dropdown name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}
@@ -40,6 +43,7 @@ const Dropdown: React.FC<IDropdown> = ({
         placeholder='Use ";" to separate each value'
         roundStyle="lg"
         value={items.join(";")}
+        isError={errors.items}
         onChange={(event: any) => {
           let arrayItem: any = event?.target?.value.split(";");
           if (arrayItem.length === 1 && arrayItem[0] === "") {

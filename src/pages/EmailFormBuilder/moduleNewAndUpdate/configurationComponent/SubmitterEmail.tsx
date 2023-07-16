@@ -7,6 +7,7 @@ interface ISubmitterEmail {
   name: string;
   placeholder: string;
   required: boolean;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
@@ -14,6 +15,7 @@ const SubmitterEmail: React.FC<ISubmitterEmail> = ({
   name,
   placeholder,
   required,
+  errors,
   valueChange,
 }) => {
   return (
@@ -26,6 +28,7 @@ const SubmitterEmail: React.FC<ISubmitterEmail> = ({
         placeholder="Enter your submitter email name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}
@@ -47,9 +50,6 @@ const SubmitterEmail: React.FC<ISubmitterEmail> = ({
         labelTitle="Required Field"
         labelContainerStyle="justify-start p-1"
         inputStyle="w-[20px] h-[20px]"
-        updateFormValue={(event: any) => {
-          valueChange('required', event.value);
-        }}
       />
     </React.Fragment>
   )

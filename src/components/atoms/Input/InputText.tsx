@@ -2,6 +2,7 @@ import {
   HTMLInputTypeAttribute,
 } from 'react';
 import PropTypes from 'prop-types';
+import ErrorSmallIcon from "../../../assets/error-small.svg";
 
 interface IInputText {
   labelTitle: string;
@@ -14,12 +15,12 @@ interface IInputText {
   value?: string | number;
   placeholder?: string | null;
   disabled?: boolean;
-  suffix?: React.ReactNode;
   direction?: string;
   roundStyle?: string;
   themeColor?: string;
   inputWidth?: number;
   inputHeight?: number;
+  isError?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -34,13 +35,13 @@ export const InputText: React.FC<IInputText> = ({
   placeholder,
   disabled,
   onChange,
-  suffix,
   inputStyle,
   direction,
   roundStyle = '3xl',
   themeColor,
   inputWidth,
   inputHeight,
+  isError,
 }) => {
   return (
     <div className={`form-control w-full ${containerStyle} ${direction === 'row' ? 'flex-row' : ''}`}>
@@ -52,7 +53,7 @@ export const InputText: React.FC<IInputText> = ({
       <div style={{
         width: inputWidth ?? '100%',
         height: inputHeight ?? '',
-      }} className={`input input-bordered ${`rounded-${roundStyle}`} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
+      }} className={`input input-bordered ${`rounded-${roundStyle}`} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''} ${isError && 'border-reddist'}`}>
         <input
           type={type ?? 'text'}
           value={value}
@@ -65,8 +66,15 @@ export const InputText: React.FC<IInputText> = ({
           }}
           className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${disabled ? 'text-[#637488]' : ''}`}
         />
-        <div className='relative right-8'>{suffix ?? ''}</div>
       </div>
+      {
+        isError && (
+          <div className='flex flex-row px-1 py-2'>
+            <img src={ErrorSmallIcon} className='mr-3' />
+            <p className='text-reddist text-sm'>This field is required</p>
+          </div>
+        )
+      }
     </div>
   );
 };
@@ -82,11 +90,11 @@ InputText.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  suffix: PropTypes.any,
   direction: PropTypes.string,
   inputStyle: PropTypes.string,
   roundStyle: PropTypes.string,
   themeColor: PropTypes.string,
   inputWidth: PropTypes.number,
   inputHeight: PropTypes.number,
+  isError: PropTypes.bool,
 };

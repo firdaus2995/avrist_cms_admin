@@ -7,6 +7,7 @@ interface INumber {
   name: string;
   placeholder: string;
   required: boolean;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
@@ -14,6 +15,7 @@ const Number: React.FC<INumber> = ({
   name,
   placeholder,
   required,
+  errors,
   valueChange,
 }) => {
   return (
@@ -26,6 +28,7 @@ const Number: React.FC<INumber> = ({
         placeholder="Enter your number name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}

@@ -17,6 +17,7 @@ import { InputText } from "@/components/atoms/Input/InputText";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
+import { useCreateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 // import { useAppDispatch } from "@/store";
 
 export default function EmailFormBuilderNew () {
@@ -33,9 +34,42 @@ export default function EmailFormBuilderNew () {
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
 
-  const onSave = () => {
+  // RTK CREATE EMAIL
+  const [ createEmailFormBuilder, {
+    isLoading
+  }] = useCreateEmailFormBuilderMutation();
 
-  }
+  const onSave = () => {
+    // ALL COMPONENTS
+    let currentComponents: any = copyArray(components);
+    for (let i = 0; i < currentComponents.length; i++) {
+      for (const key in currentComponents[i].mandatory) {
+        if (!currentComponents[i][key] || currentComponents[i][key].length === 0) {
+          currentComponents[i].mandatory[key] = true;
+        } else {
+          currentComponents[i].mandatory[key] = false;
+        }
+      };
+    };
+
+    // ACTIVE COMPONENT
+    let activeCurrentComponent: any = activeComponent.data;
+    for (const key in activeCurrentComponent.mandatory) {
+      if (!activeCurrentComponent[key] || activeCurrentComponent[key].length === 0) {
+        activeCurrentComponent.mandatory[key] = true;
+      } else {
+        activeCurrentComponent.mandatory[key] = false;
+      }
+    };
+
+    setComponents(currentComponents);
+    setActiveComponent((prevComponent: any) => (
+      {
+        ...prevComponent,
+        data: activeCurrentComponent,
+      }
+    ))
+  };
 
   const onLeave = () => {
     setShowLeaveModal(false);
@@ -98,6 +132,9 @@ export default function EmailFormBuilderNew () {
           placeholder: "Enter your field",
           multiple: false,
           required: false,
+          mandatory: {
+            name: false,
+          },
         };
         break;
       case "TEXTAREA":
@@ -109,6 +146,9 @@ export default function EmailFormBuilderNew () {
           maxLength: null,
           multiple: false,
           required: false,
+          mandatory: {
+            name: false,
+          },
         };
         break;
       case "DROPDOWN":
@@ -118,6 +158,10 @@ export default function EmailFormBuilderNew () {
           items: ["Ayam", "Babi"],
           multiple: false,
           required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
         };
         break;
       case "RADIO":
@@ -127,6 +171,10 @@ export default function EmailFormBuilderNew () {
           items: ["Ayam", "Babi"],
           other: true,
           required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
         };
         break;
       case "CHECKBOX":
@@ -136,6 +184,10 @@ export default function EmailFormBuilderNew () {
           items: ["Ayam", "Babi"],
           other: true,
           required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
         };
         break;
       case "EMAIL":
@@ -145,6 +197,9 @@ export default function EmailFormBuilderNew () {
           placeholder: "Enter your email",
           required: false,
           submitter: false,
+          mandatory: {
+            name: false,
+          },
         };
         break;
       case "LABEL":
@@ -152,6 +207,10 @@ export default function EmailFormBuilderNew () {
           type: item,
           name: "Label Name",
           position: "TITLE",
+          alignment: "LEFT",
+          mandatory: {
+            name: false,
+          },
         };
         break;
       case "NUMBER":
@@ -160,6 +219,9 @@ export default function EmailFormBuilderNew () {
           name: "Number Name",
           placeholder: "Enter your field",
           required: false,
+          mandatory: {
+            name: false,
+          },
         };
         break;
       case "DOCUMENT":
@@ -168,6 +230,9 @@ export default function EmailFormBuilderNew () {
           name: "Document Name",
           multiple: false,
           required: false,
+          mandatory: {
+            name: false,
+          },
         };
         break;
       case "IMAGE":
@@ -176,6 +241,9 @@ export default function EmailFormBuilderNew () {
           name: "Image Name",
           multiple: false,
           required: false,
+          mandatory: {
+            name: false,
+          },
         };
         break;
       case "SUBMITTEREMAIL":
@@ -183,9 +251,12 @@ export default function EmailFormBuilderNew () {
           type: item,
           name: "Submitter Email Name",
           placeholder: "Enter your email",
-          required: false,
+          required: true,
           submitter: true,
-        }
+          mandatory: {
+            name: false,
+          },
+        };
         break;
       default:
         component = false;
@@ -442,6 +513,7 @@ export default function EmailFormBuilderNew () {
             placeholder={activeComponent?.data?.placeholder}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -456,6 +528,7 @@ export default function EmailFormBuilderNew () {
             maxLength={activeComponent?.data?.maxLength}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -468,6 +541,7 @@ export default function EmailFormBuilderNew () {
             items={activeComponent?.data?.items}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -480,6 +554,7 @@ export default function EmailFormBuilderNew () {
             items={activeComponent?.data?.items}
             other={activeComponent?.data?.other}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -492,6 +567,7 @@ export default function EmailFormBuilderNew () {
             items={activeComponent?.data?.items}
             other={activeComponent?.data?.other}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -503,6 +579,7 @@ export default function EmailFormBuilderNew () {
             name={activeComponent?.data?.name}
             placeholder={activeComponent?.data?.placeholder}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -513,6 +590,8 @@ export default function EmailFormBuilderNew () {
           <EFBConfiguration.Label 
             name={activeComponent?.data?.name}
             position={activeComponent?.data?.position}
+            alignment={activeComponent?.data?.alignment}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -520,10 +599,11 @@ export default function EmailFormBuilderNew () {
         )
       case "NUMBER":
         return (
-          <EFBConfiguration.Email 
+          <EFBConfiguration.Number 
             name={activeComponent?.data?.name}
             placeholder={activeComponent?.data?.placeholder}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -535,6 +615,7 @@ export default function EmailFormBuilderNew () {
             name={activeComponent?.data?.name}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -545,7 +626,8 @@ export default function EmailFormBuilderNew () {
           <EFBConfiguration.Image 
             name={activeComponent?.data?.name}
             multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required} 
+            required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -557,6 +639,7 @@ export default function EmailFormBuilderNew () {
             name={activeComponent?.data?.name}
             placeholder={activeComponent?.data?.placeholder}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -668,13 +751,13 @@ export default function EmailFormBuilderNew () {
               setMessageLeaveModalShow(t('modal.leave-confirmation'));
               setShowLeaveModal(true);          
             }}>
-              {t('btn.cancel')}
+              {isLoading ? 'Loading...' : t('btn.cancel')}
             </button>
             <button className="btn btn-success btn-md" onClick={(event: any) => {
               event.preventDefault();
               onSave();
             }}>
-              {t('btn.save')}
+              {isLoading ? 'Loading...' : t('btn.save')}
             </button>
           </div>
         </form>

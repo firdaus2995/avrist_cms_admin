@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
 // import { TextArea } from '@/components/atoms/Input/TextArea';
-import { useGetEmailFormDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
+import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 
 export default function PreviewModal(props: any) {
@@ -10,7 +10,7 @@ export default function PreviewModal(props: any) {
 
   const [previewData, setPreviewData] = useState<any>({});
 
-  const { data, isLoading } = useGetEmailFormDetailQuery({ id, pageIndex: 0, limit: 99 });
+  const { data, isLoading } = useGetEmailFormBuilderDetailQuery({ id, pageIndex: 0, limit: 99 });
 
   const [listData, setListData] = useState([]);
 

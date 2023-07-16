@@ -7,6 +7,7 @@ interface IEmail {
   name: string;
   placeholder: string;
   required: boolean;
+  errors: any;
   valueChange: (type: string, value: any) => void;
 };
 
@@ -14,6 +15,7 @@ const Email: React.FC<IEmail> = ({
   name,
   placeholder,
   required,
+  errors,
   valueChange,
 }) => {
   return (
@@ -26,6 +28,7 @@ const Email: React.FC<IEmail> = ({
         placeholder="Enter your email name"
         roundStyle="lg"
         value={name}
+        isError={errors.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}

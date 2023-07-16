@@ -6,6 +6,37 @@ export const emailFormBuilderApi = createApi({
   reducerPath: 'emailFormBuilder',
   baseQuery: customFetchBase,
   endpoints: builder => ({
+    getEmailFormBuilderDetail: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query postTypeDetail($id: Int!, $pageIndex: Int!, $limit: Int!) {
+            postTypeDetail(
+              request: {
+                postTypeGroup: "EMAIL_FORM"
+                id: $id
+                pageIndex: $pageIndex
+                limit: $limit
+              }
+            ) {
+              id
+              name
+              postTypeGroup
+              slug
+              pic
+              total
+              attributeList {
+                id
+                name
+                fieldType
+                fieldId
+                config
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     getEmailFormBuilder: builder.query<any, any>({
       query: payload => ({
         document: gql`
@@ -38,7 +69,31 @@ export const emailFormBuilderApi = createApi({
         variables: payload,
       }),
     }),
-    deletePostType: builder.mutation<any, any>({
+    createEmailFormBuilder: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation postTypeCreate(
+            $name: String!
+            $attributeRequests: [Component!]!
+          ) {
+            postTypeCreate(
+              request: {
+                name: $name
+                postTypeGroup: "EMAIL_FORM"
+                attributeRequests: $attributeRequests
+              }
+            ) {
+              id
+              name
+              postTypeGroup
+              slug
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
+    deleteEmailFormBuilder: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
           mutation postTypeDelete($id: Int!) {
@@ -51,42 +106,12 @@ export const emailFormBuilderApi = createApi({
         variables: payload,
       }),
     }),
-    getEmailFormDetail: builder.query<any, any>({
-      query: payload => ({
-        document: gql`
-          query postTypeDetail($id: Int!, $pageIndex: Int!, $limit: Int!) {
-            postTypeDetail(
-              request: {
-                postTypeGroup: "EMAIL_FORM"
-                id: $id
-                pageIndex: $pageIndex
-                limit: $limit
-              }
-            ) {
-              id
-              name
-              postTypeGroup
-              slug
-              pic
-              total
-              attributeList {
-                id
-                name
-                fieldType
-                fieldId
-                config
-              }
-            }
-          }
-        `,
-        variables: payload,
-      }),
-    }),
   }),
 });
 
 export const {
+  useGetEmailFormBuilderDetailQuery,
   useGetEmailFormBuilderQuery,
-  useDeletePostTypeMutation,
-  useGetEmailFormDetailQuery,
+  useCreateEmailFormBuilderMutation,
+  useDeleteEmailFormBuilderMutation,
 } = emailFormBuilderApi;
