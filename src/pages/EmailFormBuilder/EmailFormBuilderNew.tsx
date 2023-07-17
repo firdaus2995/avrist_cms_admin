@@ -44,7 +44,7 @@ export default function EmailFormBuilderNew () {
     // ALL COMPONENTS
     let frontendError: boolean = false;
 
-    let currentComponents: any = copyArray(components);
+    const currentComponents: any = copyArray(components);
     for (let i = 0; i < currentComponents.length; i++) {
       for (const key in currentComponents[i].mandatory) {
         if (!currentComponents[i][key] || currentComponents[i][key].length === 0) {
@@ -57,7 +57,7 @@ export default function EmailFormBuilderNew () {
     };
 
     // ACTIVE COMPONENT
-    let activeCurrentComponent: any = activeComponent?.data;
+    const activeCurrentComponent: any = activeComponent?.data;
     if (activeCurrentComponent) {
       for (const key in activeCurrentComponent.mandatory) {
         if (!activeCurrentComponent[key] || activeCurrentComponent[key].length === 0) {
@@ -167,14 +167,23 @@ export default function EmailFormBuilderNew () {
         default:
           return false;
       };
-    });    
+    });
+
+    if (multipleInput.length > 0) {
+      backendComponents.unshift({
+        fieldType: "EMAIL_FORM_PIC",
+        name: "EMAIL_FORM_PIC",
+        fieldId: "EMAIL_FORM_PIC",
+        value: multipleInput.join(";"),
+      });
+    };
+
+    console.log(backendComponents);
 
     const payload = {
       name: formName,
       attributeRequests: backendComponents,
     };
-
-    console.log(backendComponents);
 
     createEmailFormBuilder(payload)
       .unwrap()
@@ -878,7 +887,7 @@ export default function EmailFormBuilderNew () {
               event.preventDefault();
               setLeaveTitleModalShow(t('modal.confirmation'));
               setMessageLeaveModalShow(t('modal.leave-confirmation'));
-              setShowLeaveModal(true);          
+              setShowLeaveModal(true);
             }}>
               {isLoading ? 'Loading...' : t('btn.cancel')}
             </button>
