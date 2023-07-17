@@ -16,13 +16,14 @@ import { CheckBox } from "@/components/atoms/Input/CheckBox";
 import { InputText } from "@/components/atoms/Input/InputText";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
+import { useAppDispatch } from "@/store";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useCreateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
-// import { useAppDispatch } from "@/store";
+import { openToast } from "@/components/atoms/Toast/slice";
 
 export default function EmailFormBuilderNew () {
   const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   // FORM STATE
   const [formName, setFormName] = useState<any>("");
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
@@ -41,10 +42,13 @@ export default function EmailFormBuilderNew () {
 
   const onSave = () => {
     // ALL COMPONENTS
+    let frontendError: boolean = false;
+
     let currentComponents: any = copyArray(components);
     for (let i = 0; i < currentComponents.length; i++) {
       for (const key in currentComponents[i].mandatory) {
         if (!currentComponents[i][key] || currentComponents[i][key].length === 0) {
+          frontendError = true
           currentComponents[i].mandatory[key] = true;
         } else {
           currentComponents[i].mandatory[key] = false;
@@ -53,22 +57,73 @@ export default function EmailFormBuilderNew () {
     };
 
     // ACTIVE COMPONENT
-    let activeCurrentComponent: any = activeComponent.data;
-    for (const key in activeCurrentComponent.mandatory) {
-      if (!activeCurrentComponent[key] || activeCurrentComponent[key].length === 0) {
-        activeCurrentComponent.mandatory[key] = true;
-      } else {
-        activeCurrentComponent.mandatory[key] = false;
-      }
+    let activeCurrentComponent: any = activeComponent?.data;
+    if (activeCurrentComponent) {
+      for (const key in activeCurrentComponent.mandatory) {
+        if (!activeCurrentComponent[key] || activeCurrentComponent[key].length === 0) {
+          activeCurrentComponent.mandatory[key] = true;
+        } else {
+          activeCurrentComponent.mandatory[key] = false;
+        }
+      };
     };
 
     setComponents(currentComponents);
-    setActiveComponent((prevComponent: any) => (
-      {
-        ...prevComponent,
-        data: activeCurrentComponent,
-      }
-    ))
+    if (activeCurrentComponent) {
+      setActiveComponent((prevComponent: any) => (
+        {
+          ...prevComponent,
+          data: activeCurrentComponent,
+        }
+      ));
+    };
+
+    if (frontendError) {
+      return;
+    };
+
+    const backendComponents: any = currentComponents.map((element: any) => {
+      switch (element.type) {
+        case "TEXTFIELD":
+          return {
+            fieldType: "TEXT_FIELD",
+            name: "TEXT_FIELD",
+            fieldId: "TEXT_FIELD",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\"}`,
+          };
+        default:
+          return false;
+      };
+    });
+
+    const payload = {
+      name: formName,
+      attributeRequests: backendComponents,
+    };
+
+    console.log(backendComponents);
+
+    createEmailFormBuilder(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('email-form-builder.add.success-msg', { name: payload.name })
+          })
+        )
+        navigate('/email-form-builder');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('email-form-builder.add.failed-msg', { name: payload.name }),
+          }),
+        );
+      });
   };
 
   const onLeave = () => {

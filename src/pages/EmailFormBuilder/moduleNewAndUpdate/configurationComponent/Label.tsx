@@ -61,7 +61,7 @@ const TextField: React.FC<ILabel> = ({
       />
       <div className="flex flex-row p-2 rounded-lg bg-[#EDEDED]">
         <div 
-          className={`h-[30px] flex flex-1 justify-center items-center bg-[#D6D4D3] ${alignment === "LEFT" ? 'bg-[#3E84F7]' : ''} cursor-pointer rounded-tl-lg rounded-bl-lg`}
+          className={`h-[30px] flex flex-1 justify-center items-center ${alignment === "LEFT" ? 'bg-[#3E84F7]' : 'bg-[#D6D4D3]'} cursor-pointer rounded-tl-lg rounded-bl-lg`}
           onClick={() => {
             valueChange('alignment', 'LEFT');
           }}
@@ -69,7 +69,7 @@ const TextField: React.FC<ILabel> = ({
           <img src={alignment === "LEFT" ? TextAlignLeftWhite : TextAlignLeft} />
         </div>
         <div 
-          className={`h-[30px] flex flex-1 justify-center items-center bg-[#D6D4D3] ${alignment === "CENTER" ? 'bg-[#3E84F7]' : ''} cursor-pointer border-l-[1px] border-r-[1px] border-[#BCBAB9]`}
+          className={`h-[30px] flex flex-1 justify-center items-center ${alignment === "CENTER" ? 'bg-[#3E84F7]' : 'bg-[#D6D4D3]'} cursor-pointer border-l-[1px] border-r-[1px] border-[#BCBAB9]`}
           onClick={() => {
             valueChange('alignment', 'CENTER');
           }}
@@ -77,7 +77,7 @@ const TextField: React.FC<ILabel> = ({
           <img src={alignment === "CENTER" ? TextAlignCenterWhite : TextAlignCenter} />
         </div>
         <div 
-          className={`h-[30px] flex flex-1 justify-center items-center bg-[#D6D4D3] ${alignment === "RIGHT" ? 'bg-[#3E84F7]' : ''} cursor-pointer rounded-tr-lg rounded-br-lg`}
+          className={`h-[30px] flex flex-1 justify-center items-center ${alignment === "RIGHT" ? 'bg-[#3E84F7]' : 'bg-[#D6D4D3]'} cursor-pointer rounded-tr-lg rounded-br-lg`}
           onClick={() => {
             valueChange('alignment', 'RIGHT');
           }}
