@@ -156,9 +156,9 @@ export default function ContentTypeEdit() {
   function onEditList() {
     if (openedAttribute?.code === 'looping') {
       const data = {
-        fieldType: openedAttribute?.code?.toUpperCase(),
-        name: openedAttribute?.label,
-        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
+        fieldType: openedAttribute?.fieldType?.toUpperCase(),
+        name: openedAttribute?.name,
+        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
         isDeleted: true,
         loopTypeRequest,
       };
@@ -175,10 +175,10 @@ export default function ContentTypeEdit() {
       setListItems(updatedListItems);
     } else {
       const data = {
-        fieldType: openedAttribute?.code?.toUpperCase(),
-        name: openedAttribute?.label,
-        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        config: openedAttribute?.config.length > 0 ? config : [],
+        fieldType: openedAttribute?.fieldType?.toUpperCase(),
+        name: openedAttribute?.name,
+        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
+        config: openedAttribute?.config,
       };
       const updatedListItems = listItems.map((item: any, index: undefined) => {
         if (index === editedIndex) {
@@ -207,6 +207,8 @@ export default function ContentTypeEdit() {
         {listItems.map(
           (
             val: {
+              config: null;
+              attributeList: object | null;
               name: string;
               fieldId:
                 | string
@@ -236,12 +238,9 @@ export default function ContentTypeEdit() {
                       role="button"
                       onClick={() => {
                         setEditedIndex(idx);
-                        const edited = listAttributes?.filter(
-                          (value: { code: string }) => value.code === getFieldId(val.fieldType),
-                        );
-                        edited[0].label = val.name;
-                        edited[0].fieldId = val.fieldId ? val.fieldId : getFieldId(val.name);
-                        openAddModal(edited[0], true);
+                        
+                        console.log(val)
+                        openAddModal(val, true);
                       }}
                       className={`cursor-pointer select-none flex items-center justify-center`}
                       src={TableEdit}
@@ -357,25 +356,27 @@ export default function ContentTypeEdit() {
       attributeRequests: updatedData,
     };
 
-    postUpdate(payload)
-      .unwrap()
-      .then(() => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-          }),
-        );
-        navigate('/content-type');
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-          }),
-        );
-      });
+    console.log(updatedData)
+
+    // postUpdate(payload)
+    //   .unwrap()
+    //   .then(() => {
+    //     dispatch(
+    //       openToast({
+    //         type: 'success',
+    //         title: t('toast-success'),
+    //       }),
+    //     );
+    //     navigate('/content-type');
+    //   })
+    //   .catch(() => {
+    //     dispatch(
+    //       openToast({
+    //         type: 'error',
+    //         title: t('toast-failed'),
+    //       }),
+    //     );
+    //   });
   }
 
   const modalListAttribute = () => {
@@ -563,7 +564,7 @@ export default function ContentTypeEdit() {
             {openedAttribute?.code !== 'looping' ? (
               openedAttribute?.config?.length > 0 && (
                 <div className="flex flex-row gap-4 my-5">
-                  {openedAttribute?.config?.map(
+                  {/* {openedAttribute?.config?.map(
                     (
                       val: { type: string; label: any; code: string | number; value: any },
                       idx: Key | null | undefined,
@@ -608,7 +609,7 @@ export default function ContentTypeEdit() {
                           />
                         </div>
                       ),
-                  )}
+                  )} */}
                 </div>
               )
             ) : (
@@ -678,7 +679,7 @@ export default function ContentTypeEdit() {
                                 }}
                               />
                             </div>
-                            {val?.config?.length > 0 && (
+                            {/* {val?.config?.length > 0 && (
                               <div className="flex flex-row gap-4 my-5">
                                 {val?.config?.map(
                                   (
@@ -733,7 +734,7 @@ export default function ContentTypeEdit() {
                                     ),
                                 )}
                               </div>
-                            )}
+                            )} */}
                           </div>
                         ),
                       )
@@ -791,7 +792,7 @@ export default function ContentTypeEdit() {
       <Modal open={isOpenModalEditAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
-            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.code)}</div>
+            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.fieldType)}</div>
             <div className="p-2">
               <svg
                 role="button"
@@ -810,18 +811,18 @@ export default function ContentTypeEdit() {
           </div>
           <div className="flex flex-col mx-10 mt-10">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              {getType(openedAttribute?.code)}
+              {getType(openedAttribute?.fieldType)}
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
                 labelTitle="Name"
                 labelRequired
-                value={openedAttribute?.label}
+                value={openedAttribute?.name}
                 inputStyle="rounded-3xl"
                 onChange={e => {
                   setOpenedAttribute((prevState: any) => ({
                     ...prevState,
-                    label: e.target.value,
+                    name: e.target.value,
                   }));
                 }}
               />
@@ -838,10 +839,26 @@ export default function ContentTypeEdit() {
                 }}
               />
             </div>
-            {openedAttribute?.code !== 'looping' ? (
+            {openedAttribute?.fieldType === 'TEXT_FIELD' ||  openedAttribute?.fieldType === 'TEXT_AREA' ? (
               openedAttribute?.config?.length > 0 && (
                 <div className="flex flex-row gap-4 my-5">
-                  {openedAttribute?.config?.map(
+                  <InputText
+                    labelTitle={`Minimum Length (Optional)`}
+                    type="number"
+                    value={openedAttribute?.config?.min_length || ''}
+                    inputStyle="rounded-3xl"
+                    onChange={e => {
+                    }}
+                  />
+                  <InputText
+                    labelTitle={`Maximum Length (Optional)`}
+                    type="number"
+                    value={openedAttribute?.config?.max_length || ''}
+                    inputStyle="rounded-3xl"
+                    onChange={e => {
+                    }}
+                  />
+                  {/* {openedAttribute?.config?.map(
                     (
                       val: { type: string; label: any; code: string | number; value: any },
                       idx: Key | null | undefined,
@@ -886,7 +903,7 @@ export default function ContentTypeEdit() {
                           />
                         </div>
                       ),
-                  )}
+                  )} */}
                 </div>
               )
             ) : (
@@ -899,12 +916,7 @@ export default function ContentTypeEdit() {
                             fieldType: string;
                             name: string;
                             fieldId: any;
-                            config: Array<{
-                              type: string;
-                              label: any;
-                              value: string | undefined;
-                              media_type: string | number | boolean | undefined;
-                            }>;
+                            config: string;
                           },
                           idx: number,
                         ) => (
@@ -956,62 +968,90 @@ export default function ContentTypeEdit() {
                                 }}
                               />
                             </div>
-                            {val?.config?.length > 0 && (
-                              <div className="flex flex-row gap-4 my-5">
-                                {val?.config?.map(
-                                  (
-                                    val: {
-                                      type: string;
-                                      label: any;
-                                      value: any;
-                                      media_type: string | number | boolean | undefined;
-                                    },
-                                    index: number,
-                                  ) =>
-                                    val?.type === 'text_field' ? (
-                                      <div key={index}>
-                                        <InputText
-                                          labelTitle={`${val.label} (Optional)`}
-                                          type="number"
-                                          value={val.value}
-                                          inputStyle="rounded-3xl"
-                                          onChange={e => {
-                                            setLoopTypeRequest((prevState: any) => {
-                                              const updatedLoopTypeRequest = [...prevState];
-                                              updatedLoopTypeRequest[idx].config[index].value =
-                                                e.target.value;
-                                              return updatedLoopTypeRequest;
-                                            });
-                                          }}
-                                        />
-                                      </div>
-                                    ) : (
-                                      <div key={index}>
-                                        <Radio
-                                          labelTitle=""
-                                          labelStyle="font-bold	"
-                                          items={changeValue(val?.value)}
-                                          onSelect={(
-                                            event: React.ChangeEvent<HTMLInputElement>,
-                                            value: string | number | boolean,
-                                          ) => {
-                                            if (event) {
+                            {val?.config?.length > 0 ? (
+                              val?.fieldType !== "IMAGE" ? (
+                                <div className="flex flex-row gap-4 my-5">
+                                  <InputText
+                                    labelTitle={`Minimum Length (Optional)`}
+                                    type="number"
+                                    value={JSON.parse(val?.config).min_length}
+                                    inputStyle="rounded-3xl"
+                                    onChange={e => {
+                                      const updatedLoopTypeRequest = loopTypeRequest.map((item, index) => {
+                                        if (idx === index) {
+                                          const config = JSON.parse(item.config);
+                                          config.min_length = e.target.value;
+                                          return { ...item, config: JSON.stringify(config) };
+                                        }
+                                        return item;
+                                      });
+                                      setLoopTypeRequest(updatedLoopTypeRequest);
+                                    }}
+                                  />
+                                  <InputText
+                                    labelTitle={`Maximum Length (Optional)`}
+                                    type="number"
+                                    value={JSON.parse(val?.config).max_length}
+                                    inputStyle="rounded-3xl"
+                                    onChange={e => {
+                                      JSON.parse(val?.config).max_length = e.target.value
+                                    }}
+                                  />
+                                  {/* {val?.config?.map(
+                                    (
+                                      val: {
+                                        type: string;
+                                        label: any;
+                                        value: any;
+                                        media_type: string | number | boolean | undefined;
+                                      },
+                                      index: number,
+                                    ) =>
+                                      val?.type === 'text_field' ? (
+                                        <div key={index}>
+                                          <InputText
+                                            labelTitle={`${val.label} (Optional)`}
+                                            type="number"
+                                            value={val.value}
+                                            inputStyle="rounded-3xl"
+                                            onChange={e => {
                                               setLoopTypeRequest((prevState: any) => {
                                                 const updatedLoopTypeRequest = [...prevState];
-                                                updatedLoopTypeRequest[idx].config[
-                                                  index
-                                                ].media_type = value;
+                                                updatedLoopTypeRequest[idx].config[index].value =
+                                                  e.target.value;
                                                 return updatedLoopTypeRequest;
                                               });
-                                            }
-                                          }}
-                                          defaultSelected={val?.media_type}
-                                        />
-                                      </div>
-                                    ),
-                                )}
-                              </div>
-                            )}
+                                            }}
+                                          />
+                                        </div>
+                                      ) : (
+                                        <div key={index}>
+                                          <Radio
+                                            labelTitle=""
+                                            labelStyle="font-bold	"
+                                            items={changeValue(val?.value)}
+                                            onSelect={(
+                                              event: React.ChangeEvent<HTMLInputElement>,
+                                              value: string | number | boolean,
+                                            ) => {
+                                              if (event) {
+                                                setLoopTypeRequest((prevState: any) => {
+                                                  const updatedLoopTypeRequest = [...prevState];
+                                                  updatedLoopTypeRequest[idx].config[
+                                                    index
+                                                  ].media_type = value;
+                                                  return updatedLoopTypeRequest;
+                                                });
+                                              }
+                                            }}
+                                            defaultSelected={val?.media_type}
+                                          />
+                                        </div>
+                                      ),
+                                  )} */}
+                                </div>
+                              ) : null
+                            ) : null}
                           </div>
                         ),
                       )
