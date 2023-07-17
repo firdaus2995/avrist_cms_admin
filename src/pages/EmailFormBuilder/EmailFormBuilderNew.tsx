@@ -89,21 +89,21 @@ export default function EmailFormBuilderNew () {
             fieldType: "TEXT_FIELD",
             name: element.name,
             fieldId: "TEXT_FIELD",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\"}`, //eslint-disable-line
           };
         case "TEXTAREA":
           return {
             fieldType: "TEXT_AREA",
             name: element.name,
             fieldId: "TEXT_AREA",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\", \"max_length\": \"${element.maxLength ?? 0}\", \"min_length\": \"${element.minLength ?? 0}\"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\", \"max_length\": \"${element.maxLength ?? 0}\", \"min_length\": \"${element.minLength ?? 0}\"}`, //eslint-disable-line
           };
         case "DROPDOWN":
           return {
             fieldType: "DROPDOWN",
             name: element.name,
             fieldId: "DROPDOWN",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multiple}\"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multiple}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
         case "RADIO":
@@ -111,7 +111,7 @@ export default function EmailFormBuilderNew () {
             fieldType: "RADIO_BUTTON",
             name: element.name,
             fieldId: "RADIO_BUTTON",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
         case "CHECKBOX":
@@ -119,7 +119,7 @@ export default function EmailFormBuilderNew () {
             fieldType: "CHECKBOX",
             name: element.name,
             fieldId: "CHECKBOX",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
         case "EMAIL":
@@ -127,42 +127,42 @@ export default function EmailFormBuilderNew () {
             fieldType: "EMAIL",
             name: element.name,
             fieldId: "EMAIL",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
           };
         case "LABEL":
           return {
             fieldType: "LABEL",
             name: element.name,
             fieldId: "LABEL",
-            config: `{\"size\": [\"${element.position.toLowerCase()}\"], \"position\": [\"${element.alignment.toLowerCase()}\"]}`,
+            config: `{\"size\": [\"${element.position.toLowerCase()}\"], \"position\": [\"${element.alignment.toLowerCase()}\"]}`, //eslint-disable-line
           };  
         case "NUMBER":
           return {
             fieldType: "NUMBER",
             name: element.name,
             fieldId: "NUMBER",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`, //eslint-disable-line
           };
         case "DOCUMENT":
           return {
             fieldType: "DOCUMENT",
             name: element.name,
             fieldId: "DOCUMENT",
-            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`,
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`, //eslint-disable-line
           };
         case "IMAGE":
           return {
             fieldType: "IMAGE",
             name: element.name,
             fieldId: "IMAGE",
-            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`,
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`, //eslint-disable-line
           };
         case "SUBMITTEREMAIL":
           return {
             fieldType: "EMAIL",
             name: element.name,
             fieldId: "EMAIL",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true  \"}`,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true  \"}`, //eslint-disable-line
           };
         default:
           return false;
