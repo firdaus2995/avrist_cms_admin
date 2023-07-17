@@ -36,16 +36,16 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
   return (
     <div className={`flex flex-row`}>
       <label style={{
-        width: labelWidth
-      }} className={`label ${labelStyle} self-start`}>
+        width: labelWidth,
+      }} className={`label ${labelStyle}`}>
         <span className={`label-text text-base-content`}>{labelTitle}</span>
       </label>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-3" style={{
+        width: inputWidth ?? '100%'
+      }}>
         {/* THE ADD INPUT */}
         <div className="flex flex-col gap-2">
-          <div style={{
-            width: inputWidth ?? '100%'
-          }} className={`flex flex-row items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${errorAddValue ? 'border-reddist' : ''} ${inputStyle}`}>
+          <div className={`flex flex-row items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${errorAddValue ? 'border-reddist' : ''} ${inputStyle}`}>
             <input
               type="text"
               className="w-full h-full outline-0"
