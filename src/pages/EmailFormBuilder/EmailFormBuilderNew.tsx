@@ -87,14 +87,87 @@ export default function EmailFormBuilderNew () {
         case "TEXTFIELD":
           return {
             fieldType: "TEXT_FIELD",
-            name: "TEXT_FIELD",
+            name: element.name,
             fieldId: "TEXT_FIELD",
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\"}`,
+          };
+        case "TEXTAREA":
+          return {
+            fieldType: "TEXT_AREA",
+            name: element.name,
+            fieldId: "TEXT_AREA",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\", \"max_length\": \"${element.maxLength ?? 0}\", \"min_length\": \"${element.minLength ?? 0}\"}`,
+          };
+        case "DROPDOWN":
+          return {
+            fieldType: "DROPDOWN",
+            name: element.name,
+            fieldId: "DROPDOWN",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multiple}\"}`,
+            value: element.items.join(";"),
+          };
+        case "RADIO":
+          return {
+            fieldType: "RADIO_BUTTON",
+            name: element.name,
+            fieldId: "RADIO_BUTTON",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`,
+            value: element.items.join(";"),
+          };
+        case "CHECKBOX":
+          return {
+            fieldType: "CHECKBOX",
+            name: element.name,
+            fieldId: "CHECKBOX",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`,
+            value: element.items.join(";"),
+          };
+        case "EMAIL":
+          return {
+            fieldType: "EMAIL",
+            name: element.name,
+            fieldId: "EMAIL",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`,
+          };
+        case "LABEL":
+          return {
+            fieldType: "LABEL",
+            name: element.name,
+            fieldId: "LABEL",
+            config: `{\"size\": [\"${element.position.toLowerCase()}\"], \"position\": [\"${element.alignment.toLowerCase()}\"]}`,
+          };  
+        case "NUMBER":
+          return {
+            fieldType: "NUMBER",
+            name: element.name,
+            fieldId: "NUMBER",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`,
+          };
+        case "DOCUMENT":
+          return {
+            fieldType: "DOCUMENT",
+            name: element.name,
+            fieldId: "DOCUMENT",
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`,
+          };
+        case "IMAGE":
+          return {
+            fieldType: "IMAGE",
+            name: element.name,
+            fieldId: "IMAGE",
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`,
+          };
+        case "SUBMITTEREMAIL":
+          return {
+            fieldType: "EMAIL",
+            name: element.name,
+            fieldId: "EMAIL",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true  \"}`,
           };
         default:
           return false;
       };
-    });
+    });    
 
     const payload = {
       name: formName,

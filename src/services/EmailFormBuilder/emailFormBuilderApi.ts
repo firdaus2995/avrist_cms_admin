@@ -74,7 +74,7 @@ export const emailFormBuilderApi = createApi({
         document: gql`
           mutation postTypeCreate(
             $name: String!
-            $attributeRequests: [Component!]!
+            $attributeRequests: [PostMetaTemplateRequest!]!
           ) {
             postTypeCreate(
               request: {
