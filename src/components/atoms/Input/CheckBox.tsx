@@ -12,7 +12,7 @@ interface ICheckBox {
   inputStyle?: string;
   updateType?: string;
   labelContainerStyle?: string;
-  updateFormValue: (formValue: { updateType: string; value: boolean }) => void;
+  updateFormValue?: (formValue: { updateType: string; value: boolean }) => void;
 }
 
 export const CheckBox: React.FC<ICheckBox> = ({
@@ -30,7 +30,9 @@ export const CheckBox: React.FC<ICheckBox> = ({
 
   const updateToogleValue = () => {
     setValue(!(value ?? false));
-    updateFormValue({ updateType, value: !(value ?? false) });
+    if (updateFormValue) {
+      updateFormValue({ updateType, value: !(value ?? false) });
+    };
   };
 
   return (
