@@ -69,7 +69,7 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
                         className={`${
                           active ? 'bg-light-purple' : ''
                         } ${pageSize === d ? 'text-purple font-bold' : ''} group flex w-full items-center justify-between rounded-xl px-2 py-2 text-sm`}>
-                        {d}
+                        {d} / Page
                         {
                           pageSize === d && (
                             <img src={CheckMark} className="w-6 h-6" />
