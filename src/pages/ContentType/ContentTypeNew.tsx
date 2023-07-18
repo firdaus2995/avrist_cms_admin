@@ -5,12 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import {
-  ChangeEvent,
-  JSXElementConstructor,
   Key,
-  ReactElement,
-  ReactFragment,
-  ReactPortal,
   SetStateAction,
   useEffect,
   useState,
@@ -47,7 +42,6 @@ export default function ContentTypeNew() {
   const [isOpenModalEditAttribute, setIsOpenModalEditAttribute] = useState(false);
   const [openedAttribute, setOpenedAttribute] = useState<any>([]);
   const [listAttributes, setListAttributes] = useState<any>([]);
-  const [config, setConfig] = useState<any>({});
   const [loopTypeRequest, setLoopTypeRequest] = useState<any>([]);
   const [editedIndex, setEditedIndex] = useState();
 
@@ -128,8 +122,8 @@ export default function ContentTypeNew() {
         fieldType: openedAttribute?.code?.toUpperCase(),
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        isDeleted: true,
-        loopTypeRequest,
+        attributeList: openedAttribute?.attributeList,
+        icon: openedAttribute?.icon
       };
       setListItems((list: any) => [...list, data]);
     } else {
@@ -137,41 +131,43 @@ export default function ContentTypeNew() {
         fieldType: openedAttribute?.code?.toUpperCase(),
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        isDeleted: true,
-        config: openedAttribute?.config.length > 0 ? config : [],
+        config: openedAttribute?.config,
+        icon: openedAttribute?.icon
       };
       setListItems((list: any) => [...list, data]);
     }
     setIsOpenModalAddAttribute(false);
-    setConfig({});
   }
 
   function onEditList() {
-    if (openedAttribute?.code === 'looping') {
+    if (openedAttribute?.fieldType === 'LOOPING') {
       const data = {
-        fieldType: openedAttribute?.code?.toUpperCase(),
-        name: openedAttribute?.label,
-        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        isDeleted: true,
-        loopTypeRequest,
+        fieldType: openedAttribute?.fieldType?.toUpperCase(),
+        name: openedAttribute?.name,
+        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
+        attributeList: openedAttribute?.attributeList,
+        icon: openedAttribute?.icon
       };
+
       const updatedListItems = listItems.map((item: any, index: undefined) => {
         if (index === editedIndex) {
           // Ubah nilai objek pertama sesuai kebutuhan
           return {
             ...item,
-            data,
+            ...data,
           };
         }
         return item;
       });
+
       setListItems(updatedListItems);
     } else {
       const data = {
-        fieldType: openedAttribute?.code?.toUpperCase(),
-        name: openedAttribute?.label,
-        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        config: openedAttribute?.config.length > 0 ? config : [],
+        fieldType: openedAttribute?.fieldType?.toUpperCase(),
+        name: openedAttribute?.name,
+        fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
+        config: openedAttribute?.config,
+        icon: openedAttribute?.icon
       };
       const updatedListItems = listItems.map((item: any, index: undefined) => {
         if (index === editedIndex) {
@@ -186,7 +182,6 @@ export default function ContentTypeNew() {
       setListItems(updatedListItems);
     }
     setIsOpenModalEditAttribute(false);
-    setConfig({});
   }
 
   const onLeave = () => {
@@ -199,20 +194,7 @@ export default function ContentTypeNew() {
       <div className="my-5">
         {listItems.map(
           (
-            val: {
-              name: string;
-              fieldId:
-                | string
-                | number
-                | boolean
-                | ReactElement<any, string | JSXElementConstructor<any>>
-                | ReactFragment
-                | ReactPortal
-                | null
-                | undefined;
-              fieldType: string;
-              isDeleted: any;
-            },
+            val: any,
             idx: undefined,
           ) => (
             <div
@@ -225,32 +207,27 @@ export default function ContentTypeNew() {
               <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
               <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
                 {idx && idx > 1 ? (
-                  <img
-                    role="button"
-                    onClick={() => {
-                      setEditedIndex(idx);
-                      const edited = listAttributes?.filter(
-                        (value: { code: string }) => value.code === getFieldId(val.fieldType),
-                      );
-                      edited[0].label = val.name;
-                      edited[0].fieldId = val.fieldId ? val.fieldId : getFieldId(val.name);
-                      openAddModal(edited[0], true);
-                    }}
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableEdit}
-                  />
+                  <>
+                    <img
+                      role="button"
+                      onClick={() => {
+                        setEditedIndex(idx);
+                        openAddModal(val, true);
+                      }}
+                      className={`cursor-pointer select-none flex items-center justify-center`}
+                      src={TableEdit}
+                    />
+                    <img
+                      role="button"
+                      onClick={() => {
+                        const updated = listItems?.filter((_val: any, index: any) => index !== idx);
+                        setListItems(updated);
+                      }}
+                      className={`cursor-pointer select-none flex items-center justify-center`}
+                      src={TableDelete}
+                    />
+                  </>
                 ) : null}
-                {val.isDeleted && (
-                  <img
-                    role="button"
-                    onClick={() => {
-                      const updated = listItems?.filter((_val: any, index: any) => index !== idx);
-                      setListItems(updated);
-                    }}
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableDelete}
-                  />
-                )}
               </div>
             </div>
           ),
@@ -325,120 +302,52 @@ export default function ContentTypeNew() {
     );
   };
 
-  // Fungsi untuk mengubah fieldId menjadi lowercase jika kosong
-  function lowercaseIfEmpty(str: string) {
-    if (str === '') {
-      return str;
-    }
-    return str.toLowerCase();
-  }
-
-  // Fungsi untuk menghapus atribut isDeleted dari objek
-  function removeIsDeleted(obj: {
-    [x: string]: any;
-    fieldId?: any;
-    fieldType?: string;
-    name?: string;
-    config?: never[];
-    isDeleted: any;
-  }) {
-    const { isDeleted, ...rest } = obj;
-    return rest;
-  }
-
   function onSaveContent() {
-    const updatedData = listItems.map((obj: { fieldId: string; fieldType: string }) => {
-      if (obj.fieldId === '') {
-        return {
-          ...obj,
-          fieldId: lowercaseIfEmpty(obj.fieldType),
-        };
+    const transformedData = listItems.map((item: any) => {
+      const newItem = { ...item };
+      
+      // 1. Hapus attribut config jika kosong
+      if (newItem.config && newItem.config.length === 0) {
+        delete newItem.config;
       }
-      return obj;
-    });
-
-    // Menghapus atribut isDeleted dari objek
-    const newData = updatedData.map(
-      (obj: {
-        [x: string]: any;
-        fieldId?: any;
-        fieldType?: string | undefined;
-        name?: string | undefined;
-        config?: never[] | undefined;
-        isDeleted: any;
-      }) => removeIsDeleted(obj),
-    );
-
-    // Mengubah format config pada loopTypeRequest
-    newData.forEach((obj: { fieldType: string; loopTypeRequest: Array<{ config: any[] }> }) => {
-      if (obj.fieldType === 'LOOPING') {
-        obj.loopTypeRequest.forEach((item: { config: any[] }) => {
-          item.config = item.config.reduce(
-            (acc: Record<string, any>, curr: { code: string; media_type: any; value: any }) => {
-              if (curr.code === 'media_type') {
-                acc[curr.code] = curr.media_type;
-              } else {
-                acc[curr.code] = curr.value;
-              }
-              return acc;
-            },
-            {},
-          );
+      
+      // 2. Hapus isDeleted
+      delete newItem.isDeleted;
+      delete newItem.icon;
+      
+      // 3. Isi fieldId jika kosong
+      if (newItem.fieldId === "") {
+        newItem.fieldId = newItem.name.toLowerCase().replace(/\s/g, "-");
+      }
+      
+      // 4. Hapus attribute id pada attributeList
+      if (newItem.attributeList) {
+        newItem.attributeList = newItem.attributeList.map((attribute: { [x: string]: any; id: any; }) => {
+          const { id, ...newAttribute } = attribute;
+          
+          // 5. Hapus attribut config pada attributeList jika kosong
+          if (newAttribute.config && newAttribute.config.length === 0) {
+            delete newAttribute.config;
+          }
+          delete newAttribute.icon;
+          
+          return newAttribute;
         });
+        
+        // 6. Ubah attributeList menjadi loopTypeRequest
+        newItem.loopTypeRequest = newItem.attributeList;
+        delete newItem.attributeList;
       }
+      
+      return newItem;
     });
-
-    const convertData = (data: any[]) => {
-      return data.map((item: any) => {
-        const newItem = { ...item };
-        if (newItem.config && Object.keys(newItem.config).length === 0) {
-          delete newItem.config;
-        }
-        if (
-          newItem.config &&
-          (newItem.config.media_type === '' ||
-            newItem.config.max_length === '' ||
-            newItem.config.min_length === '')
-        ) {
-          delete newItem.config;
-        }
-        if (newItem.config) {
-          newItem.config = JSON.stringify(newItem.config);
-        }
-        if (newItem.loopTypeRequest) {
-          newItem.loopTypeRequest = newItem.loopTypeRequest.map((loopItem: any) => {
-            const newLoopItem = { ...loopItem };
-            if (newLoopItem.config && Object.keys(newLoopItem.config).length === 0) {
-              delete newLoopItem.config;
-            }
-            if (
-              newLoopItem.config &&
-              (newLoopItem.config.media_type === '' ||
-                newLoopItem.config.max_length === '' ||
-                newLoopItem.config.min_length === '')
-            ) {
-              delete newLoopItem.config;
-            }
-            if (newLoopItem.config) {
-              newLoopItem.config = JSON.stringify(newLoopItem.config);
-            }
-            return newLoopItem;
-          });
-        }
-        return newItem;
-      });
-    };
-
-    const convertedData = convertData(newData);
 
     const payload = {
       name,
       slug,
       isUseCategory,
-      attributeRequests: convertedData,
+      attributeRequests: transformedData,
     };
-
-    console.log(payload)
 
     postCreate(payload)
       .unwrap()
@@ -500,7 +409,13 @@ export default function ContentTypeNew() {
                 key={idx}
                 role="button"
                 onClick={() => {
-                  setConfig({});
+
+                  if (val.code === 'text_field' || val.code === 'text_area') {
+                    val.config = '{"min_length":[],"max_length":[]}';
+                  } else if (val.code === 'image') {
+                    val.config = '{"media_type":"[]"}';
+                  }
+
                   openAddModal(val, false);
                 }}
                 className="flex flex-row justify-between m-2 bg-light-purple-2 p-4">
@@ -508,6 +423,7 @@ export default function ContentTypeNew() {
                   <div className="font-semibold text-md">{val.label}</div>
                   <div className="font-semibold text-md opacity-50">{val.description}</div>
                 </div>
+                <img src={`data:image/svg+xml;base64,${val.icon}`} />
               </div>
             ))}
           </div>
@@ -516,35 +432,9 @@ export default function ContentTypeNew() {
     );
   };
 
-  function changeValue(arr: any[]) {
-    arr.forEach(function (obj: { code: any; value: any }) {
-      if (obj.code) {
-        obj.value = obj.code;
-        delete obj.code;
-      }
-    });
-
-    return arr;
-  }
-
   const renderListLoopingAttribute = () => {
     return (
       <div className="flex flex-col overflow-hidden">
-        <div className="p-2 absolute right-2 top-2">
-          <svg
-            role="button"
-            onClick={() => {
-              setIsOpenLoopingAttribute(false);
-            }}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6 opacity-50">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </div>
         <div className="p-4 font-bold">List Attribute</div>
         <div className="flex flex-col overflow-auto">
           {listAttributes
@@ -554,13 +444,57 @@ export default function ContentTypeNew() {
                 key={idx}
                 role="button"
                 onClick={() => {
-                  const data = {
-                    fieldType: val?.code?.toUpperCase(),
-                    name: val?.label,
-                    fieldId: val?.fieldId || getFieldId(val?.label),
-                    config: val?.config,
-                  };
-                  setLoopTypeRequest((loopTypeRequest: any) => [...loopTypeRequest, data]);
+                  if (
+                    openedAttribute?.attributeList &&
+                    openedAttribute?.attributeList?.length > 0
+                  ) {
+                    const lastId =
+                      openedAttribute.attributeList[openedAttribute.attributeList.length - 1].id;
+                    const newId = parseInt(lastId) + 1;
+
+                    const data = {
+                      id: newId,
+                      fieldType: val?.code?.toUpperCase(),
+                      name: val?.label,
+                      fieldId: val?.fieldId || getFieldId(val?.label),
+                      icon: val?.icon,
+                      config: "",
+                    };
+
+                    if (val.code === 'text_field' || val.code === 'text_area') {
+                      data.config = '{"min_length":[],"max_length":[]}';
+                    } else if (val.code === 'image') {
+                      data.config = '{"media_type":"[]"}';
+                    }
+
+                    const updatedAttributeList = [...openedAttribute.attributeList, data];
+
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      attributeList: updatedAttributeList,
+                    });
+                  } else {
+                    const data = {
+                      id: 1,
+                      fieldType: val?.code?.toUpperCase(),
+                      name: val?.label,
+                      icon: val?.icon,
+                      fieldId: val?.fieldId || getFieldId(val?.label),
+                      config: "",
+                    };
+
+                    if (val.code === 'text_field' || val.code === 'text_area') {
+                      data.config = '{"min_length":[],"max_length":[]}';
+                    } else if (val.code === 'image') {
+                      data.config = '{"media_type":"[]"}';
+                    }
+
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      attributeList: [data],
+                    });
+                  }
+
                   setIsOpenLoopingAttribute(false);
                 }}
                 className="flex flex-row justify-between m-2 bg-light-purple-2 p-4">
@@ -568,6 +502,7 @@ export default function ContentTypeNew() {
                   <div className="font-semibold text-md">{val.label}</div>
                   <div className="font-semibold text-md opacity-50">{val.description}</div>
                 </div>
+                <img src={`data:image/svg+xml;base64,${val.icon}`} />
               </div>
             ))}
         </div>
@@ -575,28 +510,15 @@ export default function ContentTypeNew() {
     );
   };
 
-  const updateFieldChanged = (
-    name: string,
-    index: number,
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newArr = loopTypeRequest.map((item: any, i: number) => {
-      if (index === i) {
-        return { ...item, [name]: event.target.value };
-      } else {
-        return item;
-      }
-    });
-
-    setLoopTypeRequest(newArr);
-  };
-
   const modalAddAttribute = () => {
     return (
       <Modal open={isOpenModalAddAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
-            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.code)}</div>
+            <div className='flex flex-row'>
+              <img className='ml-5' src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
+              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.code)}</div>
+            </div>
             <div className="p-2">
               <svg
                 role="button"
@@ -620,6 +542,7 @@ export default function ContentTypeNew() {
             <div className="flex flex-col w-1/2">
               <InputText
                 labelTitle="Name"
+                labelStyle='font-bold'
                 labelRequired
                 value={openedAttribute?.label}
                 inputStyle="rounded-3xl"
@@ -632,6 +555,7 @@ export default function ContentTypeNew() {
               />
               <InputText
                 labelTitle="Field ID"
+                labelStyle='font-bold'
                 labelRequired
                 value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
                 inputStyle="rounded-3xl"
@@ -643,73 +567,83 @@ export default function ContentTypeNew() {
                 }}
               />
             </div>
-            {openedAttribute?.code !== 'looping' ? (
-              openedAttribute?.config?.length > 0 && (
-                <div className="flex flex-row gap-4 my-5">
-                  {openedAttribute?.config?.map(
-                    (
-                      val: { type: string; label: any; code: string | number; value: any },
-                      idx: Key | null | undefined,
-                    ) =>
-                      val?.type === 'text_field' ? (
-                        <div key={idx}>
-                          <InputText
-                            labelTitle={`${val.label} (Optional)`}
-                            type="number"
-                            value={config?.[val.code] || ''}
-                            inputStyle="rounded-3xl"
-                            onChange={e => {
-                              const text = val?.code;
-
-                              setConfig((prevState: any) => ({
-                                ...prevState,
-                                [text]: e.target.value,
-                              }));
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div key={idx}>
-                          <Radio
-                            labelTitle=""
-                            labelStyle="font-bold	"
-                            items={changeValue(val?.value)}
-                            onSelect={(
-                              event: React.ChangeEvent<HTMLInputElement>,
-                              value: string | number | boolean,
-                            ) => {
-                              if (event) {
-                                const text = val?.code;
-
-                                setConfig((prevState: any) => ({
-                                  ...prevState,
-                                  [text]: value,
-                                }));
-                              }
-                            }}
-                            defaultSelected={config?.media_type}
-                          />
-                        </div>
-                      ),
-                  )}
-                </div>
-              )
-            ) : (
+            {openedAttribute?.code === 'text_field' || openedAttribute?.code === 'text_area' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <InputText
+                  labelTitle={`Minimum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.min_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.min_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
+                <InputText
+                  labelTitle={`Maximum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.max_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.max_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
+              </div>
+            ) : openedAttribute?.code === 'image' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <Radio
+                  labelTitle=""
+                  labelStyle="font-bold"
+                  items={[
+                    {
+                      label: 'Single Media',
+                      value: 'single_media',
+                    },
+                    {
+                      label: 'Multiple Media',
+                      value: 'multiple_media',
+                    },
+                  ]}
+                  onSelect={(
+                    event: React.ChangeEvent<HTMLInputElement>,
+                    value: string | number | boolean,
+                  ) => {
+                    if (event) {
+                      const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                      updatedConfig.media_type = value;
+                      setOpenedAttribute({
+                        ...openedAttribute,
+                        config: JSON.stringify(updatedConfig),
+                      });
+                    }
+                  }}
+                  defaultSelected={JSON.parse(openedAttribute?.config)?.media_type}
+                />
+              </div>
+            ) : openedAttribute?.code === 'looping' ? (
               <div className="flex flex-col border-t-2 my-5 py-5 items-center justify-center">
                 <>
-                  {loopTypeRequest?.length > 0
-                    ? loopTypeRequest?.map(
+                  {openedAttribute?.attributeList?.length > 0
+                    ? openedAttribute?.attributeList?.map(
                         (
                           val: {
+                            icon: any;
+                            id: any;
                             fieldType: string;
                             name: string;
                             fieldId: any;
-                            config: Array<{
-                              type: string;
-                              label: any;
-                              value: string | undefined;
-                              media_type: string | number | boolean | undefined;
-                            }>;
+                            config: string;
                           },
                           idx: number,
                         ) => (
@@ -717,8 +651,9 @@ export default function ContentTypeNew() {
                             key={idx}
                             className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
                             <div className="flex flex-row justify-between w-full border-b-2 mb-4">
-                              <div className="p-4 capitalize font-bold ">
-                                {getType(val?.fieldType)}
+                              <div className='flex flex-row w-full mb-4'>
+                                <img className='ml-5' src={`data:image/svg+xml;base64,${val?.icon}`} />
+                                <div className="font-bold capitalize ml-5">{getType(val?.fieldType)}</div>
                               </div>
                               <svg
                                 role="button"
@@ -744,79 +679,154 @@ export default function ContentTypeNew() {
                             <div className="flex flex-col w-1/2">
                               <InputText
                                 labelTitle="Name"
+                                labelStyle='font-bold'
                                 labelRequired
                                 value={val.name}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
-                                  updateFieldChanged('name', idx, e);
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          name: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
                                 }}
                               />
                               <InputText
                                 labelTitle="Field ID"
+                                labelStyle='font-bold'
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
-                                  updateFieldChanged('fieldId', idx, e);
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          fieldId: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
                                 }}
                               />
                             </div>
-                            {val?.config?.length > 0 && (
+                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
-                                {val?.config?.map(
-                                  (
-                                    val: {
-                                      type: string;
-                                      label: any;
-                                      value: any;
-                                      media_type: string | number | boolean | undefined;
-                                    },
-                                    index: Key,
-                                  ) =>
-                                    val?.type === 'text_field' ? (
-                                      <div key={index}>
-                                        <InputText
-                                          labelTitle={`${val.label} (Optional)`}
-                                          type="number"
-                                          value={val.value}
-                                          inputStyle="rounded-3xl"
-                                          onChange={e => {
-                                            setLoopTypeRequest((prevState: any) => {
-                                              const updatedLoopTypeRequest = [...prevState];
-                                              updatedLoopTypeRequest[idx].config[index].value =
-                                                e.target.value;
-                                              return updatedLoopTypeRequest;
-                                            });
-                                          }}
-                                        />
-                                      </div>
-                                    ) : (
-                                      <div key={index}>
-                                        <Radio
-                                          labelTitle=""
-                                          labelStyle="font-bold	"
-                                          items={changeValue(val?.value)}
-                                          onSelect={(
-                                            event: React.ChangeEvent<HTMLInputElement>,
-                                            value: string | number | boolean,
-                                          ) => {
-                                            if (event) {
-                                              setLoopTypeRequest((prevState: any) => {
-                                                const updatedLoopTypeRequest = [...prevState];
-                                                updatedLoopTypeRequest[idx].config[
-                                                  index
-                                                ].media_type = value;
-                                                return updatedLoopTypeRequest;
-                                              });
-                                            }
-                                          }}
-                                          defaultSelected={val?.media_type}
-                                        />
-                                      </div>
-                                    ),
-                                )}
+                                <InputText
+                                  labelTitle={`Minimum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).min_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
+                                          config.min_length = e.target.value;
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
+                                        }
+                                        return attribute;
+                                      },
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
+                                <InputText
+                                  labelTitle={`Maximum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).max_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
+                                          config.max_length = e.target.value;
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
+                                        }
+                                        return attribute;
+                                      },
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
                               </div>
-                            )}
+                            ) : val?.fieldType === 'IMAGE' ? (
+                              <div className="flex flex-row gap-4 my-5">
+                                <Radio
+                                  labelTitle=""
+                                  labelStyle="font-bold"
+                                  items={[
+                                    {
+                                      label: 'Single Media',
+                                      value: 'single_media',
+                                    },
+                                    {
+                                      label: 'Multiple Media',
+                                      value: 'multiple_media',
+                                    },
+                                  ]}
+                                  onSelect={(
+                                    event: React.ChangeEvent<HTMLInputElement>,
+                                    value: string | number | boolean,
+                                  ) => {
+                                    if (event) {
+                                      const updatedAttributeList =
+                                        openedAttribute.attributeList.map(
+                                          (attribute: { id: any, config: any }) => {
+                                            if (attribute.id === val.id) {
+                                              const updatedAttribute = { ...attribute };
+                                              const config = JSON.parse(updatedAttribute.config);
+                                              config.media_type = value;
+                                              updatedAttribute.config = JSON.stringify(config);
+                                              return updatedAttribute;
+                                            }
+                                            return attribute;
+                                          },
+                                        );
+
+                                      setOpenedAttribute((prevState: any) => ({
+                                        ...prevState,
+                                        attributeList: updatedAttributeList,
+                                      }));
+                                    }
+                                  }}
+                                  defaultSelected={JSON.parse(val?.config)?.media_type}
+                                />
+                              </div>
+                            ) : null}
                           </div>
                         ),
                       )
@@ -846,7 +856,7 @@ export default function ContentTypeNew() {
                   Add More Attributes
                 </button>
               </div>
-            )}
+            ) : null}
             <div className="flex flex-row items-end justify-end gap-2 mt-10">
               <button
                 className="btn btn-outline btn-md"
@@ -874,7 +884,10 @@ export default function ContentTypeNew() {
       <Modal open={isOpenModalEditAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
-            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.code)}</div>
+            <div className='flex flex-row'>
+              <img className='ml-5' src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
+              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType)}</div>
+            </div>
             <div className="p-2">
               <svg
                 role="button"
@@ -891,25 +904,27 @@ export default function ContentTypeNew() {
               </svg>
             </div>
           </div>
-          <div className="flex flex-col mx-10 mt-16">
+          <div className="flex flex-col mx-10 mt-10">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              {getType(openedAttribute?.code)}
+              {getType(openedAttribute?.fieldType)}
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
                 labelTitle="Name"
+                labelStyle='font-bold'
                 labelRequired
-                value={openedAttribute?.label}
+                value={openedAttribute?.name}
                 inputStyle="rounded-3xl"
                 onChange={e => {
                   setOpenedAttribute((prevState: any) => ({
                     ...prevState,
-                    label: e.target.value,
+                    name: e.target.value,
                   }));
                 }}
               />
               <InputText
                 labelTitle="Field ID"
+                labelStyle='font-bold'
                 labelRequired
                 value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
                 inputStyle="rounded-3xl"
@@ -921,73 +936,84 @@ export default function ContentTypeNew() {
                 }}
               />
             </div>
-            {openedAttribute?.code !== 'looping' ? (
-              openedAttribute?.config?.length > 0 && (
-                <div className="flex flex-row gap-4 my-5">
-                  {openedAttribute?.config?.map(
-                    (
-                      val: { type: string; label: any; code: string | number; value: any },
-                      idx: Key | null | undefined,
-                    ) =>
-                      val?.type === 'text_field' ? (
-                        <div key={idx}>
-                          <InputText
-                            labelTitle={`${val.label} (Optional)`}
-                            type="number"
-                            value={config?.[val.code] || ''}
-                            inputStyle="rounded-3xl"
-                            onChange={e => {
-                              const text = val?.code;
-
-                              setConfig((prevState: any) => ({
-                                ...prevState,
-                                [text]: e.target.value,
-                              }));
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div key={idx}>
-                          <Radio
-                            labelTitle=""
-                            labelStyle="font-bold	"
-                            items={changeValue(val?.value)}
-                            onSelect={(
-                              event: React.ChangeEvent<HTMLInputElement>,
-                              value: string | number | boolean,
-                            ) => {
-                              if (event) {
-                                const text = val?.code;
-
-                                setConfig((prevState: any) => ({
-                                  ...prevState,
-                                  [text]: value,
-                                }));
-                              }
-                            }}
-                            defaultSelected={config?.media_type}
-                          />
-                        </div>
-                      ),
-                  )}
-                </div>
-              )
-            ) : (
+            {openedAttribute?.fieldType === 'TEXT_FIELD' ||
+            openedAttribute?.fieldType === 'TEXT_AREA' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <InputText
+                  labelTitle={`Minimum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.min_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.min_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
+                <InputText
+                  labelTitle={`Maximum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.max_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.max_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
+              </div>
+            ) : openedAttribute?.fieldType === 'IMAGE' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <Radio
+                  labelTitle=""
+                  labelStyle="font-bold"
+                  items={[
+                    {
+                      label: 'Single Media',
+                      value: 'single_media',
+                    },
+                    {
+                      label: 'Multiple Media',
+                      value: 'multiple_media',
+                    },
+                  ]}
+                  onSelect={(
+                    event: React.ChangeEvent<HTMLInputElement>,
+                    value: string | number | boolean,
+                  ) => {
+                    if (event) {
+                      const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                      updatedConfig.media_type = value;
+                      setOpenedAttribute({
+                        ...openedAttribute,
+                        config: JSON.stringify(updatedConfig),
+                      });
+                    }
+                  }}
+                  defaultSelected={JSON.parse(openedAttribute?.config)?.media_type}
+                />
+              </div>
+            ) : openedAttribute?.fieldType === 'LOOPING' ? (
               <div className="flex flex-col border-t-2 my-5 py-5 items-center justify-center">
                 <>
-                  {loopTypeRequest?.length > 0
-                    ? loopTypeRequest?.map(
+                  {openedAttribute?.attributeList?.length > 0
+                    ? openedAttribute?.attributeList?.map(
                         (
                           val: {
+                            icon: any;
+                            id: any;
                             fieldType: string;
                             name: string;
                             fieldId: any;
-                            config: Array<{
-                              type: string;
-                              label: any;
-                              value: string | undefined;
-                              media_type: string | number | boolean | undefined;
-                            }>;
+                            config: string;
                           },
                           idx: number,
                         ) => (
@@ -995,16 +1021,20 @@ export default function ContentTypeNew() {
                             key={idx}
                             className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
                             <div className="flex flex-row justify-between w-full border-b-2 mb-4">
-                              <div className="p-4 capitalize font-bold ">
-                                {getType(val?.fieldType)}
+                              <div className='flex flex-row w-full mb-4'>
+                                <img className='ml-5' src={`data:image/svg+xml;base64,${val?.icon}`} />
+                                <div className="font-bold capitalize ml-5">{getType(val?.fieldType)}</div>
                               </div>
                               <svg
                                 role="button"
                                 onClick={() => {
-                                  const updated = loopTypeRequest?.filter(
-                                    (_val: any, index: any) => index !== idx,
+                                  const updatedAttributeList = openedAttribute.attributeList.filter(
+                                    (_attribute: any, index: number) => index !== idx,
                                   );
-                                  setLoopTypeRequest(updated);
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
                                 }}
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -1022,79 +1052,155 @@ export default function ContentTypeNew() {
                             <div className="flex flex-col w-1/2">
                               <InputText
                                 labelTitle="Name"
+                                labelStyle='font-bold'
                                 labelRequired
                                 value={val.name}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
-                                  updateFieldChanged('name', idx, e);
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (                                    attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          name: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
                                 }}
                               />
                               <InputText
                                 labelTitle="Field ID"
+                                labelStyle='font-bold'
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
-                                  updateFieldChanged('fieldId', idx, e);
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (                                    attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          fieldId: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
                                 }}
                               />
                             </div>
-                            {val?.config?.length > 0 && (
+                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
-                                {val?.config?.map(
-                                  (
-                                    val: {
-                                      type: string;
-                                      label: any;
-                                      value: any;
-                                      media_type: string | number | boolean | undefined;
-                                    },
-                                    index: number,
-                                  ) =>
-                                    val?.type === 'text_field' ? (
-                                      <div key={index}>
-                                        <InputText
-                                          labelTitle={`${val.label} (Optional)`}
-                                          type="number"
-                                          value={val.value}
-                                          inputStyle="rounded-3xl"
-                                          onChange={e => {
-                                            setLoopTypeRequest((prevState: any) => {
-                                              const updatedLoopTypeRequest = [...prevState];
-                                              updatedLoopTypeRequest[idx].config[index].value =
-                                                e.target.value;
-                                              return updatedLoopTypeRequest;
-                                            });
-                                          }}
-                                        />
-                                      </div>
-                                    ) : (
-                                      <div key={index}>
-                                        <Radio
-                                          labelTitle=""
-                                          labelStyle="font-bold	"
-                                          items={changeValue(val?.value)}
-                                          onSelect={(
-                                            event: React.ChangeEvent<HTMLInputElement>,
-                                            value: string | number | boolean,
-                                          ) => {
-                                            if (event) {
-                                              setLoopTypeRequest((prevState: any) => {
-                                                const updatedLoopTypeRequest = [...prevState];
-                                                updatedLoopTypeRequest[idx].config[
-                                                  index
-                                                ].media_type = value;
-                                                return updatedLoopTypeRequest;
-                                              });
-                                            }
-                                          }}
-                                          defaultSelected={val?.media_type}
-                                        />
-                                      </div>
-                                    ),
-                                )}
+                                <InputText
+                                  labelTitle={`Minimum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).min_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
+                                          config.min_length = e.target.value;
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
+                                        }
+                                        return attribute;
+                                      },
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
+                                <InputText
+                                  labelTitle={`Maximum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).max_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
+                                          config.max_length = e.target.value;
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
+                                        }
+                                        return attribute;
+                                      },
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
                               </div>
-                            )}
+                            ) : val?.fieldType === 'IMAGE' ? (
+                              <div className="flex flex-row gap-4 my-5">
+                                <Radio
+                                  labelTitle=""
+                                  labelStyle="font-bold"
+                                  items={[
+                                    {
+                                      label: 'Single Media',
+                                      value: 'single_media',
+                                    },
+                                    {
+                                      label: 'Multiple Media',
+                                      value: 'multiple_media',
+                                    },
+                                  ]}
+                                  onSelect={(
+                                    event: React.ChangeEvent<HTMLInputElement>,
+                                    value: string | number | boolean,
+                                  ) => {
+                                    if (event) {
+                                      event.stopPropagation();
+                                      const updatedAttributeList =
+                                        openedAttribute.attributeList.map(
+                                          (attribute: { id: any, config: any }) => {
+                                            if (attribute.id === val.id) {
+                                              const updatedAttribute = { ...attribute };
+                                              const config = JSON.parse(updatedAttribute.config);
+                                              config.media_type = value;
+                                              updatedAttribute.config = JSON.stringify(config);
+                                              return updatedAttribute;
+                                            }
+                                            return attribute;
+                                          },
+                                        );
+
+                                      setOpenedAttribute((prevState: any) => ({
+                                        ...prevState,
+                                        attributeList: updatedAttributeList,
+                                      }));
+                                    }
+                                  }}
+                                  defaultSelected={JSON.parse(val?.config)?.media_type}
+                                />
+                              </div>
+                            ) : null}
                           </div>
                         ),
                       )
@@ -1124,7 +1230,7 @@ export default function ContentTypeNew() {
                   Add More Attributes
                 </button>
               </div>
-            )}
+            ) : null}
             <div className="flex flex-row items-end justify-end gap-2 mt-10">
               <button
                 className="btn btn-outline btn-md"

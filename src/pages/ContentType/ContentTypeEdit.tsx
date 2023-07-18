@@ -5,12 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import {
-  ChangeEvent,
-  JSXElementConstructor,
   Key,
-  ReactElement,
-  ReactFragment,
-  ReactPortal,
   SetStateAction,
   useEffect,
   useState,
@@ -50,7 +45,6 @@ export default function ContentTypeEdit() {
   const [isOpenModalEditAttribute, setIsOpenModalEditAttribute] = useState(false);
   const [openedAttribute, setOpenedAttribute] = useState<any>([]);
   const [listAttributes, setListAttributes] = useState<any>([]);
-  const [config, setConfig] = useState<any>({});
   const [loopTypeRequest, setLoopTypeRequest] = useState<any>([]);
   const [editedIndex, setEditedIndex] = useState();
 
@@ -137,7 +131,8 @@ export default function ContentTypeEdit() {
         fieldType: openedAttribute?.code?.toUpperCase(),
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        loopTypeRequest,
+        attributeList: openedAttribute?.attributeList,
+        icon: openedAttribute?.icon
       };
       setListItems((list: any) => [...list, data]);
     } else {
@@ -145,33 +140,35 @@ export default function ContentTypeEdit() {
         fieldType: openedAttribute?.code?.toUpperCase(),
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
-        config: openedAttribute?.config.length > 0 ? config : [],
+        config: openedAttribute?.config,
+        icon: openedAttribute?.icon
       };
       setListItems((list: any) => [...list, data]);
     }
     setIsOpenModalAddAttribute(false);
-    setConfig({});
   }
 
   function onEditList() {
-    if (openedAttribute?.code === 'looping') {
+    if (openedAttribute?.fieldType === 'LOOPING') {
       const data = {
         fieldType: openedAttribute?.fieldType?.toUpperCase(),
         name: openedAttribute?.name,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
-        isDeleted: true,
-        loopTypeRequest,
+        attributeList: openedAttribute?.attributeList,
+        icon: openedAttribute?.icon
       };
+
       const updatedListItems = listItems.map((item: any, index: undefined) => {
         if (index === editedIndex) {
           // Ubah nilai objek pertama sesuai kebutuhan
           return {
             ...item,
-            data,
+            ...data,
           };
         }
         return item;
       });
+
       setListItems(updatedListItems);
     } else {
       const data = {
@@ -179,6 +176,7 @@ export default function ContentTypeEdit() {
         name: openedAttribute?.name,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
         config: openedAttribute?.config,
+        icon: openedAttribute?.icon
       };
       const updatedListItems = listItems.map((item: any, index: undefined) => {
         if (index === editedIndex) {
@@ -193,7 +191,6 @@ export default function ContentTypeEdit() {
       setListItems(updatedListItems);
     }
     setIsOpenModalEditAttribute(false);
-    setConfig({});
   }
 
   const onLeave = () => {
@@ -206,21 +203,7 @@ export default function ContentTypeEdit() {
       <div className="my-5">
         {listItems.map(
           (
-            val: {
-              config: null;
-              attributeList: object | null;
-              name: string;
-              fieldId:
-                | string
-                | number
-                | boolean
-                | ReactElement<any, string | JSXElementConstructor<any>>
-                | ReactFragment
-                | ReactPortal
-                | null
-                | undefined;
-              fieldType: string;
-            },
+            val: any,
             idx: undefined,
           ) => (
             <div
@@ -238,8 +221,6 @@ export default function ContentTypeEdit() {
                       role="button"
                       onClick={() => {
                         setEditedIndex(idx);
-                        
-                        console.log(val)
                         openAddModal(val, true);
                       }}
                       className={`cursor-pointer select-none flex items-center justify-center`}
@@ -348,35 +329,76 @@ export default function ContentTypeEdit() {
       },
     );
 
+    const convertData = (data: any[]) => {
+      return data.map((item: any) => {
+        const newItem = { ...item };
+        if (
+          (newItem.config && Object.keys(newItem.config).length === 0) ||
+          newItem.config === null
+        ) {
+          delete newItem.config;
+        }
+        if (
+          newItem.config &&
+          (newItem.config.media_type === '' ||
+            newItem.config.max_length === '' ||
+            newItem.config.min_length === '')
+        ) {
+          delete newItem.config;
+        }
+        delete newItem.icon;
+
+        if (newItem.loopTypeRequest) {
+          newItem.loopTypeRequest = newItem.loopTypeRequest.map((loopItem: any) => {
+            const newLoopItem = { ...loopItem };
+            if (newLoopItem.config && Object.keys(newLoopItem.config).length === 0) {
+              delete newLoopItem.config;
+            }
+            if (
+              newLoopItem.config &&
+              (newLoopItem.config.media_type === '' ||
+                newLoopItem.config.max_length === '' ||
+                newLoopItem.config.min_length === '')
+            ) {
+              delete newLoopItem.config;
+            }
+            delete newLoopItem.icon;
+            return newLoopItem;
+          });
+        }
+        return newItem;
+      });
+    };
+
+    const convertedData = convertData(updatedData);
+    
     const payload = {
       id: data?.postTypeDetail?.id,
       name,
       slug,
       isUseCategory,
-      attributeRequests: updatedData,
+      attributeRequests: convertedData,
     };
 
-    console.log(updatedData)
-
-    // postUpdate(payload)
-    //   .unwrap()
-    //   .then(() => {
-    //     dispatch(
-    //       openToast({
-    //         type: 'success',
-    //         title: t('toast-success'),
-    //       }),
-    //     );
-    //     navigate('/content-type');
-    //   })
-    //   .catch(() => {
-    //     dispatch(
-    //       openToast({
-    //         type: 'error',
-    //         title: t('toast-failed'),
-    //       }),
-    //     );
-    //   });
+    postUpdate(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+          }),
+        );
+        navigate('/content-type');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+          }),
+        );
+      });
   }
 
   const modalListAttribute = () => {
@@ -418,7 +440,13 @@ export default function ContentTypeEdit() {
                 key={idx}
                 role="button"
                 onClick={() => {
-                  setConfig({});
+
+                  if (val.code === 'text_field' || val.code === 'text_area') {
+                    val.config = '{"min_length":[],"max_length":[]}';
+                  } else if (val.code === 'image') {
+                    val.config = '{"media_type":"[]"}';
+                  }
+
                   openAddModal(val, false);
                 }}
                 className="flex flex-row justify-between m-2 bg-light-purple-2 p-4">
@@ -426,6 +454,7 @@ export default function ContentTypeEdit() {
                   <div className="font-semibold text-md">{val.label}</div>
                   <div className="font-semibold text-md opacity-50">{val.description}</div>
                 </div>
+                <img src={`data:image/svg+xml;base64,${val.icon}`} />
               </div>
             ))}
           </div>
@@ -434,35 +463,9 @@ export default function ContentTypeEdit() {
     );
   };
 
-  function changeValue(arr: any[]) {
-    arr.forEach(function (obj: { code: any; value: any }) {
-      if (obj.code) {
-        obj.value = obj.code;
-        delete obj.code;
-      }
-    });
-
-    return arr;
-  }
-
   const renderListLoopingAttribute = () => {
     return (
       <div className="flex flex-col overflow-hidden">
-        <div className="p-2 absolute right-2 top-2">
-          <svg
-            role="button"
-            onClick={() => {
-              setIsOpenLoopingAttribute(false);
-            }}
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            strokeWidth={1.5}
-            stroke="currentColor"
-            className="w-6 h-6 opacity-50">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-          </svg>
-        </div>
         <div className="p-4 font-bold">List Attribute</div>
         <div className="flex flex-col overflow-auto">
           {listAttributes
@@ -472,13 +475,57 @@ export default function ContentTypeEdit() {
                 key={idx}
                 role="button"
                 onClick={() => {
-                  const data = {
-                    fieldType: val?.code?.toUpperCase(),
-                    name: val?.label,
-                    fieldId: val?.fieldId || getFieldId(val?.label),
-                    config: val?.config,
-                  };
-                  setLoopTypeRequest((loopTypeRequest: any) => [...loopTypeRequest, data]);
+                  if (
+                    openedAttribute?.attributeList &&
+                    openedAttribute?.attributeList?.length > 0
+                  ) {
+                    const lastId =
+                      openedAttribute.attributeList[openedAttribute.attributeList.length - 1].id;
+                    const newId = parseInt(lastId) + 1;
+
+                    const data = {
+                      id: newId,
+                      fieldType: val?.code?.toUpperCase(),
+                      name: val?.label,
+                      fieldId: val?.fieldId || getFieldId(val?.label),
+                      icon: val?.icon,
+                      config: "",
+                    };
+
+                    if (val.code === 'text_field' || val.code === 'text_area') {
+                      data.config = '{"min_length":[],"max_length":[]}';
+                    } else if (val.code === 'image') {
+                      data.config = '{"media_type":"[]"}';
+                    }
+
+                    const updatedAttributeList = [...openedAttribute.attributeList, data];
+
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      attributeList: updatedAttributeList,
+                    });
+                  } else {
+                    const data = {
+                      id: 1,
+                      fieldType: val?.code?.toUpperCase(),
+                      name: val?.label,
+                      fieldId: val?.fieldId || getFieldId(val?.label),
+                      icon: val?.icon,
+                      config: "",
+                    };
+
+                    if (val.code === 'text_field' || val.code === 'text_area') {
+                      data.config = '{"min_length":[],"max_length":[]}';
+                    } else if (val.code === 'image') {
+                      data.config = '{"media_type":"[]"}';
+                    }
+
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      attributeList: [data],
+                    });
+                  }
+
                   setIsOpenLoopingAttribute(false);
                 }}
                 className="flex flex-row justify-between m-2 bg-light-purple-2 p-4">
@@ -486,6 +533,7 @@ export default function ContentTypeEdit() {
                   <div className="font-semibold text-md">{val.label}</div>
                   <div className="font-semibold text-md opacity-50">{val.description}</div>
                 </div>
+                <img src={`data:image/svg+xml;base64,${val.icon}`} />
               </div>
             ))}
         </div>
@@ -493,28 +541,15 @@ export default function ContentTypeEdit() {
     );
   };
 
-  const updateFieldChanged = (
-    name: string,
-    index: number,
-    event: ChangeEvent<HTMLInputElement>,
-  ) => {
-    const newArr = loopTypeRequest.map((item: any, i: number) => {
-      if (index === i) {
-        return { ...item, [name]: event.target.value };
-      } else {
-        return item;
-      }
-    });
-
-    setLoopTypeRequest(newArr);
-  };
-
   const modalAddAttribute = () => {
     return (
       <Modal open={isOpenModalAddAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
-            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.code)}</div>
+            <div className='flex flex-row'>
+              <img className='ml-5' src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
+              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.code)}</div>
+            </div>
             <div className="p-2">
               <svg
                 role="button"
@@ -538,6 +573,7 @@ export default function ContentTypeEdit() {
             <div className="flex flex-col w-1/2">
               <InputText
                 labelTitle="Name"
+                labelStyle='font-bold'
                 labelRequired
                 value={openedAttribute?.label}
                 inputStyle="rounded-3xl"
@@ -550,6 +586,7 @@ export default function ContentTypeEdit() {
               />
               <InputText
                 labelTitle="Field ID"
+                labelStyle='font-bold'
                 labelRequired
                 value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
                 inputStyle="rounded-3xl"
@@ -561,358 +598,79 @@ export default function ContentTypeEdit() {
                 }}
               />
             </div>
-            {openedAttribute?.code !== 'looping' ? (
-              openedAttribute?.config?.length > 0 && (
-                <div className="flex flex-row gap-4 my-5">
-                  {/* {openedAttribute?.config?.map(
-                    (
-                      val: { type: string; label: any; code: string | number; value: any },
-                      idx: Key | null | undefined,
-                    ) =>
-                      val?.type === 'text_field' ? (
-                        <div key={idx}>
-                          <InputText
-                            labelTitle={`${val.label} (Optional)`}
-                            type="number"
-                            value={config?.[val.code] || ''}
-                            inputStyle="rounded-3xl"
-                            onChange={e => {
-                              const text = val?.code;
-
-                              setConfig((prevState: any) => ({
-                                ...prevState,
-                                [text]: e.target.value,
-                              }));
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div key={idx}>
-                          <Radio
-                            labelTitle=""
-                            labelStyle="font-bold	"
-                            items={changeValue(val?.value)}
-                            onSelect={(
-                              event: React.ChangeEvent<HTMLInputElement>,
-                              value: string | number | boolean,
-                            ) => {
-                              if (event) {
-                                const text = val?.code;
-
-                                setConfig((prevState: any) => ({
-                                  ...prevState,
-                                  [text]: value,
-                                }));
-                              }
-                            }}
-                            defaultSelected={config?.media_type}
-                          />
-                        </div>
-                      ),
-                  )} */}
-                </div>
-              )
-            ) : (
-              <div className="flex flex-col border-t-2 my-5 py-5 items-center justify-center">
-                <>
-                  {loopTypeRequest?.length > 0
-                    ? loopTypeRequest?.map(
-                        (
-                          val: {
-                            fieldType: string;
-                            name: string;
-                            fieldId: any;
-                            config: Array<{
-                              type: string;
-                              label: any;
-                              value: string | undefined;
-                              media_type: string | number | boolean | undefined;
-                            }>;
-                          },
-                          idx: number,
-                        ) => (
-                          <div
-                            key={idx}
-                            className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
-                            <div className="flex flex-row justify-between w-full border-b-2 mb-4">
-                              <div className="p-4 capitalize font-bold ">
-                                {getType(val?.fieldType)}
-                              </div>
-                              <svg
-                                role="button"
-                                onClick={() => {
-                                  const updated = loopTypeRequest?.filter(
-                                    (_val: any, index: any) => index !== idx,
-                                  );
-                                  setLoopTypeRequest(updated);
-                                }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6 text-red-500 mt-2 mr-2">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                />
-                              </svg>
-                            </div>
-                            <div className="flex flex-col w-1/2">
-                              <InputText
-                                labelTitle="Name"
-                                labelRequired
-                                value={val.name}
-                                inputStyle="rounded-3xl"
-                                onChange={e => {
-                                  updateFieldChanged('name', idx, e);
-                                }}
-                              />
-                              <InputText
-                                labelTitle="Field ID"
-                                labelRequired
-                                value={val?.fieldId || getFieldId(val?.name)}
-                                inputStyle="rounded-3xl"
-                                onChange={e => {
-                                  updateFieldChanged('fieldId', idx, e);
-                                }}
-                              />
-                            </div>
-                            {/* {val?.config?.length > 0 && (
-                              <div className="flex flex-row gap-4 my-5">
-                                {val?.config?.map(
-                                  (
-                                    val: {
-                                      type: string;
-                                      label: any;
-                                      value: any;
-                                      media_type: string | number | boolean | undefined;
-                                    },
-                                    index: Key,
-                                  ) =>
-                                    val?.type === 'text_field' ? (
-                                      <div key={index}>
-                                        <InputText
-                                          labelTitle={`${val.label} (Optional)`}
-                                          type="number"
-                                          value={val.value}
-                                          inputStyle="rounded-3xl"
-                                          onChange={e => {
-                                            setLoopTypeRequest((prevState: any) => {
-                                              const updatedLoopTypeRequest = [...prevState];
-                                              updatedLoopTypeRequest[idx].config[index].value =
-                                                e.target.value;
-                                              return updatedLoopTypeRequest;
-                                            });
-                                          }}
-                                        />
-                                      </div>
-                                    ) : (
-                                      <div key={index}>
-                                        <Radio
-                                          labelTitle=""
-                                          labelStyle="font-bold	"
-                                          items={changeValue(val?.value)}
-                                          onSelect={(
-                                            event: React.ChangeEvent<HTMLInputElement>,
-                                            value: string | number | boolean,
-                                          ) => {
-                                            if (event) {
-                                              setLoopTypeRequest((prevState: any) => {
-                                                const updatedLoopTypeRequest = [...prevState];
-                                                updatedLoopTypeRequest[idx].config[
-                                                  index
-                                                ].media_type = value;
-                                                return updatedLoopTypeRequest;
-                                              });
-                                            }
-                                          }}
-                                          defaultSelected={val?.media_type}
-                                        />
-                                      </div>
-                                    ),
-                                )}
-                              </div>
-                            )} */}
-                          </div>
-                        ),
-                      )
-                    : null}
-                </>
-
-                {isOpenLoopingAttribute && (
-                  <div className="w-[80%] h-80 overflow-auto border p-2 rounded-xl">
-                    {renderListLoopingAttribute()}
-                  </div>
-                )}
-
-                <button
-                  className="btn btn-outline btn-primary btn-md w-[30%] items-center justify-center flex gap-2 mt-10"
-                  onClick={() => {
-                    setIsOpenLoopingAttribute(true);
-                  }}>
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                  Add More Attributes
-                </button>
+            {openedAttribute?.code === 'text_field' || openedAttribute?.code === 'text_area' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <InputText
+                  labelTitle={`Minimum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.min_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.min_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
+                <InputText
+                  labelTitle={`Maximum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.max_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.max_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
               </div>
-            )}
-            <div className="flex flex-row items-end justify-end gap-2 mt-10">
-              <button
-                className="btn btn-outline btn-md"
-                onClick={() => {
-                  setIsOpenModalAddAttribute(false);
-                }}>
-                {t('btn.cancel')}
-              </button>
-              <button
-                className="btn btn-primary btn-md"
-                onClick={() => {
-                  onAddList();
-                }}>
-                {t('btn.save')}
-              </button>
-            </div>
-          </div>
-        </div>
-      </Modal>
-    );
-  };
-
-  const modalEditAttribute = () => {
-    return (
-      <Modal open={isOpenModalEditAttribute} toggle={() => null} title="" width={840} height={640}>
-        <div className="flex flex-col">
-          <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
-            <div className="font-bold capitalize ml-10">{getType(openedAttribute?.fieldType)}</div>
-            <div className="p-2">
-              <svg
-                role="button"
-                onClick={() => {
-                  setIsOpenModalEditAttribute(false);
-                }}
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-5 h-5 opacity-50">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </div>
-          </div>
-          <div className="flex flex-col mx-10 mt-10">
-            <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              {getType(openedAttribute?.fieldType)}
-            </div>
-            <div className="flex flex-col w-1/2">
-              <InputText
-                labelTitle="Name"
-                labelRequired
-                value={openedAttribute?.name}
-                inputStyle="rounded-3xl"
-                onChange={e => {
-                  setOpenedAttribute((prevState: any) => ({
-                    ...prevState,
-                    name: e.target.value,
-                  }));
-                }}
-              />
-              <InputText
-                labelTitle="Field ID"
-                labelRequired
-                value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
-                inputStyle="rounded-3xl"
-                onChange={e => {
-                  setOpenedAttribute((prevState: any) => ({
-                    ...prevState,
-                    fieldId: e.target.value,
-                  }));
-                }}
-              />
-            </div>
-            {openedAttribute?.fieldType === 'TEXT_FIELD' ||  openedAttribute?.fieldType === 'TEXT_AREA' ? (
-              openedAttribute?.config?.length > 0 && (
-                <div className="flex flex-row gap-4 my-5">
-                  <InputText
-                    labelTitle={`Minimum Length (Optional)`}
-                    type="number"
-                    value={openedAttribute?.config?.min_length || ''}
-                    inputStyle="rounded-3xl"
-                    onChange={e => {
-                    }}
-                  />
-                  <InputText
-                    labelTitle={`Maximum Length (Optional)`}
-                    type="number"
-                    value={openedAttribute?.config?.max_length || ''}
-                    inputStyle="rounded-3xl"
-                    onChange={e => {
-                    }}
-                  />
-                  {/* {openedAttribute?.config?.map(
-                    (
-                      val: { type: string; label: any; code: string | number; value: any },
-                      idx: Key | null | undefined,
-                    ) =>
-                      val?.type === 'text_field' ? (
-                        <div key={idx}>
-                          <InputText
-                            labelTitle={`${val.label} (Optional)`}
-                            type="number"
-                            value={config?.[val.code] || ''}
-                            inputStyle="rounded-3xl"
-                            onChange={e => {
-                              const text = val?.code;
-
-                              setConfig((prevState: any) => ({
-                                ...prevState,
-                                [text]: e.target.value,
-                              }));
-                            }}
-                          />
-                        </div>
-                      ) : (
-                        <div key={idx}>
-                          <Radio
-                            labelTitle=""
-                            labelStyle="font-bold	"
-                            items={changeValue(val?.value)}
-                            onSelect={(
-                              event: React.ChangeEvent<HTMLInputElement>,
-                              value: string | number | boolean,
-                            ) => {
-                              if (event) {
-                                const text = val?.code;
-
-                                setConfig((prevState: any) => ({
-                                  ...prevState,
-                                  [text]: value,
-                                }));
-                              }
-                            }}
-                            defaultSelected={config?.media_type}
-                          />
-                        </div>
-                      ),
-                  )} */}
-                </div>
-              )
-            ) : (
+            ) : openedAttribute?.code === 'image' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <Radio
+                  labelTitle=""
+                  labelStyle="font-bold	"
+                  items={[
+                    {
+                      label: 'Single Media',
+                      value: 'single_media',
+                    },
+                    {
+                      label: 'Multiple Media',
+                      value: 'multiple_media',
+                    },
+                  ]}
+                  onSelect={(
+                    event: React.ChangeEvent<HTMLInputElement>,
+                    value: string | number | boolean,
+                  ) => {
+                    if (event) {
+                      const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                      updatedConfig.media_type = value;
+                      setOpenedAttribute({
+                        ...openedAttribute,
+                        config: JSON.stringify(updatedConfig),
+                      });
+                    }
+                  }}
+                  defaultSelected={JSON.parse(openedAttribute?.config)?.media_type}
+                />
+              </div>
+            ) : openedAttribute?.code === 'looping' ? (
               <div className="flex flex-col border-t-2 my-5 py-5 items-center justify-center">
                 <>
-                  {loopTypeRequest?.length > 0
-                    ? loopTypeRequest?.map(
+                  {openedAttribute?.attributeList?.length > 0
+                    ? openedAttribute?.attributeList?.map(
                         (
                           val: {
+                            icon: any;
+                            id: any;
                             fieldType: string;
                             name: string;
                             fieldId: any;
@@ -924,8 +682,9 @@ export default function ContentTypeEdit() {
                             key={idx}
                             className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
                             <div className="flex flex-row justify-between w-full border-b-2 mb-4">
-                              <div className="p-4 capitalize font-bold ">
-                                {getType(val?.fieldType)}
+                              <div className='flex flex-row w-full mb-4'>
+                                <img className='ml-5' src={`data:image/svg+xml;base64,${val?.icon}`} />
+                                <div className="font-bold capitalize ml-5">{getType(val?.fieldType)}</div>
                               </div>
                               <svg
                                 role="button"
@@ -951,106 +710,153 @@ export default function ContentTypeEdit() {
                             <div className="flex flex-col w-1/2">
                               <InputText
                                 labelTitle="Name"
+                                labelStyle='font-bold'
                                 labelRequired
                                 value={val.name}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
-                                  updateFieldChanged('name', idx, e);
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          name: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
                                 }}
                               />
                               <InputText
                                 labelTitle="Field ID"
+                                labelStyle='font-bold'
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
-                                  updateFieldChanged('fieldId', idx, e);
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          fieldId: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
                                 }}
                               />
                             </div>
-                            {val?.config?.length > 0 ? (
-                              val?.fieldType !== "IMAGE" ? (
-                                <div className="flex flex-row gap-4 my-5">
-                                  <InputText
-                                    labelTitle={`Minimum Length (Optional)`}
-                                    type="number"
-                                    value={JSON.parse(val?.config).min_length}
-                                    inputStyle="rounded-3xl"
-                                    onChange={e => {
-                                      const updatedLoopTypeRequest = loopTypeRequest.map((item, index) => {
-                                        if (idx === index) {
-                                          const config = JSON.parse(item.config);
+                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
+                              <div className="flex flex-row gap-4 my-5">
+                                <InputText
+                                  labelTitle={`Minimum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).min_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
                                           config.min_length = e.target.value;
-                                          return { ...item, config: JSON.stringify(config) };
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
                                         }
-                                        return item;
-                                      });
-                                      setLoopTypeRequest(updatedLoopTypeRequest);
-                                    }}
-                                  />
-                                  <InputText
-                                    labelTitle={`Maximum Length (Optional)`}
-                                    type="number"
-                                    value={JSON.parse(val?.config).max_length}
-                                    inputStyle="rounded-3xl"
-                                    onChange={e => {
-                                      JSON.parse(val?.config).max_length = e.target.value
-                                    }}
-                                  />
-                                  {/* {val?.config?.map(
-                                    (
-                                      val: {
-                                        type: string;
-                                        label: any;
-                                        value: any;
-                                        media_type: string | number | boolean | undefined;
+                                        return attribute;
                                       },
-                                      index: number,
-                                    ) =>
-                                      val?.type === 'text_field' ? (
-                                        <div key={index}>
-                                          <InputText
-                                            labelTitle={`${val.label} (Optional)`}
-                                            type="number"
-                                            value={val.value}
-                                            inputStyle="rounded-3xl"
-                                            onChange={e => {
-                                              setLoopTypeRequest((prevState: any) => {
-                                                const updatedLoopTypeRequest = [...prevState];
-                                                updatedLoopTypeRequest[idx].config[index].value =
-                                                  e.target.value;
-                                                return updatedLoopTypeRequest;
-                                              });
-                                            }}
-                                          />
-                                        </div>
-                                      ) : (
-                                        <div key={index}>
-                                          <Radio
-                                            labelTitle=""
-                                            labelStyle="font-bold	"
-                                            items={changeValue(val?.value)}
-                                            onSelect={(
-                                              event: React.ChangeEvent<HTMLInputElement>,
-                                              value: string | number | boolean,
-                                            ) => {
-                                              if (event) {
-                                                setLoopTypeRequest((prevState: any) => {
-                                                  const updatedLoopTypeRequest = [...prevState];
-                                                  updatedLoopTypeRequest[idx].config[
-                                                    index
-                                                  ].media_type = value;
-                                                  return updatedLoopTypeRequest;
-                                                });
-                                              }
-                                            }}
-                                            defaultSelected={val?.media_type}
-                                          />
-                                        </div>
-                                      ),
-                                  )} */}
-                                </div>
-                              ) : null
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
+                                <InputText
+                                  labelTitle={`Maximum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).max_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
+                                          config.max_length = e.target.value;
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
+                                        }
+                                        return attribute;
+                                      },
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
+                              </div>
+                            ) : val?.fieldType === 'IMAGE' ? (
+                              <div className="flex flex-row gap-4 my-5">
+                                <Radio
+                                  labelTitle=""
+                                  labelStyle="font-bold"
+                                  items={[
+                                    {
+                                      label: 'Single Media',
+                                      value: 'single_media',
+                                    },
+                                    {
+                                      label: 'Multiple Media',
+                                      value: 'multiple_media',
+                                    },
+                                  ]}
+                                  onSelect={(
+                                    event: React.ChangeEvent<HTMLInputElement>,
+                                    value: string | number | boolean,
+                                  ) => {
+                                    if (event) {
+                                      const updatedAttributeList =
+                                        openedAttribute.attributeList.map(
+                                          (attribute: { id: any, config: any }) => {
+                                            if (attribute.id === val.id) {
+                                              const updatedAttribute = { ...attribute };
+                                              const config = JSON.parse(updatedAttribute.config);
+                                              config.media_type = value;
+                                              updatedAttribute.config = JSON.stringify(config);
+                                              return updatedAttribute;
+                                            }
+                                            return attribute;
+                                          },
+                                        );
+
+                                      setOpenedAttribute((prevState: any) => ({
+                                        ...prevState,
+                                        attributeList: updatedAttributeList,
+                                      }));
+                                    }
+                                  }}
+                                  defaultSelected={JSON.parse(val?.config)?.media_type}
+                                />
+                              </div>
                             ) : null}
                           </div>
                         ),
@@ -1081,7 +887,381 @@ export default function ContentTypeEdit() {
                   Add More Attributes
                 </button>
               </div>
-            )}
+            ) : null}
+            <div className="flex flex-row items-end justify-end gap-2 mt-10">
+              <button
+                className="btn btn-outline btn-md"
+                onClick={() => {
+                  setIsOpenModalAddAttribute(false);
+                }}>
+                {t('btn.cancel')}
+              </button>
+              <button
+                className="btn btn-primary btn-md"
+                onClick={() => {
+                  onAddList();
+                }}>
+                {t('btn.create')}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Modal>
+    );
+  };
+
+  const modalEditAttribute = () => {
+    return (
+      <Modal open={isOpenModalEditAttribute} toggle={() => null} title="" width={840} height={640}>
+        <div className="flex flex-col">
+          <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
+            <div className='flex flex-row'>
+              <img className='ml-5' src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
+              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType)}</div>
+            </div>
+            <div className="p-2">
+              <svg
+                role="button"
+                onClick={() => {
+                  setIsOpenModalEditAttribute(false);
+                }}
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-5 h-5 opacity-50">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </div>
+          </div>
+          <div className="flex flex-col mx-10 mt-10">
+            <div className="p-4 capitalize font-bold border-b-2 mb-4">
+              {getType(openedAttribute?.fieldType)}
+            </div>
+            <div className="flex flex-col w-1/2">
+              <InputText
+                labelTitle="Name"
+                labelStyle='font-bold'
+                labelRequired
+                value={openedAttribute?.name}
+                inputStyle="rounded-3xl"
+                onChange={e => {
+                  setOpenedAttribute((prevState: any) => ({
+                    ...prevState,
+                    name: e.target.value,
+                  }));
+                }}
+              />
+              <InputText
+                labelTitle="Field ID"
+                labelStyle='font-bold'
+                labelRequired
+                value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
+                inputStyle="rounded-3xl"
+                onChange={e => {
+                  setOpenedAttribute((prevState: any) => ({
+                    ...prevState,
+                    fieldId: e.target.value,
+                  }));
+                }}
+              />
+            </div>
+            {openedAttribute?.fieldType === 'TEXT_FIELD' ||
+            openedAttribute?.fieldType === 'TEXT_AREA' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <InputText
+                  labelTitle={`Minimum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.min_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.min_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
+                <InputText
+                  labelTitle={`Maximum Length (Optional)`}
+                  labelStyle='font-bold'
+                  type="number"
+                  value={JSON.parse(openedAttribute?.config)?.max_length || ''}
+                  inputStyle="rounded-3xl"
+                  onChange={e => {
+                    const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                    updatedConfig.max_length = e.target.value;
+                    setOpenedAttribute({
+                      ...openedAttribute,
+                      config: JSON.stringify(updatedConfig),
+                    });
+                  }}
+                />
+              </div>
+            ) : openedAttribute?.fieldType === 'IMAGE' ? (
+              <div className="flex flex-row gap-4 my-5">
+                <Radio
+                  labelTitle=""
+                  labelStyle="font-bold"
+                  items={[
+                    {
+                      label: 'Single Media',
+                      value: 'single_media',
+                    },
+                    {
+                      label: 'Multiple Media',
+                      value: 'multiple_media',
+                    },
+                  ]}
+                  onSelect={(
+                    event: React.ChangeEvent<HTMLInputElement>,
+                    value: string | number | boolean,
+                  ) => {
+                    if (event) {
+                      const updatedConfig = JSON.parse(openedAttribute?.config) || {};
+                      updatedConfig.media_type = value;
+                      setOpenedAttribute({
+                        ...openedAttribute,
+                        config: JSON.stringify(updatedConfig),
+                      });
+                    }
+                  }}
+                  defaultSelected={JSON.parse(openedAttribute?.config)?.media_type}
+                />
+              </div>
+            ) : openedAttribute?.fieldType === 'LOOPING' ? (
+              <div className="flex flex-col border-t-2 my-5 py-5 items-center justify-center">
+                <>
+                  {openedAttribute?.attributeList?.length > 0
+                    ? openedAttribute?.attributeList?.map(
+                        (
+                          val: {
+                            icon: any;
+                            id: any;
+                            fieldType: string;
+                            name: string;
+                            fieldId: any;
+                            config: string;
+                          },
+                          idx: number,
+                        ) => (
+                          <div
+                            key={idx}
+                            className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
+                            <div className="flex flex-row justify-between w-full border-b-2 mb-4">
+                              <div className='flex flex-row w-full mb-4'>
+                                <img className='ml-5' src={`data:image/svg+xml;base64,${val?.icon}`} />
+                                <div className="font-bold capitalize ml-5">{getType(val?.fieldType)}</div>
+                              </div>
+                              <svg
+                                role="button"
+                                onClick={() => {
+                                  const updatedAttributeList = openedAttribute.attributeList.filter(
+                                    (_attribute: any, index: number) => index !== idx,
+                                  );
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
+                                }}
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                strokeWidth={1.5}
+                                stroke="currentColor"
+                                className="w-6 h-6 text-red-500 mt-2 mr-2">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                />
+                              </svg>
+                            </div>
+                            <div className="flex flex-col w-1/2">
+                              <InputText
+                                labelTitle="Name"
+                                labelStyle='font-bold'
+                                labelRequired
+                                value={val.name}
+                                inputStyle="rounded-3xl"
+                                onChange={e => {
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (                                    attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          name: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
+                                }}
+                              />
+                              <InputText
+                                labelTitle="Field ID"
+                                labelStyle='font-bold'
+                                labelRequired
+                                value={val?.fieldId || getFieldId(val?.name)}
+                                inputStyle="rounded-3xl"
+                                onChange={e => {
+                                  const updatedAttributeList = openedAttribute.attributeList.map(
+                                    (                                    attribute: { id: any; }) => {
+                                      if (attribute.id === val.id) {
+                                        return {
+                                          ...attribute,
+                                          fieldId: e.target.value,
+                                        };
+                                      }
+                                      return attribute;
+                                    },
+                                  );
+
+                                  setOpenedAttribute((prevState: any) => ({
+                                    ...prevState,
+                                    attributeList: updatedAttributeList,
+                                  }));
+                                }}
+                              />
+                            </div>
+                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
+                              <div className="flex flex-row gap-4 my-5">
+                                <InputText
+                                  labelTitle={`Minimum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).min_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
+                                          config.min_length = e.target.value;
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
+                                        }
+                                        return attribute;
+                                      },
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
+                                <InputText
+                                  labelTitle={`Maximum Length (Optional)`}
+                                  labelStyle='font-bold'
+                                  type="number"
+                                  value={JSON.parse(val?.config).max_length}
+                                  inputStyle="rounded-3xl"
+                                  onChange={e => {
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any, config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          const config = JSON.parse(updatedAttribute.config);
+                                          config.max_length = e.target.value;
+                                          updatedAttribute.config = JSON.stringify(config);
+                                          return updatedAttribute;
+                                        }
+                                        return attribute;
+                                      },
+                                    );
+
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                />
+                              </div>
+                            ) : val?.fieldType === 'IMAGE' ? (
+                              <div className="flex flex-row gap-4 my-5">
+                                <Radio
+                                  labelTitle=""
+                                  labelStyle="font-bold"
+                                  items={[
+                                    {
+                                      label: 'Single Media',
+                                      value: 'single_media',
+                                    },
+                                    {
+                                      label: 'Multiple Media',
+                                      value: 'multiple_media',
+                                    },
+                                  ]}
+                                  onSelect={(
+                                    event: React.ChangeEvent<HTMLInputElement>,
+                                    value: string | number | boolean,
+                                  ) => {
+                                    if (event) {
+                                      event.stopPropagation();
+                                      const updatedAttributeList =
+                                        openedAttribute.attributeList.map(
+                                          (attribute: { id: any, config: any }) => {
+                                            if (attribute.id === val.id) {
+                                              const updatedAttribute = { ...attribute };
+                                              const config = JSON.parse(updatedAttribute.config);
+                                              config.media_type = value;
+                                              updatedAttribute.config = JSON.stringify(config);
+                                              return updatedAttribute;
+                                            }
+                                            return attribute;
+                                          },
+                                        );
+
+                                      setOpenedAttribute((prevState: any) => ({
+                                        ...prevState,
+                                        attributeList: updatedAttributeList,
+                                      }));
+                                    }
+                                  }}
+                                  defaultSelected={JSON.parse(val?.config)?.media_type}
+                                />
+                              </div>
+                            ) : null}
+                          </div>
+                        ),
+                      )
+                    : null}
+                </>
+
+                {isOpenLoopingAttribute && (
+                  <div className="w-[80%] h-80 overflow-auto border p-2 rounded-xl">
+                    {renderListLoopingAttribute()}
+                  </div>
+                )}
+
+                <button
+                  className="btn btn-outline btn-primary btn-md w-[30%] items-center justify-center flex gap-2 mt-10"
+                  onClick={() => {
+                    setIsOpenLoopingAttribute(true);
+                  }}>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  Add More Attributes
+                </button>
+              </div>
+            ) : null}
             <div className="flex flex-row items-end justify-end gap-2 mt-10">
               <button
                 className="btn btn-outline btn-md"
