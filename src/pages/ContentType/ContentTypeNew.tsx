@@ -4,12 +4,7 @@ import { useAppDispatch } from '../../store';
 import { useNavigate } from 'react-router-dom';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
-import {
-  Key,
-  SetStateAction,
-  useEffect,
-  useState,
-} from 'react';
+import { Key, SetStateAction, useEffect, useState } from 'react';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import TableEdit from '../../assets/table-edit.png';
@@ -123,7 +118,7 @@ export default function ContentTypeNew() {
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         attributeList: openedAttribute?.attributeList,
-        icon: openedAttribute?.icon
+        icon: openedAttribute?.icon,
       };
       setListItems((list: any) => [...list, data]);
     } else {
@@ -132,7 +127,7 @@ export default function ContentTypeNew() {
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         config: openedAttribute?.config,
-        icon: openedAttribute?.icon
+        icon: openedAttribute?.icon,
       };
       setListItems((list: any) => [...list, data]);
     }
@@ -146,7 +141,7 @@ export default function ContentTypeNew() {
         name: openedAttribute?.name,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
         attributeList: openedAttribute?.attributeList,
-        icon: openedAttribute?.icon
+        icon: openedAttribute?.icon,
       };
 
       const updatedListItems = listItems.map((item: any, index: undefined) => {
@@ -167,7 +162,7 @@ export default function ContentTypeNew() {
         name: openedAttribute?.name,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
         config: openedAttribute?.config,
-        icon: openedAttribute?.icon
+        icon: openedAttribute?.icon,
       };
       const updatedListItems = listItems.map((item: any, index: undefined) => {
         if (index === editedIndex) {
@@ -192,46 +187,41 @@ export default function ContentTypeNew() {
   const renderListItems = () => {
     return (
       <div className="my-5">
-        {listItems.map(
-          (
-            val: any,
-            idx: undefined,
-          ) => (
-            <div
-              key={idx}
-              className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
-              <div className="w-1/4 text-left font-semibold">{val.name}</div>
-              <div className="w-1/4 text-center font-semibold">
-                {val.fieldId ? val.fieldId : getFieldId(val.name)}
-              </div>
-              <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
-              <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
-                {idx && idx > 1 ? (
-                  <>
-                    <img
-                      role="button"
-                      onClick={() => {
-                        setEditedIndex(idx);
-                        openAddModal(val, true);
-                      }}
-                      className={`cursor-pointer select-none flex items-center justify-center`}
-                      src={TableEdit}
-                    />
-                    <img
-                      role="button"
-                      onClick={() => {
-                        const updated = listItems?.filter((_val: any, index: any) => index !== idx);
-                        setListItems(updated);
-                      }}
-                      className={`cursor-pointer select-none flex items-center justify-center`}
-                      src={TableDelete}
-                    />
-                  </>
-                ) : null}
-              </div>
+        {listItems.map((val: any, idx: undefined) => (
+          <div
+            key={idx}
+            className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
+            <div className="w-1/4 text-left font-semibold">{val.name}</div>
+            <div className="w-1/4 text-center font-semibold">
+              {val.fieldId ? val.fieldId : getFieldId(val.name)}
             </div>
-          ),
-        )}
+            <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
+            <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
+              {idx && idx > 1 ? (
+                <>
+                  <img
+                    role="button"
+                    onClick={() => {
+                      setEditedIndex(idx);
+                      openAddModal(val, true);
+                    }}
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableEdit}
+                  />
+                  <img
+                    role="button"
+                    onClick={() => {
+                      const updated = listItems?.filter((_val: any, index: any) => index !== idx);
+                      setListItems(updated);
+                    }}
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableDelete}
+                  />
+                </>
+              ) : null}
+            </div>
+          </div>
+        ))}
         <div className="p-2 flex items-center justify-center">
           <div
             role="button"
@@ -305,40 +295,42 @@ export default function ContentTypeNew() {
   function onSaveContent() {
     const transformedData = listItems.map((item: any) => {
       const newItem = { ...item };
-      
+
       // 1. Hapus attribut config jika kosong
       if (newItem.config && newItem.config.length === 0) {
         delete newItem.config;
       }
-      
+
       // 2. Hapus isDeleted
       delete newItem.isDeleted;
       delete newItem.icon;
-      
+
       // 3. Isi fieldId jika kosong
-      if (newItem.fieldId === "") {
-        newItem.fieldId = newItem.name.toLowerCase().replace(/\s/g, "-");
+      if (newItem.fieldId === '') {
+        newItem.fieldId = newItem.name.toLowerCase().replace(/\s/g, '-');
       }
-      
+
       // 4. Hapus attribute id pada attributeList
       if (newItem.attributeList) {
-        newItem.attributeList = newItem.attributeList.map((attribute: { [x: string]: any; id: any; }) => {
-          const { id, ...newAttribute } = attribute;
-          
-          // 5. Hapus attribut config pada attributeList jika kosong
-          if (newAttribute.config && newAttribute.config.length === 0) {
-            delete newAttribute.config;
-          }
-          delete newAttribute.icon;
-          
-          return newAttribute;
-        });
-        
+        newItem.attributeList = newItem.attributeList.map(
+          (attribute: { [x: string]: any; id: any }) => {
+            const { id, ...newAttribute } = attribute;
+
+            // 5. Hapus attribut config pada attributeList jika kosong
+            if (newAttribute.config && newAttribute.config.length === 0) {
+              delete newAttribute.config;
+            }
+            delete newAttribute.icon;
+
+            return newAttribute;
+          },
+        );
+
         // 6. Ubah attributeList menjadi loopTypeRequest
         newItem.loopTypeRequest = newItem.attributeList;
         delete newItem.attributeList;
       }
-      
+
       return newItem;
     });
 
@@ -409,7 +401,6 @@ export default function ContentTypeNew() {
                 key={idx}
                 role="button"
                 onClick={() => {
-
                   if (val.code === 'text_field' || val.code === 'text_area') {
                     val.config = '{"min_length":[],"max_length":[]}';
                   } else if (val.code === 'image') {
@@ -458,7 +449,7 @@ export default function ContentTypeNew() {
                       name: val?.label,
                       fieldId: val?.fieldId || getFieldId(val?.label),
                       icon: val?.icon,
-                      config: "",
+                      config: '',
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
@@ -480,7 +471,7 @@ export default function ContentTypeNew() {
                       name: val?.label,
                       icon: val?.icon,
                       fieldId: val?.fieldId || getFieldId(val?.label),
-                      config: "",
+                      config: '',
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
@@ -515,8 +506,8 @@ export default function ContentTypeNew() {
       <Modal open={isOpenModalAddAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
-            <div className='flex flex-row'>
-              <img className='ml-5' src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
+            <div className="flex flex-row">
+              <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
               <div className="font-bold capitalize ml-5">{getType(openedAttribute?.code)}</div>
             </div>
             <div className="p-2">
@@ -542,7 +533,7 @@ export default function ContentTypeNew() {
             <div className="flex flex-col w-1/2">
               <InputText
                 labelTitle="Name"
-                labelStyle='font-bold'
+                labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.label}
                 inputStyle="rounded-3xl"
@@ -555,7 +546,7 @@ export default function ContentTypeNew() {
               />
               <InputText
                 labelTitle="Field ID"
-                labelStyle='font-bold'
+                labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
                 inputStyle="rounded-3xl"
@@ -571,7 +562,7 @@ export default function ContentTypeNew() {
               <div className="flex flex-row gap-4 my-5">
                 <InputText
                   labelTitle={`Minimum Length (Optional)`}
-                  labelStyle='font-bold'
+                  labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.min_length || ''}
                   inputStyle="rounded-3xl"
@@ -586,7 +577,7 @@ export default function ContentTypeNew() {
                 />
                 <InputText
                   labelTitle={`Maximum Length (Optional)`}
-                  labelStyle='font-bold'
+                  labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.max_length || ''}
                   inputStyle="rounded-3xl"
@@ -651,9 +642,14 @@ export default function ContentTypeNew() {
                             key={idx}
                             className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
                             <div className="flex flex-row justify-between w-full border-b-2 mb-4">
-                              <div className='flex flex-row w-full mb-4'>
-                                <img className='ml-5' src={`data:image/svg+xml;base64,${val?.icon}`} />
-                                <div className="font-bold capitalize ml-5">{getType(val?.fieldType)}</div>
+                              <div className="flex flex-row w-full mb-4">
+                                <img
+                                  className="ml-5"
+                                  src={`data:image/svg+xml;base64,${val?.icon}`}
+                                />
+                                <div className="font-bold capitalize ml-5">
+                                  {getType(val?.fieldType)}
+                                </div>
                               </div>
                               <svg
                                 role="button"
@@ -679,13 +675,13 @@ export default function ContentTypeNew() {
                             <div className="flex flex-col w-1/2">
                               <InputText
                                 labelTitle="Name"
-                                labelStyle='font-bold'
+                                labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
                                   const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (attribute: { id: any; }) => {
+                                    (attribute: { id: any }) => {
                                       if (attribute.id === val.id) {
                                         return {
                                           ...attribute,
@@ -704,13 +700,13 @@ export default function ContentTypeNew() {
                               />
                               <InputText
                                 labelTitle="Field ID"
-                                labelStyle='font-bold'
+                                labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
                                   const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (attribute: { id: any; }) => {
+                                    (attribute: { id: any }) => {
                                       if (attribute.id === val.id) {
                                         return {
                                           ...attribute,
@@ -732,13 +728,13 @@ export default function ContentTypeNew() {
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
                                   labelTitle={`Minimum Length (Optional)`}
-                                  labelStyle='font-bold'
+                                  labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).min_length}
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any, config: any }) => {
+                                      (attribute: { id: any; config: any }) => {
                                         if (attribute.id === val.id) {
                                           const updatedAttribute = { ...attribute };
                                           const config = JSON.parse(updatedAttribute.config);
@@ -758,13 +754,13 @@ export default function ContentTypeNew() {
                                 />
                                 <InputText
                                   labelTitle={`Maximum Length (Optional)`}
-                                  labelStyle='font-bold'
+                                  labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).max_length}
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any, config: any }) => {
+                                      (attribute: { id: any; config: any }) => {
                                         if (attribute.id === val.id) {
                                           const updatedAttribute = { ...attribute };
                                           const config = JSON.parse(updatedAttribute.config);
@@ -805,7 +801,7 @@ export default function ContentTypeNew() {
                                     if (event) {
                                       const updatedAttributeList =
                                         openedAttribute.attributeList.map(
-                                          (attribute: { id: any, config: any }) => {
+                                          (attribute: { id: any; config: any }) => {
                                             if (attribute.id === val.id) {
                                               const updatedAttribute = { ...attribute };
                                               const config = JSON.parse(updatedAttribute.config);
@@ -884,8 +880,8 @@ export default function ContentTypeNew() {
       <Modal open={isOpenModalEditAttribute} toggle={() => null} title="" width={840} height={640}>
         <div className="flex flex-col">
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
-            <div className='flex flex-row'>
-              <img className='ml-5' src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
+            <div className="flex flex-row">
+              <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
               <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType)}</div>
             </div>
             <div className="p-2">
@@ -911,7 +907,7 @@ export default function ContentTypeNew() {
             <div className="flex flex-col w-1/2">
               <InputText
                 labelTitle="Name"
-                labelStyle='font-bold'
+                labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.name}
                 inputStyle="rounded-3xl"
@@ -924,7 +920,7 @@ export default function ContentTypeNew() {
               />
               <InputText
                 labelTitle="Field ID"
-                labelStyle='font-bold'
+                labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
                 inputStyle="rounded-3xl"
@@ -941,7 +937,7 @@ export default function ContentTypeNew() {
               <div className="flex flex-row gap-4 my-5">
                 <InputText
                   labelTitle={`Minimum Length (Optional)`}
-                  labelStyle='font-bold'
+                  labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.min_length || ''}
                   inputStyle="rounded-3xl"
@@ -956,7 +952,7 @@ export default function ContentTypeNew() {
                 />
                 <InputText
                   labelTitle={`Maximum Length (Optional)`}
-                  labelStyle='font-bold'
+                  labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.max_length || ''}
                   inputStyle="rounded-3xl"
@@ -1021,9 +1017,14 @@ export default function ContentTypeNew() {
                             key={idx}
                             className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
                             <div className="flex flex-row justify-between w-full border-b-2 mb-4">
-                              <div className='flex flex-row w-full mb-4'>
-                                <img className='ml-5' src={`data:image/svg+xml;base64,${val?.icon}`} />
-                                <div className="font-bold capitalize ml-5">{getType(val?.fieldType)}</div>
+                              <div className="flex flex-row w-full mb-4">
+                                <img
+                                  className="ml-5"
+                                  src={`data:image/svg+xml;base64,${val?.icon}`}
+                                />
+                                <div className="font-bold capitalize ml-5">
+                                  {getType(val?.fieldType)}
+                                </div>
                               </div>
                               <svg
                                 role="button"
@@ -1052,13 +1053,13 @@ export default function ContentTypeNew() {
                             <div className="flex flex-col w-1/2">
                               <InputText
                                 labelTitle="Name"
-                                labelStyle='font-bold'
+                                labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
                                   const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (                                    attribute: { id: any; }) => {
+                                    (attribute: { id: any }) => {
                                       if (attribute.id === val.id) {
                                         return {
                                           ...attribute,
@@ -1077,13 +1078,13 @@ export default function ContentTypeNew() {
                               />
                               <InputText
                                 labelTitle="Field ID"
-                                labelStyle='font-bold'
+                                labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
                                   const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (                                    attribute: { id: any; }) => {
+                                    (attribute: { id: any }) => {
                                       if (attribute.id === val.id) {
                                         return {
                                           ...attribute,
@@ -1105,13 +1106,13 @@ export default function ContentTypeNew() {
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
                                   labelTitle={`Minimum Length (Optional)`}
-                                  labelStyle='font-bold'
+                                  labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).min_length}
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any, config: any }) => {
+                                      (attribute: { id: any; config: any }) => {
                                         if (attribute.id === val.id) {
                                           const updatedAttribute = { ...attribute };
                                           const config = JSON.parse(updatedAttribute.config);
@@ -1131,13 +1132,13 @@ export default function ContentTypeNew() {
                                 />
                                 <InputText
                                   labelTitle={`Maximum Length (Optional)`}
-                                  labelStyle='font-bold'
+                                  labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).max_length}
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any, config: any }) => {
+                                      (attribute: { id: any; config: any }) => {
                                         if (attribute.id === val.id) {
                                           const updatedAttribute = { ...attribute };
                                           const config = JSON.parse(updatedAttribute.config);
@@ -1179,7 +1180,7 @@ export default function ContentTypeNew() {
                                       event.stopPropagation();
                                       const updatedAttributeList =
                                         openedAttribute.attributeList.map(
-                                          (attribute: { id: any, config: any }) => {
+                                          (attribute: { id: any; config: any }) => {
                                             if (attribute.id === val.id) {
                                               const updatedAttribute = { ...attribute };
                                               const config = JSON.parse(updatedAttribute.config);
