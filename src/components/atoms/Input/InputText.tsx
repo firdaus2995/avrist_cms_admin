@@ -43,6 +43,7 @@ export const InputText: React.FC<IInputText> = ({
   inputHeight,
   name,
   isError,
+  suffix,
 }) => {
   return (
     <div
