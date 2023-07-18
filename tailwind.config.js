@@ -22,6 +22,7 @@ export default {
         'secondary-warning': '#FF8E3C',
         reddist: '#DB3838',
         'dark-reddist': '#AE1D1D',
+        'lumut': '#DFEEEC',
         'toast-error': '#FFF6F6',
         'toast-error-border': '#EBD2CE',
       },

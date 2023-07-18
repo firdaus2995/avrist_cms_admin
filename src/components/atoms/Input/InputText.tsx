@@ -1,5 +1,6 @@
 import { HTMLInputTypeAttribute } from 'react';
 import PropTypes from 'prop-types';
+import ErrorSmallIcon from "../../../assets/error-small.svg";
 
 interface IInputText {
   labelTitle: string;
@@ -12,14 +13,15 @@ interface IInputText {
   value?: string | number;
   placeholder?: string | null;
   disabled?: boolean;
-  suffix?: React.ReactNode;
   direction?: string;
   roundStyle?: string;
   themeColor?: string;
   inputWidth?: number;
   inputHeight?: number;
+  isError?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
+  suffix?: React.ReactNode;
 }
 
 export const InputText: React.FC<IInputText> = ({
@@ -33,7 +35,6 @@ export const InputText: React.FC<IInputText> = ({
   placeholder,
   disabled,
   onChange,
-  suffix,
   inputStyle,
   direction,
   roundStyle = '3xl',
@@ -41,6 +42,7 @@ export const InputText: React.FC<IInputText> = ({
   inputWidth,
   inputHeight,
   name,
+  isError,
 }) => {
   return (
     <div
@@ -55,16 +57,10 @@ export const InputText: React.FC<IInputText> = ({
           <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
         </span>
       </label>
-      <div
-        style={{
-          width: inputWidth ?? '100%',
-          height: inputHeight ?? '',
-        }}
-        className={`input input-bordered ${`rounded-${roundStyle}`} ${
-          themeColor ? `border-${themeColor}` : ''
-        } focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${
-          themeColor ?? '[#D2D4D7]'
-        } ${disabled ? 'bg-[#E9EEF4] ' : ''}`}>
+      <div style={{
+        width: inputWidth ?? '100%',
+        height: inputHeight ?? '',
+      }} className={`input input-bordered ${`rounded-${roundStyle}`} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''} ${isError && 'border-reddist'}`}>
         <input
           name={name}
           type={type ?? 'text'}
@@ -82,6 +78,14 @@ export const InputText: React.FC<IInputText> = ({
         />
         <div className="relative right-8">{suffix ?? ''}</div>
       </div>
+      {
+        isError && (
+          <div className='flex flex-row px-1 py-2'>
+            <img src={ErrorSmallIcon} className='mr-3' />
+            <p className='text-reddist text-sm'>This field is required</p>
+          </div>
+        )
+      }
     </div>
   );
 };
@@ -97,7 +101,6 @@ InputText.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
-  suffix: PropTypes.any,
   direction: PropTypes.string,
   inputStyle: PropTypes.string,
   roundStyle: PropTypes.string,
@@ -105,4 +108,6 @@ InputText.propTypes = {
   inputWidth: PropTypes.number,
   inputHeight: PropTypes.number,
   name: PropTypes.string,
+  isError: PropTypes.bool,
+  suffix: PropTypes.node,
 };

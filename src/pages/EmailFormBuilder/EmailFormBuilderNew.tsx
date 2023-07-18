@@ -4,24 +4,26 @@ import { t } from "i18next";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 
-import Drag from "./dnd/Drag";
-import Drop from "./dnd/Drop";
+import Drag from "./moduleNewAndUpdate/dragAndDropComponent/Drag";
+import Drop from "./moduleNewAndUpdate/dragAndDropComponent/Drop";
 import CancelIcon from "../../assets/cancel.png";
 import ModalConfirm from "@/components/molecules/ModalConfirm";
-import EFBComponent from "./component";
-import EFBPreview from "./previewComponent";
-import EFBConfiguration from "./configuration";
+import EFBList from "./moduleNewAndUpdate/listComponent";
+import EFBPreview from "./moduleNewAndUpdate/previewComponent";
+import EFBConfiguration from "./moduleNewAndUpdate/configurationComponent";
 import { Divider } from "@/components/atoms/Divider";
 import { CheckBox } from "@/components/atoms/Input/CheckBox";
 import { InputText } from "@/components/atoms/Input/InputText";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
+import { useAppDispatch } from "@/store";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
-// import { useAppDispatch } from "@/store";
+import { useCreateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
+import { openToast } from "@/components/atoms/Toast/slice";
 
 export default function EmailFormBuilderNew () {
   const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
   // FORM STATE
   const [formName, setFormName] = useState<any>("");
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
@@ -33,9 +35,178 @@ export default function EmailFormBuilderNew () {
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
 
-  const onSave = () => {
+  // RTK CREATE EMAIL
+  const [ createEmailFormBuilder, {
+    isLoading
+  }] = useCreateEmailFormBuilderMutation();
 
-  }
+  const onSave = () => {
+    // ALL COMPONENTS
+    let frontendError: boolean = false;
+
+    const currentComponents: any = copyArray(components);
+    for (let i = 0; i < currentComponents.length; i++) {
+      for (const key in currentComponents[i].mandatory) {
+        if (!currentComponents[i][key] || currentComponents[i][key].length === 0) {
+          frontendError = true
+          currentComponents[i].mandatory[key] = true;
+        } else {
+          currentComponents[i].mandatory[key] = false;
+        }
+      };
+    };
+
+    // ACTIVE COMPONENT
+    const activeCurrentComponent: any = activeComponent?.data;
+    if (activeCurrentComponent) {
+      for (const key in activeCurrentComponent.mandatory) {
+        if (!activeCurrentComponent[key] || activeCurrentComponent[key].length === 0) {
+          activeCurrentComponent.mandatory[key] = true;
+        } else {
+          activeCurrentComponent.mandatory[key] = false;
+        }
+      };
+    };
+
+    setComponents(currentComponents);
+    if (activeCurrentComponent) {
+      setActiveComponent((prevComponent: any) => (
+        {
+          ...prevComponent,
+          data: activeCurrentComponent,
+        }
+      ));
+    };
+
+    if (frontendError) {
+      return;
+    };
+
+    const backendComponents: any = currentComponents.map((element: any) => {
+      switch (element.type) {
+        case "TEXTFIELD":
+          return {
+            fieldType: "TEXT_FIELD",
+            name: element.name,
+            fieldId: "TEXT_FIELD",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\"}`, //eslint-disable-line
+          };
+        case "TEXTAREA":
+          return {
+            fieldType: "TEXT_AREA",
+            name: element.name,
+            fieldId: "TEXT_AREA",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\", \"max_length\": \"${element.maxLength ?? 0}\", \"min_length\": \"${element.minLength ?? 0}\"}`, //eslint-disable-line
+          };
+        case "DROPDOWN":
+          return {
+            fieldType: "DROPDOWN",
+            name: element.name,
+            fieldId: "DROPDOWN",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multiple}\"}`, //eslint-disable-line
+            value: element.items.join(";"),
+          };
+        case "RADIO":
+          return {
+            fieldType: "RADIO_BUTTON",
+            name: element.name,
+            fieldId: "RADIO_BUTTON",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`, //eslint-disable-line
+            value: element.items.join(";"),
+          };
+        case "CHECKBOX":
+          return {
+            fieldType: "CHECKBOX",
+            name: element.name,
+            fieldId: "CHECKBOX",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`, //eslint-disable-line
+            value: element.items.join(";"),
+          };
+        case "EMAIL":
+          return {
+            fieldType: "EMAIL",
+            name: element.name,
+            fieldId: "EMAIL",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
+          };
+        case "LABEL":
+          return {
+            fieldType: "LABEL",
+            name: element.name,
+            fieldId: "LABEL",
+            config: `{\"size\": [\"${element.position.toLowerCase()}\"], \"position\": [\"${element.alignment.toLowerCase()}\"]}`, //eslint-disable-line
+          };  
+        case "NUMBER":
+          return {
+            fieldType: "NUMBER",
+            name: element.name,
+            fieldId: "NUMBER",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`, //eslint-disable-line
+          };
+        case "DOCUMENT":
+          return {
+            fieldType: "DOCUMENT",
+            name: element.name,
+            fieldId: "DOCUMENT",
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`, //eslint-disable-line
+          };
+        case "IMAGE":
+          return {
+            fieldType: "IMAGE",
+            name: element.name,
+            fieldId: "IMAGE",
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`, //eslint-disable-line
+          };
+        case "SUBMITTEREMAIL":
+          return {
+            fieldType: "EMAIL",
+            name: element.name,
+            fieldId: "EMAIL",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true  \"}`, //eslint-disable-line
+          };
+        default:
+          return false;
+      };
+    });
+
+    if (multipleInput.length > 0) {
+      backendComponents.unshift({
+        fieldType: "EMAIL_FORM_PIC",
+        name: "EMAIL_FORM_PIC",
+        fieldId: "EMAIL_FORM_PIC",
+        value: multipleInput.join(";"),
+      });
+    };
+
+    console.log(backendComponents);
+
+    const payload = {
+      name: formName,
+      attributeRequests: backendComponents,
+    };
+
+    createEmailFormBuilder(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('email-form-builder.add.success-msg', { name: payload.name })
+          })
+        )
+        navigate('/email-form-builder');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('email-form-builder.add.failed-msg', { name: payload.name }),
+          }),
+        );
+      });
+  };
 
   const onLeave = () => {
     setShowLeaveModal(false);
@@ -66,86 +237,16 @@ export default function EmailFormBuilderNew () {
     setMultipleInput(items);
   };
 
-  const handlerAddComponent = (item: any) => {
-    switch (item) {
-      case "TEXTFIELD":
-        return {
-          type: item,
-          name: "Text Field Name",
-          placeholder: "Enter your field",
-          multiple: false,
-          required: false,
-        };
-      case "TEXTAREA":
-        return {
-          type: item,
-          name: "Text Area Name",
-          placeholder: "Enter your field",
-          minLength: null,
-          maxLength: null,
-          multiple: false,
-          required: false,
-        };
-      case "DROPDOWN":
-        return {
-          type: item,
-          name: "Dropdown Name",
-          items: ["Ayam", "Babi"],
-          multiple: false,
-          required: false,
-        };
-      case "RADIO":
-        return {
-          type: item,
-          name: "Radio Name",
-          items: ["Ayam", "Babi"],
-          other: true,
-          required: false,
-        };
-      case "CHECKBOX":
-        return {
-          type: item,
-          name: "Checkbox Name",
-          items: ["Ayam", "Babi"],
-          other: true,
-          required: false,
-        };
-      case "EMAIL":
-        return {
-          type: item,
-          name: "Email Name",
-          placeholder: "Enter your email",
-          required: false,
-        };
-      case "LABEL":
-        return {
-          type: item,
-          name: "Label Name",
-          position: "TITLE",
-        }
-      case "NUMBER":
-        return {
-          type: item,
-          name: "Number Name",
-          placeholder: "Enter your field",
-          required: false,
-        };
-      case "DOCUMENT":
-        return {
-          type: item,
-          name: "Document Name",
-          multiple: false,
-          required: false,
-        };
-      case "IMAGE":
-        return {
-          type: item,
-          name: "Image Name",
-          multiple: false,
-          required: false,
-        };
-      default:
-        return false;
+  const handlerSubmitterEmail = (element: any) => {
+    if (element) {
+      handlerAddComponent("SUBMITTEREMAIL");
+      setCheckSubmitterEmail(true);
+    } else {
+      const indexSubmitterEmail: number = components.findIndex((element: any) => {
+        return element.type === "SUBMITTEREMAIL";
+      })
+      handlerDeleteComponent(indexSubmitterEmail);
+      setCheckSubmitterEmail(false);
     };
   };
 
@@ -155,6 +256,150 @@ export default function EmailFormBuilderNew () {
         index,
         data: element,
       });
+    };
+  };
+
+  const handlerAddComponent = (item: any) => {
+    let component: any = {};
+    switch (item) {
+      case "TEXTFIELD":
+        component = {
+          type: item,
+          name: "Text Field Name",
+          placeholder: "Enter your field",
+          multiple: false,
+          required: false,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      case "TEXTAREA":
+        component = {
+          type: item,
+          name: "Text Area Name",
+          placeholder: "Enter your field",
+          minLength: null,
+          maxLength: null,
+          multiple: false,
+          required: false,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      case "DROPDOWN":
+        component = {
+          type: item,
+          name: "Dropdown Name",
+          items: ["Ayam", "Babi"],
+          multiple: false,
+          required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
+        };
+        break;
+      case "RADIO":
+        component = {
+          type: item,
+          name: "Radio Name",
+          items: ["Ayam", "Babi"],
+          other: true,
+          required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
+        };
+        break;
+      case "CHECKBOX":
+        component = {
+          type: item,
+          name: "Checkbox Name",
+          items: ["Ayam", "Babi"],
+          other: true,
+          required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
+        };
+        break;
+      case "EMAIL":
+        component = {
+          type: item,
+          name: "Email Name",
+          placeholder: "Enter your email",
+          required: false,
+          submitter: false,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      case "LABEL":
+        component = {
+          type: item,
+          name: "Label Name",
+          position: "TITLE",
+          alignment: "LEFT",
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      case "NUMBER":
+        component = {
+          type: item,
+          name: "Number Name",
+          placeholder: "Enter your field",
+          required: false,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      case "DOCUMENT":
+        component = {
+          type: item,
+          name: "Document Name",
+          multiple: false,
+          required: false,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      case "IMAGE":
+        component = {
+          type: item,
+          name: "Image Name",
+          multiple: false,
+          required: false,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      case "SUBMITTEREMAIL":
+        component = {
+          type: item,
+          name: "Submitter Email Name",
+          placeholder: "Enter your email",
+          required: true,
+          submitter: true,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;
+      default:
+        component = false;
+    };
+    if (component) {
+      setComponents((prevItem: any) => [...prevItem, component]);
     };
   };
 
@@ -171,52 +416,52 @@ export default function EmailFormBuilderNew () {
         <Drag
           name="TEXTFIELD"
         >
-          <EFBComponent.TextField />
+          <EFBList.TextField />
         </Drag>
         <Drag
           name="TEXTAREA"
         >
-          <EFBComponent.TextArea />
+          <EFBList.TextArea />
         </Drag>
         <Drag
           name="DROPDOWN"
         >
-          <EFBComponent.Dropdown />
+          <EFBList.Dropdown />
         </Drag>
         <Drag
           name="RADIO"
         >
-          <EFBComponent.Radio />
+          <EFBList.Radio />
         </Drag>
         <Drag
           name="CHECKBOX"
         >
-          <EFBComponent.Checkbox />
+          <EFBList.Checkbox />
         </Drag>
         <Drag
           name="EMAIL"
         >
-          <EFBComponent.Email />
+          <EFBList.Email />
         </Drag>
         <Drag
           name="LABEL"
         >
-          <EFBComponent.Label />
+          <EFBList.Label />
         </Drag>
         <Drag
           name="NUMBER"
         >
-          <EFBComponent.Number />
+          <EFBList.Number />
         </Drag>
         <Drag
           name="DOCUMENT"
         >
-          <EFBComponent.Document />
+          <EFBList.Document />
         </Drag>
         <Drag
           name="IMAGE"
         >
-          <EFBComponent.Image />
+          <EFBList.Image />
         </Drag>
       </React.Fragment>
     )
@@ -324,6 +569,7 @@ export default function EmailFormBuilderNew () {
                 key={index}
                 name={element.name}
                 isActive={activeComponent?.index === index}
+                alignment={element.alignment}
                 onClick={() => {
                   handlerFocusComponent(element, index)
                 }}
@@ -375,6 +621,18 @@ export default function EmailFormBuilderNew () {
                 }}
               />
             );
+          case "SUBMITTEREMAIL":
+            return (
+              <EFBPreview.SubmitterEmail
+                key={index}
+                name={element.name}
+                placeholder={element.placeholder}
+                isActive={activeComponent?.index === index}
+                onClick={() => {
+                  handlerFocusComponent(element, index)
+                }}
+              />
+            );  
           default:
             return (
               <div>ERROR</div>
@@ -393,6 +651,7 @@ export default function EmailFormBuilderNew () {
             placeholder={activeComponent?.data?.placeholder}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -407,6 +666,7 @@ export default function EmailFormBuilderNew () {
             maxLength={activeComponent?.data?.maxLength}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -419,6 +679,7 @@ export default function EmailFormBuilderNew () {
             items={activeComponent?.data?.items}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -431,6 +692,7 @@ export default function EmailFormBuilderNew () {
             items={activeComponent?.data?.items}
             other={activeComponent?.data?.other}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -443,6 +705,7 @@ export default function EmailFormBuilderNew () {
             items={activeComponent?.data?.items}
             other={activeComponent?.data?.other}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -454,6 +717,7 @@ export default function EmailFormBuilderNew () {
             name={activeComponent?.data?.name}
             placeholder={activeComponent?.data?.placeholder}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -464,6 +728,8 @@ export default function EmailFormBuilderNew () {
           <EFBConfiguration.Label 
             name={activeComponent?.data?.name}
             position={activeComponent?.data?.position}
+            alignment={activeComponent?.data?.alignment}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -471,10 +737,11 @@ export default function EmailFormBuilderNew () {
         )
       case "NUMBER":
         return (
-          <EFBConfiguration.Email 
+          <EFBConfiguration.Number 
             name={activeComponent?.data?.name}
             placeholder={activeComponent?.data?.placeholder}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -486,6 +753,7 @@ export default function EmailFormBuilderNew () {
             name={activeComponent?.data?.name}
             multiple={activeComponent?.data?.multiple}
             required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -496,7 +764,20 @@ export default function EmailFormBuilderNew () {
           <EFBConfiguration.Image 
             name={activeComponent?.data?.name}
             multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required} 
+            required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
+            valueChange={(type: string, value: any) => {
+              functionChangeState(type, value)
+            }}
+          />
+        )
+      case "SUBMITTEREMAIL":
+        return (
+          <EFBConfiguration.SubmitterEmail 
+            name={activeComponent?.data?.name}
+            placeholder={activeComponent?.data?.placeholder}
+            required={activeComponent?.data?.required}
+            errors={activeComponent?.data?.mandatory}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -557,8 +838,8 @@ export default function EmailFormBuilderNew () {
             />
             <CheckBox
               defaultValue={checkSubmitterEmail}
-              updateFormValue={e => {
-                setCheckSubmitterEmail(e.value);
+              updateFormValue={(event: any) => {
+                handlerSubmitterEmail(event.value);
               }}
               labelTitle="Also send to submitter email"
               labelContainerStyle="justify-start"
@@ -584,10 +865,7 @@ export default function EmailFormBuilderNew () {
                 <h2 className="font-bold p-3">Form Preview</h2>
                 <Drop
                   onDropped={(item: any) => {
-                    const component: any = handlerAddComponent(item.name);                    
-                    if (component) {
-                      setComponents((prevItem: any) => [...prevItem, component]);
-                    };
+                    handlerAddComponent(item.name);                    
                   }}
                 >
                   {renderDropComponents()}
@@ -609,15 +887,15 @@ export default function EmailFormBuilderNew () {
               event.preventDefault();
               setLeaveTitleModalShow(t('modal.confirmation'));
               setMessageLeaveModalShow(t('modal.leave-confirmation'));
-              setShowLeaveModal(true);          
+              setShowLeaveModal(true);
             }}>
-              {t('btn.cancel')}
+              {isLoading ? 'Loading...' : t('btn.cancel')}
             </button>
             <button className="btn btn-success btn-md" onClick={(event: any) => {
               event.preventDefault();
               onSave();
             }}>
-              {t('btn.save')}
+              {isLoading ? 'Loading...' : t('btn.save')}
             </button>
           </div>
         </form>
