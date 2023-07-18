@@ -16,30 +16,94 @@ export const contentManagerApi = createApi({
             $sortBy: String
             $direction: String
           ) {
-            contentDataList(postTypeId: $id,
-            pageableRequest: {
+            contentDataList(
+              postTypeId: $id
+              pageableRequest: {
                 pageIndex: $pageIndex
                 limit: $limit
                 sortBy: $sortBy
                 direction: $direction
-            }) {
-                total
-                contentDataList {
-                    id
-                    title
-                    shortDesc
-                    categoryName
-                    status
-                }
+              }
+            ) {
+              total
+              contentDataList {
+                id
+                title
+                shortDesc
+                categoryName
+                status
+              }
             }
           }
         `,
         variables: payload,
       }),
     }),
-  })
-})
+    getCategoryList: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query categoryList(
+            $postTypeId: Int!
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+          ) {
+            categoryList(
+              postTypeId: $postTypeId
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                sortBy: $sortBy
+                direction: $direction
+              }
+            ) {
+              total
+              categoryList {
+                id
+                name
+                shortDesc
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    createContentData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation contentDataCreate(
+            $title: String!
+            $shortDesc: String!
+            $isDraft: Boolean!
+            $postTypeId: Int!
+            $categoryName: String!
+            $contentData: [PostMetaTemplateRequest]!
+          ) {
+            contentDataCreate(
+              request: {
+                title: $title
+                shortDesc: $shortDesc
+                isDraft: $isDraft
+                postTypeId: $postTypeId
+                categoryName: $categoryName
+                contentData: $contentData
+              }
+            ) {
+              id
+              title
+              shortDesc
+              categoryName
+              status
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+  }),
+});
 
-export const {
-  useGetContentDataQuery,
-} = contentManagerApi;
+export const { useGetContentDataQuery, useGetCategoryListQuery, useCreateContentDataMutation } =
+  contentManagerApi;
