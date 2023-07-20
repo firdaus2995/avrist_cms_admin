@@ -55,7 +55,9 @@ const TextArea: React.FC<ITextArea> = ({
         <InputText
           type="number"
           labelTitle="Min. Length"
+          labelTitleExtension="(Optional)"
           labelStyle="font-bold	"
+          labelTitleExtensionStyle="!text-xs !font-normal"
           inputHeight={40}
           inputStyle="text-sm"
           roundStyle="lg"
@@ -67,7 +69,9 @@ const TextArea: React.FC<ITextArea> = ({
         <InputText
           type="number"
           labelTitle="Max. Length"
+          labelTitleExtension="(Optional)"
           labelStyle="font-bold	"
+          labelTitleExtensionStyle="!text-xs !font-normal"
           inputHeight={40}
           inputStyle="text-sm"
           roundStyle="lg"
