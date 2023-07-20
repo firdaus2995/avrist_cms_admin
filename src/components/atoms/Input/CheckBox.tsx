@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 interface ICheckBox {
@@ -27,6 +27,10 @@ export const CheckBox: React.FC<ICheckBox> = ({
   labelContainerStyle,
 }) => {
   const [value, setValue] = useState(defaultValue);
+
+  useEffect(() => {
+    setValue(defaultValue);
+  }, [defaultValue]);
 
   const updateToogleValue = () => {
     setValue(!(value ?? false));

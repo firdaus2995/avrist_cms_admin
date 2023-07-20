@@ -17,9 +17,9 @@ import { InputText } from "@/components/atoms/Input/InputText";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
+import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useCreateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
-import { openToast } from "@/components/atoms/Toast/slice";
 
 export default function EmailFormBuilderNew () {
   const navigate = useNavigate();
@@ -177,8 +177,6 @@ export default function EmailFormBuilderNew () {
         value: multipleInput.join(";"),
       });
     };
-
-    console.log(backendComponents);
 
     const payload = {
       name: formName,
