@@ -43,6 +43,11 @@
       "title": "Tambah Email Form Builder",
       "success-msg": "Email Form Builder {{name}} berhasil disimpan",
       "failed-msg": "Email Form Builder {{name}} gagal disimpan"
+    },
+    "edit": {
+      "title": "Modifikasi Email Form Builder",
+      "success-msg": "Email Form Builder {{name}} berhasil diperbarui",
+      "failed-msg": "Email Form Builder {{name}} gagal diperbarui"
     }
   },
   "roles": {

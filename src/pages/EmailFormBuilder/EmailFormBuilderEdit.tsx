@@ -844,7 +844,7 @@ export default function EmailFormBuilderEdit () {
   return (
     <React.Fragment>
       <TitleCard
-        title={t('email-form-builder.add.title')}
+        title={t('email-form-builder.edit.title')}
         topMargin="mt-2"
       >
         <ModalConfirm
