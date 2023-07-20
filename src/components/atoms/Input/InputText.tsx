@@ -4,7 +4,9 @@ import ErrorSmallIcon from "../../../assets/error-small.svg";
 
 interface IInputText {
   labelTitle: string;
+  labelTitleExtension?: string;
   labelStyle?: string;
+  labelTitleExtensionStyle?: string;
   labelRequired?: boolean;
   labelWidth?: number;
   inputStyle?: string;
@@ -26,7 +28,9 @@ interface IInputText {
 
 export const InputText: React.FC<IInputText> = ({
   labelTitle,
+  labelTitleExtension,
   labelStyle = '',
+  labelTitleExtensionStyle = '',
   labelRequired,
   labelWidth = 225,
   type,
@@ -54,7 +58,7 @@ export const InputText: React.FC<IInputText> = ({
         }}
         className={`label`}>
         <span className={`label-text text-base-content ${labelStyle}`}>
-          {labelTitle}
+          {labelTitle} {labelTitleExtension && <span className={labelTitleExtensionStyle}>{labelTitleExtension}</span>}
           <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
         </span>
       </label>
@@ -93,7 +97,9 @@ export const InputText: React.FC<IInputText> = ({
 
 InputText.propTypes = {
   labelTitle: PropTypes.string.isRequired,
+  labelTitleExtension: PropTypes.string,
   labelStyle: PropTypes.string,
+  labelTitleExtensionStyle: PropTypes.string,
   labelRequired: PropTypes.bool,
   labelWidth: PropTypes.number,
   type: PropTypes.string,
