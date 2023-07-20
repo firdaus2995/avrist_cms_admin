@@ -25,6 +25,7 @@ export default {
         'lumut': '#DFEEEC',
         'toast-error': '#FFF6F6',
         'toast-error-border': '#EBD2CE',
+        'form-disabled-bg': '#E9EEF4',
       },
       // Custom fonts
       fontFamily: {
