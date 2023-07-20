@@ -168,7 +168,7 @@ export default function PreviewModal(props: any) {
                     <span className="label-text">{element?.value}</span>
                   </label>
                 ))}
-                {allow_other_value && (
+                {ALLOW_OTHER_VALUE && (
                   <label className="label cursor-pointer justify-start flex h-[34px] gap-2 p-0">
                     <input
                       type="radio"
