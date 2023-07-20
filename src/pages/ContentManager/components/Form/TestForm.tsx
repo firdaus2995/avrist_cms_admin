@@ -22,10 +22,13 @@ function TestForm() {
     setBannerForm(values);
   };
 
-  const handleInputChange = (index: number, event: ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (
+    index: number,
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     const values = [...bannerForm];
     const updatedValue = event.target.name;
-    values[index][updatedValue] = event.target.value;
+    (values[index] as any)[updatedValue] = event.target.value;
     setBannerForm(values);
   };
 
@@ -54,7 +57,9 @@ function TestForm() {
                     name="name"
                     placeholder="Enter Name"
                     value={field.name}
-                    onChange={event => { handleInputChange(index, event); }}
+                    onChange={event => {
+                      handleInputChange(index, event);
+                    }}
                     className="w-full rounded py-1 px-2 border border-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -65,7 +70,9 @@ function TestForm() {
                     name="description"
                     placeholder="Enter Description"
                     value={field.description}
-                    onChange={event => { handleInputChange(index, event); }}
+                    onChange={event => {
+                      handleInputChange(index, event);
+                    }}
                     className="w-full rounded py-1 px-2 border border-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -75,8 +82,10 @@ function TestForm() {
                     type="number"
                     name="price"
                     placeholder="Enter Price"
-                    value={field.price}
-                    onChange={event => { handleInputChange(index, event); }}
+                    value={field.price ?? ''}
+                    onChange={event => {
+                      handleInputChange(index, event);
+                    }}
                     className="w-full rounded py-1 px-2 border border-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
@@ -86,14 +95,18 @@ function TestForm() {
                     type="number"
                     name="rating"
                     placeholder="Enter Rating"
-                    value={field.rating}
-                    onChange={event => { handleInputChange(index, event); }}
+                    value={field.rating ?? ''}
+                    onChange={event => {
+                      handleInputChange(index, event);
+                    }}
                     className="w-full rounded py-1 px-2 border border-gray-400 focus:outline-none focus:border-blue-500"
                   />
                 </div>
                 <button
                   className="bg-gray-500 text-white py-2 px-4 rounded"
-                  onClick={() => { handleRemovePlayers(index); }}>
+                  onClick={() => {
+                    handleRemovePlayers(index);
+                  }}>
                   Cancel
                 </button>
               </div>

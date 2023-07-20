@@ -5,7 +5,9 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 import CkEditor from '@/components/atoms/Ckeditor';
 
 export const LoopingBannerForm: React.FC<any> = ({ formData, onChange, onRemove, isRemovable }) => {
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement> | React.ChangeEvent<HTMLTextAreaElement>,
+  ): void => {
     const { name, value } = e.target;
     const updatedFormData: FormData = { ...formData, [name]: value };
     onChange(updatedFormData);

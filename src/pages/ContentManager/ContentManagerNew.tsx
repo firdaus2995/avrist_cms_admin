@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -31,10 +31,13 @@ export default function ContentManagerNew() {
   //   setBannerForm(values);
   // };
 
-  const handleInputChange = (index, event) => {
+  const handleInputChange = (
+    index: number,
+    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
+  ) => {
     const values = [...bannerForm];
     const updatedValue = event.target.name;
-    values[index][updatedValue] = event.target.value;
+    (values[index] as any)[updatedValue] = event.target.value;
     setBannerForm(values);
   };
 
@@ -140,7 +143,7 @@ export default function ContentManagerNew() {
         <Typography type="body" size="m" weight="bold" className="my-5 ml-1">
           Looping Banner
         </Typography>
-        {bannerForm.map((formData, index) => {
+        {bannerForm.map((_formData, index) => {
           return (
             <div key={index}>
               <div className="rounded-xl shadow-md p-5 mb-10">
