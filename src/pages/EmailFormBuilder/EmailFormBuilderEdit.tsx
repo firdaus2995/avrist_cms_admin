@@ -49,7 +49,7 @@ export default function EmailFormBuilderEdit () {
       const emailFormBuilderDetail: any = dataDetail?.postTypeDetail;
 
       const name: string = emailFormBuilderDetail?.name;
-      const pic: any = emailFormBuilderDetail?.pic.split(";");
+      const pic: any = emailFormBuilderDetail?.pic?.split(";") ?? [];
 
       const attributeList: any = emailFormBuilderDetail?.attributeList.map((element: any) => {
         const config: any = JSON.parse(element?.config);
