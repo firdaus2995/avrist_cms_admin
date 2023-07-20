@@ -24,8 +24,13 @@ const loginSlice = createSlice({
     setRoles: (state, action: PayloadAction<string[]>) => {
       state.roles = action.payload;
     },
+    clearAuth: (state) => {
+      state.accessToken = '';
+      state.refreshToken = '';
+      state.roles = [];
+    },
   },
 });
 
-export const { setAccessToken, setRefreshToken, setRoles } = loginSlice.actions;
+export const { setAccessToken, setRefreshToken, setRoles, clearAuth } = loginSlice.actions;
 export default loginSlice.reducer;

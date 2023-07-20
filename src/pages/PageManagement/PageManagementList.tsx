@@ -242,7 +242,7 @@ export default function PageManagementList() {
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
     setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete ${title}?`);
+    setMessageConfirm(`Do you want to delete ${title} from the list?`);
     setShowConfirm(true);
   };
 
