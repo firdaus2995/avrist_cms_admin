@@ -106,7 +106,7 @@ export default function EmailFormBuilderNew () {
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multiple}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
-        case "RADIO":
+        case "RADIOBUTTON":
           return {
             fieldType: "RADIO_BUTTON",
             name: element.name,
@@ -299,7 +299,7 @@ export default function EmailFormBuilderNew () {
           },
         };
         break;
-      case "RADIO":
+      case "RADIOBUTTON":
         component = {
           type: item,
           name: "Radio Name",
@@ -427,7 +427,7 @@ export default function EmailFormBuilderNew () {
           <EFBList.Dropdown />
         </Drag>
         <Drag
-          name="RADIO"
+          name="RADIOBUTTON"
         >
           <EFBList.Radio />
         </Drag>
@@ -514,7 +514,7 @@ export default function EmailFormBuilderNew () {
                 }}
               />
             );
-          case "RADIO":
+          case "RADIOBUTTON":
             return (
               <EFBPreview.Radio 
                 key={index}
@@ -683,7 +683,7 @@ export default function EmailFormBuilderNew () {
             }}
           />
         )
-      case "RADIO":
+      case "RADIOBUTTON":
         return (
           <EFBConfiguration.Radio 
             name={activeComponent?.data?.name}
