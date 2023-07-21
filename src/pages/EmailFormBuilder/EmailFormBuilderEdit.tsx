@@ -19,7 +19,7 @@ import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
-import { useGetEmailFormBuilderDetailQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi";
+import { useGetEmailFormBuilderDetailQuery, useUpdateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi";
 
 export default function EmailFormBuilderEdit () {
   const navigate = useNavigate();
@@ -37,12 +37,14 @@ export default function EmailFormBuilderEdit () {
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
 
   // RTK GET DETAIL
-  const { data: dataDetail } = useGetEmailFormBuilderDetailQuery({ id, pageIndex: 0, limit: 99 });
+  const { data: dataDetail } = useGetEmailFormBuilderDetailQuery({ id, pageIndex: 0, limit: 99 }, {
+    refetchOnMountOrArgChange: true,
+  });
 
   // RTK UPDATE EMAIL
-  // const [ updateEmailFormBuilder, {
-  //   isLoading
-  // }] = useUpdateEmailFormBuilderMutation();
+  const [ updateEmailFormBuilder, {
+    isLoading
+  }] = useUpdateEmailFormBuilderMutation();
 
   useEffect(() => {
     if (dataDetail) {
@@ -63,34 +65,34 @@ export default function EmailFormBuilderEdit () {
         return {
           type: submmiterEmail ? 'SUBMITTEREMAIL' : element?.fieldType.replaceAll('_', ''),
           name: element?.name,
-          ...(config.hasOwnProperty('placeholder') && {
+          ...(!!Object.getOwnPropertyDescriptor(config, 'placeholder') && {
             placeholder: config?.placeholder,
           }),
-          ...(config.hasOwnProperty('multiple_input') && {
-            multiple: config?.multiple_input === "true" ? true : false,
+          ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_input') && {
+            multiple: config?.multiple_input === "true" ?? false,
           }),
-          ...(config.hasOwnProperty('multiple_select') && {
-            multiple: config?.multiple_select === "true" ? true : false,
+          ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_select') && {
+            multiple: config?.multiple_select === "true" ?? false,
           }),
-          ...(config.hasOwnProperty('multiple_upload') && {
-            multiple: config?.multiple_upload === "true" ? true : false,
+          ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_upload') && {
+            multiple: config?.multiple_upload === "true" ?? false,
           }),
-          ...(config.hasOwnProperty('required') && {
-            required: config?.required === "true" ? true : false,
+          ...(!!Object.getOwnPropertyDescriptor(config, 'required') && {
+            required: config?.required === "true" ?? false,
           }),
-          ...(config.hasOwnProperty('min_length') && {
+          ...(!!Object.getOwnPropertyDescriptor(config, 'min_length') && {
             minLength: config?.min_length,
           }),
-          ...(config.hasOwnProperty('max_length') && {
+          ...(!!Object.getOwnPropertyDescriptor(config, 'max_length') && {
             maxLength: config?.max_length,
           }),
-          ...(config.hasOwnProperty('allow_other_value') && {
-            other: config?.allow_other_value === "true" ? true : false,
+          ...(!!Object.getOwnPropertyDescriptor(config, 'allow_other_value') && {
+            other: config?.allow_other_value === "true" ?? false,
           }),
-          ...(config.hasOwnProperty('size') && {
+          ...(!!Object.getOwnPropertyDescriptor(config, 'size') && {
             position: config?.size[0].toUpperCase(),
           }),
-          ...(config.hasOwnProperty('position') && {
+          ...(!!Object.getOwnPropertyDescriptor(config, 'position') && {
             alignment: config?.position[0].toUpperCase(),
           }),
 
@@ -252,11 +254,32 @@ export default function EmailFormBuilderEdit () {
     };
 
     const payload = {
+      id,
       name: formName,
       attributeRequests: backendComponents,
     };
 
-
+    updateEmailFormBuilder(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('email-form-builder.edit.success-msg', { name: payload.name })
+          })
+        )
+        navigate('/email-form-builder');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('email-form-builder.edit.failed-msg', { name: payload.name }),
+          }),
+        );
+      })
   };
 
   const onLeave = () => {
@@ -940,13 +963,13 @@ export default function EmailFormBuilderEdit () {
               setMessageLeaveModalShow(t('modal.leave-confirmation'));
               setShowLeaveModal(true);
             }}>
-              {t('btn.cancel')}
+              {isLoading ? 'Loading...' : t('btn.cancel')}
             </button>
             <button className="btn btn-success btn-md" onClick={(event: any) => {
               event.preventDefault();
               onSave();
             }}>
-              {t('btn.save')}
+              {isLoading ? 'Loading...' : t('btn.save')}
             </button>
           </div>
         </form>
