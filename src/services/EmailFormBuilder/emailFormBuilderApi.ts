@@ -30,7 +30,7 @@ export const emailFormBuilderApi = createApi({
                 fieldType
                 fieldId
                 config
-                # value
+                value
               }
             }
           }

@@ -366,7 +366,7 @@ export default function EmailFormBuilderEdit () {
         component = {
           type: item,
           name: "Dropdown Name",
-          items: ["Ayam", "Babi"],
+          items: ["Content 1", "Content 2"],
           multiple: false,
           required: false,
           mandatory: {
@@ -379,7 +379,7 @@ export default function EmailFormBuilderEdit () {
         component = {
           type: item,
           name: "Radio Name",
-          items: ["Ayam", "Babi"],
+          items: ["Content 1", "Content 2"],
           other: true,
           required: false,
           mandatory: {
@@ -392,7 +392,7 @@ export default function EmailFormBuilderEdit () {
         component = {
           type: item,
           name: "Checkbox Name",
-          items: ["Ayam", "Babi"],
+          items: ["Content 1", "Content 2"],
           other: true,
           required: false,
           mandatory: {
