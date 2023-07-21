@@ -30,6 +30,7 @@ export const emailFormBuilderApi = createApi({
                 fieldType
                 fieldId
                 config
+                value
               }
             }
           }
@@ -93,6 +94,32 @@ export const emailFormBuilderApi = createApi({
         variables: payload,
       })
     }),
+    updateEmailFormBuilder: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation postTypeUpdate(
+            $id: Int!
+            $name: String!
+            $attributeRequests: [PostMetaTemplateRequest!]!
+          ) {
+            postTypeUpdate(
+              id: $id,
+              request: {
+                name: $name
+                postTypeGroup: "EMAIL_FORM"
+                attributeRequests: $attributeRequests
+              }
+            ) {
+              id
+              name
+              postTypeGroup
+              slug
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
     deleteEmailFormBuilder: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
@@ -113,5 +140,6 @@ export const {
   useGetEmailFormBuilderDetailQuery,
   useGetEmailFormBuilderQuery,
   useCreateEmailFormBuilderMutation,
+  useUpdateEmailFormBuilderMutation,
   useDeleteEmailFormBuilderMutation,
 } = emailFormBuilderApi;
