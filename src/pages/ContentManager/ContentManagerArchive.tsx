@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import {
-  useGetPageManagementListQuery,
-  useRestorePageMutation,
-} from '@/services/PageManagement/pageManagementApi';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
@@ -13,16 +9,22 @@ import dayjs from 'dayjs';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
+import { useGetArchiveDataQuery, useRestoreDataMutation } from '@/services/ContentManager/contentManagerApi';
+import { useGetRoleQuery } from '@/services/User/userApi';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
-
+  const [, setRoleData] = useState([]);
+  
   // GO BACK
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
   };
+
+  const params = useParams();
+  const [id] = useState<any>(Number(params.id));
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -39,25 +41,42 @@ export default function PageManagementArchive() {
   const [restoreId, setRestoreId] = useState(0);
 
   // RTK GET DATA
-  const fetchQuery = useGetPageManagementListQuery({
+  const fetchQuery = useGetArchiveDataQuery({
+    id,
     pageIndex,
     limit: pageLimit,
     direction,
     search,
     sortBy,
-    isArchive: true,
+    archive: true,
   });
   const { data } = fetchQuery;
 
+  const fetchRoleQuery = useGetRoleQuery({});
+  const { data: fetchedRole } = fetchRoleQuery;  
+
+
   // RTK RESTORE
-  const [restorePage, { isLoading }] = useRestorePageMutation();
+  const [restoreData, { isLoading }] = useRestoreDataMutation();
 
   useEffect(() => {
     if (data) {
-      setListData(data?.pageList?.pages);
-      setTotal(data?.pageList?.total);
+      setListData(data?.contentDataList?.contentDataList);
+      setTotal(data?.contentDataList?.total);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (fetchedRole) {
+      const roleList = fetchedRole?.roleList?.roles.map((element: any) => {
+        return {
+          value: Number(element.id),
+          label: element.name,
+        }
+      })
+      setRoleData(roleList);
+    };
+  }, [fetchedRole])
 
   useEffect(() => {
     const refetch = async () => {
@@ -68,7 +87,7 @@ export default function PageManagementArchive() {
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
-    if (sortModel.length) {
+    if (sortModel?.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
     }
@@ -77,13 +96,13 @@ export default function PageManagementArchive() {
   const onClickPageRestore = (id: number, title: string) => {
     setRestoreId(id);
     setRestoreModalTitle('Are you sure?');
-    setRestoreModalBody(`Do you want to restore ${title} page?`);
+    setRestoreModalBody(`Do you want to restore ${title} content data?`);
     setOpenRestoreModal(true);
   };
 
   // FUNCTION FOR restore USER
   const submitRestorePage = () => {
-    restorePage({
+    restoreData({
       id: restoreId,
     })
       .unwrap()
@@ -92,7 +111,7 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Restore Page',
+            title: 'Success Restore Data',
             message: result.pageRestore.message,
           }),
         );
@@ -103,7 +122,7 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Restore Page',
+            title: 'Failed Restore Data',
             message: 'Something went wrong!',
           }),
         );
@@ -125,7 +144,7 @@ export default function PageManagementArchive() {
     },
     {
       header: () => <span className="text-[14px]">Short Description</span>,
-      accessorKey: 'createdBy.name',
+      accessorKey: 'shortDesc',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -137,7 +156,7 @@ export default function PageManagementArchive() {
     },
     {
       header: () => <span className="text-[14px]">Category Name</span>,
-      accessorKey: 'createdAt',
+      accessorKey: 'categoryName',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
