@@ -8,16 +8,19 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
 import ModalLog from '../../components/ModalLog';
-import { useGetContentDataQuery } from '@/services/ContentManager/contentManagerApi';
+import { useDeleteContentDataMutation, useGetContentDataQuery } from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function MainTab(props: { id: any }) {
+  const dispatch = useAppDispatch();
   const { id } = props;
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
-  const [, setIdDelete] = useState(0);
+  const [idDelete, setIdDelete] = useState(0);
 
   const [listData, setListData] = useState<any>([]);
 
@@ -40,6 +43,9 @@ export default function MainTab(props: { id: any }) {
 
   const [idLog, setIdLog] = useState(null);
   const [logTitle, setLogTitle] = useState(null);
+
+  // RTK DELETE
+  const [deleteContentData, { isLoading: deleteContentDataLoading }] = useDeleteContentDataMutation();
 
   useEffect(() => {
     if (data) {
@@ -165,6 +171,33 @@ export default function MainTab(props: { id: any }) {
     setShowConfirm(true);
   };
 
+   // FUNCTION FOR DELETE PAGE
+   const submitDeletePage = () => {
+    deleteContentData({ id: idDelete })
+      .unwrap()
+      .then(async d => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Delete Page',
+            message: d.pageDelete.message,
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Delete Page',
+            message: 'Something went wrong!',
+          }),
+        );
+      });
+  };
+
   return (
     <>
       <ModalConfirm
@@ -175,11 +208,9 @@ export default function MainTab(props: { id: any }) {
         title={titleConfirm}
         cancelTitle="No"
         message={messageConfirm}
-        submitAction={() => {
-          setShowConfirm(false);
-        }}
+        submitAction={submitDeletePage}
         submitTitle="Yes"
-        // loading={deletePageLoading}
+        loading={deleteContentDataLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
       />
