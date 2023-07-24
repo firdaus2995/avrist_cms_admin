@@ -11,7 +11,7 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '@/assets/table-edit.png';
-import TableView from '@/assets/table-view.png';
+// import TableView from '@/assets/table-view.png';
 import TableDelete from '@/assets/table-delete.png';
 import FilterIcon from '@/assets/filter.svg';
 import ArchiveBox from '@/assets/archive-box.svg';
@@ -217,12 +217,6 @@ export default function PageManagementList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-5">
-          <div className="tooltip" data-tip="View">
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableView}
-            />
-          </div>
           <Link to={`edit/${info.getValue()}`}>
             <div className="tooltip" data-tip="Edit">
               <img
@@ -248,7 +242,7 @@ export default function PageManagementList() {
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
     setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete ${title}?`);
+    setMessageConfirm(`Do you want to delete ${title} from the list?`);
     setShowConfirm(true);
   };
 

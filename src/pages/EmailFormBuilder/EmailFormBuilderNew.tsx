@@ -17,9 +17,9 @@ import { InputText } from "@/components/atoms/Input/InputText";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
+import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useCreateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
-import { openToast } from "@/components/atoms/Toast/slice";
 
 export default function EmailFormBuilderNew () {
   const navigate = useNavigate();
@@ -106,7 +106,7 @@ export default function EmailFormBuilderNew () {
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multiple}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
-        case "RADIO":
+        case "RADIOBUTTON":
           return {
             fieldType: "RADIO_BUTTON",
             name: element.name,
@@ -177,8 +177,6 @@ export default function EmailFormBuilderNew () {
         value: multipleInput.join(";"),
       });
     };
-
-    console.log(backendComponents);
 
     const payload = {
       name: formName,
@@ -292,7 +290,7 @@ export default function EmailFormBuilderNew () {
         component = {
           type: item,
           name: "Dropdown Name",
-          items: ["Ayam", "Babi"],
+          items: ["Content 1", "Content 2"],
           multiple: false,
           required: false,
           mandatory: {
@@ -301,11 +299,11 @@ export default function EmailFormBuilderNew () {
           },
         };
         break;
-      case "RADIO":
+      case "RADIOBUTTON":
         component = {
           type: item,
           name: "Radio Name",
-          items: ["Ayam", "Babi"],
+          items: ["Content 1", "Content 2"],
           other: true,
           required: false,
           mandatory: {
@@ -318,7 +316,7 @@ export default function EmailFormBuilderNew () {
         component = {
           type: item,
           name: "Checkbox Name",
-          items: ["Ayam", "Babi"],
+          items: ["Content 1", "Content 2"],
           other: true,
           required: false,
           mandatory: {
@@ -429,7 +427,7 @@ export default function EmailFormBuilderNew () {
           <EFBList.Dropdown />
         </Drag>
         <Drag
-          name="RADIO"
+          name="RADIOBUTTON"
         >
           <EFBList.Radio />
         </Drag>
@@ -516,7 +514,7 @@ export default function EmailFormBuilderNew () {
                 }}
               />
             );
-          case "RADIO":
+          case "RADIOBUTTON":
             return (
               <EFBPreview.Radio 
                 key={index}
@@ -685,7 +683,7 @@ export default function EmailFormBuilderNew () {
             }}
           />
         )
-      case "RADIO":
+      case "RADIOBUTTON":
         return (
           <EFBConfiguration.Radio 
             name={activeComponent?.data?.name}

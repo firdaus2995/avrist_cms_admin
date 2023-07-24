@@ -1,77 +1,126 @@
 import { useState, useEffect } from 'react';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
-// import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
+import UploadDocumentIcon from '@/assets/efb/preview-document.svg';
+import DropDown from '@/components/molecules/DropDown';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function PreviewModal(props: any) {
   const { open, toggle, id } = props;
-
-  const [previewData, setPreviewData] = useState<any>({});
-
-  const { data, isLoading } = useGetEmailFormBuilderDetailQuery({ id, pageIndex: 0, limit: 99 });
-
+  // const [previewData, setPreviewData] = useState<any>({});
+  const { data, isLoading } = useGetEmailFormBuilderDetailQuery({ id, pageIndex: 0, limit: 100 });
   const [listData, setListData] = useState([]);
+  const nameId: any = uuidv4();
 
   useEffect(() => {
     if (data) {
-      console.log('ini data => ', data?.postTypeDetail);
-      setPreviewData(data?.postTypeDetail);
+      // setPreviewData(data?.postTypeDetail);
       setListData(data?.postTypeDetail?.attributeList);
     }
   }, [data]);
 
   const renderFormList = () => {
     return listData.map(({ name, fieldType, config }) => {
+      const { required, placeholder, position, size, ALLOW_OTHER_VALUE } = JSON.parse(config);
+      const dummy = [
+        {
+          value: 'item1',
+          label: 'Item 1',
+        },
+        {
+          value: 'item2',
+          label: 'Item 2',
+        },
+      ];
       switch (fieldType) {
         case 'EMAIL':
           return (
             <InputText
               disabled
               labelTitle={name}
-              labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
-              value={name}
-              placeholder={'name'}
+              labelStyle="font-bold"
+              labelRequired={required}
+              value={placeholder}
               roundStyle="xl"
             />
           );
         case 'IMAGE':
           return (
-            <InputText
-              disabled
-              labelTitle={name}
-              labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
-              value={name}
-              placeholder={'name'}
-              roundStyle="xl"
-            />
+            <div className="mb-1">
+              <label className={`label font-bold`}>
+                <span className={`label-text text-base-content`}>
+                  {name}
+                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
+                </span>
+              </label>
+              <div className="w-full h-[120px] bg-form-disabled-bg flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2">
+                <img src={UploadDocumentIcon} />
+                <span className="text-xs text-center">
+                  Drag and Drop Files or click to <p className="text-primary inline">Browse</p>
+                </span>
+              </div>
+            </div>
+          );
+        case 'DOCUMENT':
+          return (
+            <div className="mb-1">
+              <label className={`label font-bold`}>
+                <span className={`label-text text-base-content`}>
+                  {name}
+                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
+                </span>
+              </label>
+              <div className="w-full h-[120px] bg-form-disabled-bg flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2">
+                <img src={UploadDocumentIcon} />
+                <span className="text-xs text-center">
+                  Drag and Drop Files or click to <p className="text-primary inline">Browse</p>
+                </span>
+              </div>
+            </div>
           );
         case 'TEXT_AREA':
           return (
-            <InputText
-              disabled
-              labelTitle={name}
-              labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
-              value={name}
-              placeholder={'name'}
-              roundStyle="xl"
-            />
+            <div className="mb-1">
+              <label className={`label font-bold`}>
+                <span className={`label-text text-base-content`}>
+                  {name}
+                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
+                </span>
+              </label>
+              <div className="w-full h-[120px] bg-form-disabled-bg flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2">
+                <textarea
+                  name={name}
+                  rows={3}
+                  disabled
+                  placeholder={placeholder}
+                  className={`w-full h-full px-1 outline-0 resize-none`}
+                />
+              </div>
+            </div>
           );
         case 'LABEL':
           return (
-            <InputText
-              disabled
-              labelTitle={name}
-              labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
-              value={name}
-              placeholder={'name'}
-              roundStyle="xl"
-            />
+            <div
+              className={`flex flex-1 ${
+                position[0] === 'left'
+                  ? 'justify-start'
+                  : position[0] === 'center'
+                  ? 'justify-center'
+                  : 'justify-end'
+              } font-bold text-lg`}>
+              {size[0] === 'title' && (
+                <Typography type="body" size="xl" weight="semi" className="truncate m-2">
+                  {name}
+                </Typography>
+              )}
+              {size[0] === 'subtitle' && (
+                <Typography type="body" size="normal" weight="regular" className="truncate m-2">
+                  {name}
+                </Typography>
+              )}
+            </div>
           );
         case 'NUMBER':
           return (
@@ -79,7 +128,7 @@ export default function PreviewModal(props: any) {
               disabled
               labelTitle={name}
               labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
+              labelRequired={required}
               value={name}
               placeholder={'name'}
               roundStyle="xl"
@@ -91,34 +140,103 @@ export default function PreviewModal(props: any) {
               disabled
               labelTitle={name}
               labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
+              labelRequired={required}
               value={name}
-              placeholder={'name'}
+              placeholder={placeholder}
               roundStyle="xl"
             />
           );
         case 'RADIO_BUTTON':
           return (
-            <InputText
-              disabled
-              labelTitle={name}
-              labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
-              value={name}
-              placeholder={'name'}
-              roundStyle="xl"
-            />
+            <div className="my-2">
+              <label className={`label font-bold`}>
+                <span className={`label-text text-base-content`}>
+                  {name}
+                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
+                </span>
+              </label>
+              <div className="w-full flex flex-col gap-1">
+                {dummy?.map((element: any, index: number) => (
+                  <label
+                    key={index}
+                    className="label cursor-pointer justify-start flex h-[34px] gap-2 p-0">
+                    <input
+                      type="radio"
+                      name={nameId}
+                      className="radio radio-primary h-[22px] w-[22px] bg-white"
+                    />
+                    <span className="label-text">{element?.value}</span>
+                  </label>
+                ))}
+                {ALLOW_OTHER_VALUE && (
+                  <label className="label cursor-pointer justify-start flex h-[34px] gap-2 p-0">
+                    <input
+                      type="radio"
+                      name={nameId}
+                      className="radio radio-primary h-[22px] w-[22px] bg-white"
+                    />
+                    <span className="w-full label-text text-other-grey border-b-[1px] border-other-grey">
+                      Other
+                    </span>
+                  </label>
+                )}
+              </div>
+            </div>
+          );
+        case 'CHECKBOX':
+          return (
+            <div className="my-2">
+              <label className={`label font-bold`}>
+                <span className={`label-text text-base-content`}>
+                  {name}
+                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
+                </span>
+              </label>
+              <div className="w-full flex flex-col gap-1">
+                {dummy.map((element: any, index: number) => (
+                  <div key={index} className="form-control">
+                    <label className="h-[34px] label cursor-pointer p-0 justify-start gap-2">
+                      <input
+                        type="checkbox"
+                        className="h-[22px] w-[22px] checkbox checkbox-primary bg-white border-[2px] border-dark-grey"
+                      />
+                      <span className="label-text">{element?.value}</span>
+                    </label>
+                  </div>
+                ))}
+                {ALLOW_OTHER_VALUE && (
+                  <div className="form-control">
+                    <label className="h-[34px] label cursor-pointer p-0 justify-start gap-2">
+                      <input
+                        type="checkbox"
+                        className="h-[22px] w-[22px] checkbox checkbox-primary bg-white border-[2px] border-other-grey"
+                      />
+                      <span className="w-full label-text text-other-grey border-b-[1px] border-other-grey">
+                        Other
+                      </span>
+                    </label>
+                  </div>
+                )}
+              </div>
+            </div>
           );
         case 'DROPDOWN':
           return (
-            <InputText
-              disabled
+            <DropDown
               labelTitle={name}
               labelStyle="font-bold	"
-              labelRequired={JSON.parse(config)?.required}
-              value={name}
-              placeholder={'name'}
-              roundStyle="xl"
+              labelRequired={required}
+              defaultValue="item1"
+              items={[
+                {
+                  value: 'item1',
+                  label: 'Item 1',
+                },
+                {
+                  value: 'item2',
+                  label: 'Item 2',
+                },
+              ]}
             />
           );
         default:
@@ -130,15 +248,7 @@ export default function PreviewModal(props: any) {
   return (
     <div className={`modal ${open ? 'modal-open' : ''}`}>
       <div className="modal-box overflow-hidden">
-        <div>
-          <div>
-            <Typography type="body" size="xl" weight="semi" className="truncate mb-3">
-              {previewData?.name}
-            </Typography>
-            {/* <Typography type="body" size="normal" weight="regular" className="truncate mb-3">
-              Deskripsi Singkat
-            </Typography> */}
-          </div>
+        <div className="h-7">
           <button
             onClick={() => toggle()}
             className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3">
@@ -162,43 +272,7 @@ export default function PreviewModal(props: any) {
               <LoadingCircle />
             </div>
           )}
-          <div className="mb-10 p-1">
-            {renderFormList()}
-            {/* <InputText
-              disabled
-              labelTitle="Name"
-              labelStyle="font-bold	"
-              labelRequired
-              type="name"
-              // value={name}
-              placeholder={'name'}
-              roundStyle="xl"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                // setName(event.target.value);
-              }}
-            /> */}
-            {/* <InputText
-              labelTitle="User ID"
-              labelStyle="font-bold	"
-              labelRequired
-              type="name"
-              // value={name}
-              placeholder={'name'}
-              roundStyle="xl"
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                // setName(event.target.value);
-              }}
-            /> */}
-            {/* <TextArea
-              labelTitle={'Description'}
-              placeholder="Description"
-              onChange={e => {
-                // setDescription(e.target.value);
-              }}
-              labelStyle="font-bold w-[200px]"
-              // value={description}
-            /> */}
-          </div>
+          <div className="mb-10 p-1 mr-2">{renderFormList()}</div>
           <div className="flex justify-center items-center">
             <div className="btn btn-primary flex flex-row gap-2 rounded-xl w-80">Submit</div>
           </div>

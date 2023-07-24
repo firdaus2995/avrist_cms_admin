@@ -11,7 +11,7 @@ import ModalLog from '../../components/ModalLog';
 import { useGetContentDataQuery } from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
 
-export default function MainTab(props: { id: any; }) {
+export default function MainTab(props: { id: any }) {
   const { id } = props;
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
@@ -70,15 +70,29 @@ export default function MainTab(props: { id: any; }) {
                 : '-'
             }
           />
-          <div className="ml-3 cursor-pointer tooltip" data-tip="Log"
-          onClick={() => {
-            setIdLog(info?.row?.original?.id);
-            setLogTitle(info?.row?.original?.title);
-          }}>
+          <div
+            className="ml-3 cursor-pointer tooltip"
+            data-tip="Log"
+            onClick={() => {
+              setIdLog(info?.row?.original?.id);
+              setLogTitle(info?.row?.original?.title);
+            }}>
             <img src={TimelineLog} className="w-6 h-6" />
             {/* <p>{info?.row?.original?.id}</p> */}
           </div>
         </>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px] font-black">ID</span>,
+      accessorKey: 'id',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
       ),
     },
     {

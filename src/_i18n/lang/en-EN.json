@@ -43,6 +43,11 @@
       "title": "New Form",
       "success-msg": "Success register {{name}} Email Form Builder",
       "failed-msg": "Failed register {{name}} Email Form Builder"
+    },
+    "edit": {
+      "title": "Edit Form",
+      "success-msg": "Success edit Email Form Builder {{name}}",
+      "failed-msg": "Failed edit Email Form Builder {{name}}"
     }
   },
   "roles": {

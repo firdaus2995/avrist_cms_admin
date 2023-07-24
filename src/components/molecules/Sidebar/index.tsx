@@ -1,17 +1,12 @@
-import React, { 
-  useState,
-} from 'react';
-import { 
-  useLocation, 
-  useNavigate
-} from 'react-router-dom';
+import React, { useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { clearAuth } from '@/services/Login/slice';
 
-import { 
-  sidebarList,
-} from './list';
-import Menu from '../../../assets/menu.png';
-import LogoutIcon from '../../../assets/sidebar/Logout-icon.png';
-import ProfilePhoto from '../../../assets/Profile-photo.png';
+import { sidebarList } from './list';
+import Menu from '@/assets/menu.png';
+import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
+import ProfilePhoto from '@/assets/Profile-photo.png';
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -50,38 +45,38 @@ interface IMenuSidebar extends ISidebar {}
 const MenuSidebar: React.FC<IMenuSidebar> = props => {
   const { open } = props;
 
-  const navigate  = useNavigate();
+  const navigate = useNavigate();
   const location = useLocation();
   const [openedTab, setOpenedTab] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState(() => {
     // SET DEFAULT ACTIVE PAGE
     const pathName = location.pathname;
-       
+
     for (const parentItem of sidebarList) {
       if (parentItem?.list) {
         for (const childItem of parentItem?.list) {
           if (childItem?.path === pathName || `/${pathName.split('/')[1]}` === childItem?.path) {
-            // SET DEFAULT OPEN ACTIVE TAB 
+            // SET DEFAULT OPEN ACTIVE TAB
             setOpenedTab([`Tab_${parentItem.id}`]);
             return childItem.id;
-          };
-        };
+          }
+        }
       } else {
         if (parentItem?.path === pathName || `/${pathName.split('/')[1]}` === parentItem?.path) {
           return parentItem.id;
-        };
-      };
-    };
+        }
+      }
+    }
   });
 
   const footerList = [
     {
-      id: 8,
+      id: 98,
       title: 'Edit Profile',
       bordered: true,
     },
     {
-      id: 9,
+      id: 99,
       title: 'Logout',
       icon: LogoutIcon,
     },
@@ -89,7 +84,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
 
   const listTabHandler = (e: string) => {
     if (openedTab.includes(e)) {
-      const filtered = openedTab.filter(val => val !== e);      
+      const filtered = openedTab.filter(val => val !== e);
       setOpenedTab(filtered);
     } else {
       setOpenedTab(val => [...val, e]);
@@ -187,8 +182,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
                     <text
                       className={`${
                         activeTab === e.id ? 'font-bold' : 'font-base'
-                      } text-white text-sm ml-8`}
-                    >
+                      } text-white text-sm ml-8`}>
                       {e.title}
                     </text>
                   </div>
@@ -201,6 +195,13 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
   };
 
   const renderFooter = () => {
+    // LOGOUT
+    const dispatch = useDispatch();
+
+    const handleLogout = () => {
+      dispatch(clearAuth());
+    };
+
     return (
       <div className="flex flex-col items-center justify-center my-10">
         {footerList.map(val => (
@@ -209,6 +210,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
             role="button"
             onClick={() => {
               setActiveTab(val.id);
+              if (val.id === 99) handleLogout();
             }}
             className={`
             ${activeTab === val.id ? 'bg-[#9B86BA] font-bold' : ''} 

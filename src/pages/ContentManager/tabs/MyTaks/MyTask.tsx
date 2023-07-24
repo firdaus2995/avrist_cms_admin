@@ -50,6 +50,18 @@ export default function MyTaskTab(_props: { id: any }) {
       ),
     },
     {
+      header: () => <span className="text-[14px] font-black">ID</span>,
+      accessorKey: 'id',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
       header: () => <span className="text-[14px] font-black">Title</span>,
       accessorKey: 'title',
       enableSorting: false,
