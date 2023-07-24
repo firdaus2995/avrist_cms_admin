@@ -5,15 +5,16 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import DropDown from '@/components/molecules/DropDown';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
-import TestForm from './components/Form/TestForm';
+// import TestForm from './components/Form/TestForm';
 import CkEditor from '@/components/atoms/Ckeditor';
+import { useGetPostTypeDetailQuery } from '@/services/ContentType/contentTypeApi';
+import { useParams } from 'react-router-dom';
 
 export default function ContentManagerNew() {
+  const [postTypeDetail, setPostTypeDetail] = useState(null);
+
   // FORM
   const [bannerForm, setBannerForm] = useState([{ textField: '', textArea: '', textEditor: '' }]);
-  useEffect(() => {
-    console.log(bannerForm);
-  }, [bannerForm]);
 
   const handleAddBannerForm = () => {
     const values = [...bannerForm];
@@ -24,6 +25,24 @@ export default function ContentManagerNew() {
     });
     setBannerForm(values);
   };
+
+  const params = useParams();
+  const [id] = useState<any>(Number(params.id));
+
+  // RTK GET DATA
+  const fetchGetPostTypeDetail = useGetPostTypeDetailQuery({
+    id,
+    pageIndex: 0,
+    limit: 100,
+  });
+  const { data: postTypeDetailData } = fetchGetPostTypeDetail;
+
+  useEffect(() => {
+    if (postTypeDetailData) {
+      setPostTypeDetail(postTypeDetailData?.postTypeDetail);
+      console.log(postTypeDetailData?.postTypeDetail);
+    }
+  }, [postTypeDetailData]);
 
   // const handleRemoveBannerForm = index => {
   //   const values = [...bannerForm];
@@ -96,16 +115,18 @@ export default function ContentManagerNew() {
   };
 
   return (
-    <TitleCard title="New Homepage Avrist Life" border={true}>
+    <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
       <div className="ml-2 mt-6">
         <div className="grid grid-cols-1 gap-5">
-          <InputText
-            labelTitle="ID"
-            labelStyle="font-bold text-base w-48"
-            direction="row"
-            roundStyle="xl"
-            onChange={() => {}}
-          />
+          {false && (
+            <InputText
+              labelTitle="ID"
+              labelStyle="font-bold text-base w-48"
+              direction="row"
+              roundStyle="xl"
+              onChange={() => {}}
+            />
+          )}
           <InputText
             labelTitle="Title"
             labelStyle="font-bold text-base w-48"
@@ -113,12 +134,18 @@ export default function ContentManagerNew() {
             roundStyle="xl"
             onChange={() => {}}
           />
-          <div className="flex flex-row items-center">
-            <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-              Category
-            </Typography>
-            <DropDown labelStyle="font-bold text-base" defaultValue="item1" items={categoryList} />
-          </div>
+          {postTypeDetail?.isUseCategory && (
+            <div className="flex flex-row items-center">
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Category
+              </Typography>
+              <DropDown
+                labelStyle="font-bold text-base"
+                defaultValue="item1"
+                items={categoryList}
+              />
+            </div>
+          )}
           <div className="flex flex-row">
             <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
               Short Description
@@ -208,7 +235,7 @@ export default function ContentManagerNew() {
       </div>
 
       <div className="border border-primary my-10" />
-      <TestForm />
+      {/* <TestForm /> */}
       <Footer />
     </TitleCard>
   );
