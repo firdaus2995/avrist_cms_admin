@@ -123,7 +123,7 @@ export default function ContentManagerNew() {
   }
 
   const renderFormList = () => {
-    return postTypeDetail?.attributeList.map(({ id, name, fieldType, _config }) => {
+    return postTypeDetail?.attributeList.map(({ id, name, fieldType }) => {
       switch (fieldType) {
         case 'EMAIL':
           return (
