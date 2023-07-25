@@ -167,6 +167,39 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    getMyTaskList: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query contentDataMyTaskList(
+            $postTypeId: Int!
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+          ) {
+            contentDataMyTaskList(
+              postTypeId: $postTypeId
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                sortBy: $sortBy
+                direction: $direction
+              }
+            ) {
+              total
+              categoryList {
+                id
+                title
+                shortDesc
+                categoryName
+                status
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -176,5 +209,6 @@ export const {
   useGetCategoryListQuery, 
   useRestoreDataMutation,
   useCreateContentDataMutation,
-  useDeleteContentDataMutation
+  useDeleteContentDataMutation,
+  useGetMyTaskListQuery,
 } = contentManagerApi;
