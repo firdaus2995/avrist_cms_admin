@@ -26,7 +26,7 @@ export default function CategoryTab(_props: { id: any }) {
     {
       header: () => <span className="text-[14px] font-black">Category Description</span>,
       accessorKey: 'shortDesc',
-      enableSorting: true,
+      enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
