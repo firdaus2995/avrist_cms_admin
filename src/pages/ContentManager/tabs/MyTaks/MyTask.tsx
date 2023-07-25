@@ -1,36 +1,47 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
 import { useTranslation } from 'react-i18next';
+import { useGetMyTaskListQuery } from '@/services/ContentManager/contentManagerApi';
+import { SortingState } from '@tanstack/react-table';
 
-export default function MyTaskTab(_props: { id: any }) {
+export default function MyTaskTab(props: { id: any }) {
   const { t } = useTranslation();
-  const [listData] = useState<any>([
-    {
-      id: 1,
-      status: 'waiting_review',
-      title: 'Homepage Avrist Life',
-      desc: 'Landing Page',
-    },
-    {
-      id: 2,
-      status: 'waiting_approval',
-      title: 'Homepage Avrist Life 2',
-      desc: 'Landing Page',
-    },
-    {
-      id: 3,
-      status: 'draft',
-      title: 'title',
-      desc: 'description',
-    },
-  ]);
+  const { id } = props;
+  const [listData, setListData] = useState<any>([]);
 
   // TABLE PAGINATION STATE
-  const [total] = useState(3);
+  const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
+  const [direction, setDirection] = useState('asc');
+  const [sortBy, setSortBy] = useState('id');
+
+  // RTK GET DATA
+  const fetchQuery = useGetMyTaskListQuery({
+    id,
+    pageIndex,
+    limit: pageLimit,
+    sortBy,
+    direction,
+  });
+  const { data } = fetchQuery;
+
+  useEffect(() => {
+    if (data) {
+      setListData(data?.contentDataList?.contentDataList);
+      setTotal(data?.contentDataList?.total);
+    }
+  }, [data]);
+
+  // FUNCTION FOR SORTING FOR ATOMIC TABLE
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      setSortBy(sortModel[0].id);
+      setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    }
+  }, []);
 
   const COLUMNS = [
     {
@@ -64,7 +75,7 @@ export default function MyTaskTab(_props: { id: any }) {
     {
       header: () => <span className="text-[14px] font-black">Title</span>,
       accessorKey: 'title',
-      enableSorting: false,
+      enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
@@ -75,8 +86,8 @@ export default function MyTaskTab(_props: { id: any }) {
     },
     {
       header: () => <span className="text-[14px] font-black">Short Description</span>,
-      accessorKey: 'desc',
-      enableSorting: false,
+      accessorKey: 'shortDesc',
+      enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
@@ -113,6 +124,7 @@ export default function MyTaskTab(_props: { id: any }) {
           error={false}
           manualPagination={true}
           manualSorting={true}
+          onSortModelChange={handleSortModelChange}
         />
       </div>
       <PaginationComponent

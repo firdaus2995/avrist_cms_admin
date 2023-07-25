@@ -126,7 +126,7 @@ export default function RoutesComponent() {
           <Route path="content-manager" element={<ContentManagerPage />} />
           <Route path="content-manager/:id" element={<ContentManagerDetailPage />} />
           <Route path="content-manager/:id/category/new" element={<CategoryNew />} />
-          <Route path="content-manager/:id/category/edit/:id" element={<CategoryEdit />} />
+          <Route path="content-manager/:id/category/edit/:categoryid" element={<CategoryEdit />} />
           <Route path="content-manager/:id/archive" element={<ContentManagerArchivePage />} />
           <Route path="content-manager/:id/data/new" element={<ContentManagerNewPage />} />
         </Route>
