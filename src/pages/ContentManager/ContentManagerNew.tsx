@@ -6,11 +6,18 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 import DropDown from '@/components/molecules/DropDown';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import CkEditor from '@/components/atoms/Ckeditor';
-import { useGetPostTypeDetailQuery } from '@/services/ContentType/contentTypeApi';
+import {
+  useGetPostTypeDetailQuery,
+  useCreateContentDataMutation,
+} from '@/services/ContentType/contentTypeApi';
 import { useParams } from 'react-router-dom';
-// import FormList from './components/FormList';
+import FormList from './components/FormList';
+
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function ContentManagerNew() {
+  const dispatch = useAppDispatch();
   const [postTypeDetail, setPostTypeDetail] = useState({
     id: null,
     name: '',
@@ -21,10 +28,10 @@ export default function ContentManagerNew() {
     attributeList: [],
   });
 
-  const [formValues, setFormValues] = useState({});
+  const [formValues, setFormValues] = useState<any>({});
 
   const handleChange = (id: string | number, value: string) => {
-    setFormValues(prevFormValues => ({
+    setFormValues((prevFormValues: any) => ({
       ...prevFormValues,
       [id]: value,
     }));
@@ -60,7 +67,6 @@ export default function ContentManagerNew() {
     }
   }, [postTypeDetailData]);
 
-  // CATEGORY LIST GET DATA
   const fetchGetCategoryList = useGetCategoryListQuery({
     postTypeId,
     pageIndex,
@@ -83,6 +89,39 @@ export default function ContentManagerNew() {
     }
   }, [categoryListData]);
 
+  // RTK POST DATA
+  const [createContentData] = useCreateContentDataMutation();
+
+  const payload = {
+    title: formValues.title,
+    shortDesc: formValues.shortDesc,
+    isDraft: false,
+    postTypeId: id,
+    categoryName: 'test1',
+    contentData: [],
+  };
+
+  function onSubmitData() {
+    createContentData(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+          }),
+        );
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+      });
+  }
+
   const renderFormList = () => {
     return postTypeDetail?.attributeList.map(({ id, name, fieldType, config }) => {
       switch (fieldType) {
@@ -104,36 +143,16 @@ export default function ContentManagerNew() {
               <div className="border my-10" />
             </div>
           );
+        case 'DOCUMENT':
         case 'IMAGE':
           return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Image
-              </Typography>
-              <InputText
-                labelTitle={name}
-                labelStyle="font-bold text-base w-48"
-                direction="row"
-                roundStyle="xl"
-                onChange={() => {}}
+            <div id={id}>
+              <FormList.FileUploader
+                name={name}
+                fieldType={fieldType}
+                multiple={true}
+                onFilesChange={() => {}}
               />
-              <div className="border my-10" />
-            </div>
-          );
-        case 'DOCUMENT':
-          return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Document
-              </Typography>
-              <InputText
-                labelTitle={name}
-                labelStyle="font-bold text-base w-48"
-                direction="row"
-                roundStyle="xl"
-                onChange={() => {}}
-              />
-              <div className="border my-10" />
             </div>
           );
         case 'TEXT_AREA':
@@ -264,7 +283,9 @@ export default function ContentManagerNew() {
             Save as Draft
           </button>
           <button
-            onClick={() => {}}
+            onClick={() => {
+              onSubmitData();
+            }}
             className="btn btn-success text-xs text-white btn-sm w-28 h-10">
             Submit
           </button>

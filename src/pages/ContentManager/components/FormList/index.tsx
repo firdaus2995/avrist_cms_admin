@@ -1,7 +1,7 @@
-import TextField from './TextField';
+import FileUploader from './FileUploader';
 
 const FormList = {
-  TextField,
+  FileUploader,
 };
 
 export default FormList;

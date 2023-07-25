@@ -162,7 +162,7 @@ export const contentTypeApi = createApi({
             $isDraft: Boolean!
             $postTypeId: Int!
             $categoryName: String!
-            $contentData: [Any]
+            $contentData: [ContentDataAttributeRequest]
           ) {
             contentDataCreate(
               request: {
