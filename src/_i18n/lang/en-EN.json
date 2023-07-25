@@ -18,6 +18,20 @@
     "confirmation": "Are you sure?",
     "leave-confirmation": "Do you want to cancel all the process?"
   },
+  "content-manager": {
+    "category": {
+      "add": {
+        "title": "New Category",
+        "success-msg": "Success register Content Category {{name}}",
+        "failed-msg": "Failed add register Content Category {{name}}"
+      },
+      "edit": {
+        "title": "Edit Category",
+        "success-msg": "Success edit Content Category {{name}}",
+        "failed-msg": "Failed edit Content Category {{name}}"
+      }
+    }
+  },
   "page-template": {
     "list": {
       "title": "Page Template",

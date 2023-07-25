@@ -56,7 +56,8 @@ export const InputText: React.FC<IInputText> = ({
         style={{
           width: direction === 'row' ? labelWidth : '',
         }}
-        className={`label`}>
+        className={`label`}
+      >
         <span className={`label-text text-base-content ${labelStyle}`}>
           {labelTitle} {labelTitleExtension && <span className={labelTitleExtensionStyle}>{labelTitleExtension}</span>}
           <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
