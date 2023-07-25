@@ -1,33 +1,50 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import DropDown from '@/components/molecules/DropDown';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
-// import TestForm from './components/Form/TestForm';
 import CkEditor from '@/components/atoms/Ckeditor';
 import { useGetPostTypeDetailQuery } from '@/services/ContentType/contentTypeApi';
 import { useParams } from 'react-router-dom';
+// import FormList from './components/FormList';
 
 export default function ContentManagerNew() {
-  const [postTypeDetail, setPostTypeDetail] = useState(null);
+  const [postTypeDetail, setPostTypeDetail] = useState({
+    id: null,
+    name: '',
+    postTypeGroup: '',
+    slug: '',
+    isUseCategory: '',
+    total: null,
+    attributeList: [],
+  });
 
-  // FORM
-  const [bannerForm, setBannerForm] = useState([{ textField: '', textArea: '', textEditor: '' }]);
+  const [formValues, setFormValues] = useState({});
 
-  const handleAddBannerForm = () => {
-    const values = [...bannerForm];
-    values.push({
-      textField: '',
-      textArea: '',
-      textEditor: '',
-    });
-    setBannerForm(values);
+  const handleChange = (id: string | number, value: string) => {
+    setFormValues(prevFormValues => ({
+      ...prevFormValues,
+      [id]: value,
+    }));
   };
+
+  useEffect(() => {
+    console.log(formValues);
+  }, [formValues]);
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
+
+  // TABLE PAGINATION STATE
+  const [categoryList, setCategoryList] = useState<any>([]);
+  const [postTypeId] = useState(1);
+  const [pageIndex] = useState(0);
+  const [pageLimit] = useState(5);
+  const [direction] = useState('asc');
+  const [search] = useState('');
+  const [sortBy] = useState('id');
 
   // RTK GET DATA
   const fetchGetPostTypeDetail = useGetPostTypeDetailQuery({
@@ -40,37 +57,11 @@ export default function ContentManagerNew() {
   useEffect(() => {
     if (postTypeDetailData) {
       setPostTypeDetail(postTypeDetailData?.postTypeDetail);
-      console.log(postTypeDetailData?.postTypeDetail);
     }
   }, [postTypeDetailData]);
 
-  // const handleRemoveBannerForm = index => {
-  //   const values = [...bannerForm];
-  //   values.splice(index, 1);
-  //   setBannerForm(values);
-  // };
-
-  const handleInputChange = (
-    index: number,
-    event: ChangeEvent<HTMLInputElement> | ChangeEvent<HTMLTextAreaElement>,
-  ) => {
-    const values = [...bannerForm];
-    const updatedValue = event.target.name;
-    (values[index] as any)[updatedValue] = event.target.value;
-    setBannerForm(values);
-  };
-
-  // TABLE PAGINATION STATE
-  const [categoryList, setCategoryList] = useState<any>([]);
-  const [postTypeId] = useState(1);
-  const [pageIndex] = useState(0);
-  const [pageLimit] = useState(5);
-  const [direction] = useState('asc');
-  const [search] = useState('');
-  const [sortBy] = useState('id');
-
-  // RTK GET DATA
-  const fetchQuery = useGetCategoryListQuery({
+  // CATEGORY LIST GET DATA
+  const fetchGetCategoryList = useGetCategoryListQuery({
     postTypeId,
     pageIndex,
     limit: pageLimit,
@@ -78,11 +69,11 @@ export default function ContentManagerNew() {
     search,
     sortBy,
   });
-  const { data } = fetchQuery;
+  const { data: categoryListData } = fetchGetCategoryList;
 
   useEffect(() => {
-    if (data) {
-      const tempCategoryList = data?.categoryList?.categoryList.map((element: any) => {
+    if (categoryListData) {
+      const tempCategoryList = categoryListData?.categoryList?.categoryList.map((element: any) => {
         return {
           value: Number(element.id),
           label: element.name,
@@ -90,7 +81,175 @@ export default function ContentManagerNew() {
       });
       setCategoryList(tempCategoryList);
     }
-  }, [data]);
+  }, [categoryListData]);
+
+  const renderFormList = () => {
+    return postTypeDetail?.attributeList.map(({ id, name, fieldType, config }) => {
+      switch (fieldType) {
+        case 'EMAIL':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Email
+              </Typography>
+              <InputText
+                labelTitle={name}
+                labelStyle="font-bold text-base w-48"
+                direction="row"
+                roundStyle="xl"
+                onChange={e => {
+                  handleChange(id, e.target.value);
+                }}
+              />
+              <div className="border my-10" />
+            </div>
+          );
+        case 'IMAGE':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Image
+              </Typography>
+              <InputText
+                labelTitle={name}
+                labelStyle="font-bold text-base w-48"
+                direction="row"
+                roundStyle="xl"
+                onChange={() => {}}
+              />
+              <div className="border my-10" />
+            </div>
+          );
+        case 'DOCUMENT':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Document
+              </Typography>
+              <InputText
+                labelTitle={name}
+                labelStyle="font-bold text-base w-48"
+                direction="row"
+                roundStyle="xl"
+                onChange={() => {}}
+              />
+              <div className="border my-10" />
+            </div>
+          );
+        case 'TEXT_AREA':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Text Area
+              </Typography>
+              <div className="flex flex-row">
+                <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                  {name}
+                </Typography>
+                <TextArea
+                  name={id}
+                  labelTitle=""
+                  placeholder={'Enter description'}
+                  containerStyle="rounded-3xl"
+                  onChange={e => {
+                    handleChange(id, e.target.value);
+                  }}
+                />
+              </div>
+              <div className="border my-10" />
+            </div>
+          );
+        case 'TEXT_EDITOR':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1">
+                Text Editor
+              </Typography>
+              <div className="flex flex-row mt-5">
+                <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1">
+                  {name}
+                </Typography>
+                <CkEditor />
+              </div>
+              <div className="border my-10" />
+            </div>
+          );
+        case 'PHONE_NUMBER':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Phone Number
+              </Typography>
+              <InputText
+                name={id}
+                labelTitle={name}
+                labelStyle="font-bold text-base w-48"
+                direction="row"
+                roundStyle="xl"
+                onChange={e => {
+                  handleChange(id, e.target.value);
+                }}
+              />
+              <div className="border my-10" />
+            </div>
+          );
+        case 'TEXT_FIELD':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Text Field
+              </Typography>
+              <InputText
+                labelTitle={name}
+                labelStyle="font-bold text-base w-48"
+                direction="row"
+                roundStyle="xl"
+                onChange={e => {
+                  handleChange(id, e.target.value);
+                }}
+              />
+              <div className="border my-10" />
+            </div>
+          );
+        case 'YOUTUBE_URL':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Youtube URL
+              </Typography>
+              <InputText
+                labelTitle={name}
+                labelStyle="font-bold text-base w-48"
+                direction="row"
+                roundStyle="xl"
+                onChange={e => {
+                  handleChange(id, e.target.value);
+                }}
+              />
+              <div className="border my-10" />
+            </div>
+          );
+        case 'LOOPING':
+          return (
+            <div key={id}>
+              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+                Looping
+              </Typography>
+              <InputText
+                labelTitle={name}
+                labelStyle="font-bold text-base w-48"
+                direction="row"
+                roundStyle="xl"
+                onChange={() => {}}
+              />
+              <div className="border my-10" />
+            </div>
+          );
+        default:
+          return <div>err</div>;
+      }
+    });
+  };
 
   const Footer = () => {
     return (
@@ -118,21 +277,15 @@ export default function ContentManagerNew() {
     <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
       <div className="ml-2 mt-6">
         <div className="grid grid-cols-1 gap-5">
-          {false && (
-            <InputText
-              labelTitle="ID"
-              labelStyle="font-bold text-base w-48"
-              direction="row"
-              roundStyle="xl"
-              onChange={() => {}}
-            />
-          )}
           <InputText
+            name="title"
             labelTitle="Title"
             labelStyle="font-bold text-base w-48"
             direction="row"
             roundStyle="xl"
-            onChange={() => {}}
+            onChange={e => {
+              handleChange(e.target.name, e.target.value);
+            }}
           />
           {postTypeDetail?.isUseCategory && (
             <div className="flex flex-row items-center">
@@ -151,12 +304,13 @@ export default function ContentManagerNew() {
               Short Description
             </Typography>
             <TextArea
+              name="shortDesc"
               labelTitle=""
               placeholder={'Enter description'}
               // value={description}
               containerStyle="rounded-3xl"
-              onChange={() => {
-                // setDescription(e.target.value);
+              onChange={e => {
+                handleChange(e.target.name, e.target.value);
               }}
             />
           </div>
@@ -165,77 +319,7 @@ export default function ContentManagerNew() {
 
       <div className="border border-primary my-10" />
 
-      {/* LOOPING BANNER FORM */}
-      <div>
-        <Typography type="body" size="m" weight="bold" className="my-5 ml-1">
-          Looping Banner
-        </Typography>
-        {bannerForm.map((_formData, index) => {
-          return (
-            <div key={index}>
-              <div className="rounded-xl shadow-md p-5 mb-10">
-                <InputText
-                  labelTitle="Text Field"
-                  labelStyle="font-bold text-base w-48"
-                  direction="row"
-                  roundStyle="xl"
-                  name="name"
-                  onChange={event => {
-                    handleInputChange(index, event);
-                  }}
-                />
-                <div className="flex flex-row">
-                  <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                    Text Area
-                  </Typography>
-                  <TextArea
-                    labelTitle=""
-                    placeholder={'Enter description'}
-                    containerStyle="rounded-3xl"
-                    onChange={event => {
-                      handleInputChange(index, event);
-                    }}
-                  />
-                </div>
-                <div className="flex flex-row mt-5">
-                  <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1">
-                    Text Editor
-                  </Typography>
-                  <CkEditor />
-                </div>
-                <div className="flex flex-row mt-5">
-                  <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1">
-                    Image Banner
-                  </Typography>
-                  <div className="w-1/3 rounded-lg h-24 bg-red-50"></div>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-
-        <div className="flex justify-end">
-          <button
-            onClick={handleAddBannerForm}
-            className="btn btn-outline border-primary text-xs text-primary btn-sm h-10 w-52">
-            <div className="flex flex-row gap-2 items-center justify-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth={1.5}
-                stroke="currentColor"
-                className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-              </svg>
-              Add Data
-            </div>
-          </button>
-        </div>
-      </div>
-
-      <div className="border border-primary my-10" />
-      {/* <TestForm /> */}
+      {renderFormList()}
       <Footer />
     </TitleCard>
   );

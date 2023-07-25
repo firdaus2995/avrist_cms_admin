@@ -9,6 +9,7 @@ interface ITextArea {
   placeholder?: string;
   disabled?: boolean;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  name?: string;
 }
 
 export const TextArea: React.FC<ITextArea> = ({
@@ -21,6 +22,7 @@ export const TextArea: React.FC<ITextArea> = ({
   placeholder,
   disabled,
   onChange,
+  name,
 }) => {
   return (
     <div className={`form-control w-full ${containerStyle}`}>
@@ -28,6 +30,7 @@ export const TextArea: React.FC<ITextArea> = ({
         <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
       </label>
       <textarea
+        name={name}
         rows={rows ?? 4}
         value={value}
         disabled={disabled}
@@ -51,4 +54,5 @@ TextArea.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  name: PropTypes.string,
 };
