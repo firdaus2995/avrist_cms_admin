@@ -10,37 +10,42 @@ export const contentTypeApi = createApi({
       query: payload => ({
         document: gql`
           query {
-            getConfig(variable: "CONTENT_TYPE_ATTRIBUTE_LIST") {    
-                id
-                variable
-                value
-                description
+            getConfig(variable: "CONTENT_TYPE_ATTRIBUTE_LIST") {
+              id
+              variable
+              value
+              description
             }
-        }
+          }
         `,
         variables: payload,
-      })
+      }),
     }),
     postTypeCreate: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation postTypeCreate($name: String! $slug: String! $isUseCategory: Boolean $attributeRequests: [PostMetaTemplateRequest]!){
+          mutation postTypeCreate(
+            $name: String!
+            $slug: String!
+            $isUseCategory: Boolean
+            $attributeRequests: [PostMetaTemplateRequest]!
+          ) {
             postTypeCreate(
-                request: {
-                    name: $name
-                    postTypeGroup: "CONTENT_TYPE"
-                    slug: $slug
-                    isUseCategory: $isUseCategory
-                    attributeRequests: $attributeRequests
-                }
+              request: {
+                name: $name
+                postTypeGroup: "CONTENT_TYPE"
+                slug: $slug
+                isUseCategory: $isUseCategory
+                attributeRequests: $attributeRequests
+              }
             ) {
-                id
-                name
-                postTypeGroup
-                slug
-                isUseCategory
+              id
+              name
+              postTypeGroup
+              slug
+              isUseCategory
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -120,30 +125,68 @@ export const contentTypeApi = createApi({
     postTypeUpdate: builder.mutation<any, { id: number }>({
       query: payload => ({
         document: gql`
-          mutation postTypeUpdate($id: Int! $name: String! $slug: String! $isUseCategory: Boolean $attributeRequests: [PostMetaTemplateRequest]!){
+          mutation postTypeUpdate(
+            $id: Int!
+            $name: String!
+            $slug: String!
+            $isUseCategory: Boolean
+            $attributeRequests: [PostMetaTemplateRequest]!
+          ) {
             postTypeUpdate(
-                id: $id,
-                request: {
-                    name: $name
-                    postTypeGroup: "CONTENT_TYPE"
-                    slug: $slug
-                    isUseCategory: $isUseCategory
-                    attributeRequests: $attributeRequests
-                }
+              id: $id
+              request: {
+                name: $name
+                postTypeGroup: "CONTENT_TYPE"
+                slug: $slug
+                isUseCategory: $isUseCategory
+                attributeRequests: $attributeRequests
+              }
             ) {
-                id
-                name
-                postTypeGroup
-                slug
-                isUseCategory
+              id
+              name
+              postTypeGroup
+              slug
+              isUseCategory
             }
-        }
+          }
         `,
         variables: payload,
       }),
     }),
-  })
-})
+    createContentData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation contentDataCreate(
+            $title: String!
+            $shortDesc: String!
+            $isDraft: Boolean!
+            $postTypeId: Int!
+            $categoryName: String!
+            $contentData: [ContentDataAttributeRequest]
+          ) {
+            contentDataCreate(
+              request: {
+                title: $title
+                shortDesc: $shortDesc
+                isDraft: $isDraft
+                postTypeId: $postTypeId
+                categoryName: $categoryName
+                contentData: $contentData
+              }
+            ) {
+              id
+              title
+              shortDesc
+              categoryName
+              status
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+  }),
+});
 
 export const {
   useGetConfigQuery,
@@ -151,4 +194,5 @@ export const {
   useGetPostTypeListQuery,
   useGetPostTypeDetailQuery,
   usePostTypeUpdateMutation,
+  useCreateContentDataMutation,
 } = contentTypeApi;

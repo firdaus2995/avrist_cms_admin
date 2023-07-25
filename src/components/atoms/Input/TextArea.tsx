@@ -13,6 +13,7 @@ interface ITextArea {
   inputWidth?: number;
   inputHeight?: number;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  name?: string;
 }
 
 export const TextArea: React.FC<ITextArea> = ({
@@ -29,6 +30,7 @@ export const TextArea: React.FC<ITextArea> = ({
   inputWidth,
   inputHeight,
   onChange,
+  name,
 }) => {
   return (
     <div className={`form-control w-full ${containerStyle} ${direction === 'row' ? 'flex-row items-start' : ''}`}>
@@ -43,6 +45,7 @@ export const TextArea: React.FC<ITextArea> = ({
         </span>
       </label>
       <textarea
+        name={name}
         style={{
           width: inputWidth ?? '',
           height: inputHeight ?? '',  
@@ -72,6 +75,7 @@ TextArea.propTypes = {
   placeholder: PropTypes.string,
   onChange: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
+  name: PropTypes.string,
   inputWidth: PropTypes.number,
   inputHeight: PropTypes.number,
 };
