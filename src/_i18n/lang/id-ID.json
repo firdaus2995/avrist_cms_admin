@@ -18,6 +18,20 @@
     "confirmation": "Apakah kamu yakin?",
     "leave-confirmation": "Apakah kamu ingin keluar dan membatalkan semuanya?"
   },
+  "content-manager": {
+    "category": {
+      "add": {
+        "title": "Tambah Content Category",
+        "success-msg": "Content Category {{name}} berhasil disimpan",
+        "failed-msg": "Content Category {{name}} gagal disimpan"
+      },
+      "edit": {
+        "title": "Modifikasi Content Category",
+        "success-msg": "Content Category {{name}} berhasil diperbarui",
+        "failed-msg": "Content Category {{name}} gagal diperbarui"
+      }
+    }
+  },
   "page-template": {
     "list": {
       "title": "Daftar Page Template",

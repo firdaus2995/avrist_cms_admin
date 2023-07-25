@@ -6,6 +6,21 @@ export const contentManagerApi = createApi({
   reducerPath: 'contentManagerApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
+    getCategoryDetail: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query categoryDetail($id: Int!) {
+            categoryDetail(id: $id) {
+              id
+              name
+              shortDesc
+              postTypeId
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
     getContentData: builder.query<any, any>({
       query: payload => ({
         document: gql`
@@ -121,6 +136,31 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    createCategory: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation categoryCreate(
+            $postTypeId: Int!
+            $name: String!
+            $shortDesc: String!
+          ) {
+            categoryCreate(
+              request: {
+                postTypeId: $postTypeId
+                name: $name
+                shortDesc: $shortDesc
+              }
+            ) {
+              id
+              name
+              shortDesc
+              postTypeId
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
     createContentData: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
@@ -152,6 +192,31 @@ export const contentManagerApi = createApi({
         `,
         variables: payload,
       }),
+    }),
+    editCategory: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation categoryUpdate(
+            $id: Int!
+            $name: String!
+            $shortDesc: String!
+          ) {
+            categoryUpdate(
+              id: $id
+              request: {
+                name: $name
+                shortDesc: $shortDesc
+              }
+            ) {
+              id
+              name
+              shortDesc
+              postTypeId
+            }
+          }
+        `,
+        variables: payload,
+      })
     }),
     deleteContentData: builder.mutation<any, any>({
       query: payload => ({
@@ -204,11 +269,14 @@ export const contentManagerApi = createApi({
 })
 
 export const {
+  useGetCategoryDetailQuery,
   useGetContentDataQuery,
   useGetArchiveDataQuery,
   useGetCategoryListQuery, 
   useRestoreDataMutation,
+  useCreateCategoryMutation,
   useCreateContentDataMutation,
+  useEditCategoryMutation,
   useDeleteContentDataMutation,
   useGetMyTaskListQuery,
 } = contentManagerApi;
