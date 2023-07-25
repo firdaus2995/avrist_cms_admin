@@ -69,7 +69,7 @@ export default function CategoryTab(_props: { id: any }) {
   // PERMISSION STATE
   const [canEdit] = useState(() => {
     return !!getCredential().roles.find((element: any) => {
-      if (element === "CONTENT_CATEGORY_EDIT") {
+      if (element === "CONTENT_MANAGER_EDIT") {
         return true;
       }
       return false;
