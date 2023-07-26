@@ -9,13 +9,17 @@ import {
   useGetPostTypeDetailQuery,
   useCreateContentDataMutation,
 } from '@/services/ContentType/contentTypeApi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import FormList from './components/FormList';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const goBack = () => {
+    navigate(-1);
+  };
   const [postTypeDetail, setPostTypeDetail] = useState({
     id: null,
     name: '',
@@ -26,9 +30,13 @@ export default function ContentManagerNew() {
     attributeList: [],
   });
 
-  const [formValues, setFormValues] = useState<any>({});
-  const handleChange = (id: string | number, value: string) => {
-    setFormValues((prevFormValues: any) => ({
+  const [mainForm, setMainForm] = useState<any>({
+    title: '',
+    shortDesc: '',
+    categoryName: '',
+  });
+  const handleChange = (id: string | number, value: any) => {
+    setMainForm((prevFormValues: any) => ({
       ...prevFormValues,
       [id]: value,
     }));
@@ -50,10 +58,6 @@ export default function ContentManagerNew() {
       }
     });
   };
-
-  useEffect(() => {
-    console.log(contentTempData);
-  }, [contentTempData]);
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
@@ -107,16 +111,15 @@ export default function ContentManagerNew() {
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
   const payload = {
-    title: formValues.title,
-    shortDesc: formValues.shortDesc,
+    title: mainForm.title,
+    shortDesc: mainForm.shortDesc,
     isDraft: false,
     postTypeId: id,
-    categoryName: 'test1',
+    categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
     contentData: contentTempData,
   };
 
   function onSubmitData() {
-    console.log('ini payload => ', payload);
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -126,6 +129,7 @@ export default function ContentManagerNew() {
             title: 'Success',
           }),
         );
+        goBack();
       })
       .catch(() => {
         dispatch(
@@ -137,12 +141,23 @@ export default function ContentManagerNew() {
       });
   }
 
-  const handleFilesChange = (id: string, files: FileData[], fieldType: string) => {
-    const base64Array = files.map(file => file.base64);
+  const handleFilesChange = (id: string, files: any, fieldType: string) => {
+    const base64Array = files.map((file: { base64: any }) => file.base64);
     handleFormChange(id, base64Array[0], fieldType);
   };
 
   const renderFormList = () => {
+    // DEFAULT VALUE
+    const attributeList = postTypeDetail?.attributeList || [];
+    if (contentTempData.length === 0 && attributeList.length > 0) {
+      const defaultFormData = attributeList.map(({ id, fieldType }) => ({
+        id,
+        value: '',
+        fieldType,
+      }));
+      setContentTempData(defaultFormData);
+    }
+
     return postTypeDetail?.attributeList.map(({ id, name, fieldType, attributeList }: any) => {
       switch (fieldType) {
         case 'EMAIL':
@@ -216,8 +231,28 @@ export default function ContentManagerNew() {
               <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
                 Looping
               </Typography>
-              {attributeList?.map((_data: any, idx: Key | null | undefined) => {
-                return <p key={idx}>Nested Form</p>;
+              {attributeList?.map(({ idx, name, fieldType }: any) => {
+                switch (fieldType) {
+                  case 'EMAIL':
+                  case 'DOCUMENT':
+                  case 'IMAGE':
+                  case 'TEXT_AREA':
+                  case 'TEXT_EDITOR':
+                  case 'PHONE_NUMBER':
+                  case 'TEXT_FIELD':
+                  case 'YOUTUBE_URL':
+                    return (
+                      <FormList.Email
+                        key={idx}
+                        name={name}
+                        onChange={(e: { target: { value: string } }) => {
+                          handleFormChange(id, e.target.value, fieldType);
+                        }}
+                      />
+                    );
+                  default:
+                    return <p>err</p>;
+                }
               })}
               <div className="border my-10" />
             </div>
@@ -277,6 +312,9 @@ export default function ContentManagerNew() {
                 labelStyle="font-bold text-base"
                 defaultValue="item1"
                 items={categoryList}
+                onSelect={(_e, val) => {
+                  handleChange('categoryName', val);
+                }}
               />
             </div>
           )}
