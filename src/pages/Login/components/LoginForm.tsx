@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLoginMutation } from '@/services/Login/loginApi';
 import AuthInput from '@/components/atoms/Input/AuthInput';
 import { Link } from 'react-router-dom';
@@ -6,9 +6,20 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { useAppDispatch } from '@/store';
 import { storeDataStorage } from '@/utils/SessionStorage';
 import Typography from '@/components/atoms/Typography';
+import { useGetCmsEntityLoginDescriptionQuery } from '@/services/Config/configApi';
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
+
+  const [loginDescription, setLoginDescription] = useState("");
+  const fetchLoginDescriptionQuery = useGetCmsEntityLoginDescriptionQuery({});
+  const { data: dataLoginDescription } = fetchLoginDescriptionQuery
+
+  useEffect(() => {
+    if (dataLoginDescription?.getConfig) {
+      setLoginDescription(dataLoginDescription?.getConfig.value);
+    };;
+  }, [dataLoginDescription])
 
   const [login] = useLoginMutation();
   const [authValue, setAuthValue] = useState({
@@ -71,8 +82,7 @@ const LoginForm = () => {
     <>
       <h1 className="font-bold text-2xl my-5 text-dark-purple">Login</h1>
       <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
-        Welcome to Avrist Content Management System, please put your login credentials below to
-        start using the app.
+        {loginDescription}
       </Typography>
       <form onSubmit={handleLoginSubmit} className="mx-0 lg:mx-10">
         <AuthInput
