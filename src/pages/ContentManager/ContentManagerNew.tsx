@@ -1,11 +1,10 @@
-import { useEffect, useState } from 'react';
+import { Key, useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import DropDown from '@/components/molecules/DropDown';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
-import CkEditor from '@/components/atoms/Ckeditor';
 import {
   useGetPostTypeDetailQuery,
   useCreateContentDataMutation,
@@ -31,15 +30,12 @@ export default function ContentManagerNew() {
   const [formValues, setFormValues] = useState<any>({});
 
   const handleChange = (id: string | number, value: string) => {
+    console.log('value ', value);
     setFormValues((prevFormValues: any) => ({
       ...prevFormValues,
       [id]: value,
     }));
   };
-
-  useEffect(() => {
-    console.log(formValues);
-  }, [formValues]);
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
@@ -64,6 +60,7 @@ export default function ContentManagerNew() {
   useEffect(() => {
     if (postTypeDetailData) {
       setPostTypeDetail(postTypeDetailData?.postTypeDetail);
+      console.log(postTypeDetailData?.postTypeDetail);
     }
   }, [postTypeDetailData]);
 
@@ -91,14 +88,14 @@ export default function ContentManagerNew() {
 
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
-
+  const { title, shortDesc, ...contentData } = formValues;
   const payload = {
     title: formValues.title,
     shortDesc: formValues.shortDesc,
     isDraft: false,
     postTypeId: id,
     categoryName: 'test1',
-    contentData: [],
+    contentData,
   };
 
   function onSubmitData() {
@@ -123,144 +120,80 @@ export default function ContentManagerNew() {
   }
 
   const renderFormList = () => {
-    return postTypeDetail?.attributeList.map(({ id, name, fieldType }) => {
+    return postTypeDetail?.attributeList.map(({ id, name, fieldType, attributeList }: any) => {
       switch (fieldType) {
         case 'EMAIL':
           return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Email
-              </Typography>
-              <InputText
-                labelTitle={name}
-                labelStyle="font-bold text-base w-48"
-                direction="row"
-                roundStyle="xl"
-                onChange={e => {
-                  handleChange(id, e.target.value);
-                }}
-              />
-              <div className="border my-10" />
-            </div>
+            <FormList.Email
+              key={id}
+              name={name}
+              onChange={(e: { target: { value: string } }) => {
+                handleChange(id, e.target.value);
+              }}
+            />
           );
         case 'DOCUMENT':
         case 'IMAGE':
           return (
-            <div id={id}>
-              <FormList.FileUploader
-                name={name}
-                fieldType={fieldType}
-                multiple={true}
-                onFilesChange={() => {}}
-              />
-            </div>
+            <FormList.FileUploader
+              key={id}
+              name={name}
+              fieldType={fieldType}
+              multiple={true}
+              onFilesChange={() => {}}
+            />
           );
         case 'TEXT_AREA':
           return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Text Area
-              </Typography>
-              <div className="flex flex-row">
-                <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                  {name}
-                </Typography>
-                <TextArea
-                  name={id}
-                  labelTitle=""
-                  placeholder={'Enter description'}
-                  containerStyle="rounded-3xl"
-                  onChange={e => {
-                    handleChange(id, e.target.value);
-                  }}
-                />
-              </div>
-              <div className="border my-10" />
-            </div>
+            <FormList.TextAreaField
+              key={id}
+              name={name}
+              onChange={(e: { target: { value: string } }) => {
+                handleChange(id, e.target.value);
+              }}
+            />
           );
         case 'TEXT_EDITOR':
-          return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1">
-                Text Editor
-              </Typography>
-              <div className="flex flex-row mt-5">
-                <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1">
-                  {name}
-                </Typography>
-                <CkEditor />
-              </div>
-              <div className="border my-10" />
-            </div>
-          );
+          return <FormList.TextEditor key={id} name={name} />;
         case 'PHONE_NUMBER':
           return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Phone Number
-              </Typography>
-              <InputText
-                name={id}
-                labelTitle={name}
-                labelStyle="font-bold text-base w-48"
-                direction="row"
-                roundStyle="xl"
-                onChange={e => {
-                  handleChange(id, e.target.value);
-                }}
-              />
-              <div className="border my-10" />
-            </div>
+            <FormList.PhoneNumber
+              key={id}
+              name={name}
+              onChange={(e: { target: { value: string } }) => {
+                handleChange(id, e.target.value);
+              }}
+            />
           );
         case 'TEXT_FIELD':
           return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Text Field
-              </Typography>
-              <InputText
-                labelTitle={name}
-                labelStyle="font-bold text-base w-48"
-                direction="row"
-                roundStyle="xl"
-                onChange={e => {
-                  handleChange(id, e.target.value);
-                }}
-              />
-              <div className="border my-10" />
-            </div>
+            <FormList.TextField
+              key={id}
+              name={name}
+              onChange={(e: { target: { value: string } }) => {
+                handleChange(id, e.target.value);
+              }}
+            />
           );
         case 'YOUTUBE_URL':
           return (
-            <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Youtube URL
-              </Typography>
-              <InputText
-                labelTitle={name}
-                labelStyle="font-bold text-base w-48"
-                direction="row"
-                roundStyle="xl"
-                onChange={e => {
-                  handleChange(id, e.target.value);
-                }}
-              />
-              <div className="border my-10" />
-            </div>
+            <FormList.YoutubeURL
+              key={id}
+              name={name}
+              onChange={(e: { target: { value: string } }) => {
+                handleChange(id, e.target.value);
+              }}
+            />
           );
         case 'LOOPING':
           return (
-            <div key={id}>
+            <div key={id} className="">
               <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
                 Looping
               </Typography>
-              <InputText
-                labelTitle={name}
-                labelStyle="font-bold text-base w-48"
-                direction="row"
-                roundStyle="xl"
-                onChange={() => {}}
-              />
+              {attributeList?.map((_data: any, idx: Key | null | undefined) => {
+                return <p key={idx}>Nested Form</p>;
+              })}
               <div className="border my-10" />
             </div>
           );
@@ -328,7 +261,6 @@ export default function ContentManagerNew() {
               name="shortDesc"
               labelTitle=""
               placeholder={'Enter description'}
-              // value={description}
               containerStyle="rounded-3xl"
               onChange={e => {
                 handleChange(e.target.name, e.target.value);

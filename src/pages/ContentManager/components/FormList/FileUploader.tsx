@@ -14,9 +14,16 @@ interface DragAndDropProps {
   onFilesChange: (files: FileData[]) => void;
   fieldType: string;
   name: string;
+  key: number;
 }
 
-const FileUploader: React.FC<DragAndDropProps> = ({ multiple, onFilesChange, fieldType, name }) => {
+const FileUploader: React.FC<DragAndDropProps> = ({
+  key,
+  multiple,
+  onFilesChange,
+  fieldType,
+  name,
+}) => {
   const [fileData, setFileData] = useState<FileData[]>([]);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -61,12 +68,12 @@ const FileUploader: React.FC<DragAndDropProps> = ({ multiple, onFilesChange, fie
   };
 
   return (
-    <div>
+    <div key={key}>
       <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
         {name}
       </Typography>
       <div className="flex flex-row">
-        <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
+        <Typography type="body" size="m" weight="bold" className="w-40 mt-5 ml-1 mr-9">
           {fieldType}
         </Typography>
         <div
@@ -75,13 +82,15 @@ const FileUploader: React.FC<DragAndDropProps> = ({ multiple, onFilesChange, fie
           onDragOver={e => {
             e.preventDefault();
           }}>
-          <div>
+          <div className="flex flex-col items-center justify-center bg-red-200">
             <img src={UploadDocumentIcon} />
             <span className="text-xs text-center">
               Drag and Drop Files or click to <p className="text-primary inline">Browse</p>
             </span>
           </div>
-          <input type="file" onChange={handleChange} multiple={multiple} />
+          <input type="file" onChange={handleChange} multiple={multiple} >
+            
+          </input>
 
           {fileData.map(file => (
             <div key={file.name} className="flex flex-row w-full h-20 bg-red-100">
