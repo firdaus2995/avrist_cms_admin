@@ -77,23 +77,21 @@ const FileUploader: React.FC<DragAndDropProps> = ({
           {fieldType}
         </Typography>
         <div
-          className="w-[500px] h-[200px] bg-form-disabled-bg flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2"
+          className="w-[500px] min-h-[200px] bg-form-disabled-bg flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2"
           onDrop={handleDrop}
           onDragOver={e => {
             e.preventDefault();
           }}>
-          <div className="flex flex-col items-center justify-center bg-red-200">
+          <div className="flex flex-col items-center justify-center">
             <img src={UploadDocumentIcon} />
             <span className="text-xs text-center">
               Drag and Drop Files or click to <p className="text-primary inline">Browse</p>
             </span>
           </div>
-          <input type="file" onChange={handleChange} multiple={multiple} >
-            
-          </input>
+          <input id="icon-button-file" type="file" onChange={handleChange} multiple={multiple} />
 
           {fileData.map(file => (
-            <div key={file.name} className="flex flex-row w-full h-20 bg-red-100">
+            <div key={file.name} className="flex flex-row w-full h-20">
               {/* <p>Filename: {file.name}</p>
               <p>Type: {file.type}</p>
               <p>Size: {file.size} bytes</p> */}
