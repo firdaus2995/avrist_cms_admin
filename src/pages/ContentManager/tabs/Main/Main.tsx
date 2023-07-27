@@ -12,6 +12,7 @@ import { useDeleteContentDataMutation, useGetContentDataQuery } from '@/services
 import { SortingState } from '@tanstack/react-table';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
+import { Link } from 'react-router-dom';
 
 export default function MainTab(props: { id: any }) {
   const dispatch = useAppDispatch();
@@ -141,21 +142,23 @@ export default function MainTab(props: { id: any }) {
       header: () => <span className="text-[14px] font-black">{t('action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
-      cell: (_info: any) => (
+      cell: (info: any) => (
         <div className="flex gap-5">
-          <div className="tooltip" data-tip={'View Detail'}>
-            <div
-              role="button"
-              className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
-              View Detail
+          <Link to={`detail/${info.getValue()}`}>
+            <div className="tooltip" data-tip={'View Detail'}>
+              <div
+                role="button"
+                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
+                View Detail
+              </div>
             </div>
-          </div>
+          </Link>
           <div className="tooltip" data-tip={t('action.delete')}>
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
               onClick={() => {
-                onClickPageDelete(_info.getValue(), _info?.row?.original?.title);
+                onClickPageDelete(info.getValue(), info?.row?.original?.title);
               }}
             />
           </div>

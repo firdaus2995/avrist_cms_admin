@@ -2,19 +2,19 @@ import { useEffect, useState } from 'react';
 import UserLog from '../../../../assets/user-log.svg';
 import dayjs from 'dayjs';
 import Typography from '../../../../components/atoms/Typography';
-import { usePageLogApprovalQuery } from '../../../../services/PageManagement/pageManagementApi';
 import { LoadingCircle } from '../../../../components/atoms/Loading/loadingCircle';
+import { useGetContentDataLogApprovalQuery } from '@/services/ContentManager/contentManagerApi';
 
 export default function ModalLog(props: any) {
   const { open, title, toggle, id } = props;
 
   const [listData, setListData] = useState([]);
 
-  const { data, isLoading } = usePageLogApprovalQuery({ id });
+  const { data, isLoading } = useGetContentDataLogApprovalQuery({ id });
 
   useEffect(() => {
     if (data) {
-      setListData(data?.pageLogApproval?.logs);
+      setListData(data?.contentDataLogApproval?.logs);
     }
   }, [data]);
 
@@ -45,15 +45,15 @@ export default function ModalLog(props: any) {
           <div className="relative z-20 p-6">
             <div className="flex justify-between mb-4 items-center">
               <Typography type="body" size="s" weight="semi" className="truncate">
-                {datas?.pageStatus}
+                {datas?.actionText}
               </Typography>
               <div className="flex flex-row items-center">
                 <Typography type="body" size="s" weight="light">
-                  {dayjs(datas?.logCreatedAt).format('DD/MM/YYYY')}
+                  {dayjs(datas?.createdAt).format('DD/MM/YYYY')}
                 </Typography>
                 <div className="border-r h-5 border-black mx-5" />
                 <Typography type="body" size="s" weight="light">
-                  {dayjs(datas?.logCreatedAt).format('HH:mm')}
+                  {dayjs(datas?.createdAt).format('HH:mm')}
                 </Typography>
               </div>
             </div>
@@ -62,10 +62,26 @@ export default function ModalLog(props: any) {
               <div className="flex flex-row justify-center">
                 <img src={UserLog} alt="User" />
                 <Typography type="body" size="m" weight="regular" className="ml-3">
-                  {datas?.createdByName}
+                  {datas?.user}
+                </Typography>
+              </div>
+              <div className="flex flex-row justify-center">
+                <Typography type="body" size="m" weight="regular" className="ml-3">
+                  {datas?.role}
                 </Typography>
               </div>
             </div>
+
+            {datas?.comment !== null || datas?.comment !== '' && (
+              <div className="flex justify-between mt-5">
+                <div className="flex flex-row justify-center ml-3 opacity-80">
+                  Comment : 
+                  <Typography type="body" size="m" weight="regular" className="ml-3">
+                    {datas?.comment}
+                  </Typography>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
