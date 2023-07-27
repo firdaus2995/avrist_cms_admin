@@ -93,7 +93,7 @@ const FileUploader: React.FC<DragAndDropProps> = ({
         </Typography>
         <div>
           <div
-            className="w-[500px] min-h-[200px] bg-light-purple-2 flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2"
+            className="w-[500px] min-h-[200px] bg-light-purple-2 flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-xl gap-2 p-2"
             onDrop={handleDrop}
             onDragOver={e => {
               e.preventDefault();

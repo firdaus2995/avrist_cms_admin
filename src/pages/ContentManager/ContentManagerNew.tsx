@@ -1,18 +1,20 @@
 import { useEffect, useState } from 'react';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import Typography from '@/components/atoms/Typography';
-import { InputText } from '@/components/atoms/Input/InputText';
-import { TextArea } from '@/components/atoms/Input/TextArea';
-import DropDown from '@/components/molecules/DropDown';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
   useCreateContentDataMutation,
 } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
-import FormList from './components/FormList';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
+
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import Typography from '@/components/atoms/Typography';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { TextArea } from '@/components/atoms/Input/TextArea';
+import DropDown from '@/components/molecules/DropDown';
+import FormList from './components/FormList';
+
 import Plus from '@/assets/plus-purple.svg';
 
 export default function ContentManagerNew() {
