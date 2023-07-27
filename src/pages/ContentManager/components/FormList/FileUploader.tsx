@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Typography from '@/components/atoms/Typography';
-import UploadDocumentIcon from '@/assets/efb/preview-document.svg';
+import UploadDocumentIcon from '@/assets/upload-file.svg';
+import Document from '@/assets/modal/document-orange.svg';
+import Close from '@/assets/close.png';
 
 interface FileData {
   name: string;
@@ -67,6 +69,19 @@ const FileUploader: React.FC<DragAndDropProps> = ({
     }
   };
 
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const handleCardClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  function bytesToSize(bytes: number): string {
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+    if (bytes === 0) return '0 Byte';
+    const i = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, i)).toFixed(2).toString() + ' ' + sizes[i];
+  }
+
   return (
     <div key={key}>
       <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
@@ -76,46 +91,68 @@ const FileUploader: React.FC<DragAndDropProps> = ({
         <Typography type="body" size="m" weight="bold" className="w-40 mt-5 ml-1 mr-9">
           {fieldType}
         </Typography>
-        <div
-          className="w-[500px] min-h-[200px] bg-form-disabled-bg flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2"
-          onDrop={handleDrop}
-          onDragOver={e => {
-            e.preventDefault();
-          }}>
-          <div className="flex flex-col items-center justify-center">
-            <img src={UploadDocumentIcon} />
-            <span className="text-xs text-center">
-              Drag and Drop Files or click to <p className="text-primary inline">Browse</p>
-            </span>
-          </div>
-          <input id="icon-button-file" type="file" onChange={handleChange} multiple={multiple} />
+        <div>
+          <div
+            className="w-[500px] min-h-[200px] bg-light-purple-2 flex flex-col justify-center items-center border-dashed border-[1px] border-lavender rounded-lg gap-2 p-2"
+            onDrop={handleDrop}
+            onDragOver={e => {
+              e.preventDefault();
+            }}>
+            <input
+              id="icon-button-file"
+              className="hidden"
+              type="file"
+              ref={fileInputRef}
+              onChange={handleChange}
+              multiple={multiple}
+            />
+            <div
+              onClick={handleCardClick}
+              className="flex flex-col items-center justify-center h-[100px] cursor-pointer">
+              <img src={UploadDocumentIcon} />
+              <span className="text-xs text-center mt-5">Drag and Drop Files or upload image</span>
+            </div>
 
-          {fileData.map(file => (
-            <div key={file.name} className="flex flex-row w-full h-20">
-              {/* <p>Filename: {file.name}</p>
+            {fileData.map(file => (
+              <div key={file.name} className="flex flex-row w-full h-20">
+                {/* <p>Filename: {file.name}</p>
               <p>Type: {file.type}</p>
               <p>Size: {file.size} bytes</p> */}
-              {file.type.startsWith('image/') ? (
-                <img
-                  className="object-cover h-20 w-20"
-                  src={`data:${file.type};base64,${file.base64}`}
-                  alt={file.name}
-                />
-              ) : (
-                <div className="h-20 w-20"></div>
-              )}
-              {/* <p>Base64: {file.base64}</p> */}
-              <button
-                className="btn"
-                onClick={() => {
-                  handleDelete(file);
-                }}>
-                Delete
-              </button>
-            </div>
-          ))}
+                {/* <p>Base64: {file.base64}</p> */}
+                <div className="flex justify-between w-full">
+                  <div className="flex flex-row">
+                    {file.type.startsWith('image/') ? (
+                      <img
+                        className="object-cover h-16 w-16 rounded-lg mr-3"
+                        src={`data:${file.type};base64,${file.base64}`}
+                        alt={file.name}
+                      />
+                    ) : (
+                      <div className="h-16 w-16 flex justify-center items-center bg-light-purple rounded-lg mr-3">
+                        <img className="h-12 w-12" src={Document} alt="document" />
+                      </div>
+                    )}
+                    <div className="h-16 justify-center flex flex-col">
+                      <p className="truncate w-52">{file.name}</p>
+                      <p className="text-body-text-3 text-sm mt-1">{bytesToSize(file.size)}</p>
+                    </div>
+                  </div>
+                  <div
+                    data-tip={'Delete'}
+                    className="tooltip cursor-pointer w-8 h-8 rounded-full hover:bg-light-grey justify-center items-center flex"
+                    onClick={() => {
+                      handleDelete(file);
+                    }}>
+                    <img src={Close} />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <p className="text-body-text-3 text-xs mt-2">Only Support format .jpg, .jpeg, .png</p>
         </div>
       </div>
+      <div className="border my-10" />
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { Key, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -13,6 +13,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import FormList from './components/FormList';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
+import Plus from '@/assets/plus-purple.svg';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -228,32 +229,42 @@ export default function ContentManagerNew() {
         case 'LOOPING':
           return (
             <div key={id} className="">
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Looping
+              <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
+                {name}
               </Typography>
-              {attributeList?.map(({ idx, name, fieldType }: any) => {
-                switch (fieldType) {
-                  case 'EMAIL':
-                  case 'DOCUMENT':
-                  case 'IMAGE':
-                  case 'TEXT_AREA':
-                  case 'TEXT_EDITOR':
-                  case 'PHONE_NUMBER':
-                  case 'TEXT_FIELD':
-                  case 'YOUTUBE_URL':
-                    return (
-                      <FormList.Email
-                        key={idx}
-                        name={name}
-                        onChange={(e: { target: { value: string } }) => {
-                          handleFormChange(id, e.target.value, fieldType);
-                        }}
-                      />
-                    );
-                  default:
-                    return <p>err</p>;
-                }
-              })}
+              <div className="card w-full shadow-md p-5">
+                {attributeList?.map(({ idx, name, fieldType }: any) => {
+                  switch (fieldType) {
+                    case 'EMAIL':
+                    case 'DOCUMENT':
+                    case 'IMAGE':
+                    case 'TEXT_AREA':
+                    case 'TEXT_EDITOR':
+                    case 'PHONE_NUMBER':
+                    case 'TEXT_FIELD':
+                    case 'YOUTUBE_URL':
+                      return (
+                        <FormList.Email
+                          key={idx}
+                          name={name}
+                          onChange={(e: { target: { value: string } }) => {
+                            handleFormChange(id, e.target.value, fieldType);
+                          }}
+                        />
+                      );
+                    default:
+                      return <p>err</p>;
+                  }
+                })}
+              </div>
+              <div className="flex justify-end mt-8">
+                <button
+                  onClick={() => {}}
+                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                  <img src={Plus} className="mr-3" />
+                  Add Data
+                </button>
+              </div>
               <div className="border my-10" />
             </div>
           );
