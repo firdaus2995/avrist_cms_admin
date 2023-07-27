@@ -265,6 +265,60 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    getContentDataDetail: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query contentDataDetail(
+            $id: Int!
+          ){
+            contentDataDetail(id: $id) {
+                id
+                title
+                shortDesc
+                categoryName
+                status
+                contentData {
+                    id
+                    name
+                    fieldType
+                    config
+                    value
+                    contentData {
+                        id
+                        name
+                        fieldType
+                        config
+                        value
+                    }
+                }
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
+    getContentDataLogApproval: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query contentDataLogApproval($id: Int!){
+            contentDataLogApproval(id: $id) {    
+                logs {
+                    date
+                    value {
+                        status
+                        comment
+                        actionText
+                        user
+                        role
+                        createdAt
+                    }
+                }
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -279,4 +333,6 @@ export const {
   useEditCategoryMutation,
   useDeleteContentDataMutation,
   useGetMyTaskListQuery,
+  useGetContentDataDetailQuery,
+  useGetContentDataLogApprovalQuery,
 } = contentManagerApi;
