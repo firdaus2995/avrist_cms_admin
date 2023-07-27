@@ -1,22 +1,29 @@
-import { Key, useEffect, useState } from 'react';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import Typography from '@/components/atoms/Typography';
-import { InputText } from '@/components/atoms/Input/InputText';
-import { TextArea } from '@/components/atoms/Input/TextArea';
-import DropDown from '@/components/molecules/DropDown';
+import { useEffect, useState } from 'react';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
   useCreateContentDataMutation,
 } from '@/services/ContentType/contentTypeApi';
-import { useParams } from 'react-router-dom';
-import FormList from './components/FormList';
-
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 
+
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import Typography from '@/components/atoms/Typography';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { TextArea } from '@/components/atoms/Input/TextArea';
+import DropDown from '@/components/molecules/DropDown';
+import FormList from './components/FormList';
+
+import Plus from '@/assets/plus-purple.svg';
+
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+  const goBack = () => {
+    navigate(-1);
+  };
   const [postTypeDetail, setPostTypeDetail] = useState({
     id: null,
     name: '',
@@ -27,14 +34,33 @@ export default function ContentManagerNew() {
     attributeList: [],
   });
 
-  const [formValues, setFormValues] = useState<any>({});
-
-  const handleChange = (id: string | number, value: string) => {
-    console.log('value ', value);
-    setFormValues((prevFormValues: any) => ({
+  const [mainForm, setMainForm] = useState<any>({
+    title: '',
+    shortDesc: '',
+    categoryName: '',
+  });
+  const handleChange = (id: string | number, value: any) => {
+    setMainForm((prevFormValues: any) => ({
       ...prevFormValues,
       [id]: value,
     }));
+  };
+
+  const [contentTempData, setContentTempData] = useState<any[]>([]);
+  const handleFormChange = (id: string | number, value: any, fieldType: string) => {
+    setContentTempData((prevFormValues: any[]) => {
+      const existingIndex = prevFormValues.findIndex(
+        (item: { id: string | number }) => item.id === id,
+      );
+
+      if (existingIndex !== -1) {
+        const updatedFormValues = [...prevFormValues];
+        updatedFormValues[existingIndex] = { id, value, fieldType };
+        return updatedFormValues;
+      } else {
+        return [...prevFormValues, { id, value, fieldType }];
+      }
+    });
   };
 
   const params = useParams();
@@ -88,14 +114,13 @@ export default function ContentManagerNew() {
 
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
-  const { title, shortDesc, ...contentData } = formValues;
   const payload = {
-    title: formValues.title,
-    shortDesc: formValues.shortDesc,
+    title: mainForm.title,
+    shortDesc: mainForm.shortDesc,
     isDraft: false,
     postTypeId: id,
-    categoryName: 'test1',
-    contentData,
+    categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
+    contentData: contentTempData,
   };
 
   function onSubmitData() {
@@ -108,6 +133,7 @@ export default function ContentManagerNew() {
             title: 'Success',
           }),
         );
+        goBack();
       })
       .catch(() => {
         dispatch(
@@ -119,7 +145,23 @@ export default function ContentManagerNew() {
       });
   }
 
+  const handleFilesChange = (id: string, files: any, fieldType: string) => {
+    const base64Array = files.map((file: { base64: any }) => file.base64);
+    handleFormChange(id, base64Array[0], fieldType);
+  };
+
   const renderFormList = () => {
+    // DEFAULT VALUE
+    const attributeList = postTypeDetail?.attributeList || [];
+    if (contentTempData.length === 0 && attributeList.length > 0) {
+      const defaultFormData = attributeList.map(({ id, fieldType }) => ({
+        id,
+        value: '',
+        fieldType,
+      }));
+      setContentTempData(defaultFormData);
+    }
+
     return postTypeDetail?.attributeList.map(({ id, name, fieldType, attributeList }: any) => {
       switch (fieldType) {
         case 'EMAIL':
@@ -128,7 +170,7 @@ export default function ContentManagerNew() {
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
@@ -140,7 +182,9 @@ export default function ContentManagerNew() {
               name={name}
               fieldType={fieldType}
               multiple={true}
-              onFilesChange={() => {}}
+              onFilesChange={e => {
+                handleFilesChange(id, e, fieldType);
+              }}
             />
           );
         case 'TEXT_AREA':
@@ -149,7 +193,7 @@ export default function ContentManagerNew() {
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
@@ -161,7 +205,7 @@ export default function ContentManagerNew() {
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
@@ -171,7 +215,7 @@ export default function ContentManagerNew() {
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
@@ -181,24 +225,54 @@ export default function ContentManagerNew() {
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
         case 'LOOPING':
           return (
             <div key={id} className="">
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Looping
+              <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
+                {name}
               </Typography>
-              {attributeList?.map((_data: any, idx: Key | null | undefined) => {
-                return <p key={idx}>Nested Form</p>;
-              })}
+              <div className="card w-full shadow-md p-5">
+                {attributeList?.map(({ idx, name, fieldType }: any) => {
+                  switch (fieldType) {
+                    case 'EMAIL':
+                    case 'DOCUMENT':
+                    case 'IMAGE':
+                    case 'TEXT_AREA':
+                    case 'TEXT_EDITOR':
+                    case 'PHONE_NUMBER':
+                    case 'TEXT_FIELD':
+                    case 'YOUTUBE_URL':
+                      return (
+                        <FormList.Email
+                          key={idx}
+                          name={name}
+                          onChange={(e: { target: { value: string } }) => {
+                            handleFormChange(id, e.target.value, fieldType);
+                          }}
+                        />
+                      );
+                    default:
+                      return <p>err</p>;
+                  }
+                })}
+              </div>
+              <div className="flex justify-end mt-8">
+                <button
+                  onClick={() => {}}
+                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                  <img src={Plus} className="mr-3" />
+                  Add Data
+                </button>
+              </div>
               <div className="border my-10" />
             </div>
           );
         default:
-          return <div>err</div>;
+          return <p>err</p>;
       }
     });
   };
@@ -230,10 +304,12 @@ export default function ContentManagerNew() {
   return (
     <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
       <div className="ml-2 mt-6">
+        {/* DEFAULT FORM */}
         <div className="grid grid-cols-1 gap-5">
           <InputText
             name="title"
             labelTitle="Title"
+            placeholder="Title"
             labelStyle="font-bold text-base w-48"
             direction="row"
             roundStyle="xl"
@@ -250,6 +326,9 @@ export default function ContentManagerNew() {
                 labelStyle="font-bold text-base"
                 defaultValue="item1"
                 items={categoryList}
+                onSelect={(_e, val) => {
+                  handleChange('categoryName', val);
+                }}
               />
             </div>
           )}
@@ -272,6 +351,7 @@ export default function ContentManagerNew() {
 
       <div className="border border-primary my-10" />
 
+      {/* DYNAMIC FORM */}
       {renderFormList()}
       <Footer />
     </TitleCard>
