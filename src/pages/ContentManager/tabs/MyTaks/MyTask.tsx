@@ -20,7 +20,7 @@ export default function MyTaskTab(props: { id: any }) {
 
   // RTK GET DATA
   const fetchQuery = useGetMyTaskListQuery({
-    id,
+    postTypeId: id,
     pageIndex,
     limit: pageLimit,
     sortBy,
@@ -30,8 +30,8 @@ export default function MyTaskTab(props: { id: any }) {
 
   useEffect(() => {
     if (data) {
-      setListData(data?.contentDataList?.contentDataList);
-      setTotal(data?.contentDataList?.total);
+      setListData(data?.contentDataMyTaskList?.contentDataList);
+      setTotal(data?.contentDataMyTaskList?.total);
     }
   }, [data]);
 
@@ -87,7 +87,7 @@ export default function MyTaskTab(props: { id: any }) {
     {
       header: () => <span className="text-[14px] font-black">Short Description</span>,
       accessorKey: 'shortDesc',
-      enableSorting: true,
+      enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
