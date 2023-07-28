@@ -47,21 +47,39 @@ export default function ContentManagerNew() {
   };
 
   const [contentTempData, setContentTempData] = useState<any[]>([]);
-  const handleFormChange = (id: string | number, value: any, fieldType: string) => {
+  const handleFormChange = (id: string | number, value: any, fieldType: string, isLooping: boolean = false) => {
     setContentTempData((prevFormValues: any[]) => {
-      const existingIndex = prevFormValues.findIndex(
-        (item: { id: string | number }) => item.id === id,
-      );
-
-      if (existingIndex !== -1) {
+      const existingIndex = prevFormValues.findIndex((item: { id: string | number }) => item.id === id);
+  
+      if (existingIndex !== -1 && !isLooping) {
         const updatedFormValues = [...prevFormValues];
         updatedFormValues[existingIndex] = { id, value, fieldType };
         return updatedFormValues;
-      } else {
-        return [...prevFormValues, { id, value, fieldType }];
       }
+  
+      if (isLooping) {
+        const loopingDataIndex = prevFormValues.findIndex((item) => item.fieldType === 'LOOPING');
+        if (loopingDataIndex !== -1) {
+          const loopingData = { ...prevFormValues[loopingDataIndex] };
+          const contentData = loopingData.contentData || [];
+  
+          const contentDataIndex = contentData.findIndex((data: { id: any }) => data.id === id);
+  
+          if (contentDataIndex !== -1) {
+            const updatedContentData = [...contentData];
+            updatedContentData[contentDataIndex] = { ...updatedContentData[contentDataIndex], value };
+            loopingData.contentData = updatedContentData;
+            const updatedFormValues = [...prevFormValues];
+            updatedFormValues[loopingDataIndex] = loopingData;
+            return updatedFormValues;
+          }
+        }
+      }
+  
+      return [...prevFormValues, { id, value, fieldType }];
     });
   };
+  
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
@@ -154,13 +172,29 @@ export default function ContentManagerNew() {
     // DEFAULT VALUE
     const attributeList = postTypeDetail?.attributeList || [];
     if (contentTempData.length === 0 && attributeList.length > 0) {
-      const defaultFormData = attributeList.map(({ id, fieldType }) => ({
-        id,
-        value: '',
-        fieldType,
-      }));
+      const defaultFormData = attributeList.map((attribute: any) => {
+        if (attribute.fieldType === "LOOPING" && attribute.attributeList) {
+          return {
+            id: attribute.id,
+            value: "",
+            fieldType: "LOOPING",
+            contentData: attribute.attributeList.map((nestedAttribute: { id: any; fieldType: any; }) => ({
+              id: nestedAttribute.id,
+              value: "",
+              fieldType: nestedAttribute.fieldType,
+            })),
+          };
+        } else {
+          return {
+            id: attribute.id,
+            value: "",
+            fieldType: attribute.fieldType,
+          };
+        }
+      });
       setContentTempData(defaultFormData);
     }
+    
 
     return postTypeDetail?.attributeList.map(({ id, name, fieldType, attributeList }: any) => {
       switch (fieldType) {
@@ -236,7 +270,7 @@ export default function ContentManagerNew() {
                 {name}
               </Typography>
               <div className="card w-full shadow-md p-5">
-                {attributeList?.map(({ idx, name, fieldType }: any) => {
+                {attributeList?.map(({ id, name, fieldType }: any) => {
                   switch (fieldType) {
                     case 'EMAIL':
                     case 'DOCUMENT':
@@ -248,10 +282,10 @@ export default function ContentManagerNew() {
                     case 'YOUTUBE_URL':
                       return (
                         <FormList.Email
-                          key={idx}
+                          key={id}
                           name={name}
                           onChange={(e: { target: { value: string } }) => {
-                            handleFormChange(id, e.target.value, fieldType);
+                            handleFormChange(id, e.target.value, fieldType, true);
                           }}
                         />
                       );
