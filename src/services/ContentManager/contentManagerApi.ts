@@ -241,26 +241,24 @@ export const contentManagerApi = createApi({
             $limit: Int!
             $sortBy: String
             $direction: String
-          ) {
-            contentDataMyTaskList(
-              postTypeId: $postTypeId
-              pageableRequest: {
+          ){
+            contentDataMyTaskList(postTypeId: $postTypeId,
+            pageableRequest: {
                 pageIndex: $pageIndex
                 limit: $limit
                 sortBy: $sortBy
                 direction: $direction
-              }
-            ) {
-              total
-              categoryList {
-                id
-                title
-                shortDesc
-                categoryName
-                status
-              }
+            }) {
+                total
+                contentDataList {
+                    id
+                    title
+                    shortDesc
+                    categoryName
+                    status
+                }
             }
-          }
+        }
         `,
         variables: payload,
       }),
