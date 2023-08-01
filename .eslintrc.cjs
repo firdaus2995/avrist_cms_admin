@@ -21,6 +21,14 @@ module.exports = {
     '@typescript-eslint/no-invalid-void-type': 0,
     '@typescript-eslint/restrict-template-expressions': 0,
     '@typescript-eslint/strict-boolean-expressions': 0,
+    '@typescript-eslint/no-misused-promises': [
+      2,
+      {
+        checksVoidReturn: {
+          attributes: false,
+        },
+      },
+    ],
   },
   settings: {
     react: {
