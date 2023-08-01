@@ -68,31 +68,31 @@ const LoginForm = () => {
       </Typography>
       <form onSubmit={handleSubmit(handleLoginSubmit)} className="mx-0 lg:mx-10">
         <Controller
-          name="username" // Name should match the field name in the validation schema
+          name="username"
           control={control}
-          defaultValue="" // Set the initial value of the field
+          defaultValue=""
           render={({ field }) => (
             <AuthInput
               key="username"
               label="User Name"
               placeholder="Enter Username"
-              error={errors.username?.message} // Use the 'errors' object from react-hook-form
+              error={errors.username?.message}
               styleClass="mb-5"
-              {...field} // Spread the field props into the input component
+              {...field}
             />
           )}
         />
         <Controller
-          name="password" // Name should match the field name in the validation schema
+          name="password"
           control={control}
-          defaultValue="" // Set the initial value of the field
+          defaultValue=""
           render={({ field }) => (
             <AuthInput
               key="password"
               label="Password"
               placeholder="Enter Password"
-              error={errors.password?.message} // Use the 'errors' object from react-hook-form
-              {...field} // Spread the field props into the input component
+              error={errors.password?.message}
+              {...field}
               passwordMode={true}
             />
           )}
