@@ -7,52 +7,40 @@ import { useAppDispatch } from '@/store';
 import { storeDataStorage } from '@/utils/SessionStorage';
 import Typography from '@/components/atoms/Typography';
 import { useGetCmsEntityLoginDescriptionQuery } from '@/services/Config/configApi';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
+
+const schema = yup.object().shape({
+  username: yup.string().required('Username is required'),
+  password: yup.string().required('Password is required'),
+});
 
 const LoginForm = () => {
   const dispatch = useAppDispatch();
 
-  const [loginDescription, setLoginDescription] = useState("");
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const [loginDescription, setLoginDescription] = useState('');
   const fetchLoginDescriptionQuery = useGetCmsEntityLoginDescriptionQuery({});
-  const { data: dataLoginDescription } = fetchLoginDescriptionQuery
+  const { data: dataLoginDescription } = fetchLoginDescriptionQuery;
 
   useEffect(() => {
     if (dataLoginDescription?.getConfig) {
       setLoginDescription(dataLoginDescription?.getConfig.value);
-    };;
-  }, [dataLoginDescription])
+    }
+  }, [dataLoginDescription]);
 
   const [login] = useLoginMutation();
-  const [authValue, setAuthValue] = useState({
-    username: '',
-    password: '',
-    errors: { username: '', password: '' },
-  });
 
-  const handleUsernameChange = (e: { target: { value: any } }) => {
-    setAuthValue({ ...authValue, username: e.target.value });
-  };
-
-  const handlePasswordChange = (e: { target: { value: any } }) => {
-    setAuthValue({ ...authValue, password: e.target.value });
-  };
-
-  const handleLoginSubmit = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-
-    // Check if username and password are empty
-    if (!authValue.username || !authValue.password) {
-      const updatedErrors = {
-        username: !authValue.username ? 'This field is required' : '',
-        password: !authValue.password ? 'This field is required' : '',
-      };
-      setAuthValue(prevState => ({
-        ...prevState,
-        errors: updatedErrors,
-      }));
-      return;
-    }
-
-    login({ userId: authValue.username, password: authValue.password })
+  const handleLoginSubmit = (formData: { username: any; password: any }) => {
+    login({ userId: formData.username, password: formData.password })
       .unwrap()
       .then(res => {
         storeDataStorage('accessToken', res.login.accessToken);
@@ -61,13 +49,7 @@ const LoginForm = () => {
 
         window.location.assign('/');
       })
-      .catch(err => {
-        setAuthValue(prevState => ({
-          ...prevState,
-          errors: { username: '', password: 'Sign-in failed' },
-        }));
-        console.log('Sign-in failed:', err);
-        // Handle sign-in failure here
+      .catch(() => {
         dispatch(
           openToast({
             type: 'error',
@@ -84,24 +66,36 @@ const LoginForm = () => {
       <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
         {loginDescription}
       </Typography>
-      <form onSubmit={handleLoginSubmit} className="mx-0 lg:mx-10">
-        <AuthInput
-          key="username"
-          label="User Name"
-          placeholder="Enter Username"
-          error={authValue.errors.username}
-          styleClass="mb-5"
-          onChange={handleUsernameChange}
-          value={authValue.username}
+      <form onSubmit={handleSubmit(handleLoginSubmit)} className="mx-0 lg:mx-10">
+        <Controller
+          name="username" // Name should match the field name in the validation schema
+          control={control}
+          defaultValue="" // Set the initial value of the field
+          render={({ field }) => (
+            <AuthInput
+              key="username"
+              label="User Name"
+              placeholder="Enter Username"
+              error={errors.username?.message} // Use the 'errors' object from react-hook-form
+              styleClass="mb-5"
+              {...field} // Spread the field props into the input component
+            />
+          )}
         />
-        <AuthInput
-          key="password"
-          label="Password"
-          placeholder="Enter Password"
-          error={authValue.errors.password}
-          onChange={handlePasswordChange}
-          value={authValue.password}
-          passwordMode={true}
+        <Controller
+          name="password" // Name should match the field name in the validation schema
+          control={control}
+          defaultValue="" // Set the initial value of the field
+          render={({ field }) => (
+            <AuthInput
+              key="password"
+              label="Password"
+              placeholder="Enter Password"
+              error={errors.password?.message} // Use the 'errors' object from react-hook-form
+              {...field} // Spread the field props into the input component
+              passwordMode={true}
+            />
+          )}
         />
         <div className="flex flex-col items-end my-10">
           <Link to="/forgot-password">
