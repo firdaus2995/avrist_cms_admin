@@ -1,4 +1,4 @@
-import { Key, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -35,6 +35,40 @@ export default function ContentManagerDetailData() {
       ...prevFormValues,
       [id]: value,
     }));
+  };
+
+  const [contentTempData, setContentTempData] = useState<any[]>([]);
+  const handleFormChange = (id: string | number, value: any, fieldType: string, isLooping: boolean = false) => {
+    setContentTempData((prevFormValues: any[]) => {
+      const existingIndex = prevFormValues.findIndex((item: { id: string | number }) => item.id === id);
+  
+      if (existingIndex !== -1 && !isLooping) {
+        const updatedFormValues = [...prevFormValues];
+        updatedFormValues[existingIndex] = { id, value, fieldType };
+        return updatedFormValues;
+      }
+  
+      if (isLooping) {
+        const loopingDataIndex = prevFormValues.findIndex((item) => item.fieldType === 'LOOPING');
+        if (loopingDataIndex !== -1) {
+          const loopingData = { ...prevFormValues[loopingDataIndex] };
+          const contentData = loopingData.contentData || [];
+  
+          const contentDataIndex = contentData.findIndex((data: { id: any }) => data.id === id);
+  
+          if (contentDataIndex !== -1) {
+            const updatedContentData = [...contentData];
+            updatedContentData[contentDataIndex] = { ...updatedContentData[contentDataIndex], value };
+            loopingData.contentData = updatedContentData;
+            const updatedFormValues = [...prevFormValues];
+            updatedFormValues[loopingDataIndex] = loopingData;
+            return updatedFormValues;
+          }
+        }
+      }
+  
+      return [...prevFormValues, { id, value, fieldType }];
+    });
   };
 
   // GO BACK
@@ -121,16 +155,46 @@ export default function ContentManagerDetailData() {
       });
   }
 
+  const handleFilesChange = (id: string, files: any, fieldType: string) => {
+    const base64Array = files.map((file: { base64: any }) => file.base64);
+    handleFormChange(id, base64Array[0], fieldType);
+  };
+
   const renderFormList = () => {
-    return contentDataDetailList?.contentData.map(({ id, name, fieldType, contentData }: any) => {
+    const attributeList = contentDataDetailList?.contentData || [];
+    if (contentTempData.length === 0 && attributeList.length > 0) {
+      const defaultFormData = attributeList.map((attribute: any) => {
+        if (attribute.fieldType === "LOOPING" && attribute.attributeList) {
+          return {
+            id: attribute.id,
+            value: "",
+            fieldType: "LOOPING",
+            contentData: attribute.attributeList.map((nestedAttribute: { id: any; fieldType: any; }) => ({
+              id: nestedAttribute.id,
+              value: "",
+              fieldType: nestedAttribute.fieldType,
+            })),
+          };
+        } else {
+          return {
+            id: attribute.id,
+            value: "",
+            fieldType: attribute.fieldType,
+          };
+        }
+      });
+      setContentTempData(defaultFormData);
+    }
+
+    return contentDataDetailList?.contentData.map(({ id, name, fieldType }: any) => {
       switch (fieldType) {
         case 'EMAIL':
           return (
-            <FormList.Email
+            <FormList.TextField
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
@@ -142,7 +206,9 @@ export default function ContentManagerDetailData() {
               name={name}
               fieldType={fieldType}
               multiple={true}
-              onFilesChange={() => {}}
+              onFilesChange={(e) => {
+                handleFilesChange(id, e, fieldType);
+              }}
             />
           );
         case 'TEXT_AREA':
@@ -151,7 +217,7 @@ export default function ContentManagerDetailData() {
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
@@ -159,11 +225,11 @@ export default function ContentManagerDetailData() {
           return <FormList.TextEditor key={id} name={name} />;
         case 'PHONE_NUMBER':
           return (
-            <FormList.PhoneNumber
+            <FormList.TextField
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
@@ -173,29 +239,60 @@ export default function ContentManagerDetailData() {
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
         case 'YOUTUBE_URL':
           return (
-            <FormList.YoutubeURL
+            <FormList.TextField
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
-                handleChange(id, e.target.value);
+                handleFormChange(id, e.target.value, fieldType);
               }}
             />
           );
         case 'LOOPING':
           return (
             <div key={id} className="">
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Looping
+              <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
+                {name}
               </Typography>
-              {contentData?.map((_data: any, idx: Key | null | undefined) => {
-                return <p key={idx}>Nested Form</p>;
-              })}
+              <div className="card w-full shadow-md p-5">
+                {attributeList?.map(({ id, name, fieldType, value }: any) => {
+                  switch (fieldType) {
+                    case 'EMAIL':
+                    case 'DOCUMENT':
+                    case 'IMAGE':
+                    case 'TEXT_AREA':
+                    case 'TEXT_EDITOR':
+                    case 'PHONE_NUMBER':
+                    case 'TEXT_FIELD':
+                    case 'YOUTUBE_URL':
+                      return (
+                        <FormList.TextField
+                          key={id}
+                          name={name}
+                          value={value}
+                          onChange={(e: { target: { value: string } }) => {
+                            handleFormChange(id, e.target.value, fieldType, true);
+                          }}
+                        />
+                      );
+                    default:
+                      return <p>err</p>;
+                  }
+                })}
+              </div>
+              {/* <div className="flex justify-end mt-8">
+                <button
+                  onClick={() => {}}
+                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                  <img src={Plus} className="mr-3" />
+                  Add Data
+                </button>
+              </div> */}
               <div className="border my-10" />
             </div>
           );

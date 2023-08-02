@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { clearAuth } from '@/services/Login/slice';
@@ -48,26 +48,28 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
   const navigate = useNavigate();
   const location = useLocation();
   const [openedTab, setOpenedTab] = useState<string[]>([]);
-  const [activeTab, setActiveTab] = useState(() => {
-    // SET DEFAULT ACTIVE PAGE
+  const [activeTab, setActiveTab] = useState(1);
+
+  useEffect(() => {
     const pathName = location.pathname;
 
     for (const parentItem of sidebarList) {
       if (parentItem?.list) {
         for (const childItem of parentItem?.list) {
           if (childItem?.path === pathName || `/${pathName.split('/')[1]}` === childItem?.path) {
-            // SET DEFAULT OPEN ACTIVE TAB
             setOpenedTab([`Tab_${parentItem.id}`]);
-            return childItem.id;
+            setActiveTab(childItem.id);
+            return;
           }
         }
       } else {
         if (parentItem?.path === pathName || `/${pathName.split('/')[1]}` === parentItem?.path) {
-          return parentItem.id;
+          setActiveTab(parentItem.id);
+          return;
         }
       }
     }
-  });
+  }, [location.pathname]);
 
   const footerList = [
     {
