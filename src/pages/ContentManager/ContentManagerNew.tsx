@@ -8,15 +8,14 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 
-
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
-import { InputText } from '@/components/atoms/Input/InputText';
-import { TextArea } from '@/components/atoms/Input/TextArea';
 import DropDown from '@/components/molecules/DropDown';
 import FormList from './components/FormList';
 
 import Plus from '@/assets/plus-purple.svg';
+
+import { useForm, Controller } from 'react-hook-form';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -46,28 +45,49 @@ export default function ContentManagerNew() {
     }));
   };
 
+  useEffect(() => {
+    console.log('mainform ', mainForm);
+  }, [mainForm]);
+
+  // FORM VALIDATION
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   const [contentTempData, setContentTempData] = useState<any[]>([]);
-  const handleFormChange = (id: string | number, value: any, fieldType: string, isLooping: boolean = false) => {
+  const handleFormChange = (
+    id: string | number,
+    value: any,
+    fieldType: string,
+    isLooping: boolean = false,
+  ) => {
     setContentTempData((prevFormValues: any[]) => {
-      const existingIndex = prevFormValues.findIndex((item: { id: string | number }) => item.id === id);
-  
+      const existingIndex = prevFormValues.findIndex(
+        (item: { id: string | number }) => item.id === id,
+      );
+
       if (existingIndex !== -1 && !isLooping) {
         const updatedFormValues = [...prevFormValues];
         updatedFormValues[existingIndex] = { id, value, fieldType };
         return updatedFormValues;
       }
-  
+
       if (isLooping) {
-        const loopingDataIndex = prevFormValues.findIndex((item) => item.fieldType === 'LOOPING');
+        const loopingDataIndex = prevFormValues.findIndex(item => item.fieldType === 'LOOPING');
         if (loopingDataIndex !== -1) {
           const loopingData = { ...prevFormValues[loopingDataIndex] };
           const contentData = loopingData.contentData || [];
-  
+
           const contentDataIndex = contentData.findIndex((data: { id: any }) => data.id === id);
-  
+
           if (contentDataIndex !== -1) {
             const updatedContentData = [...contentData];
-            updatedContentData[contentDataIndex] = { ...updatedContentData[contentDataIndex], value };
+            updatedContentData[contentDataIndex] = {
+              ...updatedContentData[contentDataIndex],
+              value,
+            };
             loopingData.contentData = updatedContentData;
             const updatedFormValues = [...prevFormValues];
             updatedFormValues[loopingDataIndex] = loopingData;
@@ -75,11 +95,10 @@ export default function ContentManagerNew() {
           }
         }
       }
-  
+
       return [...prevFormValues, { id, value, fieldType }];
     });
   };
-  
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
@@ -141,7 +160,8 @@ export default function ContentManagerNew() {
     contentData: contentTempData,
   };
 
-  function onSubmitData() {
+  function onSubmitData(_value: any) {
+    console.log('ini payload ', payload);
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -173,39 +193,59 @@ export default function ContentManagerNew() {
     const attributeList = postTypeDetail?.attributeList || [];
     if (contentTempData.length === 0 && attributeList.length > 0) {
       const defaultFormData = attributeList.map((attribute: any) => {
-        if (attribute.fieldType === "LOOPING" && attribute.attributeList) {
+        if (attribute.fieldType === 'LOOPING' && attribute.attributeList) {
           return {
             id: attribute.id,
-            value: "",
-            fieldType: "LOOPING",
-            contentData: attribute.attributeList.map((nestedAttribute: { id: any; fieldType: any; }) => ({
-              id: nestedAttribute.id,
-              value: "",
-              fieldType: nestedAttribute.fieldType,
-            })),
+            value: '',
+            fieldType: 'LOOPING',
+            contentData: attribute.attributeList.map(
+              (nestedAttribute: { id: any; fieldType: any }) => ({
+                id: nestedAttribute.id,
+                value: '',
+                fieldType: nestedAttribute.fieldType,
+              }),
+            ),
           };
         } else {
           return {
             id: attribute.id,
-            value: "",
+            value: '',
             fieldType: attribute.fieldType,
           };
         }
       });
       setContentTempData(defaultFormData);
     }
-    
 
     return postTypeDetail?.attributeList.map(({ id, name, fieldType, attributeList }: any) => {
       switch (fieldType) {
         case 'EMAIL':
           return (
-            <FormList.Email
-              key={id}
-              name={name}
-              onChange={(e: { target: { value: string } }) => {
-                handleFormChange(id, e.target.value, fieldType);
+            <Controller
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+                // maxLength: { value: 5, message: 'Too many characters' },
+                // minLength: { value: 5, message: 'Less characters' },
               }}
+              render={({ field }) => (
+                <FormList.TextField
+                  {...field}
+                  key={id}
+                  type="email"
+                  fieldTypeLabel="EMAIL"
+                  labelTitle={name}
+                  placeholder=""
+                  error={!!errors?.[id]?.message}
+                  helperText={errors?.[id]?.message}
+                  onChange={(e: any) => {
+                    handleFormChange(id, field.value, fieldType);
+                    field.onChange(e);
+                  }}
+                />
+              )}
             />
           );
         case 'DOCUMENT':
@@ -223,44 +263,113 @@ export default function ContentManagerNew() {
           );
         case 'TEXT_AREA':
           return (
-            <FormList.TextAreaField
-              key={id}
-              name={name}
-              onChange={(e: { target: { value: string } }) => {
-                handleFormChange(id, e.target.value, fieldType);
-              }}
+            <Controller
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{ required: `${name} is required` }}
+              render={({ field }) => (
+                <FormList.TextAreaField
+                  {...field}
+                  key={id}
+                  fieldTypeLabel="TEXT_AREA"
+                  labelTitle={name}
+                  placeholder=""
+                  error={!!errors?.[id]?.message}
+                  helperText={errors?.[id]?.message}
+                  onChange={(e: any) => {
+                    handleFormChange(id, field.value, fieldType);
+                    field.onChange(e);
+                  }}
+                />
+              )}
             />
           );
         case 'TEXT_EDITOR':
           return <FormList.TextEditor key={id} name={name} />;
         case 'PHONE_NUMBER':
           return (
-            <FormList.PhoneNumber
-              key={id}
-              name={name}
-              onChange={(e: { target: { value: string } }) => {
-                handleFormChange(id, e.target.value, fieldType);
+            <Controller
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: `${name} is required`,
+                pattern: {
+                  value: /^[0-9\- ]{8,14}$/,
+                  message: 'Invalid number',
+                },
               }}
+              render={({ field }) => (
+                <FormList.TextField
+                  {...field}
+                  key={id}
+                  fieldTypeLabel="PHONE_NUMBER"
+                  labelTitle={name}
+                  placeholder=""
+                  error={!!errors?.[id]?.message}
+                  helperText={errors?.[id]?.message}
+                  onChange={(e: any) => {
+                    handleFormChange(id, field.value, fieldType);
+                    field.onChange(e);
+                  }}
+                />
+              )}
             />
           );
         case 'TEXT_FIELD':
           return (
-            <FormList.TextField
-              key={id}
-              name={name}
-              onChange={(e: { target: { value: string } }) => {
-                handleFormChange(id, e.target.value, fieldType);
-              }}
+            <Controller
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{ required: `${name} is required` }}
+              render={({ field }) => (
+                <FormList.TextField
+                  {...field}
+                  key={id}
+                  fieldTypeLabel="TEXT_FIELD"
+                  labelTitle={name}
+                  placeholder=""
+                  error={!!errors?.[id]?.message}
+                  helperText={errors?.[id]?.message}
+                  onChange={(e: any) => {
+                    handleFormChange(id, field.value, fieldType);
+                    field.onChange(e);
+                  }}
+                />
+              )}
             />
           );
         case 'YOUTUBE_URL':
           return (
-            <FormList.YoutubeURL
-              key={id}
-              name={name}
-              onChange={(e: { target: { value: string } }) => {
-                handleFormChange(id, e.target.value, fieldType);
+            <Controller
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: `${name} is required`,
+                pattern: {
+                  value:
+                    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                  message: 'Invalid URL',
+                },
               }}
+              render={({ field }) => (
+                <FormList.TextField
+                  {...field}
+                  key={id}
+                  fieldTypeLabel="YOUTUBE_URL"
+                  labelTitle={name}
+                  placeholder=""
+                  error={!!errors?.[id]?.message}
+                  helperText={errors?.[id]?.message}
+                  onChange={(e: any) => {
+                    handleFormChange(id, field.value, fieldType);
+                    field.onChange(e);
+                  }}
+                />
+              )}
             />
           );
         case 'LOOPING':
@@ -279,14 +388,58 @@ export default function ContentManagerNew() {
                     case 'TEXT_EDITOR':
                     case 'PHONE_NUMBER':
                     case 'TEXT_FIELD':
+                      return (
+                        <Controller
+                          name={id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{ required: `${name} is required` }}
+                          render={({ field }) => (
+                            <FormList.TextField
+                              {...field}
+                              key={id}
+                              fieldTypeLabel="TEXT_FIELD"
+                              labelTitle={name}
+                              placeholder=""
+                              error={!!errors?.[id]?.message}
+                              helperText={errors?.[id]?.message}
+                              onChange={(e: any) => {
+                                handleFormChange(id, field.value, fieldType, true);
+                                field.onChange(e);
+                              }}
+                            />
+                          )}
+                        />
+                      );
                     case 'YOUTUBE_URL':
                       return (
-                        <FormList.Email
-                          key={id}
-                          name={name}
-                          onChange={(e: { target: { value: string } }) => {
-                            handleFormChange(id, e.target.value, fieldType, true);
+                        <Controller
+                          name={id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: `${name} is required`,
+                            pattern: {
+                              value:
+                                /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                              message: 'Invalid URL',
+                            },
                           }}
+                          render={({ field }) => (
+                            <FormList.TextField
+                              {...field}
+                              key={id}
+                              fieldTypeLabel="YOUTUBE_URL"
+                              labelTitle={name}
+                              placeholder=""
+                              error={!!errors?.[id]?.message}
+                              helperText={errors?.[id]?.message}
+                              onChange={(e: any) => {
+                                handleFormChange(id, field.value, fieldType);
+                                field.onChange(e);
+                              }}
+                            />
+                          )}
                         />
                       );
                     default:
@@ -323,11 +476,7 @@ export default function ContentManagerNew() {
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             Save as Draft
           </button>
-          <button
-            onClick={() => {
-              onSubmitData();
-            }}
-            className="btn btn-success text-xs text-white btn-sm w-28 h-10">
+          <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
             Submit
           </button>
         </div>
@@ -337,57 +486,74 @@ export default function ContentManagerNew() {
 
   return (
     <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
-      <div className="ml-2 mt-6">
-        {/* DEFAULT FORM */}
-        <div className="grid grid-cols-1 gap-5">
-          <InputText
-            name="title"
-            labelTitle="Title"
-            placeholder="Title"
-            labelStyle="font-bold text-base w-48"
-            direction="row"
-            roundStyle="xl"
-            onChange={e => {
-              handleChange(e.target.name, e.target.value);
-            }}
-          />
-          {postTypeDetail?.isUseCategory && (
-            <div className="flex flex-row items-center">
-              <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-                Category
-              </Typography>
-              <DropDown
-                labelStyle="font-bold text-base"
-                defaultValue="item1"
-                items={categoryList}
-                onSelect={(_e, val) => {
-                  handleChange('categoryName', val);
-                }}
-              />
-            </div>
-          )}
-          <div className="flex flex-row">
-            <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
-              Short Description
-            </Typography>
-            <TextArea
+      <form onSubmit={handleSubmit(onSubmitData)}>
+        <div className="ml-2 mt-6">
+          {/* DEFAULT FORM */}
+          <div className="grid grid-cols-1 gap-5">
+            <Controller
+              name="title"
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Title is required' }}
+              render={({ field }) => (
+                <FormList.TextField
+                  {...field}
+                  key="title"
+                  labelTitle="Title"
+                  placeholder="Title"
+                  error={!!errors?.title?.message}
+                  helperText={errors?.title?.message}
+                  onChange={(e: any) => {
+                    field.onChange(e);
+                    handleChange('title', field.value);
+                  }}
+                />
+              )}
+            />
+            {postTypeDetail?.isUseCategory && (
+              <div className="flex flex-row items-center">
+                <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-9">
+                  Category
+                </Typography>
+                <DropDown
+                  labelStyle="font-bold text-base"
+                  defaultValue="item1"
+                  items={categoryList}
+                  onSelect={(_e, val) => {
+                    handleChange('categoryName', val);
+                  }}
+                />
+              </div>
+            )}
+            <Controller
               name="shortDesc"
-              labelTitle=""
-              placeholder={'Enter description'}
-              containerStyle="rounded-3xl"
-              onChange={e => {
-                handleChange(e.target.name, e.target.value);
-              }}
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Field is required' }}
+              render={({ field }) => (
+                <FormList.TextAreaField
+                  {...field}
+                  key="shortDesc"
+                  labelTitle="Short Description"
+                  placeholder="Enter Short Description"
+                  error={!!errors?.shortDesc?.message}
+                  helperText={errors?.shortDesc?.message}
+                  onChange={(e: any) => {
+                    handleChange('shortDesc', field.value);
+                    field.onChange(e);
+                  }}
+                />
+              )}
             />
           </div>
         </div>
-      </div>
 
-      <div className="border border-primary my-10" />
+        <div className="border border-primary my-10" />
 
-      {/* DYNAMIC FORM */}
-      {renderFormList()}
-      <Footer />
+        {/* DYNAMIC FORM */}
+        {renderFormList()}
+        <Footer />
+      </form>
     </TitleCard>
   );
 }
