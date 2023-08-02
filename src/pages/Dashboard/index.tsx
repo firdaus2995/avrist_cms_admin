@@ -1,11 +1,22 @@
-import { JSXElementConstructor, ReactElement, ReactFragment, ReactPortal } from 'react';
+import { JSXElementConstructor, ReactElement, ReactFragment, ReactPortal, useEffect, useState } from 'react';
 import HeaderBg from "../../assets/home/header-bg.png";
 import content1 from "../../assets/home/content-1.png";
 import content2 from "../../assets/home/content-2.png";
 import content3 from "../../assets/home/content-3.png";
 import { Link, To } from 'react-router-dom';
+import { useGetUserGuideQuery } from '@/services/Config/configApi';
 
 export default function Dashboard() {
+  const [url, setUrl] = useState("");
+  const fetchUserGuideQuery = useGetUserGuideQuery({});
+  const { data: userGuide } = fetchUserGuideQuery;
+
+  useEffect(() => {
+    if (userGuide?.getConfig) {
+      setUrl(userGuide?.getConfig?.value);
+    };
+  }, [userGuide])
+
   const data = [
     {
       title: 'Regist Page Template',
@@ -73,10 +84,12 @@ export default function Dashboard() {
             <p className='text-2xl font-medium text-dark-purple'>
               Avrist Content Management System
             </p>
-            <button
-              className="btn btn-md bg-dark-purple xl:w-[30%] lg:w-[50%] items-center justify-center flex gap-2 xl:mt-10 lg:mt-5">
-              Download User Guide
-            </button>
+            <Link to={url} target='_blank'>
+              <button
+                className="btn btn-md bg-dark-purple xl:w-[30%] lg:w-[50%] items-center justify-center flex gap-2 xl:mt-10 lg:mt-5">
+                Download User Guide
+              </button>
+            </Link>
           </div>
         </div>
         <div className='flex w-1/2'>

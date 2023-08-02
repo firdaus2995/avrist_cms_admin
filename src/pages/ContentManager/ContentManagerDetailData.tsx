@@ -1,4 +1,4 @@
-import { Key, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -186,11 +186,11 @@ export default function ContentManagerDetailData() {
       setContentTempData(defaultFormData);
     }
 
-    return contentDataDetailList?.contentData.map(({ id, name, fieldType, contentData }: any) => {
+    return contentDataDetailList?.contentData.map(({ id, name, fieldType }: any) => {
       switch (fieldType) {
         case 'EMAIL':
           return (
-            <FormList.Email
+            <FormList.TextField
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
@@ -225,7 +225,7 @@ export default function ContentManagerDetailData() {
           return <FormList.TextEditor key={id} name={name} />;
         case 'PHONE_NUMBER':
           return (
-            <FormList.PhoneNumber
+            <FormList.TextField
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
@@ -245,7 +245,7 @@ export default function ContentManagerDetailData() {
           );
         case 'YOUTUBE_URL':
           return (
-            <FormList.YoutubeURL
+            <FormList.TextField
               key={id}
               name={name}
               onChange={(e: { target: { value: string } }) => {
@@ -271,7 +271,7 @@ export default function ContentManagerDetailData() {
                     case 'TEXT_FIELD':
                     case 'YOUTUBE_URL':
                       return (
-                        <FormList.Email
+                        <FormList.TextField
                           key={id}
                           name={name}
                           value={value}

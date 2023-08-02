@@ -449,7 +449,7 @@ export default function ContentManagerNew() {
               </div>
               <div className="flex justify-end mt-8">
                 <button
-                  onClick={() => {}}
+                  onClick={() => {console.log(postTypeDetail?.attributeList)}}
                   className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                   <img src={Plus} className="mr-3" />
                   Add Data
