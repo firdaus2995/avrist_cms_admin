@@ -16,6 +16,7 @@ import FormList from './components/FormList';
 import Plus from '@/assets/plus-purple.svg';
 
 import { useForm, Controller } from 'react-hook-form';
+import TextInputDropdown from './components/FormList/TextInputDropdown';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -556,6 +557,7 @@ export default function ContentManagerNew() {
                 />
               )}
             />
+            <TextInputDropdown />
             {postTypeDetail?.isUseCategory && (
               <div className="flex flex-row items-center">
                 <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-9">
