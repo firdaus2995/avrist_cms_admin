@@ -37,6 +37,21 @@ export const configApi = createApi({
         variables: payload,
       })
     }),
+    getEmailFormAttributeList: builder.query<any,any>({
+      query: payload => ({
+        document: gql`
+          query {
+            getConfig(variable: "EMAIL_FORM_ATTRIBUTE_LIST") {    
+              id
+              variable
+              value
+              description
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
     getUserGuide: builder.query<any,any>({
       query: payload => ({
         document: gql`
@@ -58,5 +73,6 @@ export const configApi = createApi({
 export const {
   useGetCmsEntityLogoQuery,
   useGetCmsEntityLoginDescriptionQuery,
+  useGetEmailFormAttributeListQuery,
   useGetUserGuideQuery,
 } = configApi;
