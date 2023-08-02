@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
@@ -44,10 +44,6 @@ export default function ContentManagerNew() {
       [id]: value,
     }));
   };
-
-  useEffect(() => {
-    console.log('mainform ', mainForm);
-  }, [mainForm]);
 
   // FORM VALIDATION
   const {
@@ -123,7 +119,6 @@ export default function ContentManagerNew() {
   useEffect(() => {
     if (postTypeDetailData) {
       setPostTypeDetail(postTypeDetailData?.postTypeDetail);
-      console.log(postTypeDetailData?.postTypeDetail);
     }
   }, [postTypeDetailData]);
 
@@ -151,17 +146,16 @@ export default function ContentManagerNew() {
 
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
-  const payload = {
-    title: mainForm.title,
-    shortDesc: mainForm.shortDesc,
-    isDraft: false,
-    postTypeId: id,
-    categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
-    contentData: contentTempData,
-  };
 
-  function onSubmitData(_value: any) {
-    console.log('ini payload ', payload);
+  function onSubmitData(value: any) {
+    const payload = {
+      title: value.title,
+      shortDesc: value.shortDesc,
+      isDraft: false,
+      postTypeId: id,
+      categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
+      contentData: contentTempData,
+    };
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -230,22 +224,28 @@ export default function ContentManagerNew() {
                 // maxLength: { value: 5, message: 'Too many characters' },
                 // minLength: { value: 5, message: 'Less characters' },
               }}
-              render={({ field }) => (
-                <FormList.TextField
-                  {...field}
-                  key={id}
-                  type="email"
-                  fieldTypeLabel="EMAIL"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
                     handleFormChange(id, field.value, fieldType);
                     field.onChange(e);
-                  }}
-                />
-              )}
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    type="email"
+                    fieldTypeLabel="EMAIL"
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           );
         case 'DOCUMENT':
@@ -267,22 +267,31 @@ export default function ContentManagerNew() {
               name={id.toString()}
               control={control}
               defaultValue=""
-              rules={{ required: `${name} is required` }}
-              render={({ field }) => (
-                <FormList.TextAreaField
-                  {...field}
-                  key={id}
-                  fieldTypeLabel="TEXT_AREA"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
+              rules={{
+                required: { value: true, message: `${name} is required` },
+                // maxLength: { value: 5, message: 'Too many characters' },
+                // minLength: { value: 5, message: 'Less characters' },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
                     handleFormChange(id, field.value, fieldType);
                     field.onChange(e);
-                  }}
-                />
-              )}
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextAreaField
+                    {...field}
+                    key={id}
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           );
         case 'TEXT_EDITOR':
@@ -300,21 +309,27 @@ export default function ContentManagerNew() {
                   message: 'Invalid number',
                 },
               }}
-              render={({ field }) => (
-                <FormList.TextField
-                  {...field}
-                  key={id}
-                  fieldTypeLabel="PHONE_NUMBER"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
                     handleFormChange(id, field.value, fieldType);
                     field.onChange(e);
-                  }}
-                />
-              )}
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="PHONE_NUMBER"
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           );
         case 'TEXT_FIELD':
@@ -324,21 +339,27 @@ export default function ContentManagerNew() {
               control={control}
               defaultValue=""
               rules={{ required: `${name} is required` }}
-              render={({ field }) => (
-                <FormList.TextField
-                  {...field}
-                  key={id}
-                  fieldTypeLabel="TEXT_FIELD"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
                     handleFormChange(id, field.value, fieldType);
                     field.onChange(e);
-                  }}
-                />
-              )}
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="TEXT_FIELD"
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           );
         case 'YOUTUBE_URL':
@@ -464,7 +485,7 @@ export default function ContentManagerNew() {
     });
   };
 
-  const Footer = () => {
+  const Footer = useCallback(() => {
     return (
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
@@ -482,7 +503,7 @@ export default function ContentManagerNew() {
         </div>
       </div>
     );
-  };
+  }, []);
 
   return (
     <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
@@ -539,7 +560,7 @@ export default function ContentManagerNew() {
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
                   onChange={(e: any) => {
-                    handleChange('shortDesc', field.value);
+                    handleChange('shortDesc', e.target.value);
                     field.onChange(e);
                   }}
                 />
