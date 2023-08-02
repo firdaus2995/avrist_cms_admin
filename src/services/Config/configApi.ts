@@ -37,10 +37,26 @@ export const configApi = createApi({
         variables: payload,
       })
     }),
+    getEmailFormAttributeList: builder.query<any,any>({
+      query: payload => ({
+        document: gql`
+          query {
+            getConfig(variable: "EMAIL_FORM_ATTRIBUTE_LIST") {    
+              id
+              variable
+              value
+              description
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
   })
 })
 
 export const {
   useGetCmsEntityLogoQuery,
   useGetCmsEntityLoginDescriptionQuery,
+  useGetEmailFormAttributeListQuery,
 } = configApi;

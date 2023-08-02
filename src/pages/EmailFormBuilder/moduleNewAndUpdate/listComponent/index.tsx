@@ -1,25 +1,22 @@
-import TextField from "./TextField";
-import TextArea from "./TextArea";
-import Dropdown from "./Dropdown";
-import Radio from "./Radio";
-import Checkbox from "./Checkbox";
-import Email from "./Email";
-import Label from "./Label";
-import Number from "./Number";
-import Document from "./Document";
-import Image from "./Image";
+import React from "react";
 
-const EFBList = {
-  TextField,
-  TextArea,
-  Dropdown,
-  Radio,
-  Checkbox,
-  Email,
-  Label,
-  Number,
-  Document,
-  Image,
+interface IEFBList {
+  label: string;
+  icon: string;
+};
+
+const EFBList: React.FC<IEFBList> = ({
+  label,
+  icon,
+}) => {
+  return (
+    <div className="min-h-[65px] flex flex-row justify-between items-center py-2 px-4 bg-light-purple-2 rounded-xl">
+      <p className="font-bold text-sm">{label}</p>
+      <div className="w-[28px] h-[28px] flex justify-center items-center">
+        <img src={`data:image/svg+xml;base64,${icon}`} />
+      </div>
+    </div>
+  )
 };
 
 export default EFBList;
