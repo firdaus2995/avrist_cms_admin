@@ -1,10 +1,11 @@
+/* eslint-disable import/no-duplicates */
 import FileUploader from './FileUploader';
-import Email from './Email';
-import PhoneNumber from './PhoneNumber';
+import Email from './TextField';
+import PhoneNumber from './TextField';
 import TextField from './TextField';
 import TextAreaField from './TextAreaField';
 import TextEditor from './TextEditor';
-import YoutubeURL from './YoutubeURL';
+import YoutubeURL from './TextField';
 
 const FormList = {
   FileUploader,
