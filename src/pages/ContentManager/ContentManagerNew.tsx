@@ -16,7 +16,6 @@ import FormList from './components/FormList';
 import Plus from '@/assets/plus-purple.svg';
 
 import { useForm, Controller } from 'react-hook-form';
-import TextInputDropdown from './components/FormList/TextInputDropdown';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -39,13 +38,6 @@ export default function ContentManagerNew() {
     shortDesc: '',
     categoryName: '',
   });
-  // HANDLE MAIN CHANGE
-  // const handleChange = (id: string | number, value: any) => {
-  //   setMainForm((prevFormValues: any) => ({
-  //     ...prevFormValues,
-  //     [id]: value,
-  //   }));
-  // };
 
   // FORM VALIDATION
   const {
@@ -496,7 +488,9 @@ export default function ContentManagerNew() {
               </div>
               <div className="flex justify-end mt-8">
                 <button
-                  onClick={() => {console.log(postTypeDetail?.attributeList)}}
+                  onClick={() => {
+                    console.log(postTypeDetail?.attributeList);
+                  }}
                   className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                   <img src={Plus} className="mr-3" />
                   Add Data
@@ -557,7 +551,6 @@ export default function ContentManagerNew() {
                 />
               )}
             />
-            <TextInputDropdown />
             {postTypeDetail?.isUseCategory && (
               <div className="flex flex-row items-center">
                 <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-9">
