@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
@@ -16,6 +16,7 @@ import FormList from './components/FormList';
 import Plus from '@/assets/plus-purple.svg';
 
 import { useForm, Controller } from 'react-hook-form';
+import TextInputDropdown from './components/FormList/TextInputDropdown';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -38,16 +39,13 @@ export default function ContentManagerNew() {
     shortDesc: '',
     categoryName: '',
   });
-  const handleChange = (id: string | number, value: any) => {
-    setMainForm((prevFormValues: any) => ({
-      ...prevFormValues,
-      [id]: value,
-    }));
-  };
-
-  useEffect(() => {
-    console.log('mainform ', mainForm);
-  }, [mainForm]);
+  // HANDLE MAIN CHANGE
+  // const handleChange = (id: string | number, value: any) => {
+  //   setMainForm((prevFormValues: any) => ({
+  //     ...prevFormValues,
+  //     [id]: value,
+  //   }));
+  // };
 
   // FORM VALIDATION
   const {
@@ -60,13 +58,21 @@ export default function ContentManagerNew() {
   const handleFormChange = (
     id: string | number,
     value: any,
-    fieldType: string,
+    fieldType?: string,
     isLooping: boolean = false,
   ) => {
     setContentTempData((prevFormValues: any[]) => {
       const existingIndex = prevFormValues.findIndex(
         (item: { id: string | number }) => item.id === id,
       );
+
+      const mainForm = id && value && !fieldType && !isLooping;
+      if (mainForm) {
+        setMainForm((prevFormValues: any) => ({
+          ...prevFormValues,
+          [id]: value,
+        }));
+      }
 
       if (existingIndex !== -1 && !isLooping) {
         const updatedFormValues = [...prevFormValues];
@@ -123,7 +129,6 @@ export default function ContentManagerNew() {
   useEffect(() => {
     if (postTypeDetailData) {
       setPostTypeDetail(postTypeDetailData?.postTypeDetail);
-      console.log(postTypeDetailData?.postTypeDetail);
     }
   }, [postTypeDetailData]);
 
@@ -151,17 +156,16 @@ export default function ContentManagerNew() {
 
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
-  const payload = {
-    title: mainForm.title,
-    shortDesc: mainForm.shortDesc,
-    isDraft: false,
-    postTypeId: id,
-    categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
-    contentData: contentTempData,
-  };
 
-  function onSubmitData(_value: any) {
-    console.log('ini payload ', payload);
+  function onSubmitData(value: any) {
+    const payload = {
+      title: value.title,
+      shortDesc: value.shortDesc,
+      isDraft: false,
+      postTypeId: id,
+      categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
+      contentData: contentTempData,
+    };
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -217,8 +221,89 @@ export default function ContentManagerNew() {
       setContentTempData(defaultFormData);
     }
 
-    return postTypeDetail?.attributeList.map(({ id, name, fieldType, attributeList }: any) => {
+    return postTypeDetail?.attributeList.map((props: any) => {
+      const { id, name, fieldType, attributeList, config } = props;
+      const configs = JSON.parse(config);
       switch (fieldType) {
+        case 'TEXT_FIELD':
+          return (
+            <Controller
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+                maxLength: {
+                  value: configs?.max_length,
+                  message: `${configs?.max_length} characters maximum`,
+                },
+                minLength: {
+                  value: configs?.min_length,
+                  message: `${configs?.min_length} characters minimum`,
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, field.value, fieldType);
+                    field.onChange(e);
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="TEXT_FIELD"
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          );
+        case 'TEXT_AREA':
+          return (
+            <Controller
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+                maxLength: {
+                  value: configs?.max_length,
+                  message: `${configs?.max_length} characters maximum`,
+                },
+                minLength: {
+                  value: configs?.min_length,
+                  message: `${configs?.min_length} characters minimum`,
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, field.value, fieldType);
+                    field.onChange(e);
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextAreaField
+                    {...field}
+                    key={id}
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          );
         case 'EMAIL':
           return (
             <Controller
@@ -227,25 +312,29 @@ export default function ContentManagerNew() {
               defaultValue=""
               rules={{
                 required: { value: true, message: `${name} is required` },
-                // maxLength: { value: 5, message: 'Too many characters' },
-                // minLength: { value: 5, message: 'Less characters' },
               }}
-              render={({ field }) => (
-                <FormList.TextField
-                  {...field}
-                  key={id}
-                  type="email"
-                  fieldTypeLabel="EMAIL"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
                     handleFormChange(id, field.value, fieldType);
                     field.onChange(e);
-                  }}
-                />
-              )}
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    type="email"
+                    fieldTypeLabel="EMAIL"
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           );
         case 'DOCUMENT':
@@ -259,30 +348,6 @@ export default function ContentManagerNew() {
               onFilesChange={e => {
                 handleFilesChange(id, e, fieldType);
               }}
-            />
-          );
-        case 'TEXT_AREA':
-          return (
-            <Controller
-              name={id.toString()}
-              control={control}
-              defaultValue=""
-              rules={{ required: `${name} is required` }}
-              render={({ field }) => (
-                <FormList.TextAreaField
-                  {...field}
-                  key={id}
-                  fieldTypeLabel="TEXT_AREA"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
-                    handleFormChange(id, field.value, fieldType);
-                    field.onChange(e);
-                  }}
-                />
-              )}
             />
           );
         case 'TEXT_EDITOR':
@@ -300,45 +365,27 @@ export default function ContentManagerNew() {
                   message: 'Invalid number',
                 },
               }}
-              render={({ field }) => (
-                <FormList.TextField
-                  {...field}
-                  key={id}
-                  fieldTypeLabel="PHONE_NUMBER"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
                     handleFormChange(id, field.value, fieldType);
                     field.onChange(e);
-                  }}
-                />
-              )}
-            />
-          );
-        case 'TEXT_FIELD':
-          return (
-            <Controller
-              name={id.toString()}
-              control={control}
-              defaultValue=""
-              rules={{ required: `${name} is required` }}
-              render={({ field }) => (
-                <FormList.TextField
-                  {...field}
-                  key={id}
-                  fieldTypeLabel="TEXT_FIELD"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
-                    handleFormChange(id, field.value, fieldType);
-                    field.onChange(e);
-                  }}
-                />
-              )}
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="PHONE_NUMBER"
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           );
         case 'YOUTUBE_URL':
@@ -464,7 +511,7 @@ export default function ContentManagerNew() {
     });
   };
 
-  const Footer = () => {
+  const Footer = useCallback(() => {
     return (
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
@@ -482,7 +529,7 @@ export default function ContentManagerNew() {
         </div>
       </div>
     );
-  };
+  }, []);
 
   return (
     <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
@@ -505,11 +552,12 @@ export default function ContentManagerNew() {
                   helperText={errors?.title?.message}
                   onChange={(e: any) => {
                     field.onChange(e);
-                    handleChange('title', field.value);
+                    handleFormChange('title', field.value);
                   }}
                 />
               )}
             />
+            <TextInputDropdown />
             {postTypeDetail?.isUseCategory && (
               <div className="flex flex-row items-center">
                 <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-9">
@@ -520,7 +568,7 @@ export default function ContentManagerNew() {
                   defaultValue="item1"
                   items={categoryList}
                   onSelect={(_e, val) => {
-                    handleChange('categoryName', val);
+                    handleFormChange('categoryName', val);
                   }}
                 />
               </div>
@@ -539,7 +587,7 @@ export default function ContentManagerNew() {
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
                   onChange={(e: any) => {
-                    handleChange('shortDesc', field.value);
+                    handleFormChange('shortDesc', e.target.value);
                     field.onChange(e);
                   }}
                 />
