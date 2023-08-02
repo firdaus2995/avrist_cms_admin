@@ -1,21 +1,17 @@
 import React from "react";
 
-import { CheckBox } from "@/components/atoms/Input/CheckBox";
+import Config from "./Config";
 import { InputText } from "@/components/atoms/Input/InputText";
 
 interface IEmail {
-  name: string;
-  placeholder: string;
-  required: boolean;
-  errors: any;
+  data: any;
+  configList: any;
   valueChange: (type: string, value: any) => void;
 };
 
 const Email: React.FC<IEmail> = ({
-  name,
-  placeholder,
-  required,
-  errors,
+  data,
+  configList,
   valueChange,
 }) => {
   return (
@@ -27,32 +23,16 @@ const Email: React.FC<IEmail> = ({
         inputStyle="text-sm"
         placeholder="Enter your email name"
         roundStyle="lg"
-        value={name}
-        isError={errors.name}
+        value={data?.name}
+        isError={data?.mandatory?.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}
       />
-      <InputText
-        labelTitle="Placeholder Name"
-        labelStyle="font-bold	"
-        inputHeight={40}
-        inputStyle="text-sm"
-        placeholder="Enter your placeholder"
-        roundStyle="lg"
-        value={placeholder}
-        onChange={(event: any) => {
-          valueChange('placeholder', event.target.value);
-        }}
-      />
-      <CheckBox
-        defaultValue={required}
-        labelTitle="Required Field"
-        labelContainerStyle="justify-start p-1"
-        inputStyle="w-[20px] h-[20px]"
-        updateFormValue={(event: any) => {
-          valueChange('required', event.value);
-        }}
+      <Config
+        data={data}
+        configList={configList}
+        valueChange={valueChange}
       />
     </React.Fragment>
   )

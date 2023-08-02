@@ -20,15 +20,19 @@ import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useGetEmailFormBuilderDetailQuery, useUpdateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi";
+import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
 
 export default function EmailFormBuilderEdit () {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { id } = useParams();
+  // BACKEND STATE
+  const [formAttribute, setFormAttribute] = useState<any>([]);
+  const [objectFormAttribute, setObjectFormAttribute] = useState<any>({});
   // FORM STATE
   const [formName, setFormName] = useState<any>("");
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
-  const [multipleInput, setMultipleInput] = useState<any>([]);
+  const [pics, setPics] = useState<any>([]);
   const [components, setComponents] = useState<any>([]);
   const [activeComponent, setActiveComponent] = useState<any>(null);
   // LEAVE MODAL
@@ -36,10 +40,27 @@ export default function EmailFormBuilderEdit () {
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
 
+  // RTK GET ATTRIBUTE
+  const { data: dataAttribute } = useGetEmailFormAttributeListQuery({});
+
   // RTK GET DETAIL
   const { data: dataDetail } = useGetEmailFormBuilderDetailQuery({ id, pageIndex: 0, limit: 99 }, {
     refetchOnMountOrArgChange: true,
   });
+
+  useEffect(() => {
+    if (dataAttribute?.getConfig) {
+      const arrayFormAttribute: any = JSON.parse(dataAttribute?.getConfig?.value).attributes;
+      const objectFormAttribute: any = {};
+      
+      for (const element of arrayFormAttribute) {
+        objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
+      };
+
+      setFormAttribute(arrayFormAttribute);
+      setObjectFormAttribute(objectFormAttribute);
+    };
+  }, [dataAttribute]);
 
   // RTK UPDATE EMAIL
   const [ updateEmailFormBuilder, {
@@ -69,13 +90,13 @@ export default function EmailFormBuilderEdit () {
             placeholder: config?.placeholder,
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_input') && {
-            multiple: config?.multiple_input === "true" ?? false,
+            multipleInput: config?.multiple_input === "true" ?? false,
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_select') && {
-            multiple: config?.multiple_select === "true" ?? false,
+            multipleSelect: config?.multiple_select === "true" ?? false,
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_upload') && {
-            multiple: config?.multiple_upload === "true" ?? false,
+            multipleUpload: config?.multiple_upload === "true" ?? false,
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'required') && {
             required: config?.required === "true" ?? false,
@@ -87,13 +108,13 @@ export default function EmailFormBuilderEdit () {
             maxLength: config?.max_length,
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'allow_other_value') && {
-            other: config?.allow_other_value === "true" ?? false,
+            allowOtherValue: config?.allow_other_value === "true" ?? false,
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'size') && {
-            position: config?.size[0].toUpperCase(),
+            size: config?.size[0].toUpperCase(),
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'position') && {
-            alignment: config?.position[0].toUpperCase(),
+            position: config?.position[0].toUpperCase(),
           }),
 
           ...((element?.fieldType === "CHECKBOX" || element?.fieldType === "RADIO_BUTTON" || element?.fieldType === "DROPDOWN") && {
@@ -110,7 +131,7 @@ export default function EmailFormBuilderEdit () {
       });      
             
       setFormName(name);
-      setMultipleInput(pic);
+      setPics(pic);
       setComponents(attributeList);
     }
   }, [dataDetail])
@@ -164,21 +185,21 @@ export default function EmailFormBuilderEdit () {
             fieldType: "TEXT_FIELD",
             name: element.name,
             fieldId: "TEXT_FIELD",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multipleInput}\"}`, //eslint-disable-line
           };
         case "TEXTAREA":
           return {
             fieldType: "TEXT_AREA",
             name: element.name,
             fieldId: "TEXT_AREA",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multiple}\", \"max_length\": \"${element.maxLength ?? 0}\", \"min_length\": \"${element.minLength ?? 0}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multipleInput}\", \"max_length\": \"${element.maxLength ?? 0}\", \"min_length\": \"${element.minLength ?? 0}\"}`, //eslint-disable-line
           };
         case "DROPDOWN":
           return {
             fieldType: "DROPDOWN",
             name: element.name,
             fieldId: "DROPDOWN",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multiple}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multipleSelect}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
         case "RADIOBUTTON":
@@ -186,7 +207,7 @@ export default function EmailFormBuilderEdit () {
             fieldType: "RADIO_BUTTON",
             name: element.name,
             fieldId: "RADIO_BUTTON",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
         case "CHECKBOX":
@@ -194,7 +215,7 @@ export default function EmailFormBuilderEdit () {
             fieldType: "CHECKBOX",
             name: element.name,
             fieldId: "CHECKBOX",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.other}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(";"),
           };
         case "EMAIL":
@@ -209,7 +230,7 @@ export default function EmailFormBuilderEdit () {
             fieldType: "LABEL",
             name: element.name,
             fieldId: "LABEL",
-            config: `{\"size\": [\"${element.position.toLowerCase()}\"], \"position\": [\"${element.alignment.toLowerCase()}\"]}`, //eslint-disable-line
+            config: `{\"size\": [\"${element.size.toLowerCase()}\"], \"position\": [\"${element.position.toLowerCase()}\"]}`, //eslint-disable-line
           };  
         case "NUMBER":
           return {
@@ -223,14 +244,14 @@ export default function EmailFormBuilderEdit () {
             fieldType: "DOCUMENT",
             name: element.name,
             fieldId: "DOCUMENT",
-            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`, //eslint-disable-line
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case "IMAGE":
           return {
             fieldType: "IMAGE",
             name: element.name,
             fieldId: "IMAGE",
-            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multiple}\"}`, //eslint-disable-line
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case "SUBMITTEREMAIL":
           return {
@@ -244,12 +265,12 @@ export default function EmailFormBuilderEdit () {
       };
     });
 
-    if (multipleInput.length > 0) {
+    if (pics.length > 0) {
       backendComponents.unshift({
         fieldType: "EMAIL_FORM_PIC",
         name: "EMAIL_FORM_PIC",
         fieldId: "EMAIL_FORM_PIC",
-        value: multipleInput.join(";"),
+        value: pics.join(";"),
       });
     };
 
@@ -300,15 +321,15 @@ export default function EmailFormBuilderEdit () {
   };
 
   const handlerAddMultipleInput = (value: any) => {
-    const items: any = copyArray(multipleInput);
+    const items: any = copyArray(pics);
     items.push(value);
-    setMultipleInput(items);
+    setPics(items);
   };
 
   const handlerDeleteMultipleInput = (index: any) => {
-    const items: any = copyArray(multipleInput);
+    const items: any = copyArray(pics);
     items.splice(index, 1);
-    setMultipleInput(items);
+    setPics(items);
   };
 
   const handlerSubmitterEmail = (element: any) => {
@@ -341,7 +362,7 @@ export default function EmailFormBuilderEdit () {
           type: item,
           name: "Text Field Name",
           placeholder: "Enter your field",
-          multiple: false,
+          multipleInput: false,
           required: false,
           mandatory: {
             name: false,
@@ -355,7 +376,7 @@ export default function EmailFormBuilderEdit () {
           placeholder: "Enter your field",
           minLength: null,
           maxLength: null,
-          multiple: false,
+          multipleInput: false,
           required: false,
           mandatory: {
             name: false,
@@ -367,7 +388,7 @@ export default function EmailFormBuilderEdit () {
           type: item,
           name: "Dropdown Name",
           items: ["Content 1", "Content 2"],
-          multiple: false,
+          multipleSelect: false,
           required: false,
           mandatory: {
             name: false,
@@ -380,7 +401,7 @@ export default function EmailFormBuilderEdit () {
           type: item,
           name: "Radio Name",
           items: ["Content 1", "Content 2"],
-          other: true,
+          allowOtherValue: true,
           required: false,
           mandatory: {
             name: false,
@@ -393,7 +414,7 @@ export default function EmailFormBuilderEdit () {
           type: item,
           name: "Checkbox Name",
           items: ["Content 1", "Content 2"],
-          other: true,
+          allowOtherValue: true,
           required: false,
           mandatory: {
             name: false,
@@ -417,8 +438,8 @@ export default function EmailFormBuilderEdit () {
         component = {
           type: item,
           name: "Label Name",
-          position: "TITLE",
-          alignment: "LEFT",
+          size: "TITLE",
+          position: "LEFT",
           mandatory: {
             name: false,
           },
@@ -439,7 +460,7 @@ export default function EmailFormBuilderEdit () {
         component = {
           type: item,
           name: "Document Name",
-          multiple: false,
+          multipleUpload: false,
           required: false,
           mandatory: {
             name: false,
@@ -450,7 +471,7 @@ export default function EmailFormBuilderEdit () {
         component = {
           type: item,
           name: "Image Name",
-          multiple: false,
+          multipleUpload: false,
           required: false,
           mandatory: {
             name: false,
@@ -487,56 +508,19 @@ export default function EmailFormBuilderEdit () {
   const renderDragComponents = () => {
     return (
       <React.Fragment>
-        <Drag
-          name="TEXTFIELD"
-        >
-          <EFBList.TextField />
-        </Drag>
-        <Drag
-          name="TEXTAREA"
-        >
-          <EFBList.TextArea />
-        </Drag>
-        <Drag
-          name="DROPDOWN"
-        >
-          <EFBList.Dropdown />
-        </Drag>
-        <Drag
-          name="RADIOBUTTON"
-        >
-          <EFBList.Radio />
-        </Drag>
-        <Drag
-          name="CHECKBOX"
-        >
-          <EFBList.Checkbox />
-        </Drag>
-        <Drag
-          name="EMAIL"
-        >
-          <EFBList.Email />
-        </Drag>
-        <Drag
-          name="LABEL"
-        >
-          <EFBList.Label />
-        </Drag>
-        <Drag
-          name="NUMBER"
-        >
-          <EFBList.Number />
-        </Drag>
-        <Drag
-          name="DOCUMENT"
-        >
-          <EFBList.Document />
-        </Drag>
-        <Drag
-          name="IMAGE"
-        >
-          <EFBList.Image />
-        </Drag>
+        {
+          formAttribute.map((element: any, index: number) => (
+            <Drag
+              name={element?.code?.replaceAll('_', '').toUpperCase()}
+              key={index}
+            >
+              <EFBList
+                label={element?.label}
+                icon={element?.icon}
+              />
+            </Drag>
+          ))
+        }
       </React.Fragment>
     )
   };
@@ -596,7 +580,7 @@ export default function EmailFormBuilderEdit () {
                 key={index}
                 name={element.name}
                 items={element.items}
-                other={element.other}
+                other={element.allowOtherValue}
                 isActive={activeComponent?.index === index}
                 onClick={() => {
                   handlerFocusComponent(element, index)
@@ -612,7 +596,7 @@ export default function EmailFormBuilderEdit () {
                 key={index}
                 name={element.name}
                 items={element.items}
-                other={element.other}
+                other={element.allowOtherValue}
                 isActive={activeComponent?.index === index}
                 onClick={() => {
                   handlerFocusComponent(element, index)
@@ -643,7 +627,7 @@ export default function EmailFormBuilderEdit () {
                 key={index}
                 name={element.name}
                 isActive={activeComponent?.index === index}
-                alignment={element.alignment}
+                alignment={element.position}
                 onClick={() => {
                   handlerFocusComponent(element, index)
                 }}
@@ -721,11 +705,8 @@ export default function EmailFormBuilderEdit () {
       case "TEXTFIELD":
         return (
           <EFBConfiguration.TextField 
-            name={activeComponent?.data?.name}
-            placeholder={activeComponent?.data?.placeholder}
-            multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -734,13 +715,8 @@ export default function EmailFormBuilderEdit () {
       case "TEXTAREA":
         return (
           <EFBConfiguration.TextArea 
-            name={activeComponent?.data?.name}
-            placeholder={activeComponent?.data?.placeholder}
-            minLength={activeComponent?.data?.minLength}
-            maxLength={activeComponent?.data?.maxLength}
-            multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -748,12 +724,9 @@ export default function EmailFormBuilderEdit () {
         )
       case "DROPDOWN":
         return (
-          <EFBConfiguration.Dropdown 
-            name={activeComponent?.data?.name}
-            items={activeComponent?.data?.items}
-            multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+          <EFBConfiguration.Dropdown
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -762,11 +735,8 @@ export default function EmailFormBuilderEdit () {
       case "RADIOBUTTON":
         return (
           <EFBConfiguration.Radio 
-            name={activeComponent?.data?.name}
-            items={activeComponent?.data?.items}
-            other={activeComponent?.data?.other}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -775,11 +745,8 @@ export default function EmailFormBuilderEdit () {
       case "CHECKBOX":
         return (
           <EFBConfiguration.Checkbox 
-            name={activeComponent?.data?.name}
-            items={activeComponent?.data?.items}
-            other={activeComponent?.data?.other}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -788,10 +755,8 @@ export default function EmailFormBuilderEdit () {
       case "EMAIL":
         return (
           <EFBConfiguration.Email 
-            name={activeComponent?.data?.name}
-            placeholder={activeComponent?.data?.placeholder}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -800,10 +765,8 @@ export default function EmailFormBuilderEdit () {
       case "LABEL":
         return (
           <EFBConfiguration.Label 
-            name={activeComponent?.data?.name}
-            position={activeComponent?.data?.position}
-            alignment={activeComponent?.data?.alignment}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -812,11 +775,9 @@ export default function EmailFormBuilderEdit () {
       case "NUMBER":
         return (
           <EFBConfiguration.Number 
-            name={activeComponent?.data?.name}
-            placeholder={activeComponent?.data?.placeholder}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
-            valueChange={(type: string, value: any) => {
+          data={activeComponent?.data}
+          configList={objectFormAttribute[activeComponent?.data?.type]}
+          valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
           />
@@ -824,10 +785,8 @@ export default function EmailFormBuilderEdit () {
       case "DOCUMENT":
         return (
           <EFBConfiguration.Document 
-            name={activeComponent?.data?.name}
-            multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -836,10 +795,8 @@ export default function EmailFormBuilderEdit () {
       case "IMAGE":
         return (
           <EFBConfiguration.Image 
-            name={activeComponent?.data?.name}
-            multiple={activeComponent?.data?.multiple}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
@@ -904,7 +861,7 @@ export default function EmailFormBuilderEdit () {
               labelStyle="font-bold	"
               inputStyle="rounded-xl "
               inputWidth={400}
-              items={multipleInput}
+              items={pics}
               logicValidation={checkIsEmail}
               errorAddValueMessage="The PIC filling format must be email format"
               onAdd={handlerAddMultipleInput}

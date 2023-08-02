@@ -22,7 +22,7 @@ const Radio = ({
     setChecked(value);
     if (onSelect) onSelect(event, value);
   };
-
+  
   if (!items || items.length < 1) {
     return (
       <h2 className="text-red-900">Component Radio Error</h2>
