@@ -1,0 +1,18 @@
+version: '3'
+services:
+  wiz-web:
+    container_name: avrist-admin-web-app
+    image: avrist-admin-web
+    build:
+      context: .                          
+      dockerfile: Dockerfile  
+    ports:
+      - "3030:80"
+    volumes:
+      - ./nginx/conf/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf/conf.d/default.conf:/etc/nginx/conf.d/default.conf:ro
+    networks:
+      - avrist-network
+networks:
+  avrist-network:
+    driver: 'bridge'

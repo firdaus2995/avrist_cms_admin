@@ -15,7 +15,7 @@ const TextField: React.FC<ITextField> = ({
   placeholder,
   isActive,
   onClick,
-  onDelete,
+  onDelete, 
 }) => {
   return (
     <div 
