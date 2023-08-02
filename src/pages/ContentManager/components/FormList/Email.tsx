@@ -1,7 +1,7 @@
 import Typography from '@/components/atoms/Typography';
 import { InputText } from '@/components/atoms/Input/InputText';
 
-export default function Email({ key, name, onChange }: any) {
+export default function Email({ key, name, onChange, value }: any) {
   return (
     <div key={key}>
       <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-9">
@@ -9,6 +9,7 @@ export default function Email({ key, name, onChange }: any) {
       </Typography>
       <InputText
         labelTitle={name}
+        value={value}
         labelStyle="font-bold text-base w-48"
         direction="row"
         roundStyle="xl"
