@@ -1,23 +1,17 @@
 import React from "react";
 
-import { CheckBox } from "@/components/atoms/Input/CheckBox";
+import Config from "./Config";
 import { InputText } from "@/components/atoms/Input/InputText";
 
 interface IRadio {
-  name: string;
-  items: string[];
-  other: boolean;
-  required: boolean;
-  errors: any;
+  data: any;
+  configList: any;
   valueChange: (type: string, value: any) => void;
 };
 
 const Radio: React.FC<IRadio> = ({
-  name,
-  items,
-  other,
-  required,
-  errors,
+  data,
+  configList,
   valueChange,
 }) => {
   return (
@@ -29,8 +23,8 @@ const Radio: React.FC<IRadio> = ({
         inputStyle="text-sm"
         placeholder="Enter your radio button name"
         roundStyle="lg"
-        value={name}
-        isError={errors.name}
+        value={data?.name}
+        isError={data?.mandatory?.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}
@@ -42,8 +36,8 @@ const Radio: React.FC<IRadio> = ({
         inputStyle="text-sm"
         placeholder='Use ";" to separate each value'
         roundStyle="lg"
-        value={items.join(";")}
-        isError={errors.items}
+        value={data?.items.join(";")}
+        isError={data?.mandatory?.items}
         onChange={(event: any) => {
           let arrayItem: any = event?.target?.value.split(";");
           if (arrayItem.length === 1 && arrayItem[0] === "") {
@@ -52,23 +46,10 @@ const Radio: React.FC<IRadio> = ({
           valueChange('items', arrayItem);
         }}
       />
-      <CheckBox
-        defaultValue={other}
-        labelTitle="Other Value"
-        labelContainerStyle="justify-start p-1"
-        inputStyle="w-[20px] h-[20px]"
-        updateFormValue={(event: any) => {
-          valueChange('other', event.value);
-        }}
-      />
-      <CheckBox
-        defaultValue={required}
-        labelTitle="Required Field"
-        labelContainerStyle="justify-start p-1"
-        inputStyle="w-[20px] h-[20px]"
-        updateFormValue={(event: any) => {
-          valueChange('required', event.value);
-        }}
+      <Config
+        data={data}
+        configList={configList}
+        valueChange={valueChange}
       />
     </React.Fragment>
   )

@@ -1,23 +1,17 @@
 import React from "react";
 
-import { CheckBox } from "@/components/atoms/Input/CheckBox";
+import Config from "./Config";
 import { InputText } from "@/components/atoms/Input/InputText";
 
 interface ITextField {
-  name: string;
-  placeholder: string;
-  multiple: boolean;
-  required: boolean;
-  errors: any;
+  data: any;
+  configList: any;
   valueChange: (type: string, value: any) => void;
 };
 
 const TextField: React.FC<ITextField> = ({
-  name,
-  placeholder,
-  multiple,
-  required,
-  errors,
+  data,
+  configList,
   valueChange,
 }) => {
   return (
@@ -29,41 +23,16 @@ const TextField: React.FC<ITextField> = ({
         inputStyle="text-sm"
         placeholder="Enter your text field name"
         roundStyle="lg"
-        value={name}
-        isError={errors.name}
+        value={data?.name}
+        isError={data?.mandatory?.name}
         onChange={(event: any) => {
           valueChange('name', event.target.value);
         }}
       />
-      <InputText
-        labelTitle="Placeholder Name"
-        labelStyle="font-bold	"
-        inputHeight={40}
-        inputStyle="text-sm"
-        placeholder="Enter your placeholder"
-        roundStyle="lg"
-        value={placeholder}
-        onChange={(event: any) => {
-          valueChange('placeholder', event.target.value);
-        }}
-      />
-      <CheckBox
-        defaultValue={multiple}
-        labelTitle="Multiple Value Input"
-        labelContainerStyle="justify-start p-1"
-        inputStyle="w-[20px] h-[20px]"
-        updateFormValue={(event: any) => {
-          valueChange('multiple', event.value);
-        }}
-      />
-      <CheckBox
-        defaultValue={required}
-        labelTitle="Required Field"
-        labelContainerStyle="justify-start p-1"
-        inputStyle="w-[20px] h-[20px]"
-        updateFormValue={(event: any) => {
-          valueChange('required', event.value);
-        }}
+      <Config
+        data={data}
+        configList={configList}
+        valueChange={valueChange}
       />
     </React.Fragment>
   )
