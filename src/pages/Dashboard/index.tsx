@@ -5,10 +5,12 @@ import content2 from "../../assets/home/content-2.png";
 import content3 from "../../assets/home/content-3.png";
 import { Link, To } from 'react-router-dom';
 import { useGetUserGuideQuery } from '@/services/Config/configApi';
+import { store } from '@/store';
 
 export default function Dashboard() {
   const [url, setUrl] = useState("");
   const fetchUserGuideQuery = useGetUserGuideQuery({});
+  const roles = store.getState().loginSlice.roles;
   const { data: userGuide } = fetchUserGuideQuery;
 
   useEffect(() => {
@@ -74,46 +76,50 @@ export default function Dashboard() {
   }
 
   return (
-    <div className='w-full h-full flex flex-col'>
-      <div className='w-full flex flex-row h-[40vh] rounded-xl shadow-md'>
-        <div className='flex w-1/2 p-10 bg-white rounded-l-xl'>
-          <div className='w-full py-4 flex flex-col'>
-            <p className='text-3xl font-bold text-dark-purple'>
-              Welcome to
-            </p>
-            <p className='text-2xl font-medium text-dark-purple'>
-              Avrist Content Management System
-            </p>
-            <Link to={url} target='_blank'>
-              <button
-                className="btn btn-md bg-dark-purple xl:w-[40%] lg:w-[50%] items-center justify-center flex gap-2 mt-10">
-                Download User Guide
-              </button>
-            </Link>
+    <>
+      {roles?.includes('HOME_READ') && (
+        <div className='w-full h-full flex flex-col'>
+          <div className='w-full flex flex-row h-[40vh] rounded-xl shadow-md'>
+            <div className='flex w-1/2 p-10 bg-white rounded-l-xl'>
+              <div className='w-full py-4 flex flex-col'>
+                <p className='text-3xl font-bold text-dark-purple'>
+                  Welcome to
+                </p>
+                <p className='text-2xl font-medium text-dark-purple'>
+                  Avrist Content Management System
+                </p>
+                <Link to={url} target='_blank'>
+                  <button
+                    className="btn btn-md bg-dark-purple xl:w-[40%] lg:w-[50%] items-center justify-center flex gap-2 mt-10">
+                    Download User Guide
+                  </button>
+                </Link>
+              </div>
+            </div>
+            <div className='flex w-1/2'>
+              <img className='w-full rounded-r-xl' src={HeaderBg} />
+              <div className="w-44 h-[40vh] bg-white rounded-full rounded-l-none absolute"></div>
+            </div>
+          </div>
+
+          <div className='p-5 text-2xl font-bold border-b-2 mt-10'>
+            Start Creating Content
+          </div>
+          <div className="grid grid-cols-2 gap-4 p-7">
+            {data.map((val, idx) => (
+              idx === 2 ? (
+                <div key={idx} className="col-span-2 ...">
+                  {contentContainer(val)}
+                </div>
+              ) : (
+                <>
+                  {contentContainer(val)}
+                </>
+              )
+            ))}
           </div>
         </div>
-        <div className='flex w-1/2'>
-          <img className='w-full rounded-r-xl' src={HeaderBg} />
-          <div className="w-44 h-[40vh] bg-white rounded-full rounded-l-none absolute"></div>
-        </div>
-      </div>
-
-      <div className='p-5 text-2xl font-bold border-b-2 mt-10'>
-        Start Creating Content
-      </div>
-      <div className="grid grid-cols-2 gap-4 p-7">
-        {data.map((val, idx) => (
-          idx === 2 ? (
-            <div key={idx} className="col-span-2 ...">
-              {contentContainer(val)}
-            </div>
-          ) : (
-            <>
-              {contentContainer(val)}
-            </>
-          )
-        ))}
-      </div>
-    </div>
+      )}
+    </>
   );
 }
