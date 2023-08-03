@@ -225,6 +225,8 @@ export default function ContentManagerNew() {
       contentData: isAddLooping ? transformedData : convertData(contentTempData),
     };
 
+    console.log('ini payload ', payload);
+
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -254,7 +256,7 @@ export default function ContentManagerNew() {
   const addNewLoopingField = () => {
     // Find the existing looping field
     const existingLoopingField = postTypeDetail.attributeList.find(
-      (      attribute: { fieldType: string; }) => attribute.fieldType === 'LOOPING',
+      (attribute: { fieldType: string }) => attribute.fieldType === 'LOOPING',
     );
 
     if (existingLoopingField) {
@@ -273,7 +275,7 @@ export default function ContentManagerNew() {
       };
 
       // Add the new looping field to attributeList
-      setPostTypeDetail((prevPostTypeDetail: { attributeList: any; }) => ({
+      setPostTypeDetail((prevPostTypeDetail: { attributeList: any }) => ({
         ...prevPostTypeDetail,
         attributeList: [...prevPostTypeDetail.attributeList, newLoopingField],
       }));
@@ -288,7 +290,7 @@ export default function ContentManagerNew() {
         if (attribute.fieldType === 'LOOPING' && attribute.attributeList) {
           return {
             id: attribute.id,
-            value: '',
+            value: 'temporary_value',
             fieldType: 'LOOPING',
             contentData: attribute.attributeList.map(
               (nestedAttribute: { id: any; fieldType: any }) => ({
@@ -311,11 +313,13 @@ export default function ContentManagerNew() {
 
     return postTypeDetail?.attributeList.map((props: any) => {
       const { id, name, fieldType, attributeList, config } = props;
+      console.log('first', props);
       const configs = JSON.parse(config);
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -356,6 +360,7 @@ export default function ContentManagerNew() {
         case 'TEXT_AREA':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -379,9 +384,10 @@ export default function ContentManagerNew() {
                   [id, fieldType, field, handleFormChange],
                 );
                 return (
-                  <FormList.TextField
+                  <FormList.TextAreaField
                     {...field}
                     key={id}
+                    fieldTypeLabel="TEXT_AREA"
                     labelTitle={name}
                     placeholder=""
                     error={!!errors?.[id]?.message}
@@ -395,6 +401,7 @@ export default function ContentManagerNew() {
         case 'EMAIL':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -443,6 +450,7 @@ export default function ContentManagerNew() {
         case 'PHONE_NUMBER':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -479,6 +487,7 @@ export default function ContentManagerNew() {
         case 'YOUTUBE_URL':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -515,7 +524,7 @@ export default function ContentManagerNew() {
           );
         case 'LOOPING':
           return (
-            <div key={id} className="">
+            <div key={id}>
               <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
                 {name}
               </Typography>
@@ -647,10 +656,6 @@ export default function ContentManagerNew() {
                   placeholder="Title"
                   error={!!errors?.title?.message}
                   helperText={errors?.title?.message}
-                  onChange={(e: any) => {
-                    field.onChange(e);
-                    // handleFormChange('title', field.value);
-                  }}
                 />
               )}
             />
@@ -682,10 +687,6 @@ export default function ContentManagerNew() {
                   placeholder="Enter Short Description"
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
-                  onChange={(e: any) => {
-                    // handleFormChange('shortDesc', e.target.value);
-                    field.onChange(e);
-                  }}
                 />
               )}
             />
@@ -696,7 +697,9 @@ export default function ContentManagerNew() {
 
         {/* DYNAMIC FORM */}
         {renderFormList()}
-        {postTypeDetail?.attributeList?.filter((item: { fieldType: string; }) => item.fieldType === 'LOOPING')?.length > 0 ? (
+        {postTypeDetail?.attributeList?.filter(
+          (item: { fieldType: string }) => item.fieldType === 'LOOPING',
+        )?.length > 0 ? (
           <div className="flex justify-end mt-8">
             <button
               onClick={() => {
