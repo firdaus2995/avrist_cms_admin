@@ -14,9 +14,7 @@ import {
 } from "@tanstack/table-core";
 
 import Table from "../../components/molecules/Table";
-import TableEdit from "../../assets/table-edit.png";
-import TableView from "../../assets/table-view.png";
-import TableDelete from "../../assets/table-delete.png";
+import TableDelete from "../../assets/table-delete.svg";
 import PaginationComponent from "../../components/molecules/Pagination";
 import ModalConfirm from "../../components/molecules/ModalConfirm";
 import WarningIcon from "../../assets/warning.png";
@@ -87,19 +85,13 @@ export default function PageTemplatesList () {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-5">
-          <button>
-            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableView} 
-              onClick={() => {
-                onClickPageTemplateView(info.getValue());
-              }}
-            />
-          </button>
-          <button>
-            <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} 
-              onClick={() => {
-                onClickPageTemplateEdit(info.getValue(), info?.row?.original?.filenameCode, info?.row?.original?.name, info?.row?.original?.shortDesc);
-              }}
-            />
+          <button 
+            className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-4 text-sm" 
+            onClick={() => {
+              onClickPageTemplateEdit(info.getValue(), info?.row?.original?.filenameCode, info?.row?.original?.name, info?.row?.original?.shortDesc);
+            }}
+          >
+            View Detail
           </button>
           <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
             onClick={() => {
@@ -162,11 +154,6 @@ export default function PageTemplatesList () {
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
     };
   }, []);
-
-  // FUNCTION FOR VIEW PAGE TEMPLATE
-  const onClickPageTemplateView = (id: number) => {
-    console.log(id);
-  };
 
   // FUNCTION FOR DELETE PAGE TEMPLATE
   const submitDeleteUser = () => {
