@@ -10,7 +10,7 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '@/assets/table-edit.png';
-import TableDelete from '@/assets/table-delete.png';
+import TableDelete from '@/assets/table-delete.svg';
 import WarningIcon from '@/assets/warning.png';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
@@ -133,7 +133,7 @@ export default function ContentTypeList() {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <Link to={`edit/${info.getValue()}`}>
             <div className="tooltip" data-tip={t('action.edit')}>
               <img

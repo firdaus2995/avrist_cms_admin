@@ -46,7 +46,7 @@ export const TitleCard: React.FC<ITitleCard> = ({
           {title}
           {titleComponent}
         </div>
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           {SearchBar !== undefined && SearchBar}
           {TopSideButtons !== undefined && TopSideButtons}
         </div>

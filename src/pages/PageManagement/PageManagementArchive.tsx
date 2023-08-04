@@ -164,7 +164,7 @@ export default function PageManagementArchive() {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <button
             onClick={() => {
               onClickPageRestore(info.getValue(), info?.row?.original?.title);

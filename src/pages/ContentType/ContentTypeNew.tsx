@@ -8,7 +8,7 @@ import { Key, SetStateAction, useEffect, useState } from 'react';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import TableEdit from '../../assets/table-edit.png';
-import TableDelete from '../../assets/table-delete.png';
+import TableDelete from '../../assets/table-delete.svg';
 import Modal from '@/components/atoms/Modal';
 import {
   useGetConfigQuery,
