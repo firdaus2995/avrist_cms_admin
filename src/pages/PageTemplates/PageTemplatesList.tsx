@@ -84,7 +84,7 @@ export default function PageTemplatesList () {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <button 
             className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-4 text-sm" 
             onClick={() => {
