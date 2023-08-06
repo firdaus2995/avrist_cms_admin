@@ -76,11 +76,25 @@ export default function FileUploaderBase({ isDocument, multiple, onFilesChange, 
     const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
+    const maxFileSize = 5.5 * 1024 * 1024; // 5.5MB dalam bytes
+
+    if (files[0].size > maxFileSize) {
+      dispatch(
+        openToast({
+          type: 'error',
+          title: 'File Size Too Large',
+          message: 'Please upload a file that is no larger than 5MB.',
+        }),
+      );
+      return;
+    }
+
     if (filesData.some((item: any) => item.name === fileName)) {
       dispatch(
         openToast({
           type: 'error',
           title: 'Duplicate File',
+          message: 'File already uploaded',
         }),
       );
       return;
