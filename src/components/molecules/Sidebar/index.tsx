@@ -103,9 +103,9 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
         </div>
         {open && (
           <div className="text-white flex flex-col mt-2 items-center justify-center">
-            <text className="font-bold">Haykal</text>
-            <text>600234563</text>
-            <text>Employee - Submitter</text>
+            <p className="font-bold">Haykal</p>
+            <p>600234563</p>
+            <p>Employee - Submitter</p>
           </div>
         )}
       </div>
@@ -129,12 +129,12 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
               <div className="flex flex-row">
                 <img src={val.icon} alt={`Menu_${val.id}`} className="w-4 h-4" />
                 {open && (
-                  <text
+                  <p
                     className={`${
                       activeTab === val.id ? 'font-bold' : 'font-base'
                     } text-white text-sm ml-4`}>
                     {val.title}
-                  </text>
+                  </p>
                 )}
               </div>
               {val.list && open ? (
@@ -181,12 +181,12 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
                       setActiveTab(e.id);
                       if (e.path) navigate(e.path);
                     }}>
-                    <text
+                    <p
                       className={`${
                         activeTab === e.id ? 'font-bold' : 'font-base'
                       } text-white text-sm ml-8`}>
                       {e.title}
-                    </text>
+                    </p>
                   </div>
                 ))
               : null}

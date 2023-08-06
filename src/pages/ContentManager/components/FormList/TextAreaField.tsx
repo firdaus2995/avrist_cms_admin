@@ -71,8 +71,8 @@ export default function TextAreaField({
             </div>
           )}
         </div>
-        <div className="border my-10" />
       </div>
+      <div className="border my-10" />
     </div>
   );
 }
