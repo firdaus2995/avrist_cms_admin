@@ -8,25 +8,22 @@ import { openToast } from '@/components/atoms/Toast/slice';
 const baseUrl = import.meta.env.VITE_API_URL;
 
 function formatFilename(filename: string) {
-  // Remove special characters, spaces, and non-ASCII characters
   const sanitizedFilename = filename.replace(/[^\w.-]/g, '');
-  // Convert to lowercase
   const lowercaseFilename = sanitizedFilename.toLowerCase();
-  // Replace spaces with underscores
   const formattedFilename = lowercaseFilename.replace(/\s+/g, '_');
-
   return formattedFilename;
+}
+
+function bytesToSize(bytes: number): string {
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+  if (bytes === 0) return '0 Byte';
+  const i = Math.floor(Math.log(bytes) / Math.log(1024));
+  return (bytes / Math.pow(1024, i)).toFixed(2).toString() + ' ' + sizes[i];
 }
 
 const FileItem = (props: any) => {
   const { name, value, onDeletePress } = props;
 
-  function bytesToSize(bytes: number): string {
-    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-    if (bytes === 0) return '0 Byte';
-    const i = Math.floor(Math.log(bytes) / Math.log(1024));
-    return (bytes / Math.pow(1024, i)).toFixed(2).toString() + ' ' + sizes[i];
-  }
   return (
     <div className="flex flex-row items-center h-14 mx-2 mb-1">
       {value?.type?.startsWith('image/') ? (
