@@ -12,6 +12,7 @@ export default function FileUploaderV2({
   onChange,
   error,
   helperText,
+  id,
 }: any) {
   return (
     <div>
@@ -26,7 +27,6 @@ export default function FileUploaderV2({
         <Typography type="body" size="m" weight="bold" className="w-48 mt-1 ml-1 mr-9">
           {labelTitle}
         </Typography>
-        <div></div>
         <div
           className={`
             form-control
@@ -36,6 +36,7 @@ export default function FileUploaderV2({
         `}>
           <div>
             <FileUploaderBase
+              id={id}
               isDocument={isDocument}
               multiple={multiple}
               onFilesChange={onChange}

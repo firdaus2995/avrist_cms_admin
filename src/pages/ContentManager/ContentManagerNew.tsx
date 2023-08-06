@@ -312,7 +312,6 @@ export default function ContentManagerNew() {
     return postTypeDetail?.attributeList.map((props: any) => {
       const { id, name, fieldType, attributeList, config } = props;
       const configs = JSON.parse(config);
-      console.log('ini configs ', configs);
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -452,6 +451,7 @@ export default function ContentManagerNew() {
                   <FormList.FileUploaderV2
                     {...field}
                     key={id}
+                    id={id}
                     fieldTypeLabel="DOCUMENT"
                     labelTitle={name}
                     isDocument={true}

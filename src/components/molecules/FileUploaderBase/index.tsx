@@ -54,7 +54,7 @@ const FileItem = (props: any) => {
   );
 };
 
-export default function FileUploaderBase({ isDocument, multiple, onFilesChange }: any) {
+export default function FileUploaderBase({ isDocument, multiple, onFilesChange, id }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
 
@@ -143,12 +143,10 @@ export default function FileUploaderBase({ isDocument, multiple, onFilesChange }
           e.preventDefault();
         }}
         className="w-[400px] min-h-[150px] bg-light-purple-2 border-dashed border-[1px] border-lavender rounded-xl">
-        <label
-          htmlFor="file_input"
-          className="flex flex-col justify-center items-center cursor-pointer">
+        <label htmlFor={id} className="flex flex-col justify-center items-center cursor-pointer">
           <input
             ref={inputRef}
-            id="file_input"
+            id={id}
             type="file"
             className="hidden"
             accept={isDocument ? 'application/pdf' : 'image/png, image/jpeg, image/jpg'}
