@@ -312,6 +312,7 @@ export default function ContentManagerNew() {
     return postTypeDetail?.attributeList.map((props: any) => {
       const { id, name, fieldType, attributeList, config } = props;
       const configs = JSON.parse(config);
+      console.log(configs)
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -489,7 +490,7 @@ export default function ContentManagerNew() {
                     fieldTypeLabel="IMAGE"
                     labelTitle={name}
                     isDocument={false}
-                    multiple={true}
+                    multiple={configs?.media_type === 'multiple_media'}
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
                     onChange={onChange}

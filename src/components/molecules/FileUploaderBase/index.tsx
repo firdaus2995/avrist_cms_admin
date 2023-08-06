@@ -28,7 +28,7 @@ const FileItem = (props: any) => {
     <div className="flex flex-row items-center h-14 mx-2 mb-1">
       {value?.type?.startsWith('image/') ? (
         <img
-          className="object-cover h-16 w-16 rounded-lg mr-3 mb-4"
+          className="object-cover h-12 w-12 rounded-lg mr-3"
           src={URL.createObjectURL(value)}
           alt={name}
         />
@@ -76,11 +76,25 @@ export default function FileUploaderBase({ isDocument, multiple, onFilesChange, 
     const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
+    const maxFileSize = 5.5 * 1024 * 1024; // 5.5MB dalam bytes
+
+    if (files[0].size > maxFileSize) {
+      dispatch(
+        openToast({
+          type: 'error',
+          title: 'File Size Too Large',
+          message: 'Please upload a file that is no larger than 5MB.',
+        }),
+      );
+      return;
+    }
+
     if (filesData.some((item: any) => item.name === fileName)) {
       dispatch(
         openToast({
           type: 'error',
           title: 'Duplicate File',
+          message: 'File already uploaded',
         }),
       );
       return;
