@@ -101,7 +101,7 @@ export default function MyTaskTab(props: { id: any }) {
       accessorKey: 'id',
       enableSorting: false,
       cell: (_info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <div className="tooltip" data-tip={'View Detail'}>
             <div
               role="button"

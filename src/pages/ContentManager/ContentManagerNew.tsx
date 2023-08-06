@@ -19,11 +19,12 @@ import { useForm, Controller } from 'react-hook-form';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
+  const [isAddLooping, setIsAddLooping] = useState(false);
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
   };
-  const [postTypeDetail, setPostTypeDetail] = useState({
+  const [postTypeDetail, setPostTypeDetail] = useState<any>({
     id: null,
     name: '',
     postTypeGroup: '',
@@ -82,11 +83,23 @@ export default function ContentManagerNew() {
 
           if (contentDataIndex !== -1) {
             const updatedContentData = [...contentData];
+            // Update value as an array of values
             updatedContentData[contentDataIndex] = {
               ...updatedContentData[contentDataIndex],
-              value,
+              value: Array.isArray(value) ? value : [value],
             };
             loopingData.contentData = updatedContentData;
+            const updatedFormValues = [...prevFormValues];
+            updatedFormValues[loopingDataIndex] = loopingData;
+            return updatedFormValues;
+          } else {
+            // Add new looping data
+            const newLoopingData = {
+              id,
+              value: Array.isArray(value) ? value : [value],
+              fieldType,
+            };
+            loopingData.contentData.push(newLoopingData);
             const updatedFormValues = [...prevFormValues];
             updatedFormValues[loopingDataIndex] = loopingData;
             return updatedFormValues;
@@ -149,6 +162,59 @@ export default function ContentManagerNew() {
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
 
+  const convertData = (contentTempData: any[]) => {
+    const convertedData = contentTempData.map(
+      (item: { fieldType: string; contentData: any[]; value: any[] }) => {
+        if (item.fieldType === 'LOOPING') {
+          const contentData = item.contentData.map((data: { value: any[] }) => ({
+            ...data,
+            value: data.value.length > 0 ? data.value.join(', ') : '',
+          }));
+          return { ...item, contentData };
+        } else if (Array.isArray(item.value)) {
+          return { ...item, value: item.value.join(', ') };
+        }
+        return item;
+      },
+    );
+
+    return convertedData;
+  };
+
+  const transformedData = contentTempData.map(item => {
+    if (item.fieldType === 'LOOPING' && item.contentData) {
+      const groupedContentData = item.contentData.reduce(
+        (
+          grouped: Record<string, any[]>,
+          contentItem: { fieldType: string | number; value: any },
+        ) => {
+          if (!grouped[contentItem.fieldType]) {
+            grouped[contentItem.fieldType] = [];
+          }
+          grouped[contentItem.fieldType].push(...contentItem.value);
+          return grouped;
+        },
+        {},
+      );
+
+      const newContentData = Object.entries(groupedContentData).map(
+        ([fieldType, values], index) => {
+          return {
+            id: item.contentData[index].id, // Use the original id from contentData
+            value: values,
+            fieldType,
+          };
+        },
+      );
+
+      return {
+        ...item,
+        contentData: newContentData,
+      };
+    }
+    return item;
+  });
+
   function onSubmitData(value: any) {
     const payload = {
       title: value.title,
@@ -156,8 +222,9 @@ export default function ContentManagerNew() {
       isDraft: false,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
-      contentData: contentTempData,
+      contentData: isAddLooping ? transformedData : convertData(contentTempData),
     };
+
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -179,9 +246,38 @@ export default function ContentManagerNew() {
       });
   }
 
-  const handleFilesChange = (id: string, files: any, fieldType: string) => {
-    const base64Array = files.map((file: { base64: any }) => file.base64);
-    handleFormChange(id, base64Array[0], fieldType);
+  // const handleFilesChange = (id: string, files: any, fieldType: string) => {
+  //   const base64Array = files.map((file: { base64: any }) => file.base64);
+  //   handleFormChange(id, base64Array[0], fieldType);
+  // };
+
+  const addNewLoopingField = () => {
+    // Find the existing looping field
+    const existingLoopingField = postTypeDetail.attributeList.find(
+      (attribute: { fieldType: string }) => attribute.fieldType === 'LOOPING',
+    );
+
+    if (existingLoopingField) {
+      // Create a new looping field based on the existing one
+      const newLoopingField = {
+        id: Math.floor(Math.random() * 100000), // Generate a random ID
+        name: 'Looping',
+        fieldType: 'LOOPING',
+        fieldId: 'looping',
+        config: null,
+        parentId: null,
+        attributeList: existingLoopingField.attributeList.map((item: any) => ({
+          ...item,
+          id: Math.floor(Math.random() * 100000),
+        })),
+      };
+
+      // Add the new looping field to attributeList
+      setPostTypeDetail((prevPostTypeDetail: { attributeList: any }) => ({
+        ...prevPostTypeDetail,
+        attributeList: [...prevPostTypeDetail.attributeList, newLoopingField],
+      }));
+    }
   };
 
   const renderFormList = () => {
@@ -192,7 +288,7 @@ export default function ContentManagerNew() {
         if (attribute.fieldType === 'LOOPING' && attribute.attributeList) {
           return {
             id: attribute.id,
-            value: '',
+            value: 'temporary_value',
             fieldType: 'LOOPING',
             contentData: attribute.attributeList.map(
               (nestedAttribute: { id: any; fieldType: any }) => ({
@@ -216,10 +312,12 @@ export default function ContentManagerNew() {
     return postTypeDetail?.attributeList.map((props: any) => {
       const { id, name, fieldType, attributeList, config } = props;
       const configs = JSON.parse(config);
+      console.log(configs)
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -237,8 +335,8 @@ export default function ContentManagerNew() {
               render={({ field }) => {
                 const onChange = useCallback(
                   (e: any) => {
-                    handleFormChange(id, field.value, fieldType);
-                    field.onChange(e);
+                    handleFormChange(id, e.target.value, fieldType);
+                    field.onChange({ target: { value: e.target.value } });
                   },
                   [id, fieldType, field, handleFormChange],
                 );
@@ -260,6 +358,7 @@ export default function ContentManagerNew() {
         case 'TEXT_AREA':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -277,8 +376,8 @@ export default function ContentManagerNew() {
               render={({ field }) => {
                 const onChange = useCallback(
                   (e: any) => {
-                    handleFormChange(id, field.value, fieldType);
-                    field.onChange(e);
+                    handleFormChange(id, e.target.value, fieldType);
+                    field.onChange({ target: { value: e.target.value } });
                   },
                   [id, fieldType, field, handleFormChange],
                 );
@@ -286,6 +385,7 @@ export default function ContentManagerNew() {
                   <FormList.TextAreaField
                     {...field}
                     key={id}
+                    fieldTypeLabel="TEXT_AREA"
                     labelTitle={name}
                     placeholder=""
                     error={!!errors?.[id]?.message}
@@ -299,6 +399,7 @@ export default function ContentManagerNew() {
         case 'EMAIL':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -308,8 +409,8 @@ export default function ContentManagerNew() {
               render={({ field }) => {
                 const onChange = useCallback(
                   (e: any) => {
-                    handleFormChange(id, field.value, fieldType);
-                    field.onChange(e);
+                    handleFormChange(id, e.target.value, fieldType);
+                    field.onChange({ target: { value: e.target.value } });
                   },
                   [id, fieldType, field, handleFormChange],
                 );
@@ -330,15 +431,71 @@ export default function ContentManagerNew() {
             />
           );
         case 'DOCUMENT':
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange({ target: { value: e } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    key={id}
+                    id={id}
+                    fieldTypeLabel="DOCUMENT"
+                    labelTitle={name}
+                    isDocument={true}
+                    multiple={configs?.media_type === 'multiple_media'}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          );
         case 'IMAGE':
           return (
-            <FormList.FileUploader
+            <Controller
               key={id}
-              name={name}
-              fieldType={fieldType}
-              multiple={true}
-              onFilesChange={e => {
-                handleFilesChange(id, e, fieldType);
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange({ target: { value: e } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="IMAGE"
+                    labelTitle={name}
+                    isDocument={false}
+                    multiple={configs?.media_type === 'multiple_media'}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
               }}
             />
           );
@@ -347,6 +504,7 @@ export default function ContentManagerNew() {
         case 'PHONE_NUMBER':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -360,8 +518,8 @@ export default function ContentManagerNew() {
               render={({ field }) => {
                 const onChange = useCallback(
                   (e: any) => {
-                    handleFormChange(id, field.value, fieldType);
-                    field.onChange(e);
+                    handleFormChange(id, e.target.value, fieldType);
+                    field.onChange({ target: { value: e.target.value } });
                   },
                   [id, fieldType, field, handleFormChange],
                 );
@@ -383,6 +541,7 @@ export default function ContentManagerNew() {
         case 'YOUTUBE_URL':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -394,26 +553,32 @@ export default function ContentManagerNew() {
                   message: 'Invalid URL',
                 },
               }}
-              render={({ field }) => (
-                <FormList.TextField
-                  {...field}
-                  key={id}
-                  fieldTypeLabel="YOUTUBE_URL"
-                  labelTitle={name}
-                  placeholder=""
-                  error={!!errors?.[id]?.message}
-                  helperText={errors?.[id]?.message}
-                  onChange={(e: any) => {
-                    handleFormChange(id, field.value, fieldType);
-                    field.onChange(e);
-                  }}
-                />
-              )}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e.target.value, fieldType);
+                    field.onChange({ target: { value: e.target.value } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="YOUTUBE_URL"
+                    labelTitle={name}
+                    placeholder=""
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
             />
           );
         case 'LOOPING':
           return (
-            <div key={id} className="">
+            <div key={id}>
               <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
                 {name}
               </Typography>
@@ -433,21 +598,27 @@ export default function ContentManagerNew() {
                           control={control}
                           defaultValue=""
                           rules={{ required: `${name} is required` }}
-                          render={({ field }) => (
-                            <FormList.TextField
-                              {...field}
-                              key={id}
-                              fieldTypeLabel="TEXT_FIELD"
-                              labelTitle={name}
-                              placeholder=""
-                              error={!!errors?.[id]?.message}
-                              helperText={errors?.[id]?.message}
-                              onChange={(e: any) => {
-                                handleFormChange(id, field.value, fieldType, true);
-                                field.onChange(e);
-                              }}
-                            />
-                          )}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(id, e.target.value, fieldType, true);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.TextField
+                                {...field}
+                                key={id}
+                                fieldTypeLabel="TEXT_FIELD"
+                                labelTitle={name}
+                                placeholder=""
+                                error={!!errors?.[id]?.message}
+                                helperText={errors?.[id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
                         />
                       );
                     case 'YOUTUBE_URL':
@@ -464,21 +635,27 @@ export default function ContentManagerNew() {
                               message: 'Invalid URL',
                             },
                           }}
-                          render={({ field }) => (
-                            <FormList.TextField
-                              {...field}
-                              key={id}
-                              fieldTypeLabel="YOUTUBE_URL"
-                              labelTitle={name}
-                              placeholder=""
-                              error={!!errors?.[id]?.message}
-                              helperText={errors?.[id]?.message}
-                              onChange={(e: any) => {
-                                handleFormChange(id, field.value, fieldType);
-                                field.onChange(e);
-                              }}
-                            />
-                          )}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(id, e.target.value, fieldType, true);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.TextField
+                                {...field}
+                                key={id}
+                                fieldTypeLabel="YOUTUBE_URL"
+                                labelTitle={name}
+                                placeholder=""
+                                error={!!errors?.[id]?.message}
+                                helperText={errors?.[id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
                         />
                       );
                     default:
@@ -486,17 +663,6 @@ export default function ContentManagerNew() {
                   }
                 })}
               </div>
-              <div className="flex justify-end mt-8">
-                <button
-                  onClick={() => {
-                    console.log(postTypeDetail?.attributeList);
-                  }}
-                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                  <img src={Plus} className="mr-3" />
-                  Add Data
-                </button>
-              </div>
-              <div className="border my-10" />
             </div>
           );
         default:
@@ -544,10 +710,6 @@ export default function ContentManagerNew() {
                   placeholder="Title"
                   error={!!errors?.title?.message}
                   helperText={errors?.title?.message}
-                  onChange={(e: any) => {
-                    field.onChange(e);
-                    handleFormChange('title', field.value);
-                  }}
                 />
               )}
             />
@@ -579,10 +741,6 @@ export default function ContentManagerNew() {
                   placeholder="Enter Short Description"
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
-                  onChange={(e: any) => {
-                    handleFormChange('shortDesc', e.target.value);
-                    field.onChange(e);
-                  }}
                 />
               )}
             />
@@ -593,6 +751,21 @@ export default function ContentManagerNew() {
 
         {/* DYNAMIC FORM */}
         {renderFormList()}
+        {postTypeDetail?.attributeList?.filter(
+          (item: { fieldType: string }) => item.fieldType === 'LOOPING',
+        )?.length > 0 ? (
+          <div className="flex justify-end mt-8">
+            <button
+              onClick={() => {
+                addNewLoopingField();
+                setIsAddLooping(true);
+              }}
+              className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+              <img src={Plus} className="mr-3" />
+              Add Data
+            </button>
+          </div>
+        ) : null}
         <Footer />
       </form>
     </TitleCard>

@@ -12,7 +12,7 @@ import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '@/assets/table-edit.png';
 // import TableView from '@/assets/table-view.png';
-import TableDelete from '@/assets/table-delete.png';
+import TableDelete from '@/assets/table-delete.svg';
 import FilterIcon from '@/assets/filter.svg';
 import ArchiveBox from '@/assets/archive-box.svg';
 import TimelineLog from '@/assets/timeline-log.svg';
@@ -216,7 +216,7 @@ export default function PageManagementList() {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <Link to={`edit/${info.getValue()}`}>
             <div className="tooltip" data-tip="Edit">
               <img

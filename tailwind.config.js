@@ -11,8 +11,10 @@ export default {
         lavender: '#9B86BA',
         'light-purple': '#E5DFEC',
         'light-purple-2': '#F9F5FD',
+        'body-text-1': '#637488',
         'body-text-2': '#464B53',
         'body-text-3': '#818494',
+        'body-text-4': '#2C3034',
         grey: '#BBBBBB',
         'light-grey': '#D6D6D6',
         'dark-grey': '#798F9F',
@@ -26,6 +28,7 @@ export default {
         'toast-error': '#FFF6F6',
         'toast-error-border': '#EBD2CE',
         'form-disabled-bg': '#E9EEF4',
+        'white': '#FFFFFF',
       },
       // Custom fonts
       fontFamily: {
