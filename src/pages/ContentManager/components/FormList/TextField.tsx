@@ -74,8 +74,8 @@ export default function TextField({
             </div>
           )}
         </div>
-        <div className="border my-10" />
       </div>
+      <div className="border my-10" />
     </div>
   );
 }

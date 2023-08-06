@@ -225,8 +225,6 @@ export default function ContentManagerNew() {
       contentData: isAddLooping ? transformedData : convertData(contentTempData),
     };
 
-    console.log('ini payload ', payload);
-
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -248,10 +246,10 @@ export default function ContentManagerNew() {
       });
   }
 
-  const handleFilesChange = (id: string, files: any, fieldType: string) => {
-    const base64Array = files.map((file: { base64: any }) => file.base64);
-    handleFormChange(id, base64Array[0], fieldType);
-  };
+  // const handleFilesChange = (id: string, files: any, fieldType: string) => {
+  //   const base64Array = files.map((file: { base64: any }) => file.base64);
+  //   handleFormChange(id, base64Array[0], fieldType);
+  // };
 
   const addNewLoopingField = () => {
     // Find the existing looping field
@@ -313,8 +311,8 @@ export default function ContentManagerNew() {
 
     return postTypeDetail?.attributeList.map((props: any) => {
       const { id, name, fieldType, attributeList, config } = props;
-      console.log('first', props);
       const configs = JSON.parse(config);
+      console.log('ini configs ', configs);
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -433,15 +431,70 @@ export default function ContentManagerNew() {
             />
           );
         case 'DOCUMENT':
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange({ target: { value: e } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="DOCUMENT"
+                    labelTitle={name}
+                    isDocument={true}
+                    multiple={configs?.media_type === 'multiple_media'}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          );
         case 'IMAGE':
           return (
-            <FormList.FileUploader
+            <Controller
               key={id}
-              name={name}
-              fieldType={fieldType}
-              multiple={true}
-              onFilesChange={e => {
-                handleFilesChange(id, e, fieldType);
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange({ target: { value: e } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="IMAGE"
+                    labelTitle={name}
+                    isDocument={false}
+                    multiple={true}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
               }}
             />
           );
