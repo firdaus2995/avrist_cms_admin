@@ -28,7 +28,7 @@ const FileItem = (props: any) => {
     <div className="flex flex-row items-center h-14 mx-2 mb-1">
       {value?.type?.startsWith('image/') ? (
         <img
-          className="object-cover h-16 w-16 rounded-lg mr-3 mb-4"
+          className="object-cover h-12 w-12 rounded-lg mr-3"
           src={URL.createObjectURL(value)}
           alt={name}
         />
