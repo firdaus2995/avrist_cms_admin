@@ -710,7 +710,7 @@ export default function ContentManagerNew() {
             />
             {postTypeDetail?.isUseCategory && (
               <div className="flex flex-row">
-                <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-9">
+                <Typography type="body" size="m" weight="bold" className="w-60 ml-1">
                   Category
                 </Typography>
                 <Controller
