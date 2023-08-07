@@ -40,7 +40,7 @@ export default function CategoryTab(_props: { id: any }) {
       accessorKey: 'id',
       enableSorting: false,
       cell: (_info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           {
             canEdit && (
               <Link to={`category/edit/${_info.getValue()}`}>

@@ -10,8 +10,8 @@ import { openToast } from '@/components/atoms/Toast/slice';
 
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
-import DropDown from '@/components/molecules/DropDown';
-import FormList from './components/FormList';
+// import DropDown from '@/components/molecules/DropDown';
+import FormList from '@/components/molecules/FormList';
 
 import Plus from '@/assets/plus-purple.svg';
 
@@ -268,7 +268,7 @@ export default function ContentManagerNew() {
         if (attribute.fieldType === 'LOOPING' && attribute.attributeList) {
           return {
             id: attribute.id,
-            value: '',
+            value: 'temporary_value',
             fieldType: 'LOOPING',
             contentData: attribute.attributeList.map(
               (nestedAttribute: { id: any; fieldType: any }) => ({
@@ -306,6 +306,7 @@ export default function ContentManagerNew() {
         case 'TEXT_FIELD':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -346,6 +347,7 @@ export default function ContentManagerNew() {
         case 'TEXT_AREA':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -369,9 +371,10 @@ export default function ContentManagerNew() {
                   [id, fieldType, field, handleFormChange],
                 );
                 return (
-                  <FormList.TextField
+                  <FormList.TextAreaField
                     {...field}
                     key={id}
+                    fieldTypeLabel="TEXT_AREA"
                     labelTitle={name}
                     placeholder=""
                     error={!!errors?.[id]?.message}
@@ -385,6 +388,7 @@ export default function ContentManagerNew() {
         case 'EMAIL':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -416,15 +420,71 @@ export default function ContentManagerNew() {
             />
           );
         case 'DOCUMENT':
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange({ target: { value: e } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    key={id}
+                    id={id}
+                    fieldTypeLabel="DOCUMENT"
+                    labelTitle={name}
+                    isDocument={true}
+                    multiple={configs?.media_type === 'multiple_media'}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          );
         case 'IMAGE':
           return (
-            <FormList.FileUploader
+            <Controller
               key={id}
-              name={name}
-              fieldType={fieldType}
-              multiple={true}
-              onFilesChange={e => {
-                handleFilesChange(id, e, fieldType);
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange({ target: { value: e } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    key={id}
+                    fieldTypeLabel="IMAGE"
+                    labelTitle={name}
+                    isDocument={false}
+                    multiple={configs?.media_type === 'multiple_media'}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
               }}
             />
           );
@@ -433,6 +493,7 @@ export default function ContentManagerNew() {
         case 'PHONE_NUMBER':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -469,6 +530,7 @@ export default function ContentManagerNew() {
         case 'YOUTUBE_URL':
           return (
             <Controller
+              key={id}
               name={id.toString()}
               control={control}
               defaultValue=""
@@ -505,7 +567,7 @@ export default function ContentManagerNew() {
           );
         case 'LOOPING':
           return (
-            <div key={id} className="">
+            <div key={id}>
               <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
                 {name}
               </Typography>
@@ -650,24 +712,40 @@ export default function ContentManagerNew() {
                   placeholder="Title"
                   error={!!errors?.title?.message}
                   helperText={errors?.title?.message}
-                  onChange={(e: any) => {
-                    field.onChange(e);
-                    // handleFormChange('title', field.value);
-                  }}
+                  border={false}
                 />
               )}
             />
             {postTypeDetail?.isUseCategory && (
-              <div className="flex flex-row items-center">
-                <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-9">
+              <div className="flex flex-row">
+                <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
                   Category
                 </Typography>
-                <DropDown
-                  labelStyle="font-bold text-base"
-                  defaultValue="item1"
-                  items={categoryList}
-                  onSelect={(_e, val) => {
-                    handleFormChange('categoryName', val);
+                <Controller
+                  name="category"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Category is required' }}
+                  render={({ field }) => {
+                    const onChange = useCallback(
+                      (e: any) => {
+                        handleFormChange('categoryName', e);
+                        field.onChange({ target: { value: e } });
+                      },
+                      [id, field, handleFormChange],
+                    );
+                    return (
+                      <FormList.TextInputDropDown
+                        {...field}
+                        key="category"
+                        labelTitle="Category"
+                        placeholder="Title"
+                        error={!!errors?.category?.message}
+                        helperText={errors?.category?.message}
+                        items={categoryList}
+                        onChange={onChange}
+                      />
+                    );
                   }}
                 />
               </div>
@@ -685,10 +763,7 @@ export default function ContentManagerNew() {
                   placeholder="Enter Short Description"
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
-                  onChange={(e: any) => {
-                    // handleFormChange('shortDesc', e.target.value);
-                    field.onChange(e);
-                  }}
+                  border={false}
                 />
               )}
             />

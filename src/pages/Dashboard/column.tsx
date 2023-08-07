@@ -1,5 +1,5 @@
 import TableEdit from "../../assets/table-edit.png";
-import TableDelete from "../../assets/table-delete.png";
+import TableDelete from "../../assets/table-delete.svg";
 
 export const COLUMNS = [
   {
@@ -31,7 +31,7 @@ export const COLUMNS = [
     accessorKey: 'action',
     enableSorting: true,
     cell: () => (
-      <div className="flex gap-5">
+      <div className="flex gap-3">
         <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit}
           onClick={(event: React.SyntheticEvent) => {
             console.log(event);

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Subtitle } from '../../atoms/Typography/Subtitle';
 import ArrowLeft from '../../../assets/arrow-left.svg';
+import Typography from '@/components/atoms/Typography';
 
 interface ITitleCard {
   title: string;
@@ -43,10 +44,12 @@ export const TitleCard: React.FC<ITitleCard> = ({
       )}
       <Subtitle styleClass={TopSideButtons !== undefined ? 'inline-block' : ''}>
         <div className="flex flex-row items-center">
-          {title}
+          <Typography type="heading3" size="l" weight="bold">
+            {title}
+          </Typography>
           {titleComponent}
         </div>
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           {SearchBar !== undefined && SearchBar}
           {TopSideButtons !== undefined && TopSideButtons}
         </div>

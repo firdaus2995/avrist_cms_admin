@@ -41,7 +41,7 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
   
   return (
     <div className="flex lg:items-center lg:justify-between gap- flex-col lg:flex-row">
-      <div className="flex gap-5 items-center">
+      <div className="flex gap-3 items-center">
         <Menu as="div" className="relative inline-block text-left">
           <div>
             <Menu.Button className="inline-flex w-[200px] justify-between rounded-xl p-3 text-sm font-medium text-[#333333] border-[1px] border-[#BBBBBB] active:border-purple">

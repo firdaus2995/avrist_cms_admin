@@ -7,7 +7,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import Table from '../../components/molecules/Table';
 import TableEdit from "../../assets/table-edit.png";
-import TableDelete from "../../assets/table-delete.png";
+import TableDelete from "../../assets/table-delete.svg";
 import WarningIcon from "../../assets/warning.png";
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
@@ -151,7 +151,7 @@ export default function RolesList() {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <Link to={`edit/${info.getValue()}`}>
             <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableEdit} />
           </Link>

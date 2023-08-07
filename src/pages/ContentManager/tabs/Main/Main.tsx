@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
-import TableDelete from '@/assets/table-delete.png';
+import TableDelete from '@/assets/table-delete.svg';
 import { useTranslation } from 'react-i18next';
 import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
@@ -143,7 +143,7 @@ export default function MainTab(props: { id: any }) {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
             <div className="tooltip" data-tip={'View Detail'}>
               <div

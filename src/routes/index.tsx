@@ -23,8 +23,11 @@ const MenuManagementPage = React.lazy(async () => await import('../pages/MenuMan
 
 // IMPORT PAGE TEMPLATES PAGE
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
-const PageTemplateNewPage = React.lazy(
-  async () => await import('../pages/PageTemplates/PageTemplatesNew'),
+// const PageTemplateNewPage = React.lazy(
+//   async () => await import('../pages/PageTemplates/PageTemplatesNew'),
+// );
+const PageTemplateNewPageV2 = React.lazy(
+  async () => await import('../pages/PageTemplates/PageTemplatesNewV2'),
 );
 
 // IMPORT EMAIL FORM BUILDER PAGE
@@ -110,7 +113,7 @@ export default function RoutesComponent() {
           <Route path="menu" element={<MenuManagementPage />} />
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route path="page-template" element={<PageTemplatePage />} />
-          <Route path="page-template/new" element={<PageTemplateNewPage />} />
+          <Route path="page-template/new" element={<PageTemplateNewPageV2 />} />
           {/* EMAIL FORM BUILDER PAGES ROUTE */}
           <Route path="email-form-builder" element={<EmailFormBuilderListPage />} />
           <Route path="email-form-builder/new" element={<EmailFormBuilderNewPage />} />
@@ -132,7 +135,10 @@ export default function RoutesComponent() {
           <Route path="content-manager/:id/category/edit/:categoryid" element={<CategoryEdit />} />
           <Route path="content-manager/:id/archive" element={<ContentManagerArchivePage />} />
           <Route path="content-manager/:id/data/new" element={<ContentManagerNewPage />} />
-          <Route path="content-manager/:id/detail/:dataId" element={<ContentManagerDetailDataPage />} />
+          <Route
+            path="content-manager/:id/detail/:dataId"
+            element={<ContentManagerDetailDataPage />}
+          />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

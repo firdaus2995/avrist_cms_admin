@@ -6,6 +6,8 @@ import TextField from './TextField';
 import TextAreaField from './TextAreaField';
 import TextEditor from './TextEditor';
 import YoutubeURL from './TextField';
+import FileUploaderV2 from './FileUploaderV2';
+import TextInputDropDown from './TextInputDropdown';
 
 const FormList = {
   FileUploader,
@@ -15,6 +17,8 @@ const FormList = {
   TextAreaField,
   TextEditor,
   YoutubeURL,
+  FileUploaderV2,
+  TextInputDropDown,
 };
 
 export default FormList;

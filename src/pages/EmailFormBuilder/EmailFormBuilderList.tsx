@@ -7,7 +7,7 @@ import Plus from '@/assets/plus.png';
 import Table from '@/components/molecules/Table';
 import TableEdit from '../../assets/table-edit.png';
 import TableView from '../../assets/table-view.png';
-import TableDelete from '../../assets/table-delete.png';
+import TableDelete from '../../assets/table-delete.svg';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
 import PaginationComponent from '@/components/molecules/Pagination';
@@ -43,7 +43,7 @@ export default function EmailFormBuilderList() {
       enableSorting: true,
       cell: (info: any) => {
         return (
-          <div className="flex gap-5">
+          <div className="flex gap-3">
             <p className="text-[14px] truncate">
               {info.getValue() && info.getValue() !== '' && info.getValue() !== null
                 ? info.getValue()
@@ -65,7 +65,7 @@ export default function EmailFormBuilderList() {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-5">
+        <div className="flex gap-3">
           <button>
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}
