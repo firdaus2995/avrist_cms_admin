@@ -1,67 +1,125 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import ChevronUp from '@/assets/chevronup.png';
+import ChevronDown from '@/assets/chevrondown.png';
+import ErrorSmallIcon from '@/assets/error-small.svg';
 
-const TextInputDropdown = () => {
-  const [inputText, setInputText] = useState('');
-  const [showDropdown, setShowDropdown] = useState(false);
-  const options = [
-    'Option 1',
-    'Option 2',
-    'Option 3',
-    // Add more options here as needed
-  ];
-  const [selectedOption, setSelectedOption] = useState('');
+// const items = [
+//   { value: 'apple', label: 'Apple' },
+//   { value: 'banana', label: 'Banana' },
+//   { value: 'cherry', label: 'Cherry' },
+//   { value: 'date', label: 'Date' },
+//   { value: 'fig', label: 'Fig' },
+//   { value: 'grape', label: 'Grape' },
+//   { value: 'kiwi', label: 'Kiwi' },
+//   { value: 'lemon', label: 'Lemon' },
+//   { value: 'mango', label: 'Mango' },
+// ];
 
-  const filterOptions = (event: { target: { value: string; }; }) => {
-    const searchText = event.target.value.toLowerCase();
-    setInputText(searchText);
-    setShowDropdown(true);
+const TextInputDropDown = ({
+  id,
+  inputStyle,
+  disabled,
+  themeColor,
+  inputWidth,
+  inputHeight,
+  roundStyle = 'xl',
+  error,
+  helperText,
+  onChange,
+  items,
+}: any) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  const filteredOptions = items.filter((option: { label: string }) =>
+    option.label.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
+
+  const handleInputChange = (e: { target: { value: React.SetStateAction<string> } }) => {
+    setSearchTerm(e.target.value);
+    onChange(e.target.value);
+    setIsOpen(true);
   };
 
-  const showDropdownMenu = () => {
-    setShowDropdown(true);
+  const handleOptionClick = (option: string) => {
+    setSearchTerm(option);
+    onChange(option);
+    setIsOpen(false);
   };
-
-  const hideDropdownMenu = () => {
-    // Add a small delay to hide the dropdown after blur event
-    setTimeout(() => {
-      setShowDropdown(false);
-    }, 100);
-  };
-
-  const updateTextInput = (event: { target: { value: any; }; }) => {
-    const selectedValue = event.target.value;
-    setInputText(selectedValue);
-    setSelectedOption(selectedValue);
-    setShowDropdown(false);
-  };
-
-  const filteredOptions = options.filter(option => option.toLowerCase().includes(inputText));
 
   return (
-    <div className="relative">
-      <input
-        type="text"
-        className="w-full px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:border-blue-500"
-        placeholder="Type or select an option"
-        value={inputText}
-        onChange={filterOptions}
-        onFocus={showDropdownMenu}
-        onBlur={hideDropdownMenu}
-      />
-      {showDropdown && (
-        <div className="absolute top-10 left-0 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-10">
-          <select className="w-full px-4 py-2" value={selectedOption} onChange={updateTextInput}>
-            <option value="">Select an option</option>
-            {filteredOptions.map((option, index) => (
-              <option key={index} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+    <div className="relative w-full">
+      <div
+        style={{ width: inputWidth ?? '100%', height: inputHeight ?? '' }}
+        className={`
+            flex
+            flex-row
+            items-center
+            input
+            input-bordered 
+            rounded-${roundStyle} ${themeColor ? `border-${themeColor}` : ''} 
+            focus-within:outline 
+            focus-within:outline-2 
+            focus-within:outline-offset-2 
+            focus-within:outline-${themeColor ?? '[#D2D4D7]'} 
+            ${disabled ? 'bg-[#E9EEF4] ' : ''} 
+            ${error ? 'border-reddist' : ''}
+          `}>
+        <input
+          id={id}
+          type="text"
+          placeholder="Search, select or create an option..."
+          value={searchTerm}
+          onChange={handleInputChange}
+          onFocus={() => {
+            setIsOpen(true);
+          }}
+          className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
+            disabled ? 'text-[#637488]' : ''
+          }`}
+        />
+        <div
+          onClick={() => {
+            setIsOpen(!isOpen);
+          }}
+          className={`
+            flex items-center 
+            justify-center cursor-pointer 
+            w-10 h-10 rounded-lg 
+            -mr-3 hover:bg-slate-300
+            ${isOpen && 'animate-pulse'}
+          `}>
+          <img src={isOpen ? ChevronUp : ChevronDown} className="w-6 h-6" />
+        </div>
+      </div>
+      {isOpen && (
+        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto">
+          {filteredOptions.length > 0 ? (
+            <ul>
+              {filteredOptions.map((option: any, index: any) => (
+                <li
+                  key={index}
+                  onClick={() => {
+                    handleOptionClick(option.label);
+                  }}
+                  className="px-4 py-2 rounded-xl cursor-pointer hover:bg-light-purple m-1">
+                  {option.label}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            false && <p className="px-4 py-2 text-gray-500">No matching options</p>
+          )}
+        </div>
+      )}
+      {error && (
+        <div className="flex flex-row px-1 py-2">
+          <img src={ErrorSmallIcon} className="mr-3" />
+          <p className="text-reddist text-sm">{helperText}</p>
         </div>
       )}
     </div>
   );
 };
 
-export default TextInputDropdown;
+export default TextInputDropDown;
