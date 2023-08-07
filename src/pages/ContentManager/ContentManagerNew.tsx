@@ -11,7 +11,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 // import DropDown from '@/components/molecules/DropDown';
-import FormList from './components/FormList';
+import FormList from '@/components/molecules/FormList';
 
 import Plus from '@/assets/plus-purple.svg';
 
@@ -722,7 +722,7 @@ export default function ContentManagerNew() {
                     const onChange = useCallback(
                       (e: any) => {
                         handleFormChange('categoryName', e);
-                        field.onChange({ target: { value: e} });
+                        field.onChange({ target: { value: e } });
                       },
                       [id, field, handleFormChange],
                     );
