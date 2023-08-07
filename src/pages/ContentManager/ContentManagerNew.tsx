@@ -10,8 +10,8 @@ import { openToast } from '@/components/atoms/Toast/slice';
 
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
-import DropDown from '@/components/molecules/DropDown';
-import FormList from './components/FormList';
+// import DropDown from '@/components/molecules/DropDown';
+import FormList from '@/components/molecules/FormList';
 
 import Plus from '@/assets/plus-purple.svg';
 
@@ -246,11 +246,6 @@ export default function ContentManagerNew() {
       });
   }
 
-  // const handleFilesChange = (id: string, files: any, fieldType: string) => {
-  //   const base64Array = files.map((file: { base64: any }) => file.base64);
-  //   handleFormChange(id, base64Array[0], fieldType);
-  // };
-
   const addNewLoopingField = () => {
     // Find the existing looping field
     const existingLoopingField = postTypeDetail.attributeList.find(
@@ -312,7 +307,6 @@ export default function ContentManagerNew() {
     return postTypeDetail?.attributeList.map((props: any) => {
       const { id, name, fieldType, attributeList, config } = props;
       const configs = JSON.parse(config);
-      console.log(configs)
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -710,20 +704,40 @@ export default function ContentManagerNew() {
                   placeholder="Title"
                   error={!!errors?.title?.message}
                   helperText={errors?.title?.message}
+                  border={false}
                 />
               )}
             />
             {postTypeDetail?.isUseCategory && (
-              <div className="flex flex-row items-center">
-                <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-9">
+              <div className="flex flex-row">
+                <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
                   Category
                 </Typography>
-                <DropDown
-                  labelStyle="font-bold text-base"
-                  defaultValue="item1"
-                  items={categoryList}
-                  onSelect={(_e, val) => {
-                    handleFormChange('categoryName', val);
+                <Controller
+                  name="category"
+                  control={control}
+                  defaultValue=""
+                  rules={{ required: 'Category is required' }}
+                  render={({ field }) => {
+                    const onChange = useCallback(
+                      (e: any) => {
+                        handleFormChange('categoryName', e);
+                        field.onChange({ target: { value: e } });
+                      },
+                      [id, field, handleFormChange],
+                    );
+                    return (
+                      <FormList.TextInputDropDown
+                        {...field}
+                        key="category"
+                        labelTitle="Category"
+                        placeholder="Title"
+                        error={!!errors?.category?.message}
+                        helperText={errors?.category?.message}
+                        items={categoryList}
+                        onChange={onChange}
+                      />
+                    );
                   }}
                 />
               </div>
@@ -741,6 +755,7 @@ export default function ContentManagerNew() {
                   placeholder="Enter Short Description"
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
+                  border={false}
                 />
               )}
             />

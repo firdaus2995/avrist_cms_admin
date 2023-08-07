@@ -13,6 +13,7 @@ export default function FileUploaderV2({
   error,
   helperText,
   id,
+  labelRequired = false,
 }: any) {
   return (
     <div>
@@ -24,8 +25,9 @@ export default function FileUploaderV2({
         {fieldTypeLabel}
       </Typography>
       <div className="flex flex-row">
-        <Typography type="body" size="m" weight="bold" className="w-48 mt-1 ml-1 mr-9">
+        <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
           {labelTitle}
+          <span className={'text-reddist text-lg'}>{labelRequired ? ' *' : ''}</span>
         </Typography>
         <div
           className={`
@@ -33,7 +35,8 @@ export default function FileUploaderV2({
             w-full
             ${containerStyle}
             ${direction === 'row' ? 'flex-row' : ''}
-        `}>
+            `}
+          style={{ flex: '1' }}>
           <div>
             <FileUploaderBase
               id={id}

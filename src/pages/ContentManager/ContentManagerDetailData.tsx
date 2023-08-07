@@ -10,7 +10,7 @@ import {
 } from '@/services/ContentManager/contentManagerApi';
 import { useCreateContentDataMutation } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
-import FormList from './components/FormList';
+import FormList from '@/components/molecules/FormList';
 
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
