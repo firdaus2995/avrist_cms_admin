@@ -48,7 +48,7 @@ const TextInputDropDown = ({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full" style={{ flex: '1' }}>
       <div
         style={{ width: inputWidth ?? '100%', height: inputHeight ?? '' }}
         className={`
