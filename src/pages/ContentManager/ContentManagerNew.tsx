@@ -208,11 +208,6 @@ export default function ContentManagerNew() {
       });
   }
 
-  const handleFilesChange = (id: string, files: any, fieldType: string) => {
-    const base64Array = files.map((file: { base64: any }) => file.base64);
-    handleFormChange(id, base64Array[0], fieldType);
-  };
-
   const addNewLoopingField = (loopingId: any) => {
     const existingLoopingIndex: number = postTypeDetail.attributeList.findIndex(
       (attribute: { id: string }) => attribute.id === loopingId,
