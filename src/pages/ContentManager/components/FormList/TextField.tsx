@@ -20,6 +20,7 @@ export default function TextField({
   suffix,
   helperText,
   fieldTypeLabel,
+  border = true,
 }: any) {
   return (
     <div>
@@ -75,7 +76,7 @@ export default function TextField({
           )}
         </div>
       </div>
-      <div className="border my-10" />
+      {border && <div className="border my-10" />}
     </div>
   );
 }

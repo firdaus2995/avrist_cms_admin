@@ -20,6 +20,7 @@ export default function TextAreaField({
   rows,
   textAreaStyle,
   fieldTypeLabel = '',
+  border = true,
 }: any) {
   return (
     <div>
@@ -72,7 +73,7 @@ export default function TextAreaField({
           )}
         </div>
       </div>
-      <div className="border my-10" />
+      {border && <div className="border my-10" />}
     </div>
   );
 }
