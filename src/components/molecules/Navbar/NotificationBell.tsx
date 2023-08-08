@@ -33,6 +33,17 @@ const NotificationBell: React.FC = () => {
     ])
   }, []);
 
+  const countUnreadedNotification = () => {
+    let count = 0;
+    for (const iterator of notifications) {
+      if (iterator.isRead === false) {
+        count++;
+      };
+    };
+    
+    return count;
+  };
+
   const handlerReadAll = (event: any) => {
     console.log(event);
   };
@@ -47,7 +58,7 @@ const NotificationBell: React.FC = () => {
               {
                 notifications.length > 0 && (
                   <div className='absolute right-0 top-0 w-[24px] text-reddist font-bold border-2 border-light-purple rounded-full bg-light-purple-2'>
-                    {notifications.length}
+                    {countUnreadedNotification()}
                   </div>
                 )
               }
