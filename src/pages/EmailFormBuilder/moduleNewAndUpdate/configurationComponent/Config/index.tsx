@@ -111,12 +111,12 @@ const Config: React.FC<IConfig> = ({
                 <img src={data[element.code] === "LEFT" ? TextAlignLeftWhite : TextAlignLeft} />
               </div>
               <div 
-                className={`h-[30px] flex flex-1 justify-center items-center ${data[element.code] === "CENTER" ? 'bg-[#3E84F7]' : 'bg-[#D6D4D3]'} cursor-pointer border-l-[1px] border-r-[1px] border-[#BCBAB9]`}
+                className={`h-[30px] flex flex-1 justify-center items-center ${data[element.code] === "MIDDLE" ? 'bg-[#3E84F7]' : 'bg-[#D6D4D3]'} cursor-pointer border-l-[1px] border-r-[1px] border-[#BCBAB9]`}
                 onClick={() => {
-                  valueChange(element.code, 'CENTER');
+                  valueChange(element.code, 'MIDDLE');
                 }}
               >
-                <img src={data[element.code] === "CENTER" ? TextAlignCenterWhite : TextAlignCenter} />
+                <img src={data[element.code] === "MIDDLE" ? TextAlignCenterWhite : TextAlignCenter} />
               </div>
               <div 
                 className={`h-[30px] flex flex-1 justify-center items-center ${data[element.code] === "RIGHT" ? 'bg-[#3E84F7]' : 'bg-[#D6D4D3]'} cursor-pointer rounded-tr-lg rounded-br-lg`}
