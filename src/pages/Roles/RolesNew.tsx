@@ -91,7 +91,7 @@ export default function RolesNew() {
             {t('btn.cancel')}
           </button>
           <button
-            className="btn btn-success btn-md"
+            className="btn btn-success btn-md text-white"
             onClick={() => {
               onSave();
             }}>

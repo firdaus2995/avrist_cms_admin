@@ -8,6 +8,7 @@ import TextEditor from './TextEditor';
 import YoutubeURL from './TextField';
 import FileUploaderV2 from './FileUploaderV2';
 import TextInputDropDown from './TextInputDropdown';
+import FieldButton from './FieldButton';
 
 const FormList = {
   FileUploader,
@@ -19,6 +20,7 @@ const FormList = {
   YoutubeURL,
   FileUploaderV2,
   TextInputDropDown,
+  FieldButton,
 };
 
 export default FormList;

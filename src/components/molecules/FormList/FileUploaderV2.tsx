@@ -14,6 +14,7 @@ export default function FileUploaderV2({
   helperText,
   id,
   labelRequired = false,
+  border = true,
 }: any) {
   return (
     <div>
@@ -53,7 +54,7 @@ export default function FileUploaderV2({
           </div>
         </div>
       </div>
-      <div className="border my-10" />
+      {border && <div className="border my-10" />}
     </div>
   );
 }
