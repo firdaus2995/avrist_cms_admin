@@ -7,6 +7,11 @@ import CancelIcon from '@/assets/cancel.png';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import ModalForm from '@/components/molecules/ModalForm';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+
+import Table from '@/components/molecules/Table';
+import TableEdit from '@/assets/table-edit.png';
+import TableDelete from '@/assets/table-delete.svg';
+
 // import { useAppDispatch } from '../../store';
 // import { useCreatePageTemplateMutation } from '../../services/PageTemplate/pageTemplateApi';
 // import { openToast } from '../../components/atoms/Toast/slice';
@@ -71,6 +76,135 @@ export default function PageTemplatesNewV2() {
     setShowLeaveModal(false);
     navigate('/page-template');
   };
+
+  // TABLE COLUMN
+  const sampleData = [
+    { attributes: 'AATR1', id: '1', desc: 'Desc 1' },
+    { attributes: 'AATR2', id: '2', desc: 'Desc 2' },
+  ];
+  const attributesColumns = [
+    {
+      header: () => <span className="text-[14px]">Attribute Type</span>,
+      accessorKey: 'attributes',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Field ID</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Description</span>,
+      accessorKey: 'desc',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Action</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (_info: any) => (
+        <div className="flex gap-3">
+          <div className="tooltip" data-tip="Edit">
+            <button>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+                onClick={() => {
+                  // onClickEmailFormBuilderEdit(info.getValue());
+                }}
+              />
+            </button>
+          </div>
+          <div className="tooltip" data-tip="Delete">
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableDelete}
+              onClick={() => {
+                // onClickEmailFormBuilderDelete(info.getValue());
+              }}
+            />
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  const configColumns = [
+    {
+      header: () => <span className="text-[14px]">Key</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Description</span>,
+      accessorKey: 'createdBy.name',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Action</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (_info: any) => (
+        <div className="flex gap-3">
+          <div className="tooltip" data-tip="Edit">
+            <button>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+                onClick={() => {
+                  // onClickEmailFormBuilderEdit(info.getValue());
+                }}
+              />
+            </button>
+          </div>
+          <div className="tooltip" data-tip="Delete">
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableDelete}
+              onClick={() => {
+                // onClickEmailFormBuilderDelete(info.getValue());
+              }}
+            />
+          </div>
+        </div>
+      ),
+    },
+  ];
 
   return (
     <TitleCard
@@ -237,6 +371,16 @@ export default function PageTemplatesNewV2() {
               setOpenAddAttributesModal(true);
             }}
           />
+          <div className="ml-2 lg:ml-56 ">
+            <Table
+              rows={sampleData}
+              columns={attributesColumns}
+              manualPagination={true}
+              manualSorting={true}
+              // loading={isFetching}
+              // error={isError}
+            />
+          </div>
           <FormList.FieldButton
             name="Config"
             buttonTitle="Add Config"
@@ -244,6 +388,16 @@ export default function PageTemplatesNewV2() {
               console.log('halo');
             }}
           />
+          <div className="ml-2 lg:ml-56 ">
+            <Table
+              rows={[{}]}
+              columns={configColumns}
+              manualPagination={true}
+              manualSorting={true}
+              // loading={isFetching}
+              // error={isError}
+            />
+          </div>
 
           <div className="flex justify-end items-end gap-2">
             <button
