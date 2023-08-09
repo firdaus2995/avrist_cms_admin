@@ -86,7 +86,7 @@ export const InputPassword: React.FC<IInputPassword> = ({
         </div>
       </div>
       {
-        (isError ?? actionLink) && (
+        (isError || actionLink) && ( //eslint-disable-line
           <div 
             style={{
               marginLeft: direction === 'row' ? labelWidth : '',
