@@ -10,11 +10,11 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   let title = '';
   switch (status.toLowerCase()) {
     case 'waiting_review':
-      style = 'bg-[#F8E7D2] border-[#FF8E3C]';
+      style = 'bg-[#F8E7CF] border-[#FF8E3C]';
       title = 'Waiting Review';
       break;
-    case 'waiting_approval':
-      style = 'bg-[#CFE3FB] border-[#829BC7]';
+    case 'waiting_approve':
+      style = 'bg-[#CFE3FB] border-[#6F92C6]';
       title = 'Waiting Approval';
       break;
     case 'draft':
@@ -29,8 +29,8 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       style = 'bg-[#EBD2CE] border-[#D09191]';
       title = 'Delete Approval';
       break;
-    case 'approve':
-      style = 'bg-[#F8E7D2] border-[#FF8E3C]';
+    case 'approved':
+      style = 'bg-[#D9E7D6] border-[#8AA97C]';
       title = 'Approve';
       break;
     case 'rejected':

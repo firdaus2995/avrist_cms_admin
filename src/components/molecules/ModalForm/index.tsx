@@ -8,6 +8,8 @@ export default function ModalForm ({
   open,
   formTitle,
   submitTitle,
+  submitType,
+  submitDisabled,
   cancelTitle,
   loading,
   submitAction,
@@ -20,6 +22,7 @@ export default function ModalForm ({
       toggle={() => null}
       title=""
       width={725}
+      height={640}
     >
       <div className="p-2 flex flex-col gap-6">
         <div className="flex justify-between">
@@ -35,7 +38,7 @@ export default function ModalForm ({
           <button className="btn btn-outline w-[105px]" onClick={cancelAction}>
             {cancelTitle}
           </button>
-          <button className="btn btn-success w-[105px]" onClick={submitAction}>
+          <button disabled={submitDisabled} className={`btn ${submitType !== '' ? submitType : 'btn-success'} w-[105px]`} onClick={submitAction}>
             {loading ? 'Loading...' : submitTitle}
           </button>
         </div>

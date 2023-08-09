@@ -38,6 +38,7 @@ export const contentManagerApi = createApi({
                 limit: $limit
                 sortBy: $sortBy
                 direction: $direction
+                isArchive: false
               }
             ) {
               total
@@ -317,6 +318,58 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    updateContentData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation contentDataUpdate(
+            $title: String!
+            $shortDesc: String!
+            $isDraft: Boolean!
+            $postTypeId: Int!
+            $categoryName: String!
+            $contentData: [PostMetaTemplateRequest]!
+          ){
+            contentDataUpdate(
+                id: $postTypeId,
+                request: {
+                    title: $title
+                    shortDesc: $shortDesc
+                    isDraft: $isDraft
+                    categoryName: $categoryName
+                    contentData: $contentData
+            }) {    
+                id
+                title
+                shortDesc
+                categoryName
+                status
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
+    updateContentDataStatus: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation contentDataUpdateStatus(
+            $id: Int!
+            $status: String!
+            $comment: String!
+          ){
+            contentDataUpdateStatus(
+                request: {
+                    id: $id
+                    status: $status
+                    comment: $comment
+            }) {    
+              message
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -333,4 +386,6 @@ export const {
   useGetMyTaskListQuery,
   useGetContentDataDetailQuery,
   useGetContentDataLogApprovalQuery,
+  useUpdateContentDataMutation,
+  useUpdateContentDataStatusMutation,
 } = contentManagerApi;
