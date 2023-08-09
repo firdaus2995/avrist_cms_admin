@@ -1,5 +1,5 @@
-import { HTMLInputTypeAttribute } from 'react';
-import PropTypes from 'prop-types';
+import React, { HTMLInputTypeAttribute } from 'react';
+
 import ErrorSmallIcon from "../../../assets/error-small.svg";
 
 interface IInputText {
@@ -55,6 +55,7 @@ export const InputText: React.FC<IInputText> = ({
       <label
         style={{
           width: direction === 'row' ? labelWidth : '',
+          minWidth: direction === 'row' ? labelWidth : '',
         }}
         className={`label`}
       >
@@ -66,7 +67,7 @@ export const InputText: React.FC<IInputText> = ({
       <div style={{
         width: inputWidth ?? '100%',
         height: inputHeight ?? '',
-      }} className={`input input-bordered ${`rounded-${roundStyle}`} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''} ${isError && 'border-reddist'}`}>
+      }} className={`input input-bordered rounded-${roundStyle} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''} ${isError && 'border-reddist'}`}>
         <input
           name={name}
           type={type ?? 'text'}
@@ -94,28 +95,4 @@ export const InputText: React.FC<IInputText> = ({
       }
     </div>
   );
-};
-
-InputText.propTypes = {
-  labelTitle: PropTypes.string.isRequired,
-  labelTitleExtension: PropTypes.string,
-  labelStyle: PropTypes.string,
-  labelTitleExtensionStyle: PropTypes.string,
-  labelRequired: PropTypes.bool,
-  labelWidth: PropTypes.number,
-  type: PropTypes.string,
-  containerStyle: PropTypes.string,
-  value: PropTypes.string,
-  placeholder: PropTypes.string,
-  onChange: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
-  direction: PropTypes.string,
-  inputStyle: PropTypes.string,
-  roundStyle: PropTypes.string,
-  themeColor: PropTypes.string,
-  inputWidth: PropTypes.number,
-  inputHeight: PropTypes.number,
-  name: PropTypes.string,
-  isError: PropTypes.bool,
-  suffix: PropTypes.node,
 };
