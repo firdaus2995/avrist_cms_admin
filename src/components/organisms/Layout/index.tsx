@@ -1,14 +1,25 @@
-import React from 'react';
+import React, { useEffect } from 'react';
+import { isDesktop, isTablet, isMobile } from 'react-device-detect';
+import { useLocation } from 'react-router-dom';
+import { Outlet } from 'react-router';
+
+import Notification from '../Notification';
+import { setOpen } from './slice';
 import { Navbar } from '../../molecules/Navbar';
 import { Sidebar } from '../../molecules/Sidebar';
-import { isDesktop, isTablet, isMobile } from 'react-device-detect';
-import { Outlet } from 'react-router';
 import { useAppDispatch, useAppSelector } from '../../../store';
-import { setOpen } from './slice';
+import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
 
 const Layout: React.FC<any> = props => {
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const { open } = useAppSelector(s => s.layoutSlice);
+  const { activatedNotificationPage } = useAppSelector(s => s.notificationSlice)
+
+  useEffect(() => {
+    dispatch(setActivatedNotificationPage(false));
+  }, [location.pathname]);
+
   return (
     <div>
       {(isMobile || isTablet || isDesktop) && (
@@ -27,11 +38,18 @@ const Layout: React.FC<any> = props => {
         }}
       />
       <div
-        className={`${
-          open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'
-        } pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full ease-in-out duration-300`}>
-        <Outlet />
-        {props.children}
+        className={`${open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'} pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full ease-in-out duration-300`}
+      >
+        {
+          activatedNotificationPage ? (
+            <Notification />
+          ) : (
+            <React.Fragment>
+              <Outlet />
+              {props.children}
+            </React.Fragment>
+          )
+        }
       </div>
     </div>
   );
