@@ -22,7 +22,7 @@ const TextField: React.FC<ILabel> = ({
       className={`flex flex-row justify-between items-center py-4 px-4 bg-light-purple-2 rounded-xl gap-2 border-[1px] ${isActive ? 'border-lavender' : 'border-light-purple-2'}`}
       onClick={onClick}
     >
-      <span className={`flex flex-1 ${alignment === "LEFT" ? "justify-start" : alignment === "CENTER" ? "justify-center" : "justify-end"} font-bold text-lg`}>{name}</span>
+      <span className={`flex flex-1 ${alignment === "LEFT" ? "justify-start" : alignment === "MIDDLE" ? "justify-center" : "justify-end"} font-bold text-lg`}>{name}</span>
       <img 
         src={DeleteComponentIcon}
         className="cursor-pointer"

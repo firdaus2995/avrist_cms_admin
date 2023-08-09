@@ -19,7 +19,6 @@ import { useForm, Controller } from 'react-hook-form';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
-  const [isAddLooping, setIsAddLooping] = useState(false);
   const navigate = useNavigate();
   const goBack = () => {
     navigate(-1);
@@ -34,7 +33,7 @@ export default function ContentManagerNew() {
     attributeList: [],
   });
 
-  const [mainForm, setMainForm] = useState<any>({
+  const [mainForm] = useState<any>({
     title: '',
     shortDesc: '',
     categoryName: '',
@@ -53,61 +52,33 @@ export default function ContentManagerNew() {
     value: any,
     fieldType?: string,
     isLooping: boolean = false,
+    parentId: any = false,
   ) => {
     setContentTempData((prevFormValues: any[]) => {
-      const existingIndex = prevFormValues.findIndex(
-        (item: { id: string | number }) => item.id === id,
-      );
-
-      const mainForm = id && value && !fieldType && !isLooping;
-      if (mainForm) {
-        setMainForm((prevFormValues: any) => ({
-          ...prevFormValues,
-          [id]: value,
-        }));
-      }
-
-      if (existingIndex !== -1 && !isLooping) {
-        const updatedFormValues = [...prevFormValues];
-        updatedFormValues[existingIndex] = { id, value, fieldType };
-        return updatedFormValues;
-      }
-
-      if (isLooping) {
-        const loopingDataIndex = prevFormValues.findIndex(item => item.fieldType === 'LOOPING');
-        if (loopingDataIndex !== -1) {
-          const loopingData = { ...prevFormValues[loopingDataIndex] };
-          const contentData = loopingData.contentData || [];
-
-          const contentDataIndex = contentData.findIndex((data: { id: any }) => data.id === id);
-
-          if (contentDataIndex !== -1) {
-            const updatedContentData = [...contentData];
-            // Update value as an array of values
-            updatedContentData[contentDataIndex] = {
-              ...updatedContentData[contentDataIndex],
-              value: Array.isArray(value) ? value : [value],
-            };
-            loopingData.contentData = updatedContentData;
-            const updatedFormValues = [...prevFormValues];
-            updatedFormValues[loopingDataIndex] = loopingData;
-            return updatedFormValues;
-          } else {
-            // Add new looping data
-            const newLoopingData = {
-              id,
-              value: Array.isArray(value) ? value : [value],
-              fieldType,
-            };
-            loopingData.contentData.push(newLoopingData);
-            const updatedFormValues = [...prevFormValues];
-            updatedFormValues[loopingDataIndex] = loopingData;
-            return updatedFormValues;
+      return prevFormValues.map(item => {
+        if (item.id === id || item.id === parentId) {
+          if (!isLooping) {
+            return { ...item, value, fieldType };
+          } else if (item.fieldType === 'LOOPING') {
+            const updatedContentData = item.contentData.map((data: any) => {
+              if (data.id === id) {
+                return { ...data, value };
+              } else if (data.contentData) {
+                const updatedNestedContentData = data.contentData.map((nestedData: any) => {
+                  if (nestedData.id === id) {
+                    return { ...nestedData, value };
+                  }
+                  return nestedData;
+                });
+                return { ...data, contentData: updatedNestedContentData };
+              }
+              return data;
+            });
+            return { ...item, contentData: updatedContentData };
           }
         }
-      }
-
-      return [...prevFormValues, { id, value, fieldType }];
+        return item;
+      });
     });
   };
 
@@ -122,6 +93,8 @@ export default function ContentManagerNew() {
   const [direction] = useState('asc');
   const [search] = useState('');
   const [sortBy] = useState('id');
+
+  const [loopingDupCount, setLoopingDupCount] = useState<number[]>([]);
 
   // RTK GET DATA
   const fetchGetPostTypeDetail = useGetPostTypeDetailQuery({
@@ -162,58 +135,47 @@ export default function ContentManagerNew() {
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
 
-  const convertData = (contentTempData: any[]) => {
-    const convertedData = contentTempData.map(
-      (item: { fieldType: string; contentData: any[]; value: any[] }) => {
-        if (item.fieldType === 'LOOPING') {
-          const contentData = item.contentData.map((data: { value: any[] }) => ({
-            ...data,
-            value: data.value.length > 0 ? data.value.join(', ') : '',
+  const convertContentData = (data: any[]) => {
+    const combinedData: any[] = [];
+
+    data.forEach((item: { duplicateId: any; contentData: any[] }) => {
+      if (item.duplicateId) {
+        const existingItem = combinedData.find(
+          combinedItem => combinedItem.id === item.duplicateId,
+        );
+
+        if (existingItem) {
+          item.contentData.forEach((contentItem: { fieldType: any; value: any[] }) => {
+            const existingContentItem = existingItem.contentData.find(
+              (existingContent: { fieldType: any }) =>
+                existingContent.fieldType === contentItem.fieldType,
+            );
+
+            if (existingContentItem) {
+              if (!Array.isArray(existingContentItem.value)) {
+                existingContentItem.value = [existingContentItem.value];
+              }
+              if (!Array.isArray(contentItem.value)) {
+                contentItem.value = [contentItem.value];
+              }
+              existingContentItem.value.push(...contentItem.value);
+            }
+          });
+        } else {
+          const newItem = { ...item };
+          newItem.contentData = newItem.contentData.map((contentItem: { value: any }) => ({
+            ...contentItem,
+            value: Array.isArray(contentItem.value) ? [...contentItem.value] : [contentItem.value],
           }));
-          return { ...item, contentData };
-        } else if (Array.isArray(item.value)) {
-          return { ...item, value: item.value.join(', ') };
+          combinedData.push(newItem);
         }
-        return item;
-      },
-    );
+      } else {
+        combinedData.push(item);
+      }
+    });
 
-    return convertedData;
+    return combinedData;
   };
-
-  const transformedData = contentTempData.map(item => {
-    if (item.fieldType === 'LOOPING' && item.contentData) {
-      const groupedContentData = item.contentData.reduce(
-        (
-          grouped: Record<string, any[]>,
-          contentItem: { fieldType: string | number; value: any },
-        ) => {
-          if (!grouped[contentItem.fieldType]) {
-            grouped[contentItem.fieldType] = [];
-          }
-          grouped[contentItem.fieldType].push(...contentItem.value);
-          return grouped;
-        },
-        {},
-      );
-
-      const newContentData = Object.entries(groupedContentData).map(
-        ([fieldType, values], index) => {
-          return {
-            id: item.contentData[index].id, // Use the original id from contentData
-            value: values,
-            fieldType,
-          };
-        },
-      );
-
-      return {
-        ...item,
-        contentData: newContentData,
-      };
-    }
-    return item;
-  });
 
   function onSubmitData(value: any) {
     const payload = {
@@ -222,7 +184,7 @@ export default function ContentManagerNew() {
       isDraft: false,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
-      contentData: isAddLooping ? transformedData : convertData(contentTempData),
+      contentData: convertContentData(contentTempData),
     };
 
     createContentData(payload)
@@ -246,39 +208,57 @@ export default function ContentManagerNew() {
       });
   }
 
-  const addNewLoopingField = () => {
-    // Find the existing looping field
-    const existingLoopingField = postTypeDetail.attributeList.find(
-      (attribute: { fieldType: string }) => attribute.fieldType === 'LOOPING',
+  const addNewLoopingField = (loopingId: any) => {
+    const existingLoopingIndex: number = postTypeDetail.attributeList.findIndex(
+      (attribute: { id: string }) => attribute.id === loopingId,
     );
 
-    if (existingLoopingField) {
-      // Create a new looping field based on the existing one
+    if (existingLoopingIndex !== -1) {
       const newLoopingField = {
-        id: Math.floor(Math.random() * 100000), // Generate a random ID
-        name: 'Looping',
-        fieldType: 'LOOPING',
-        fieldId: 'looping',
-        config: null,
-        parentId: null,
-        attributeList: existingLoopingField.attributeList.map((item: any) => ({
-          ...item,
-          id: Math.floor(Math.random() * 100000),
-        })),
+        ...postTypeDetail.attributeList[existingLoopingIndex],
+        id: Math.floor(Math.random() * 100),
+        duplicateId: postTypeDetail.attributeList[existingLoopingIndex].duplicateId || loopingId,
+        name: `${postTypeDetail.attributeList[existingLoopingIndex].name}`,
+        attributeList: postTypeDetail.attributeList[existingLoopingIndex].attributeList.map(
+          (attribute: any) => ({
+            ...attribute,
+            id: Math.floor(Math.random() * 100),
+            parentId: loopingId,
+            value: '', // Initialize value to empty
+          }),
+        ),
       };
 
-      // Add the new looping field to attributeList
+      const newAttributeList = [...postTypeDetail.attributeList];
+      newAttributeList.splice(existingLoopingIndex + 1, 0, newLoopingField);
+
       setPostTypeDetail((prevPostTypeDetail: { attributeList: any }) => ({
         ...prevPostTypeDetail,
-        attributeList: [...prevPostTypeDetail.attributeList, newLoopingField],
+        attributeList: newAttributeList,
       }));
+
+      setLoopingDupCount(prevCount => ({
+        ...prevCount,
+        [loopingId]: (prevCount[loopingId] || 0) + 1,
+      }));
+
+      setContentTempData(prevContentTempData => [
+        ...prevContentTempData,
+        {
+          ...newLoopingField,
+          contentData: newLoopingField.attributeList.map((attribute: any) => ({
+            id: attribute.id,
+            value: '',
+            fieldType: attribute.fieldType,
+          })),
+        },
+      ]);
     }
   };
 
-  const renderFormList = () => {
-    // DEFAULT VALUE
+  useEffect(() => {
     const attributeList = postTypeDetail?.attributeList || [];
-    if (contentTempData.length === 0 && attributeList.length > 0) {
+    if (attributeList.length > 0 && contentTempData.length === 0) {
       const defaultFormData = attributeList.map((attribute: any) => {
         if (attribute.fieldType === 'LOOPING' && attribute.attributeList) {
           return {
@@ -303,10 +283,20 @@ export default function ContentManagerNew() {
       });
       setContentTempData(defaultFormData);
     }
+  }, [postTypeDetail?.attributeList]);
 
-    return postTypeDetail?.attributeList.map((props: any) => {
+  const renderFormList = () => {
+    // DEFAULT VALUE
+    
+
+    return postTypeDetail?.attributeList.map((props: any, index: number) => {
       const { id, name, fieldType, attributeList, config } = props;
       const configs = JSON.parse(config);
+      
+      const loopingCount = loopingDupCount[id] || 0;
+      const showAddDataButton =
+        loopingCount === 0 ||
+        (loopingCount > 0 && index === postTypeDetail.attributeList.length - 1);
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -577,8 +567,8 @@ export default function ContentManagerNew() {
                 {name}
               </Typography>
               <div className="card w-full shadow-md p-5">
-                {attributeList?.map(({ id, name, fieldType }: any) => {
-                  switch (fieldType) {
+                {attributeList?.map((val: { name: any; id: any; fieldType: any }) => {
+                  switch (val.fieldType) {
                     case 'EMAIL':
                     case 'DOCUMENT':
                     case 'IMAGE':
@@ -588,27 +578,28 @@ export default function ContentManagerNew() {
                     case 'TEXT_FIELD':
                       return (
                         <Controller
-                          name={id.toString()}
+                          name={val.id.toString()}
                           control={control}
                           defaultValue=""
                           rules={{ required: `${name} is required` }}
                           render={({ field }) => {
                             const onChange = useCallback(
                               (e: any) => {
-                                handleFormChange(id, e.target.value, fieldType, true);
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
                                 field.onChange({ target: { value: e.target.value } });
                               },
-                              [id, fieldType, field, handleFormChange],
+                              [val.id, val.fieldType, field, handleFormChange],
                             );
+
                             return (
                               <FormList.TextField
                                 {...field}
-                                key={id}
+                                key={val.id}
                                 fieldTypeLabel="TEXT_FIELD"
-                                labelTitle={name}
+                                labelTitle={val.name}
                                 placeholder=""
-                                error={!!errors?.[id]?.message}
-                                helperText={errors?.[id]?.message}
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
                                 onChange={onChange}
                               />
                             );
@@ -618,11 +609,11 @@ export default function ContentManagerNew() {
                     case 'YOUTUBE_URL':
                       return (
                         <Controller
-                          name={id.toString()}
+                          name={val.id.toString()}
                           control={control}
                           defaultValue=""
                           rules={{
-                            required: `${name} is required`,
+                            required: `${val.name} is required`,
                             pattern: {
                               value:
                                 /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
@@ -632,20 +623,20 @@ export default function ContentManagerNew() {
                           render={({ field }) => {
                             const onChange = useCallback(
                               (e: any) => {
-                                handleFormChange(id, e.target.value, fieldType, true);
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
                                 field.onChange({ target: { value: e.target.value } });
                               },
-                              [id, fieldType, field, handleFormChange],
+                              [val.id, val.fieldType, field, handleFormChange],
                             );
                             return (
                               <FormList.TextField
                                 {...field}
-                                key={id}
+                                key={val.id}
                                 fieldTypeLabel="YOUTUBE_URL"
-                                labelTitle={name}
+                                labelTitle={val.name}
                                 placeholder=""
-                                error={!!errors?.[id]?.message}
-                                helperText={errors?.[id]?.message}
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
                                 onChange={onChange}
                               />
                             );
@@ -656,6 +647,18 @@ export default function ContentManagerNew() {
                       return <p>err</p>;
                   }
                 })}
+                {showAddDataButton && (
+                  <div className="flex justify-end mt-8">
+                    <button
+                      onClick={() => {
+                        addNewLoopingField(id);
+                      }}
+                      className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                      <img src={Plus} className="mr-3" />
+                      Add Data
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           );
@@ -766,21 +769,6 @@ export default function ContentManagerNew() {
 
         {/* DYNAMIC FORM */}
         {renderFormList()}
-        {postTypeDetail?.attributeList?.filter(
-          (item: { fieldType: string }) => item.fieldType === 'LOOPING',
-        )?.length > 0 ? (
-          <div className="flex justify-end mt-8">
-            <button
-              onClick={() => {
-                addNewLoopingField();
-                setIsAddLooping(true);
-              }}
-              className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-              <img src={Plus} className="mr-3" />
-              Add Data
-            </button>
-          </div>
-        ) : null}
         <Footer />
       </form>
     </TitleCard>
