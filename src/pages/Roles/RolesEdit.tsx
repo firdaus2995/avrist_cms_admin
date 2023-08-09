@@ -125,7 +125,7 @@ export default function RolesEdit() {
           </button>
           {editMode ? (
             <button
-              className="btn btn-success btn-md"
+              className="btn btn-success btn-md text-white"
               onClick={() => {
                 onSave();
               }}>
@@ -133,7 +133,7 @@ export default function RolesEdit() {
             </button>
           ) : (
             <button
-              className="btn btn-success btn-md"
+              className="btn btn-success btn-md text-white"
               onClick={() => {
                 window.location.assign(`/roles/edit/${params.id}`);
               }}>
