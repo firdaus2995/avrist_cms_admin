@@ -275,7 +275,7 @@ export default function UsersEdit () {
           }}>
             {isLoading ? 'Loading...' : t('btn.cancel')}
           </button>
-          <button className="btn btn-success btn-md" onClick={(event: any) => {
+          <button className="btn btn-success btn-md text-white" onClick={(event: any) => {
             event.preventDefault();
             onSave();
           }}>

@@ -1327,7 +1327,7 @@ export default function ContentTypeEdit() {
             onClick={() => {
               onSaveContent();
             }}
-            className="btn btn-success btn-md">
+            className="btn btn-success btn-md text-white">
             {t('btn.create')}
           </button>
         </div>

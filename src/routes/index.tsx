@@ -84,6 +84,7 @@ const ContentManagerDetailDataPage = React.lazy(
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
+
   return (
     <Routes>
       <Route element={<ProtectedRoute token={!accessToken} redirectPath="/" />}>
@@ -98,7 +99,8 @@ export default function RoutesComponent() {
             <Suspense fallback={<Loading />}>
               <Layout />
             </Suspense>
-          }>
+          }
+        >
           <Route index element={<DashboardPage />} />
           {/* USER PAGES ROUTE */}
           <Route path="user" element={<UserPage />} />

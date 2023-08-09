@@ -2,15 +2,23 @@ import { t } from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import { useState, useCallback } from 'react';
 
-import CancelIcon from '../../assets/cancel.png';
-import ModalConfirm from '../../components/molecules/ModalConfirm';
-import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import EditPurple from '@/assets/edit-purple.svg';
+import CancelIcon from '@/assets/cancel.png';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import ModalForm from '@/components/molecules/ModalForm';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+
+import Table from '@/components/molecules/Table';
+import TableEdit from '@/assets/table-edit.png';
+import TableDelete from '@/assets/table-delete.svg';
+
 // import { useAppDispatch } from '../../store';
 // import { useCreatePageTemplateMutation } from '../../services/PageTemplate/pageTemplateApi';
 // import { openToast } from '../../components/atoms/Toast/slice';
 
 import { useForm, Controller } from 'react-hook-form';
 import FormList from '@/components/molecules/FormList';
+// import { useRestoreDataMutation } from '../../services/ContentManager/contentManagerApi';
 
 export default function PageTemplatesNewV2() {
   const navigate = useNavigate();
@@ -23,6 +31,7 @@ export default function PageTemplatesNewV2() {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+  const [openAddAttributesModal, setOpenAddAttributesModal] = useState<any>(false);
 
   // FORM VALIDATION
   const {
@@ -68,8 +77,148 @@ export default function PageTemplatesNewV2() {
     navigate('/page-template');
   };
 
+  // TABLE COLUMN
+  const sampleData = [
+    { attributes: 'AATR1', id: '1', desc: 'Desc 1' },
+    { attributes: 'AATR2', id: '2', desc: 'Desc 2' },
+  ];
+  const attributesColumns = [
+    {
+      header: () => <span className="text-[14px]">Attribute Type</span>,
+      accessorKey: 'attributes',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Field ID</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Description</span>,
+      accessorKey: 'desc',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Action</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (_info: any) => (
+        <div className="flex gap-3">
+          <div className="tooltip" data-tip="Edit">
+            <button>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+                onClick={() => {
+                  // onClickEmailFormBuilderEdit(info.getValue());
+                }}
+              />
+            </button>
+          </div>
+          <div className="tooltip" data-tip="Delete">
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableDelete}
+              onClick={() => {
+                // onClickEmailFormBuilderDelete(info.getValue());
+              }}
+            />
+          </div>
+        </div>
+      ),
+    },
+  ];
+
+  const configColumns = [
+    {
+      header: () => <span className="text-[14px]">Key</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Description</span>,
+      accessorKey: 'createdBy.name',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Action</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (_info: any) => (
+        <div className="flex gap-3">
+          <div className="tooltip" data-tip="Edit">
+            <button>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+                onClick={() => {
+                  // onClickEmailFormBuilderEdit(info.getValue());
+                }}
+              />
+            </button>
+          </div>
+          <div className="tooltip" data-tip="Delete">
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableDelete}
+              onClick={() => {
+                // onClickEmailFormBuilderDelete(info.getValue());
+              }}
+            />
+          </div>
+        </div>
+      ),
+    },
+  ];
+
   return (
-    <TitleCard title={t('page-template.add.title')} topMargin="mt-2">
+    <TitleCard
+      title={t('page-template.add.title')}
+      TopSideButtons={
+        <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
+          <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
+            <img src={EditPurple} className="w-6 h-6 mr-1" />
+            Edit Content
+          </div>
+        </button>
+      }
+      topMargin="mt-2">
+      {/* ON CANCEL */}
       <ModalConfirm
         open={showLeaveModal}
         cancelAction={() => {
@@ -83,8 +232,20 @@ export default function PageTemplatesNewV2() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
+      <ModalForm
+        open={openAddAttributesModal}
+        formTitle="Page Template"
+        submitTitle={t('btn.save-alternate')}
+        cancelTitle={t('btn.cancel')}
+        cancelAction={() => {
+          setOpenAddAttributesModal(false);
+        }}
+        submitAction={() => {}}>
+        <p>Tezs</p>
+      </ModalForm>
       <form
         onSubmit={handleSubmit(e => {
+          e.preventDefault();
           console.log(e);
         })}
         className="flex flex-col w-100 mt-[35px]">
@@ -179,7 +340,7 @@ export default function PageTemplatesNewV2() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: `Image Preview is required` },
+              required: { value: true, message: `Image preview is required` },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
@@ -197,23 +358,61 @@ export default function PageTemplatesNewV2() {
                   error={!!errors?.imagePreview?.message}
                   helperText={errors?.imagePreview?.message}
                   onChange={onChange}
+                  border={false}
                 />
               );
             }}
           />
+
+          <FormList.FieldButton
+            name="Attribute"
+            buttonTitle="Add Attribute"
+            onClick={() => {
+              setOpenAddAttributesModal(true);
+            }}
+          />
+          <div className="ml-2 lg:ml-56 ">
+            <Table
+              rows={sampleData}
+              columns={attributesColumns}
+              manualPagination={true}
+              manualSorting={true}
+              // loading={isFetching}
+              // error={isError}
+            />
+          </div>
+          <FormList.FieldButton
+            name="Config"
+            buttonTitle="Add Config"
+            onClick={() => {
+              console.log('halo');
+            }}
+          />
+          <div className="ml-2 lg:ml-56 ">
+            <Table
+              rows={[{}]}
+              columns={configColumns}
+              manualPagination={true}
+              manualSorting={true}
+              // loading={isFetching}
+              // error={isError}
+            />
+          </div>
+
           <div className="flex justify-end items-end gap-2">
             <button
               className="btn btn-outline btn-md"
-              onClick={(event: any) => {
-                event.preventDefault();
+              onClick={e => {
+                e.preventDefault();
                 setLeaveTitleModalShow(t('modal.confirmation'));
                 setMessageLeaveModalShow(t('modal.leave-confirmation'));
                 setShowLeaveModal(true);
               }}>
               {/* {isLoading ? 'Loading...' : t('btn.cancel')} */}
+              {t('btn.cancel')}
             </button>
-            <button className="btn btn-success btn-md" type="submit">
-              {/* {isLoading ? 'Loading...' : t('btn.save')} */}
+            <button type="submit" className="btn btn-success btn-md text-white">
+              {t('btn.save')}
             </button>
           </div>
         </div>
