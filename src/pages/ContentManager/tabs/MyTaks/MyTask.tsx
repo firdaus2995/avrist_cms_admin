@@ -1,10 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
-import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
 import { useTranslation } from 'react-i18next';
 import { useGetMyTaskListQuery } from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
+import { Link } from 'react-router-dom';
+import StatusBadge from '../../components/StatusBadge';
 
 export default function MyTaskTab(props: { id: any }) {
   const { t } = useTranslation();
@@ -100,15 +101,17 @@ export default function MyTaskTab(props: { id: any }) {
       header: () => <span className="text-[14px] font-black">{t('action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
-      cell: (_info: any) => (
+      cell: (info: any) => (
         <div className="flex gap-3">
-          <div className="tooltip" data-tip={'View Detail'}>
-            <div
-              role="button"
-              className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
-              View Detail
+          <Link to={`detail/${info.getValue()}`}>
+            <div className="tooltip" data-tip={'View Detail'}>
+              <div
+                role="button"
+                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
+                View Detail
+              </div>
             </div>
-          </div>
+          </Link>
         </div>
       ),
     },
