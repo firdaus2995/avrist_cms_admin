@@ -187,6 +187,8 @@ export default function ContentManagerNew() {
       contentData: convertContentData(contentTempData),
     };
 
+    console.log('ini payload => ', payload);
+
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -287,12 +289,11 @@ export default function ContentManagerNew() {
 
   const renderFormList = () => {
     // DEFAULT VALUE
-    
 
     return postTypeDetail?.attributeList.map((props: any, index: number) => {
       const { id, name, fieldType, attributeList, config } = props;
       const configs = JSON.parse(config);
-      
+
       const loopingCount = loopingDupCount[id] || 0;
       const showAddDataButton =
         loopingCount === 0 ||

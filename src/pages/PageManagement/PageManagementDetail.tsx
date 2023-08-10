@@ -61,7 +61,7 @@ export default function PageManagementDetail() {
         title="Homepage - Page Template"
         titleComponent={<Badge />}
         border={true}
-        TopSideButtons={<ButtonMenu title={''} />}>
+        TopSideButtons={<ButtonMenu title={''} onClickApprove={undefined} onClickReject={undefined} />}>
         <div className="ml-2 mt-6">
           <div>
             <Typography type="heading4" weight="bold" className="mb-2">
