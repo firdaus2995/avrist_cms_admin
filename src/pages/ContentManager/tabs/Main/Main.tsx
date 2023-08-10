@@ -3,7 +3,6 @@ import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import TableDelete from '@/assets/table-delete.svg';
 import { useTranslation } from 'react-i18next';
-import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
@@ -13,6 +12,7 @@ import { SortingState } from '@tanstack/react-table';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { Link } from 'react-router-dom';
+import StatusBadge from '../../components/StatusBadge';
 
 export default function MainTab(props: { id: any }) {
   const dispatch = useAppDispatch();
@@ -54,6 +54,10 @@ export default function MainTab(props: { id: any }) {
       setTotal(data?.contentDataList?.total);
     }
   }, [data]);
+
+  useEffect(() => {
+    void fetchQuery.refetch()
+  }, [])
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {

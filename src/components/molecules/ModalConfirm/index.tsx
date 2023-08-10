@@ -31,9 +31,11 @@ export default function ModalConfirm(props: IModalConfirm) {
           children && children
         }
         <div className="flex justify-center gap-3 w-full mt-3">
-          <button className="btn btn-outline w-[105px] min-h-0 h-[40px]" onClick={cancelAction}>
-            {cancelTitle}
-          </button>
+          {cancelTitle !== '' && (
+            <button className="btn btn-outline w-[105px] min-h-0 h-[40px]" onClick={cancelAction}>
+              {cancelTitle}
+            </button>
+          )}
           <button className={`btn ${btnSubmitStyle ?? ""} w-[105px] min-h-0 h-[40px]`} onClick={submitAction}>
             {loading ? 'Loading...' : submitTitle}
           </button>
