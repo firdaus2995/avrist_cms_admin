@@ -952,6 +952,7 @@ export default function ContentManagerDetailData() {
       <ModalForm
         open={showModalRejected}
         formTitle=""
+        height={640}
         submitTitle={'Yes'}
         submitType="bg-secondary-warning border-none"
         submitDisabled={rejectComments === ''}
