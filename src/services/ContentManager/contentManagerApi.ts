@@ -370,6 +370,18 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    restoreContentData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation contentDataRestore($id: Int!){
+            contentDataRestore(id: $id) {
+                message
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -388,4 +400,5 @@ export const {
   useGetContentDataLogApprovalQuery,
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
+  useRestoreContentDataMutation,
 } = contentManagerApi;

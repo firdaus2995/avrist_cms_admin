@@ -4,6 +4,7 @@ import Typography from '@/components/atoms/Typography';
 import {
   useGetCategoryListQuery,
   useGetContentDataDetailQuery,
+  useRestoreContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
 import { useCreateContentDataMutation } from '@/services/ContentType/contentTypeApi';
@@ -14,6 +15,8 @@ import { useAppDispatch } from '@/store';
 import { Controller, useForm } from 'react-hook-form';
 import Plus from '@/assets/plus-purple.svg';
 import Edit from '@/assets/edit-purple.svg';
+import Restore from '@/assets/restore.svg';
+import RestoreOrange from '@/assets/restore-orange.svg';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import StatusBadge from './components/StatusBadge';
@@ -42,6 +45,7 @@ export default function ContentManagerDetailData() {
   const [showModalApprove, setShowModalApprove] = useState(false);
   const [showModalRejected, setShowModalRejected] = useState(false);
   const [rejectComments, setRejectComments] = useState('');
+  const [showArchivedModal, setShowArchivedModal] = useState(false);
 
   const handleChange = (id: string | number, value: string) => {
     setContentDataDetailList((prevFormValues: any) => ({
@@ -159,6 +163,7 @@ export default function ContentManagerDetailData() {
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
   const [updateContentDataStatus] = useUpdateContentDataStatusMutation();
+  const [restoreContentData] = useRestoreContentDataMutation();
 
   const convertContentData = (data: any[]) => {
     const combinedData: any[] = [];
@@ -775,6 +780,17 @@ export default function ContentManagerDetailData() {
             </button>
           )
         );
+        case 'ARCHIVED':
+          return (
+            <button
+              onClick={() => {
+                setShowArchivedModal(true);
+              }}
+              className="btn bg-secondary-warning border-none text-xs btn-sm w-48 h-10">
+              <img src={Restore} className="mr-3" />
+              Restore
+            </button>
+          );
       default:
         return null;
     }
@@ -782,6 +798,30 @@ export default function ContentManagerDetailData() {
 
   const onUpdateStatus = (payload: { id: any; status: string; comment: string }) => {
     updateContentDataStatus(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+            message: getMessageToast(status),
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+        goBack();
+      });
+  };
+
+  const onRestoreData = (payload: { id: any }) => {
+    restoreContentData(payload)
       .unwrap()
       .then(() => {
         dispatch(
@@ -884,6 +924,27 @@ export default function ContentManagerDetailData() {
         btnSubmitStyle="btn bg-secondary-warning border-none"
         cancelAction={() => {
           setShowModalApprove(false);
+        }}
+      />
+
+      <ModalConfirm
+        open={showArchivedModal}
+        title={'Restore Content Data'}
+        cancelTitle="Cancel"
+        message={'Are you sure you restore this content data?'}
+        submitTitle="Yes"
+        icon={RestoreOrange}
+        submitAction={() => {
+          setShowArchivedModal(false);
+          const payload = {
+            id: contentDataDetailList?.id,
+          };
+
+          onRestoreData(payload);
+        }}
+        btnSubmitStyle="btn bg-secondary-warning border-none"
+        cancelAction={() => {
+          setShowArchivedModal(false);
         }}
       />
 
