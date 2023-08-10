@@ -5,6 +5,7 @@ interface ITextArea {
   labelTitle: string;
   labelStyle?: string;
   labelWidth?: number;
+  labelRequired?: boolean;
   containerStyle?: string;
   textAreaStyle?: string;
   value?: string;
@@ -22,6 +23,7 @@ export const TextArea: React.FC<ITextArea> = ({
   labelTitle,
   labelStyle = '',
   labelWidth = 225,
+  labelRequired,
   containerStyle = '',
   textAreaStyle,
   value,
@@ -41,7 +43,7 @@ export const TextArea: React.FC<ITextArea> = ({
         className="label"
       >
         <span className={`label-text text-base-content ${labelStyle}`}>
-          {labelTitle}
+          {labelTitle}<span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
         </span>
       </label>
       <textarea
@@ -69,6 +71,7 @@ TextArea.propTypes = {
   labelTitle: PropTypes.string.isRequired,
   labelStyle: PropTypes.string,
   labelWidth: PropTypes.number,
+  labelRequired: PropTypes.bool,
   textAreaStyle: PropTypes.string,
   containerStyle: PropTypes.string,
   value: PropTypes.string,
