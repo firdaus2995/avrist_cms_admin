@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
-import StatusBadge from '@/pages/PageManagement/components/StatusBadge';
 import { useTranslation } from 'react-i18next';
 import { useGetMyTaskListQuery } from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
 import { Link } from 'react-router-dom';
+import StatusBadge from '../../components/StatusBadge';
 
 export default function MyTaskTab(props: { id: any }) {
   const { t } = useTranslation();
