@@ -257,9 +257,8 @@ export default function PageTemplatesList () {
         cancelTitle={t('btn.cancel')}
         cancelAction={() => {
           setOpenEditModal(false);
-        }}
-        submitAction={submitEditUser}
-      >
+        } }
+        submitAction={submitEditUser} submitType={""}      >
         <InputText
           labelTitle="Page Name"
           labelStyle="font-bold	"
