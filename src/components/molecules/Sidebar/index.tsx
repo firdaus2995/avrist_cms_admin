@@ -7,6 +7,9 @@ import { sidebarList } from './list';
 import Menu from '@/assets/menu.png';
 import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
 import ProfilePhoto from '@/assets/Profile-photo.png';
+import ModalForm from '../ModalForm';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { InputPassword } from '@/components/atoms/Input/InputPassword';
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -42,13 +45,39 @@ const HeadSidebar: React.FC<IHeadSidebar> = props => {
 };
 
 interface IMenuSidebar extends ISidebar {}
-const MenuSidebar: React.FC<IMenuSidebar> = props => {
-  const { open } = props;
+const MenuSidebar: React.FC<IMenuSidebar> = ({
+  open,
+}) => {
+  const footerList = [
+    {
+      id: 98,
+      title: 'Edit Profile',
+      bordered: true,
+    },
+    {
+      id: 99,
+      title: 'Logout',
+      icon: LogoutIcon,
+    },
+  ];
 
   const navigate = useNavigate();
   const location = useLocation();
+  
   const [openedTab, setOpenedTab] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState(1);
+  // EDIT PROFILE
+  const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
+  const [fullname, setFullname] = useState("Haykal Shafiq");
+  const [email, setEmail] = useState("haykal@gmail.com");
+  const [password, setPassword] = useState("");
+  const [passwordError, setPasswordError] = useState(false);
+  // CHANGE PASSWORD
+  const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
+  const [recentPassword, setRecentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
 
   useEffect(() => {
     const pathName = location.pathname;
@@ -71,19 +100,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
     }
   }, [location.pathname]);
 
-  const footerList = [
-    {
-      id: 98,
-      title: 'Edit Profile',
-      bordered: true,
-    },
-    {
-      id: 99,
-      title: 'Logout',
-      icon: LogoutIcon,
-    },
-  ];
-
   const listTabHandler = (e: string) => {
     if (openedTab.includes(e)) {
       const filtered = openedTab.filter(val => val !== e);
@@ -91,6 +107,29 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
     } else {
       setOpenedTab(val => [...val, e]);
     }
+  };
+
+  const handlerActionLink = () => {
+    setOpenEditProfileModal(false);
+    setTimeout(() => {
+      setOpenChangePasswordModal(true);
+    }, 50);
+  };
+
+  const submitEditProfile = () => {
+    if (!password) {
+      setPasswordError(true);
+    } else {
+      setPasswordError(false);
+    };
+  };
+
+  const submitChangePassword = () => {
+    if (confirmNewPassword !== newPassword) {
+      setConfirmNewPasswordError(true);
+    } else {
+      setConfirmNewPasswordError(false);
+    };
   };
 
   const renderHeader = () => {
@@ -206,37 +245,169 @@ const MenuSidebar: React.FC<IMenuSidebar> = props => {
 
     return (
       <div className="flex flex-col items-center justify-center my-10">
-        {footerList.map(val => (
-          <div
-            key={val.id}
-            role="button"
-            onClick={() => {
-              setActiveTab(val.id);
-              if (val.id === 99) handleLogout();
-            }}
-            className={`
-            ${activeTab === val.id ? 'bg-[#9B86BA] font-bold' : ''} 
-            ${val.bordered && open && ' border border-white'}
-            ${open ? 'w-40' : 'p-2'} 
-            p-2 text-white rounded-2xl mb-2 text-center flex items-center justify-center`}>
-            {val.icon && (
-              <img src={val.icon} alt={`Menu_${val.id}`} className={`${open && 'mr-4'} w-4 h-4`} />
-            )}
-            {open && val.title}
-          </div>
-        ))}
+        {
+          footerList.map(val => (
+            <div
+              key={val.id}
+              role="button"
+              onClick={() => {
+                if (val.id === 99) {
+                  setActiveTab(val.id);
+                  handleLogout();
+                } else if (val.id === 98) {
+                  setOpenEditProfileModal(true);
+                };
+              }}
+              className={`
+                ${activeTab === val.id ? 'bg-[#9B86BA] font-bold' : ''} 
+                ${val.bordered && open && ' border border-white'}
+                ${open ? 'w-40' : 'p-2'} 
+                p-2 text-white rounded-2xl mb-2 text-center flex items-center justify-center
+              `}
+            >
+              {
+                val.icon && (
+                  <img src={val.icon} alt={`Menu_${val.id}`} className={`${open && 'mr-4'} w-4 h-4`} />
+                )
+              }
+              {open && val.title}
+            </div>
+          ))
+        }
       </div>
     );
   };
 
   return (
-    <div
-      className={`${
-        open ? 'px-2 pt-3 pb-24' : ''
-      } w-full h-full flex flex-col border bg-[#5E217C] overflow-auto`}>
-      {renderHeader()}
-      {renderListMenu()}
-      {renderFooter()}
-    </div>
+    <React.Fragment>
+      <ModalForm
+        height={700}
+        width={600}
+        open={openEditProfileModal}
+        // loading={isLoadingEditProfileModal}
+        formTitle="Edit Profile"
+        submitTitle="Save"
+        cancelTitle="Cancel"
+        cancelAction={() => {
+          setOpenEditProfileModal(false);
+          setPasswordError(false);
+          setConfirmNewPasswordError(false);
+        }}
+        submitAction={submitEditProfile}
+      >
+        <img 
+          style={{
+            width: 120,
+            justifySelf: 'center',
+            marginBottom: 20,
+          }}
+          src='https://i.ibb.co/sC3PRC1/Group-26683.jpg'
+        />
+        <InputText
+          labelTitle="Fullname"
+          labelStyle="font-bold	"
+          labelWidth={125}
+          value={fullname}
+          direction="row"
+          themeColor="lavender"
+          roundStyle="xl"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setFullname(event.target.value);
+          }}
+        />
+        <InputText
+          labelTitle="Email"
+          labelStyle="font-bold	"
+          labelWidth={125}
+          value={email}
+          direction="row"
+          themeColor="lavender"
+          roundStyle="xl"
+          disabled
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setEmail(event.target.value);
+          }}
+        />
+        <InputPassword
+          labelTitle="Password"
+          labelStyle="font-bold	"
+          labelWidth={125}
+          value={password}
+          direction="row"
+          themeColor="lavender"
+          roundStyle="xl"
+          isError={passwordError}
+          actionLink='Change Password'
+          actionLinkClicked={handlerActionLink}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setPassword(event.target.value);
+          }}
+        />
+      </ModalForm>
+      <ModalForm
+        width={600}
+        open={openChangePasswordModal}
+        // loading={isLoadingEditProfileModal}
+        formTitle="Change Password"
+        submitTitle="Save"
+        cancelTitle="Cancel"
+        cancelAction={() => {
+          setOpenChangePasswordModal(false);
+          setPasswordError(false);
+          setConfirmNewPasswordError(false);
+          setRecentPassword("");
+          setNewPassword("");
+          setConfirmNewPassword("");
+        }}
+        submitAction={submitChangePassword}      
+      >
+        <InputPassword
+          labelTitle="Recent Password"
+          labelStyle="font-bold	"
+          labelWidth={175}
+          value={recentPassword}
+          direction="row"
+          themeColor="lavender"
+          roundStyle="xl"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setRecentPassword(event.target.value);
+          }}
+        />
+        <InputPassword
+          labelTitle="New Password"
+          labelStyle="font-bold	"
+          labelWidth={175}
+          value={newPassword}
+          direction="row"
+          themeColor="lavender"
+          roundStyle="xl"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setNewPassword(event.target.value);
+          }}
+        />
+        <InputPassword
+          labelTitle="Confirm New Password"
+          labelStyle="font-bold	"
+          labelWidth={175}
+          value={confirmNewPassword}
+          direction="row"
+          themeColor="lavender"
+          roundStyle="xl"
+          isError={confirmNewPasswordError}
+          errorMessage="Confirm password doesn’t match. Please try again!"
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+            setConfirmNewPassword(event.target.value);
+          }}
+        />
+      </ModalForm>
+      <div
+        className={`${
+          open ? 'px-2 pt-3 pb-24' : ''
+        } w-full h-full flex flex-col border bg-[#5E217C] overflow-auto`}>
+        {renderHeader()}
+        {renderListMenu()}
+        {renderFooter()}
+      </div>
+    </React.Fragment>
   );
 };
