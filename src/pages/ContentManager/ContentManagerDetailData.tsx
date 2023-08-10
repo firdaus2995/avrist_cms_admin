@@ -17,6 +17,7 @@ import Plus from '@/assets/plus-purple.svg';
 import Edit from '@/assets/edit-purple.svg';
 import Restore from '@/assets/restore.svg';
 import RestoreOrange from '@/assets/restore-orange.svg';
+import CheckOrange from '@/assets/check-orange.svg';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import StatusBadge from './components/StatusBadge';
@@ -908,9 +909,9 @@ export default function ContentManagerDetailData() {
         open={showModalApprove}
         title={'Approve'}
         cancelTitle="No"
-        message={'Do you want to approve this page content?'}
+        message={contentDataDetailList?.status === 'WAITING_APPROVE' ? 'Do you want to approve this page content?' : 'Do you want to approve delete this page content?'}
         submitTitle="Yes"
-        icon={PaperIcon}
+        icon={CheckOrange}
         submitAction={() => {
           setShowModalApprove(false);
           const payload = {
@@ -970,7 +971,11 @@ export default function ContentManagerDetailData() {
         }}>
         <div className="flex flex-col justify-center items-center">
           <img src={PaperIcon} className="w-10" />
-          <p className="font-semibold my-3 text-xl">Do you want to reject this content data?</p>
+          {contentDataDetailList?.status === 'WAITING_APPROVE' ? (
+            <p className="font-semibold my-3 text-xl">Do you want to reject this content data?</p>
+          ) : (
+            <p className="font-semibold my-3 text-xl">Do you want to reject this delete request?</p>
+          )}
           <TextArea
             name="shortDesc"
             labelTitle="Reject Comment"
@@ -1068,7 +1073,7 @@ export default function ContentManagerDetailData() {
           {isEdited && <Footer />}
         </form>
       )}
-      {contentDataDetailList?.status === 'WAITING_REVIEW' && (
+      {contentDataDetailList?.status === 'WAITING_REVIEW' || contentDataDetailList?.status === 'DELETE_REVIEW' && (
         <div className="flex flex-row justify-between">
           <div className="w-[30vh] mt-5">
             <CheckBox
