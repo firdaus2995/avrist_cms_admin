@@ -340,7 +340,7 @@ export default function PageTemplatesNewV2() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: `Image preview is required` },
+              required: { value: false, message: `Image preview is required` },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
