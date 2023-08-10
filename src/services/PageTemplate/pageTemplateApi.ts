@@ -1,11 +1,7 @@
-import { 
-  createApi,
-} from "@reduxjs/toolkit/dist/query/react";
-import { 
-  gql,
-} from "graphql-request";
+import { createApi } from '@reduxjs/toolkit/dist/query/react';
+import { gql } from 'graphql-request';
 
-import customFetchBase from "../../utils/Interceptor";
+import customFetchBase from '../../utils/Interceptor';
 export const pageTemplateApi: any = createApi({
   reducerPath: 'pageTemplateApi',
   baseQuery: customFetchBase,
@@ -46,7 +42,7 @@ export const pageTemplateApi: any = createApi({
         variables: payload,
       }),
     }),
-    deletePageTemplate: builder.mutation<any, {id: number}>({
+    deletePageTemplate: builder.mutation<any, { id: number }>({
       query: payload => ({
         document: gql`
           mutation pageTemplateDelete($id: Int!) {
@@ -56,19 +52,22 @@ export const pageTemplateApi: any = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
-    editPageTemplate: builder.mutation<any, any>({      
+    editPageTemplate: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation pageTemplateUpdate($id: Int!, $filenameCode: String!, $name: String!, $shortDesc: String!) {
+          mutation pageTemplateUpdate(
+            $id: Int!
+            $filenameCode: String!
+            $name: String!
+            $shortDesc: String!
+            $attributes: Any
+            $configs: Any
+          ) {
             pageTemplateUpdate(
               id: $id
-              request: {
-                filenameCode: $filenameCode,
-                name: $name,
-                shortDesc: $shortDesc
-              }
+              request: { filenameCode: $filenameCode, name: $name, shortDesc: $shortDesc }
             ) {
               id
               filenameCode
@@ -78,31 +77,52 @@ export const pageTemplateApi: any = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
     createPageTemplate: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation pageTemplateCreate($filenameCode: String!, $name: String!, $shortDesc: String!) {
+          mutation pageTemplateCreate(
+            $filenameCode: String!
+            $name: String!
+            $shortDesc: String!
+            $attributes: Any
+            $configs: Any
+          ) {
             pageTemplateCreate(
               request: {
-                filenameCode: $filenameCode,
-                name: $name,
+                filenameCode: $filenameCode
+                name: $name
                 shortDesc: $shortDesc
+                attributes: $attributes
+                configs: $configs
               }
             ) {
               id
               filenameCode
               name
               shortDesc
+              attributes {
+                fieldType
+                fieldId
+                description
+              }
+              configs {
+                key
+                description
+              }
+              createdBy {
+                id
+                name
+              }
             }
           }
         `,
-        variables: payload
-      })
-    })
-  })
-})
+        variables: payload,
+      }),
+    }),
+  }),
+});
 
 export const {
   useGetPageTemplateQuery,

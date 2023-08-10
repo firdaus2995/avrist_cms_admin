@@ -16,6 +16,23 @@ export default function FileUploaderV2({
   labelRequired = false,
   border = true,
 }: any) {
+  function convertToArr(arr: any[], key: string | number | undefined) {
+    if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
+      return [];
+    }
+
+    const values = arr.map(obj => obj[key]);
+
+    if (values.length === 1) {
+      return values[0];
+    } else {
+      const jsonString = JSON.stringify(
+        values.map(item => (typeof item === 'string' ? item.replace(/"/g, '\\"') : item)),
+      );
+      return jsonString;
+    }
+  }
+
   return (
     <div>
       <Typography
@@ -43,7 +60,11 @@ export default function FileUploaderV2({
               id={id}
               isDocument={isDocument}
               multiple={multiple}
-              onFilesChange={onChange}
+              // onFilesChange={onChange}
+              onFilesChange={(e: any) => {
+                const values = convertToArr(e, 'response');
+                onChange(values);
+              }}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">

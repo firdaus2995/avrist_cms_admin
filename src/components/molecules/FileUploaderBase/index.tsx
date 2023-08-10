@@ -76,7 +76,7 @@ export default function FileUploaderBase({ isDocument, multiple, onFilesChange, 
     const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
-    const maxFileSize = 5.5 * 1024 * 1024; // 5.5MB dalam bytes
+    const maxFileSize = 5 * 1024 * 1024; // 5MB dalam bytes
 
     if (files[0].size > maxFileSize) {
       dispatch(
@@ -114,7 +114,8 @@ export default function FileUploaderBase({ isDocument, multiple, onFilesChange, 
       });
 
       if (response.ok) {
-        const newFile = { name: fileName, value: files[0] };
+        const responseData = await response.json();
+        const newFile = { name: fileName, value: files[0], response: responseData.data };
         if (multiple) {
           setFilesData((prevState: any) => {
             const updatedFiles = [...prevState, newFile];
