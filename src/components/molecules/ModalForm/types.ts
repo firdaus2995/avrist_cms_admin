@@ -4,7 +4,7 @@ export interface IModalForm {
   height?: number;
   formTitle: string;
   submitTitle: string;
-  submitType: string;
+  submitType?: string;
   cancelTitle: string;
   loading?: boolean;
   submitAction: () => void;
