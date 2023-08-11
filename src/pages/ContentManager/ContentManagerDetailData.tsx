@@ -1074,7 +1074,7 @@ export default function ContentManagerDetailData() {
           {isEdited && <Footer />}
         </form>
       )}
-      {contentDataDetailList?.status === 'WAITING_REVIEW' || contentDataDetailList?.status === 'DELETE_REVIEW' && (
+      {contentDataDetailList?.status === 'WAITING_REVIEW' || contentDataDetailList?.status === 'DELETE_REVIEW' ? (
         <div className="flex flex-row justify-between">
           <div className="w-[30vh] mt-5">
             <CheckBox
@@ -1088,7 +1088,7 @@ export default function ContentManagerDetailData() {
           </div>
           {submitButton()}
         </div>
-      )}
+      ) : null}
     </TitleCard>
   );
 }
