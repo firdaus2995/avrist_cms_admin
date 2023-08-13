@@ -99,8 +99,7 @@ export default function RoutesComponent() {
             <Suspense fallback={<Loading />}>
               <Layout />
             </Suspense>
-          }
-        >
+          }>
           <Route index element={<DashboardPage />} />
           {/* USER PAGES ROUTE */}
           <Route path="user" element={<UserPage />} />
@@ -116,6 +115,8 @@ export default function RoutesComponent() {
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route path="page-template" element={<PageTemplatePage />} />
           <Route path="page-template/new" element={<PageTemplateNewPageV2 />} />
+          <Route path="page-template/detail/:id" element={<PageTemplateNewPageV2 />} />
+          <Route path="page-template/edit/:id" element={<PageTemplateNewPageV2 />} />
           {/* EMAIL FORM BUILDER PAGES ROUTE */}
           <Route path="email-form-builder" element={<EmailFormBuilderListPage />} />
           <Route path="email-form-builder/new" element={<EmailFormBuilderNewPage />} />

@@ -122,6 +122,34 @@ export const pageTemplateApi: any = createApi({
         variables: payload,
       }),
     }),
+    getPageTemplateById: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query pageTemplateById($id: Int!) {
+            pageTemplateById(id: $id) {
+              id
+              filenameCode
+              name
+              shortDesc
+              attributes {
+                fieldType
+                fieldId
+                description
+              }
+              configs {
+                key
+                description
+              }
+              createdBy {
+                id
+                name
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -130,4 +158,5 @@ export const {
   useDeletePageTemplateMutation,
   useEditPageTemplateMutation,
   useCreatePageTemplateMutation,
+  useGetPageTemplateByIdQuery,
 } = pageTemplateApi;

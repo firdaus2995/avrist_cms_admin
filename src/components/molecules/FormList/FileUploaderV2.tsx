@@ -15,6 +15,7 @@ export default function FileUploaderV2({
   id,
   labelRequired = false,
   border = true,
+  disabled = false,
 }: any) {
   function convertToArr(arr: any[], key: string | number | undefined) {
     if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
@@ -65,6 +66,7 @@ export default function FileUploaderV2({
                 const values = convertToArr(e, 'response');
                 onChange(values);
               }}
+              disabled={disabled}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">

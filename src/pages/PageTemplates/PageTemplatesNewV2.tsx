@@ -1,5 +1,5 @@
 import { t } from 'i18next';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams, useLocation, Link } from 'react-router-dom';
 import { useState, useCallback, useEffect } from 'react';
 
 import EditPurple from '@/assets/edit-purple.svg';
@@ -14,7 +14,10 @@ import TableEdit from '@/assets/table-edit.png';
 import TableDelete from '@/assets/table-delete.svg';
 
 import { useAppDispatch } from '@/store';
-import { useCreatePageTemplateMutation } from '@/services/PageTemplate/pageTemplateApi';
+import {
+  useCreatePageTemplateMutation,
+  useGetPageTemplateByIdQuery,
+} from '@/services/PageTemplate/pageTemplateApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 import { useForm, Controller } from 'react-hook-form';
@@ -37,11 +40,19 @@ const initialConfig = {
 export default function PageTemplatesNewV2() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const params = useParams();
+  const location = useLocation();
+  const [mode, setMode] = useState('new'); // Default mode is "new"
 
-  // FORM STATE
-  // const [pageName, setPageName] = useState('');
-  // const [pageDescription, setPageDescription] = useState('');
-  // const [pageFileName, setPageFileName] = useState('');
+  useEffect(() => {
+    if (location.pathname.includes('/edit')) {
+      setMode('edit');
+    } else if (location.pathname.includes('/detail')) {
+      setMode('detail');
+    } else {
+      setMode('new');
+    }
+  }, [location.pathname]);
 
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
@@ -106,6 +117,7 @@ export default function PageTemplatesNewV2() {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
   // RTK CREATE PAGE TEMPLATE
@@ -145,6 +157,44 @@ export default function PageTemplatesNewV2() {
         );
       });
   };
+  // RTK GET DATA DETAIL
+  const fetchPageTemplateQuery = useGetPageTemplateByIdQuery(params);
+  const { data: pageTemplate } = fetchPageTemplateQuery;
+
+  useEffect(() => {
+    if (mode === 'detail') {
+      const refetch = async () => {
+        await fetchPageTemplateQuery.refetch();
+      };
+      void refetch();
+    }
+  }, [mode]);
+
+  // FILL DATA FOR DETAIL / EDIT
+  useEffect(() => {
+    const data = pageTemplate?.pageTemplateById;
+    if (data && listAttributes) {
+      const defaultPageName = data?.name || '';
+      const defaultPageDescription = data?.shortDesc || '';
+      const defaultPageFileName = data?.filenameCode || '';
+      const defaultPageId = data?.id || '';
+
+      setValue('pageName', defaultPageName);
+      setValue('pageDescription', defaultPageDescription);
+      setValue('pageFileName', defaultPageFileName);
+      setValue('pageId', defaultPageId);
+
+      const originalAttributes = data?.attributes;
+      const combineAttributes = originalAttributes.map((item: any) => ({
+        ...item,
+        fieldType: listAttributes?.find(
+          (option: any) => option.value.toLowerCase() === item.fieldType.toLowerCase(),
+        ),
+      }));
+      setAttributesData(combineAttributes);
+      setConfigData(data?.configs);
+    }
+  }, [pageTemplate, listAttributes]);
 
   // RTK ATTRIBUTES LIST
   const fetchConfigQuery = useGetConfigQuery<any>({});
@@ -210,37 +260,44 @@ export default function PageTemplatesNewV2() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => {
+        mode === 'detail' ? <div /> : <span className="text-[14px]">Action</span>;
+      },
       accessorKey: 'id',
       enableSorting: false,
-      cell: (info: any) => (
-        <div className="flex gap-3">
-          <div className="tooltip" data-tip="Edit">
-            <button>
+      cell: (info: any) => {
+        if (mode === 'detail') {
+          return <div />;
+        }
+        return (
+          <div className="flex gap-3">
+            <div className="tooltip" data-tip="Edit">
+              <button>
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                  onClick={e => {
+                    e.preventDefault();
+                    setAttributesEditIndex(info.row.index);
+                    setNewAttributes(info.row.original);
+                    setOpenAddAttributesModal(true);
+                  }}
+                />
+              </button>
+            </div>
+            <div className="tooltip" data-tip="Delete">
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableEdit}
+                src={TableDelete}
                 onClick={e => {
                   e.preventDefault();
-                  setAttributesEditIndex(info.row.index);
-                  setNewAttributes(info.row.original);
-                  setOpenAddAttributesModal(true);
+                  onDeleteAttributes(info.row.index);
                 }}
               />
-            </button>
+            </div>
           </div>
-          <div className="tooltip" data-tip="Delete">
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={e => {
-                e.preventDefault();
-                onDeleteAttributes(info.row.index);
-              }}
-            />
-          </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
@@ -270,50 +327,63 @@ export default function PageTemplatesNewV2() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => {
+        mode === 'detail' ? <div /> : <span className="text-[14px]">Action</span>;
+      },
       accessorKey: 'id',
       enableSorting: false,
-      cell: (info: any) => (
-        <div className="flex gap-3">
-          <div className="tooltip" data-tip="Edit">
-            <button>
+      cell: (info: any) => {
+        if (mode === 'detail') {
+          return <div />;
+        }
+        return (
+          <div className="flex gap-3">
+            <div className="tooltip" data-tip="Edit">
+              <button>
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                  onClick={e => {
+                    e.preventDefault();
+                    setConfigEditIndex(info.row.index);
+                    setNewConfig(info.row.original);
+                    setOpenAddConfigModal(true);
+                  }}
+                />
+              </button>
+            </div>
+            <div className="tooltip" data-tip="Delete">
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableEdit}
+                src={TableDelete}
                 onClick={e => {
                   e.preventDefault();
-                  setConfigEditIndex(info.row.index);
-                  setNewConfig(info.row.original);
-                  setOpenAddConfigModal(true);
+                  onDeleteConfig(info.row.index);
                 }}
               />
-            </button>
+            </div>
           </div>
-          <div className="tooltip" data-tip="Delete">
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={e => {
-                e.preventDefault();
-                onDeleteConfig(info.row.index);
-              }}
-            />
-          </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
   return (
     <TitleCard
-      title={t('page-template.add.title')}
+      title={`${mode === 'edit' && 'Edit '}${t('page-template.add.title')}`}
       TopSideButtons={
-        <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
-          <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
-            <img src={EditPurple} className="w-6 h-6 mr-1" />
-            Edit Content
-          </div>
-        </button>
+        mode === 'detail' ? (
+          <Link to={`/page-template/edit/${params?.id}`}>
+            <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
+              <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
+                <img src={EditPurple} className="w-6 h-6 mr-1" />
+                Edit Content
+              </div>
+            </button>
+          </Link>
+        ) : (
+          <div />
+        )
       }
       topMargin="mt-2">
       {/* ON CANCEL */}
@@ -455,6 +525,7 @@ export default function PageTemplatesNewV2() {
                   helperText={errors?.pageName?.message}
                   onChange={onChange}
                   border={false}
+                  disabled={mode === 'detail'}
                 />
               );
             }}
@@ -483,6 +554,7 @@ export default function PageTemplatesNewV2() {
                   helperText={errors?.pageDescription?.message}
                   onChange={onChange}
                   border={false}
+                  disabled={mode === 'detail'}
                 />
               );
             }}
@@ -514,6 +586,7 @@ export default function PageTemplatesNewV2() {
                   helperText={errors?.pageFileName?.message}
                   onChange={onChange}
                   border={false}
+                  disabled={mode === 'detail'}
                 />
               );
             }}
@@ -542,6 +615,7 @@ export default function PageTemplatesNewV2() {
                   helperText={errors?.imagePreview?.message}
                   onChange={onChange}
                   border={false}
+                  disabled={mode === 'detail'}
                 />
               );
             }}
@@ -550,6 +624,7 @@ export default function PageTemplatesNewV2() {
           <FormList.FieldButton
             name="Attribute"
             buttonTitle="Add Attribute"
+            visible={mode !== 'detail'}
             onClick={() => {
               setOpenAddAttributesModal(true);
             }}
@@ -571,6 +646,7 @@ export default function PageTemplatesNewV2() {
           <FormList.FieldButton
             name="Config"
             buttonTitle="Add Config"
+            visible={mode !== 'detail'}
             onClick={() => {
               setOpenAddConfigModal(true);
             }}
@@ -590,21 +666,25 @@ export default function PageTemplatesNewV2() {
             <div />
           )}
 
-          <div className="flex justify-end items-end gap-2">
-            <button
-              className="btn btn-outline btn-md"
-              onClick={e => {
-                e.preventDefault();
-                setLeaveTitleModalShow(t('modal.confirmation'));
-                setMessageLeaveModalShow(t('modal.leave-confirmation'));
-                setShowLeaveModal(true);
-              }}>
-              {isLoading ? 'Loading...' : t('btn.cancel')}
-            </button>
-            <button type="submit" className="btn btn-success btn-md text-white">
-              {isLoading ? 'Loading...' : t('btn.save')}
-            </button>
-          </div>
+          {mode !== 'detail' ? (
+            <div className="flex justify-end items-end gap-2">
+              <button
+                className="btn btn-outline btn-md"
+                onClick={e => {
+                  e.preventDefault();
+                  setLeaveTitleModalShow(t('modal.confirmation'));
+                  setMessageLeaveModalShow(t('modal.leave-confirmation'));
+                  setShowLeaveModal(true);
+                }}>
+                {isLoading ? 'Loading...' : t('btn.cancel')}
+              </button>
+              <button type="submit" className="btn btn-success btn-md text-white">
+                {isLoading ? 'Loading...' : t('btn.save')}
+              </button>
+            </div>
+          ) : (
+            <div />
+          )}
         </div>
       </form>
     </TitleCard>
