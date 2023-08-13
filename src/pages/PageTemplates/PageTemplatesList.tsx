@@ -8,17 +8,14 @@ import TableDelete from '../../assets/table-delete.svg';
 import PaginationComponent from '../../components/molecules/Pagination';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
-// import ModalForm from '../../components/molecules/ModalForm';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import {
   useDeletePageTemplateMutation,
-  // useEditPageTemplateMutation,
   useGetPageTemplateQuery,
 } from '../../services/PageTemplate/pageTemplateApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
-// import { InputText } from '../../components/atoms/Input/InputText';
 
 export default function PageTemplatesList() {
   // TABLE COLUMN
@@ -101,13 +98,6 @@ export default function PageTemplatesList() {
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
   const [deleteModalBody, setDeleteModayBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
-  // FORM MODAL STATE
-  // const [openEditModal, setOpenEditModal] = useState(false);
-  // const [editedId, setEditedId] = useState(0);
-  // const [editPageName, setEditPageName] = useState('');
-  // const [editPageDescription, setEditPageDescription] = useState('');
-  // const [editPageFileName, setEditPageFileName] = useState('');
-
   // RTK GET DATA
   const fetchQuery = useGetPageTemplateQuery(
     {
@@ -124,8 +114,6 @@ export default function PageTemplatesList() {
   const { data, isFetching, isError } = fetchQuery;
   // RTK DELETE
   const [deletedPageTemplate, { isLoading: isLoadingDelete }] = useDeletePageTemplateMutation();
-  // RTK EDIT
-  // const [editedPageTemplate, { isLoading: isLoadingEdit }] = useEditPageTemplateMutation();
 
   useEffect(() => {
     if (data) {
@@ -178,52 +166,6 @@ export default function PageTemplatesList() {
     setDeleteModayBody(`Do you want to delete this Page Template?`);
     setOpenDeleteModal(true);
   };
-
-  // FUNCTION FOR EDIT PAGE TEMPLATE
-  // const submitEditUser = () => {
-  //   const payload = {
-  //     id: Number(editedId),
-  //     filenameCode: editPageFileName,
-  //     name: editPageName,
-  //     shortDesc: editPageDescription,
-  //   };
-  //   editedPageTemplate(payload)
-  //     .unwrap()
-  //     .then(async (result: any) => {
-  //       dispatch(
-  //         openToast({
-  //           type: 'success',
-  //           title: t('toast-success'),
-  //           message: t('page-template.edit.success-msg', { name: result.pageTemplateUpdate.name }),
-  //         }),
-  //       );
-  //       setOpenEditModal(false);
-  //       await fetchQuery.refetch();
-  //     })
-  //     .catch(() => {
-  //       dispatch(
-  //         openToast({
-  //           type: 'error',
-  //           title: t('toast-failed'),
-  //           message: t('page-template.edit.failed-msg', { name: payload.name }),
-  //         }),
-  //       );
-  //       setOpenEditModal(false);
-  //     });
-  // };
-
-  // const onClickPageTemplateEdit = (
-  //   id: number,
-  //   filenameCode: string,
-  //   name: string,
-  //   description: string,
-  // ) => {
-  //   setEditedId(id);
-  //   setEditPageName(name);
-  //   setEditPageDescription(description);
-  //   setEditPageFileName(filenameCode);
-  //   setOpenEditModal(true);
-  // };
 
   return (
     <React.Fragment>

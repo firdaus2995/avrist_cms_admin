@@ -23,11 +23,8 @@ const MenuManagementPage = React.lazy(async () => await import('../pages/MenuMan
 
 // IMPORT PAGE TEMPLATES PAGE
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
-// const PageTemplateNewPage = React.lazy(
-//   async () => await import('../pages/PageTemplates/PageTemplatesNew'),
-// );
-const PageTemplateNewPageV2 = React.lazy(
-  async () => await import('../pages/PageTemplates/PageTemplatesNewV2'),
+const PageTemplateNewPage = React.lazy(
+  async () => await import('../pages/PageTemplates/PageTemplatesNew'),
 );
 
 // IMPORT EMAIL FORM BUILDER PAGE
@@ -114,9 +111,9 @@ export default function RoutesComponent() {
           <Route path="menu" element={<MenuManagementPage />} />
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route path="page-template" element={<PageTemplatePage />} />
-          <Route path="page-template/new" element={<PageTemplateNewPageV2 />} />
-          <Route path="page-template/detail/:id" element={<PageTemplateNewPageV2 />} />
-          <Route path="page-template/edit/:id" element={<PageTemplateNewPageV2 />} />
+          <Route path="page-template/new" element={<PageTemplateNewPage />} />
+          <Route path="page-template/detail/:id" element={<PageTemplateNewPage />} />
+          <Route path="page-template/edit/:id" element={<PageTemplateNewPage />} />
           {/* EMAIL FORM BUILDER PAGES ROUTE */}
           <Route path="email-form-builder" element={<EmailFormBuilderListPage />} />
           <Route path="email-form-builder/new" element={<EmailFormBuilderNewPage />} />
