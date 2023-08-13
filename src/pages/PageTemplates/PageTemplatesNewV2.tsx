@@ -17,12 +17,12 @@ import { useAppDispatch } from '@/store';
 import {
   useCreatePageTemplateMutation,
   useGetPageTemplateByIdQuery,
+  useEditPageTemplateMutation,
 } from '@/services/PageTemplate/pageTemplateApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 import { useForm, Controller } from 'react-hook-form';
 import FormList from '@/components/molecules/FormList';
-// import { useRestoreDataMutation } from '../../services/ContentManager/contentManagerApi';
 
 import { useGetConfigQuery } from '@/services/ContentType/contentTypeApi';
 
@@ -122,8 +122,54 @@ export default function PageTemplatesNewV2() {
 
   // RTK CREATE PAGE TEMPLATE
   const [createPageTemplate, { isLoading }] = useCreatePageTemplateMutation();
+  // RTK EDIT
+  const [editedPageTemplate, { isLoading: isLoadingEdit }] = useEditPageTemplateMutation();
 
   const onSave = (e: any) => {
+    if (e.pageId) {
+      onSubmitEdit(e);
+    } else {
+      onSubmitNew(e);
+    }
+  };
+
+  const onSubmitEdit = (e: any) => {
+    const updatedAttributesData = attributesData.map((item: any) => ({
+      ...item,
+      fieldType: item.fieldType.value.toUpperCase(),
+    }));
+    const payload = {
+      id: Number(e.pageId),
+      filenameCode: e.pageFileName,
+      name: e.pageName,
+      shortDesc: e.pageDescription,
+      attributes: updatedAttributesData,
+      configs: configData,
+    };
+    editedPageTemplate(payload)
+      .unwrap()
+      .then((d: any) => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('page-template.edit.success-msg', { name: d.pageTemplateUpdate.name }),
+          }),
+        );
+        navigate('/page-template');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('page-template.edit.failed-msg', { name: payload.name }),
+          }),
+        );
+      });
+  };
+
+  const onSubmitNew = (e: any) => {
     const updatedAttributesData = attributesData.map((item: any) => ({
       ...item,
       fieldType: item.fieldType.value.toUpperCase(),
@@ -370,7 +416,7 @@ export default function PageTemplatesNewV2() {
 
   return (
     <TitleCard
-      title={`${mode === 'edit' && 'Edit '}${t('page-template.add.title')}`}
+      title={`${mode === 'edit' ? 'Edit ' : ''}${t('page-template.add.title')}`}
       TopSideButtons={
         mode === 'detail' ? (
           <Link to={`/page-template/edit/${params?.id}`}>
@@ -676,15 +722,13 @@ export default function PageTemplatesNewV2() {
                   setMessageLeaveModalShow(t('modal.leave-confirmation'));
                   setShowLeaveModal(true);
                 }}>
-                {isLoading ? 'Loading...' : t('btn.cancel')}
+                {isLoading | isLoadingEdit ? 'Loading...' : t('btn.cancel')}
               </button>
               <button type="submit" className="btn btn-success btn-md text-white">
-                {isLoading ? 'Loading...' : t('btn.save')}
+                {isLoading | isLoadingEdit ? 'Loading...' : t('btn.save')}
               </button>
             </div>
-          ) : (
-            <div />
-          )}
+          ) : null}
         </div>
       </form>
     </TitleCard>

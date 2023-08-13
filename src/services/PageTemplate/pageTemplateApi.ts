@@ -63,17 +63,36 @@ export const pageTemplateApi: any = createApi({
             $filenameCode: String!
             $name: String!
             $shortDesc: String!
-            $attributes: Any
-            $configs: Any
+            $attributes: [PageTemplateAttributeRequest]
+            $configs: [PageTemplateConfigRequest]
           ) {
             pageTemplateUpdate(
               id: $id
-              request: { filenameCode: $filenameCode, name: $name, shortDesc: $shortDesc }
+              request: {
+                filenameCode: $filenameCode
+                name: $name
+                shortDesc: $shortDesc
+                attributes: $attributes
+                configs: $configs
+              }
             ) {
               id
               filenameCode
               name
               shortDesc
+              attributes {
+                fieldType
+                fieldId
+                description
+              }
+              configs {
+                key
+                description
+              }
+              createdBy {
+                id
+                name
+              }
             }
           }
         `,
