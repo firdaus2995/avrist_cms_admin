@@ -1,46 +1,23 @@
-import React, { 
-  useCallback, 
-  useEffect, 
-  useState,
-} from "react";
-import { 
-  t,
-} from "i18next";
-import { 
-  Link,
-} from "react-router-dom";
-import { 
-  SortingState,
-} from "@tanstack/table-core";
+import React, { useCallback, useEffect, useState } from 'react';
+import { t } from 'i18next';
+import { Link } from 'react-router-dom';
+import { SortingState } from '@tanstack/table-core';
 
-import Table from "../../components/molecules/Table";
-import TableDelete from "../../assets/table-delete.svg";
-import PaginationComponent from "../../components/molecules/Pagination";
-import ModalConfirm from "../../components/molecules/ModalConfirm";
-import WarningIcon from "../../assets/warning.png";
-import ModalForm from "../../components/molecules/ModalForm";
-import { 
-  TitleCard,
-} from "../../components/molecules/Cards/TitleCard";
-import { 
-  InputSearch,
-} from "../../components/atoms/Input/InputSearch";
-import { 
-  useDeletePageTemplateMutation, 
-  useEditPageTemplateMutation, 
+import Table from '../../components/molecules/Table';
+import TableDelete from '../../assets/table-delete.svg';
+import PaginationComponent from '../../components/molecules/Pagination';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
+import WarningIcon from '../../assets/warning.png';
+import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import { InputSearch } from '../../components/atoms/Input/InputSearch';
+import {
+  useDeletePageTemplateMutation,
   useGetPageTemplateQuery,
-} from "../../services/PageTemplate/pageTemplateApi";
-import { 
-  useAppDispatch,
-} from "../../store";
-import { 
-  openToast,
-} from "../../components/atoms/Toast/slice";
-import { 
-  InputText,
-} from "../../components/atoms/Input/InputText";
+} from '../../services/PageTemplate/pageTemplateApi';
+import { useAppDispatch } from '../../store';
+import { openToast } from '../../components/atoms/Toast/slice';
 
-export default function PageTemplatesList () {
+export default function PageTemplatesList() {
   // TABLE COLUMN
   const columns = [
     {
@@ -85,15 +62,19 @@ export default function PageTemplatesList () {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <button 
-            className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-4 text-sm" 
-            onClick={() => {
-              onClickPageTemplateEdit(info.getValue(), info?.row?.original?.filenameCode, info?.row?.original?.name, info?.row?.original?.shortDesc);
-            }}
-          >
-            View Detail
-          </button>
-          <img className={`cursor-pointer select-none flex items-center justify-center`} src={TableDelete}
+          <Link to={`detail/${info.getValue()}`}>
+            <button
+              className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-4 text-sm"
+              // onClick={() => {
+              //   onClickPageTemplateEdit(info.getValue(), info?.row?.original?.filenameCode, info?.row?.original?.name, info?.row?.original?.shortDesc);
+              // }}
+            >
+              View Detail
+            </button>
+          </Link>
+          <img
+            className={`cursor-pointer select-none flex items-center justify-center`}
+            src={TableDelete}
             onClick={() => {
               onClickPageTemplateDelete(info.getValue());
             }}
@@ -102,7 +83,7 @@ export default function PageTemplatesList () {
       ),
     },
   ];
-  
+
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState([]);
   const [search, setSearch] = useState('');
@@ -117,42 +98,36 @@ export default function PageTemplatesList () {
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
   const [deleteModalBody, setDeleteModayBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
-  // FORM MODAL STATE
-  const [openEditModal, setOpenEditModal] = useState(false);
-  const [editedId, setEditedId] = useState(0);
-  const [editPageName, setEditPageName] = useState('');
-  const [editPageDescription, setEditPageDescription] = useState('');
-  const [editPageFileName, setEditPageFileName] = useState('');
-
   // RTK GET DATA
-  const fetchQuery = useGetPageTemplateQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search,
-  }, {
-    refetchOnMountOrArgChange: true,
-  });
+  const fetchQuery = useGetPageTemplateQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data, isFetching, isError } = fetchQuery;
   // RTK DELETE
-  const [ deletedPageTemplate, { isLoading: isLoadingDelete } ] = useDeletePageTemplateMutation();
-  // RTK EDIT
-  const [ editedPageTemplate, { isLoading: isLoadingEdit } ] =  useEditPageTemplateMutation();
+  const [deletedPageTemplate, { isLoading: isLoadingDelete }] = useDeletePageTemplateMutation();
 
   useEffect(() => {
     if (data) {
       setListData(data?.pageTemplateList?.templates);
       setTotal(data?.pageTemplateList?.total);
-    };
-  }, [data])
+    }
+  }, [data]);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    };
+    }
   }, []);
 
   // FUNCTION FOR DELETE PAGE TEMPLATE
@@ -182,7 +157,7 @@ export default function PageTemplatesList () {
             message: 'Something went wrong!',
           }),
         );
-      })
+      });
   };
 
   const onClickPageTemplateDelete = (id: number) => {
@@ -192,47 +167,6 @@ export default function PageTemplatesList () {
     setOpenDeleteModal(true);
   };
 
-  // FUNCTION FOR EDIT PAGE TEMPLATE
-  const submitEditUser = () => {
-    const payload = {
-      id: Number(editedId),
-      filenameCode: editPageFileName,
-      name: editPageName,
-      shortDesc: editPageDescription,
-    };    
-    editedPageTemplate(payload)
-      .unwrap()
-      .then(async (result: any) => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-            message: t('page-template.edit.success-msg', { name: result.pageTemplateUpdate.name }),
-          })
-        );
-        setOpenEditModal(false);
-        await fetchQuery.refetch();
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-            message: t('page-template.edit.failed-msg', { name: payload.name }),
-          })
-        )
-        setOpenEditModal(false);
-      })
-  };
-  
-  const onClickPageTemplateEdit = (id: number, filenameCode: string, name: string, description: string) => {
-    setEditedId(id);
-    setEditPageName(name);
-    setEditPageDescription(description);
-    setEditPageFileName(filenameCode);
-    setOpenEditModal(true);
-  };
-  
   return (
     <React.Fragment>
       <ModalConfirm
@@ -247,9 +181,9 @@ export default function PageTemplatesList () {
         }}
         loading={isLoadingDelete}
         icon={WarningIcon}
-        btnSubmitStyle=''
+        btnSubmitStyle=""
       />
-      <ModalForm
+      {/* <ModalForm
         open={openEditModal}
         loading={isLoadingEdit}
         formTitle="Page Template"
@@ -257,8 +191,9 @@ export default function PageTemplatesList () {
         cancelTitle={t('btn.cancel')}
         cancelAction={() => {
           setOpenEditModal(false);
-        } }
-        submitAction={submitEditUser} submitType={""}      >
+        }}
+        submitAction={submitEditUser}
+        submitType={''}>
         <InputText
           labelTitle="Page Name"
           labelStyle="font-bold	"
@@ -293,24 +228,23 @@ export default function PageTemplatesList () {
           roundStyle="xl"
           disabled
         />
-      </ModalForm>
+      </ModalForm> */}
       <TitleCard
         title={t('page-template.list.title')}
-        topMargin="mt-2" 
+        topMargin="mt-2"
         TopSideButtons={
-          <Link to='new' className="btn btn-primary flex flex-row gap-2 rounded-xl">
-            {t("page-template.list.button-add")}
+          <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+            {t('page-template.list.button-add')}
           </Link>
         }
         SearchBar={
-          <InputSearch 
+          <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
             placeholder="Search"
           />
-        }
-      >
+        }>
         <Table
           rows={listData}
           columns={columns}
@@ -330,9 +264,9 @@ export default function PageTemplatesList () {
           }}
           setPage={(page: number) => {
             setPageIndex(page);
-          }}          
+          }}
         />
       </TitleCard>
     </React.Fragment>
-  )
+  );
 }
