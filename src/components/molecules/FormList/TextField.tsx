@@ -65,7 +65,7 @@ export default function TextField({
               disabled={disabled}
               placeholder={placeholder ?? ''}
               onChange={onChange}
-              className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
+              className={`w-full h-full rounded-xl px-1 outline-0 ${inputStyle} ${
                 disabled ? 'text-[#637488]' : ''
               }`}
             />

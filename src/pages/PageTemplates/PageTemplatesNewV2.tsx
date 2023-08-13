@@ -1,37 +1,105 @@
 import { t } from 'i18next';
 import { useNavigate } from 'react-router-dom';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 
 import EditPurple from '@/assets/edit-purple.svg';
 import CancelIcon from '@/assets/cancel.png';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import ModalForm from '@/components/molecules/ModalForm';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import Typography from '@/components/atoms/Typography';
 
 import Table from '@/components/molecules/Table';
 import TableEdit from '@/assets/table-edit.png';
 import TableDelete from '@/assets/table-delete.svg';
 
-// import { useAppDispatch } from '../../store';
-// import { useCreatePageTemplateMutation } from '../../services/PageTemplate/pageTemplateApi';
-// import { openToast } from '../../components/atoms/Toast/slice';
+import { useAppDispatch } from '@/store';
+import { useCreatePageTemplateMutation } from '@/services/PageTemplate/pageTemplateApi';
+import { openToast } from '@/components/atoms/Toast/slice';
 
 import { useForm, Controller } from 'react-hook-form';
 import FormList from '@/components/molecules/FormList';
 // import { useRestoreDataMutation } from '../../services/ContentManager/contentManagerApi';
 
+import { useGetConfigQuery } from '@/services/ContentType/contentTypeApi';
+
+const initialAttributes = {
+  fieldType: '',
+  fieldId: '',
+  description: '',
+};
+
+const initialConfig = {
+  key: '',
+  description: '',
+};
+
 export default function PageTemplatesNewV2() {
   const navigate = useNavigate();
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
+
   // FORM STATE
   // const [pageName, setPageName] = useState('');
   // const [pageDescription, setPageDescription] = useState('');
   // const [pageFileName, setPageFileName] = useState('');
+
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
   const [openAddAttributesModal, setOpenAddAttributesModal] = useState<any>(false);
+  const [openAddConfigModal, setOpenAddConfigModal] = useState<any>(false);
+
+  // ATTRIBUTES LIST
+  const [listAttributes, setListAttributes] = useState<any>([]);
+
+  // TABLE DATA - ATTRIBUTES
+  const [attributesEditIndex, setAttributesEditIndex] = useState(null);
+  const [newAttributes, setNewAttributes] = useState<any>({
+    fieldType: '',
+    fieldId: '',
+    description: '',
+  });
+  const [attributesData, setAttributesData] = useState<any>([]);
+  const onAddNewAttributes = () => {
+    if (attributesEditIndex !== null) {
+      const updatedAttributes = [...attributesData];
+      updatedAttributes[attributesEditIndex] = newAttributes;
+      setAttributesData(updatedAttributes);
+      setNewAttributes(initialAttributes);
+      setAttributesEditIndex(null);
+    } else {
+      setAttributesData((current: any) => [...current, newAttributes]);
+      setNewAttributes(initialAttributes);
+    }
+    setOpenAddAttributesModal(false);
+  };
+  const onDeleteAttributes = (indexToDelete: any) => {
+    const updatedItems = attributesData.filter((_item: any, index: any) => index !== indexToDelete);
+    setAttributesData(updatedItems);
+  };
+
+  // TABLE DATA - CONFIG
+  const [configEditIndex, setConfigEditIndex] = useState(null);
+  const [newConfig, setNewConfig] = useState<any>(initialConfig);
+  const [configData, setConfigData] = useState<any>([]);
+  const onAddNewConfig = () => {
+    if (configEditIndex !== null) {
+      const updatedConfig = [...configData];
+      updatedConfig[configEditIndex] = newConfig;
+      setConfigData(updatedConfig);
+      setNewConfig(initialConfig);
+      setConfigEditIndex(null);
+    } else {
+      setConfigData((current: any) => [...current, newConfig]);
+      setNewConfig(initialConfig);
+    }
+    setOpenAddConfigModal(false);
+  };
+  const onDeleteConfig = (indexToDelete: any) => {
+    const updatedItems = configData.filter((_item: any, index: any) => index !== indexToDelete);
+    setConfigData(updatedItems);
+  };
 
   // FORM VALIDATION
   const {
@@ -41,63 +109,85 @@ export default function PageTemplatesNewV2() {
   } = useForm();
 
   // RTK CREATE PAGE TEMPLATE
-  // const [createPageTemplate, { isLoading }] = useCreatePageTemplateMutation();
+  const [createPageTemplate, { isLoading }] = useCreatePageTemplateMutation();
 
-  // const onSave = () => {
-  //   const payload = {
-  //     filenameCode: pageFileName,
-  //     name: pageName,
-  //     shortDesc: pageDescription,
-  //   };
-  //   createPageTemplate(payload)
-  //     .unwrap()
-  //     .then((d: any) => {
-  //       dispatch(
-  //         openToast({
-  //           type: 'success',
-  //           title: t('toast-success'),
-  //           message: t('page-template.add.success-msg', { name: d.pageTemplateCreate.name }),
-  //         }),
-  //       );
-  //       navigate('/page-template');
-  //     })
-  //     .catch(() => {
-  //       dispatch(
-  //         openToast({
-  //           type: 'error',
-  //           title: t('toast-failed'),
-  //           message: t('page-template.add.failed-msg', { name: payload.name }),
-  //         }),
-  //       );
-  //     });
-  // };
+  const onSave = (e: any) => {
+    const updatedAttributesData = attributesData.map((item: any) => ({
+      ...item,
+      fieldType: item.fieldType.value.toUpperCase(),
+    }));
+    const payload = {
+      filenameCode: e.pageFileName,
+      name: e.pageName,
+      shortDesc: e.pageDescription,
+      attributes: updatedAttributesData,
+      configs: configData,
+    };
+    createPageTemplate(payload)
+      .unwrap()
+      .then((d: any) => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('page-template.add.success-msg', { name: d.pageTemplateCreate.name }),
+          }),
+        );
+        navigate('/page-template');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('page-template.add.failed-msg', { name: payload.name }),
+          }),
+        );
+      });
+  };
+
+  // RTK ATTRIBUTES LIST
+  const fetchConfigQuery = useGetConfigQuery<any>({});
+  const { data } = fetchConfigQuery;
+
+  useEffect(() => {
+    const refetch = async () => {
+      await fetchConfigQuery.refetch();
+    };
+    void refetch();
+  }, []);
+
+  useEffect(() => {
+    if (data?.getConfig?.value) {
+      const newArray = JSON.parse(data?.getConfig?.value)?.attributes?.map((item: any) => {
+        return { value: item.code, label: item.label };
+      });
+      setListAttributes(newArray);
+    }
+  }, [data]);
 
   const onLeave = () => {
     setShowLeaveModal(false);
     navigate('/page-template');
   };
 
-  // TABLE COLUMN
-  const sampleData = [
-    { attributes: 'AATR1', id: '1', desc: 'Desc 1' },
-    { attributes: 'AATR2', id: '2', desc: 'Desc 2' },
-  ];
   const attributesColumns = [
     {
       header: () => <span className="text-[14px]">Attribute Type</span>,
-      accessorKey: 'attributes',
+      accessorKey: 'fieldType',
       enableSorting: false,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
-      ),
+      cell: (info: any) => {
+        const newInfo = info?.row?.original?.fieldType?.value?.toUpperCase();
+        return (
+          <p className="text-[14px] truncate">
+            {newInfo && newInfo !== '' && newInfo !== null ? newInfo : '-'}
+          </p>
+        );
+      },
     },
     {
       header: () => <span className="text-[14px]">Field ID</span>,
-      accessorKey: 'id',
+      accessorKey: 'fieldId',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -109,7 +199,7 @@ export default function PageTemplatesNewV2() {
     },
     {
       header: () => <span className="text-[14px]">Description</span>,
-      accessorKey: 'desc',
+      accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -123,15 +213,18 @@ export default function PageTemplatesNewV2() {
       header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
-      cell: (_info: any) => (
+      cell: (info: any) => (
         <div className="flex gap-3">
           <div className="tooltip" data-tip="Edit">
             <button>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
                 src={TableEdit}
-                onClick={() => {
-                  // onClickEmailFormBuilderEdit(info.getValue());
+                onClick={e => {
+                  e.preventDefault();
+                  setAttributesEditIndex(info.row.index);
+                  setNewAttributes(info.row.original);
+                  setOpenAddAttributesModal(true);
                 }}
               />
             </button>
@@ -140,8 +233,9 @@ export default function PageTemplatesNewV2() {
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
-              onClick={() => {
-                // onClickEmailFormBuilderDelete(info.getValue());
+              onClick={e => {
+                e.preventDefault();
+                onDeleteAttributes(info.row.index);
               }}
             />
           </div>
@@ -153,7 +247,7 @@ export default function PageTemplatesNewV2() {
   const configColumns = [
     {
       header: () => <span className="text-[14px]">Key</span>,
-      accessorKey: 'id',
+      accessorKey: 'key',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -165,7 +259,7 @@ export default function PageTemplatesNewV2() {
     },
     {
       header: () => <span className="text-[14px]">Description</span>,
-      accessorKey: 'createdBy.name',
+      accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -179,15 +273,18 @@ export default function PageTemplatesNewV2() {
       header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
-      cell: (_info: any) => (
+      cell: (info: any) => (
         <div className="flex gap-3">
           <div className="tooltip" data-tip="Edit">
             <button>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
                 src={TableEdit}
-                onClick={() => {
-                  // onClickEmailFormBuilderEdit(info.getValue());
+                onClick={e => {
+                  e.preventDefault();
+                  setConfigEditIndex(info.row.index);
+                  setNewConfig(info.row.original);
+                  setOpenAddConfigModal(true);
                 }}
               />
             </button>
@@ -196,8 +293,9 @@ export default function PageTemplatesNewV2() {
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
-              onClick={() => {
-                // onClickEmailFormBuilderDelete(info.getValue());
+              onClick={e => {
+                e.preventDefault();
+                onDeleteConfig(info.row.index);
               }}
             />
           </div>
@@ -232,23 +330,106 @@ export default function PageTemplatesNewV2() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
+
       <ModalForm
         open={openAddAttributesModal}
-        formTitle="Page Template"
-        submitTitle={t('btn.save-alternate')}
+        formTitle="Add Attribute"
+        submitTitle={t('btn.save')}
         cancelTitle={t('btn.cancel')}
         cancelAction={() => {
           setOpenAddAttributesModal(false);
         }}
-        submitAction={() => {}}>
-        <p>Tezs</p>
+        submitAction={onAddNewAttributes}>
+        <div className="flex flex-col gap-5 w-full">
+          <div className="flex flex-row">
+            <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+              Category
+              <span className={'text-reddist text-lg'}>{` *`}</span>
+            </Typography>
+            <FormList.DropDown
+              key="category"
+              labelTitle="Category"
+              placeholder="Title"
+              defaultValue={newAttributes.fieldType.label}
+              resetValue={openAddAttributesModal}
+              // error={!!errors?.category?.message}
+              // helperText={errors?.category?.message}
+              items={listAttributes}
+              onChange={(e: any) => {
+                setNewAttributes({
+                  ...newAttributes,
+                  fieldType: e,
+                });
+              }}
+            />
+          </div>
+          <FormList.TextField
+            key="fieldId"
+            labelTitle="Field ID"
+            labelRequired
+            placeholder="Enter field ID"
+            value={newAttributes.fieldId}
+            // error={!!errors?.pageName?.message}
+            // helperText={errors?.pageName?.message}
+            onChange={(e: any) => {
+              setNewAttributes({ ...newAttributes, fieldId: e.target.value });
+            }}
+            border={false}
+          />
+          <FormList.TextAreaField
+            key="description"
+            labelTitle="Description"
+            placeholder="Enter description"
+            // error={!!errors?.pageName?.message}
+            // helperText={errors?.pageName?.message}
+            value={newAttributes.description}
+            onChange={(e: any) => {
+              setNewAttributes({ ...newAttributes, description: e.target.value });
+            }}
+            border={false}
+          />
+        </div>
       </ModalForm>
-      <form
-        onSubmit={handleSubmit(e => {
-          e.preventDefault();
-          console.log(e);
-        })}
-        className="flex flex-col w-100 mt-[35px]">
+
+      <ModalForm
+        open={openAddConfigModal}
+        formTitle="Add Configs"
+        submitTitle={t('btn.save')}
+        cancelTitle={t('btn.cancel')}
+        cancelAction={() => {
+          setOpenAddConfigModal(false);
+        }}
+        submitAction={onAddNewConfig}>
+        <div className="flex flex-col gap-5 w-full">
+          <FormList.TextField
+            key="key"
+            labelTitle="Key"
+            labelRequired
+            placeholder="Enter key"
+            value={newConfig.key}
+            // error={!!errors?.pageName?.message}
+            // helperText={errors?.pageName?.message}
+            onChange={(e: any) => {
+              setNewConfig({ ...newConfig, key: e.target.value });
+            }}
+            border={false}
+          />
+          <FormList.TextAreaField
+            key="description"
+            labelTitle="Description"
+            placeholder="Enter description"
+            // error={!!errors?.pageName?.message}
+            // helperText={errors?.pageName?.message}
+            value={newConfig.description}
+            onChange={(e: any) => {
+              setNewConfig({ ...newConfig, description: e.target.value });
+            }}
+            border={false}
+          />
+        </div>
+      </ModalForm>
+
+      <form onSubmit={handleSubmit(onSave)} className="flex flex-col w-100 mt-[35px]">
         <div className="flex flex-col gap-[30px]">
           <Controller
             key="pageName"
@@ -313,10 +494,13 @@ export default function PageTemplatesNewV2() {
             defaultValue=""
             rules={{
               required: { value: true, message: `Page file name is required` },
+              pattern: {
+                value: /^[^\s]+$/,
+                message: "Entered value can't contain spaces",
+              },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
-                // handleFormChange(id, e.target.value, fieldType);
                 field.onChange({ target: { value: e.target.value } });
               }, []);
               return (
@@ -344,7 +528,6 @@ export default function PageTemplatesNewV2() {
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
-                // handleFormChange(id, e, fieldType);
                 field.onChange({ target: { value: e } });
               }, []);
               return (
@@ -371,33 +554,41 @@ export default function PageTemplatesNewV2() {
               setOpenAddAttributesModal(true);
             }}
           />
-          <div className="ml-2 lg:ml-56 ">
-            <Table
-              rows={sampleData}
-              columns={attributesColumns}
-              manualPagination={true}
-              manualSorting={true}
-              // loading={isFetching}
-              // error={isError}
-            />
-          </div>
+          {attributesData.length ? (
+            <div className="ml-2 lg:ml-56 ">
+              <Table
+                rows={attributesData}
+                columns={attributesColumns}
+                manualPagination={true}
+                manualSorting={true}
+                // loading={isFetching}
+                // error={isError}
+              />
+            </div>
+          ) : (
+            <div />
+          )}
           <FormList.FieldButton
             name="Config"
             buttonTitle="Add Config"
             onClick={() => {
-              console.log('halo');
+              setOpenAddConfigModal(true);
             }}
           />
-          <div className="ml-2 lg:ml-56 ">
-            <Table
-              rows={[{}]}
-              columns={configColumns}
-              manualPagination={true}
-              manualSorting={true}
-              // loading={isFetching}
-              // error={isError}
-            />
-          </div>
+          {configData.length ? (
+            <div className="ml-2 lg:ml-56 ">
+              <Table
+                rows={configData}
+                columns={configColumns}
+                manualPagination={true}
+                manualSorting={true}
+                // loading={isFetching}
+                // error={isError}
+              />
+            </div>
+          ) : (
+            <div />
+          )}
 
           <div className="flex justify-end items-end gap-2">
             <button
@@ -408,11 +599,10 @@ export default function PageTemplatesNewV2() {
                 setMessageLeaveModalShow(t('modal.leave-confirmation'));
                 setShowLeaveModal(true);
               }}>
-              {/* {isLoading ? 'Loading...' : t('btn.cancel')} */}
-              {t('btn.cancel')}
+              {isLoading ? 'Loading...' : t('btn.cancel')}
             </button>
             <button type="submit" className="btn btn-success btn-md text-white">
-              {t('btn.save')}
+              {isLoading ? 'Loading...' : t('btn.save')}
             </button>
           </div>
         </div>
