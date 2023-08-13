@@ -283,12 +283,14 @@ export const contentManagerApi = createApi({
                     config
                     value
                     contentData {
-                        id
-                        name
-                        fieldType
-                        config
-                        value
-                    }
+                      details {
+                          id
+                          name
+                          fieldType
+                          config
+                          value
+                      }
+                  }
                 }
             }
         }

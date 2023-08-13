@@ -2,6 +2,7 @@ import { createApi } from '@reduxjs/toolkit/dist/query/react';
 import { gql } from 'graphql-request';
 
 import customFetchBase from '../../utils/Interceptor';
+
 export const pageTemplateApi: any = createApi({
   reducerPath: 'pageTemplateApi',
   baseQuery: customFetchBase,
@@ -62,17 +63,36 @@ export const pageTemplateApi: any = createApi({
             $filenameCode: String!
             $name: String!
             $shortDesc: String!
-            $attributes: Any
-            $configs: Any
+            $attributes: [PageTemplateAttributeRequest]
+            $configs: [PageTemplateConfigRequest]
           ) {
             pageTemplateUpdate(
               id: $id
-              request: { filenameCode: $filenameCode, name: $name, shortDesc: $shortDesc }
+              request: {
+                filenameCode: $filenameCode
+                name: $name
+                shortDesc: $shortDesc
+                attributes: $attributes
+                configs: $configs
+              }
             ) {
               id
               filenameCode
               name
               shortDesc
+              attributes {
+                fieldType
+                fieldId
+                description
+              }
+              configs {
+                key
+                description
+              }
+              createdBy {
+                id
+                name
+              }
             }
           }
         `,
@@ -86,8 +106,8 @@ export const pageTemplateApi: any = createApi({
             $filenameCode: String!
             $name: String!
             $shortDesc: String!
-            $attributes: Any
-            $configs: Any
+            $attributes: [PageTemplateAttributeRequest]
+            $configs: [PageTemplateConfigRequest]
           ) {
             pageTemplateCreate(
               request: {
@@ -121,6 +141,34 @@ export const pageTemplateApi: any = createApi({
         variables: payload,
       }),
     }),
+    getPageTemplateById: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query pageTemplateById($id: Int!) {
+            pageTemplateById(id: $id) {
+              id
+              filenameCode
+              name
+              shortDesc
+              attributes {
+                fieldType
+                fieldId
+                description
+              }
+              configs {
+                key
+                description
+              }
+              createdBy {
+                id
+                name
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -129,4 +177,5 @@ export const {
   useDeletePageTemplateMutation,
   useEditPageTemplateMutation,
   useCreatePageTemplateMutation,
+  useGetPageTemplateByIdQuery,
 } = pageTemplateApi;
