@@ -8,6 +8,10 @@ import {
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
+<<<<<<< HEAD
+=======
+// import { useCreateContentDataMutation } from '@/services/ContentType/contentTypeApi';
+>>>>>>> 7c5728e53a9e700f88de9d180d1b172308095d85
 import { useNavigate, useParams } from 'react-router-dom';
 import FormList from '@/components/molecules/FormList';
 
