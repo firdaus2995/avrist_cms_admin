@@ -198,6 +198,7 @@ export const userApi: any = createApi({
               dob
               gender
               company
+              profilePicture
               isActive
               role {
                 id

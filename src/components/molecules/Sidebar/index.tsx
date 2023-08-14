@@ -11,6 +11,8 @@ import ModalForm from '../ModalForm';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { InputPassword } from '@/components/atoms/Input/InputPassword';
 import FileUploaderAvatar from '../FileUploaderAvatar';
+import { useGetUserProfileQuery } from '../../../services/User/userApi';
+
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -69,7 +71,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const [activeTab, setActiveTab] = useState(1);
   // EDIT PROFILE
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
-  const [avatar, setAvatar] = useState("https://i.ibb.co/dmXY7sD/Ellipse-2-1.png");
+  const [avatar, setAvatar] = useState("");
   const [fullname, setFullname] = useState("Haykal Shafiq");
   const [email, setEmail] = useState("haykal@gmail.com");
   const [password, setPassword] = useState("");
@@ -80,6 +82,10 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
+
+  // RTK USER PROFILE
+  const fetchUserDetailQuery = useGetUserProfileQuery({});
+  const { data: dataProfile } = fetchUserDetailQuery;  
 
   useEffect(() => {
     const pathName = location.pathname;
@@ -101,6 +107,14 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
       }
     }
   }, [location.pathname]);
+
+  useEffect(() => {    
+    if (dataProfile) {
+      setAvatar(dataProfile?.userProfile?.profilePicture);
+      setFullname(dataProfile?.userProfile?.fullName);
+      setEmail(dataProfile?.userProfile?.email);
+    };
+  }, [dataProfile])
 
   const listTabHandler = (e: string) => {
     if (openedTab.includes(e)) {
@@ -294,6 +308,9 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
           setOpenEditProfileModal(false);
           setPasswordError(false);
           setConfirmNewPasswordError(false);
+          setAvatar(dataProfile?.userProfile?.profilePicture);
+          setFullname(dataProfile?.userProfile?.fullName);
+          setEmail(dataProfile?.userProfile?.email);    
         }}
         submitAction={submitEditProfile}
       >
@@ -358,6 +375,9 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
           setRecentPassword("");
           setNewPassword("");
           setConfirmNewPassword("");
+          setAvatar(dataProfile?.userProfile?.profilePicture);
+          setFullname(dataProfile?.userProfile?.fullName);
+          setEmail(dataProfile?.userProfile?.email);    
         }}
         submitAction={submitChangePassword}      
       >

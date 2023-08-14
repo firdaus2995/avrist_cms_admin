@@ -17,10 +17,14 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
   imageChanged,
 }) => {
   const dispatch = useAppDispatch();
-  const [imgUrl, setImgUrl] = useState("");
+  const [imgUrl, setImgUrl] = useState<any>("");
 
   useEffect(() => {
-    setImgUrl(import.meta.env.VITE_API_URL + '/files/get/' + image);
+    if (image) {
+      setImgUrl(`${import.meta.env.VITE_API_URL}'/files/get/'${image}`);
+    } else {
+      setImgUrl("");
+    }
   }, [image]);
 
   const handleUpload = async (event: any) => {
@@ -81,12 +85,12 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
     >
       <div className="w-[115px] h-[115px] relative border-1 border-[#DBDBDB] rounded-full flex justify-center items-center bg-lavender">
         <img 
-          className={image ? 'w-full h-full object-cover' : ''}
-          src={imgUrl ?? AvatarNoImage}
+          className={imgUrl !== "" ? 'w-full h-full rounded-full object-cover' : ''}
+          src={imgUrl !== "" ? imgUrl : AvatarNoImage}
         />
         <div className='w-[50px] h-[50px] absolute bottom-0	right-[-10px] bg-white rounded-full flex justify-center items-center'>
           <img
-            src={image ? AvatarIconEdit : AvatarIconPlus}
+            src={imgUrl !== "" ? AvatarIconEdit : AvatarIconPlus}
           />
         </div>
       </div>
