@@ -34,9 +34,12 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       title = 'Approve';
       break;
     case 'rejected':
-    case 'delete_rejected':
       style = 'bg-[#EBD2CE] border-[#D09191]';
       title = 'Rejected';
+      break;
+    case 'delete_rejected':
+      style = 'bg-[#EBD2CE] border-[#D09191]';
+      title = 'Delete Rejected';
       break;
     default:
       style = 'bg-[#E4E4E4] border-[#A9AAB5]';
