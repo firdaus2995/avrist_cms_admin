@@ -10,6 +10,7 @@ import ProfilePhoto from '@/assets/Profile-photo.png';
 import ModalForm from '../ModalForm';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { InputPassword } from '@/components/atoms/Input/InputPassword';
+import FileUploaderAvatar from '../FileUploaderAvatar';
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -68,6 +69,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const [activeTab, setActiveTab] = useState(1);
   // EDIT PROFILE
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
+  const [avatar, setAvatar] = useState("https://i.ibb.co/dmXY7sD/Ellipse-2-1.png");
   const [fullname, setFullname] = useState("Haykal Shafiq");
   const [email, setEmail] = useState("haykal@gmail.com");
   const [password, setPassword] = useState("");
@@ -295,13 +297,11 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
         }}
         submitAction={submitEditProfile}
       >
-        <img 
-          style={{
-            width: 120,
-            justifySelf: 'center',
-            marginBottom: 20,
+        <FileUploaderAvatar
+          image={avatar}
+          imageChanged={(image: any) => {
+            setAvatar(image);
           }}
-          src='https://i.ibb.co/sC3PRC1/Group-26683.jpg'
         />
         <InputText
           labelTitle="Fullname"
