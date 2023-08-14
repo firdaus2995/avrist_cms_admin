@@ -72,8 +72,8 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   // EDIT PROFILE
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
   const [avatar, setAvatar] = useState("");
-  const [fullname, setFullname] = useState("Haykal Shafiq");
-  const [email, setEmail] = useState("haykal@gmail.com");
+  const [fullname, setFullname] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   // CHANGE PASSWORD
