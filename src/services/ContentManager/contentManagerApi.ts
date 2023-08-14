@@ -329,7 +329,7 @@ export const contentManagerApi = createApi({
             $isDraft: Boolean!
             $postTypeId: Int!
             $categoryName: String!
-            $contentData: [PostMetaTemplateRequest]!
+            $contentData: [ContentDataAttributeRequest]!
           ){
             contentDataUpdate(
                 id: $postTypeId,
