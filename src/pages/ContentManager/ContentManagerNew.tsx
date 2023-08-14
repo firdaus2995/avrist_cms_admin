@@ -177,17 +177,31 @@ export default function ContentManagerNew() {
     return combinedData;
   };
 
+  function convertLoopingToArrays(data: any) {
+    return data.map((field: any) => {
+      if (field.fieldType === 'LOOPING' && field.contentData) {
+        const contentDataValue = field.contentData[0]?.value;
+        if (contentDataValue) {
+          field.contentData[0].value = Array.isArray(contentDataValue)
+            ? JSON.stringify(contentDataValue)
+            : JSON.stringify([contentDataValue]);
+        }
+      }
+      return field;
+    });
+  }
+
   function onSubmitData(value: any) {
+    const convertedData = convertContentData(contentTempData);
+    const stringifyData = convertLoopingToArrays(convertedData);
     const payload = {
       title: value.title,
       shortDesc: value.shortDesc,
       isDraft: false,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
-      contentData: convertContentData(contentTempData),
+      contentData: stringifyData,
     };
-
-    console.log('ini payload => ', payload);
 
     createContentData(payload)
       .unwrap()
