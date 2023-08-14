@@ -25,10 +25,10 @@ const FileItem = (props: any) => {
   const { name, value, onDeletePress } = props;
 
   return (
-    <div className="flex flex-row items-center h-14 mx-2 mb-1">
+    <div className="flex flex-row items-center h-14 mx-2 my-1">
       {value?.type?.startsWith('image/') ? (
         <img
-          className="object-cover h-12 w-12 rounded-lg mr-3"
+          className="object-cover h-12 w-12 rounded-lg mr-3 border"
           src={URL.createObjectURL(value)}
           alt={name}
         />
@@ -160,22 +160,24 @@ export default function FileUploaderBase({
         onDragOver={e => {
           e.preventDefault();
         }}
-        className="w-[400px] min-h-[150px] bg-light-purple-2 border-dashed border-[1px] border-lavender rounded-xl">
-        <label htmlFor={id} className="flex flex-col justify-center items-center cursor-pointer">
-          <input
-            ref={inputRef}
-            id={id}
-            type="file"
-            className="hidden"
-            accept={isDocument ? 'application/pdf' : 'image/png, image/jpeg, image/jpg'}
-            onChange={handleChange}
-            disabled={disabled}
-          />
-          <div className="flex flex-col justify-center items-center h-[150px]">
-            <img src={UploadDocumentIcon} />
-            <span className="text-xs text-center mt-5">Drag and Drop Files or upload image</span>
-          </div>
-        </label>
+        className="w-[400px] bg-light-purple-2 border-dashed border-[1px] border-lavender rounded-xl">
+        {(!filesData.length || multiple) && (
+          <label htmlFor={id} className="flex flex-col justify-center items-center cursor-pointer">
+            <input
+              ref={inputRef}
+              id={id}
+              type="file"
+              className="hidden"
+              accept={isDocument ? 'application/pdf' : 'image/png, image/jpeg, image/jpg'}
+              onChange={handleChange}
+              disabled={disabled}
+            />
+            <div className="flex flex-col justify-center items-center h-[150px]">
+              <img src={UploadDocumentIcon} />
+              <span className="text-xs text-center mt-5">Drag and Drop Files or upload image</span>
+            </div>
+          </label>
+        )}
 
         {filesData.map((data: any, index: any) => {
           return (

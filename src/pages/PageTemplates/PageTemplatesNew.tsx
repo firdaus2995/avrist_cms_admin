@@ -69,9 +69,41 @@ export default function PageTemplatesNew() {
   const [configEditIndex, setConfigEditIndex] = useState(null);
   const [newConfig, setNewConfig] = useState<any>(initialConfig);
   const [configData, setConfigData] = useState<any>([]);
+  // TABLE DATA FORM VALIDATION
+  const [attributesErrors, setAttributesErrors] = useState({
+    fieldType: '',
+    fieldId: '',
+    description: '',
+  });
+
+  const [configErrors, setConfigErrors] = useState({
+    key: '',
+    description: '',
+  });
 
   // ATTRIBUTES FUNCTION
   const onAddNewAttributes = () => {
+    if (!newAttributes.fieldType) {
+      setAttributesErrors(prevErrors => ({
+        ...prevErrors,
+        fieldType: 'Field Type is required',
+      }));
+      return;
+    }
+    if (!newAttributes.fieldId) {
+      setAttributesErrors(prevErrors => ({
+        ...prevErrors,
+        fieldId: 'Field ID is required',
+      }));
+      return;
+    }
+
+    setAttributesErrors({
+      fieldType: '',
+      fieldId: '',
+      description: '',
+    });
+
     if (attributesEditIndex !== null) {
       const updatedAttributes = [...attributesData];
       updatedAttributes[attributesEditIndex] = newAttributes;
@@ -91,6 +123,13 @@ export default function PageTemplatesNew() {
 
   // CONFIG FUNCTION
   const onAddNewConfig = () => {
+    if (!newConfig.key) {
+      setConfigErrors(prevErrors => ({
+        ...prevErrors,
+        key: 'Key is required',
+      }));
+      return;
+    }
     if (configEditIndex !== null) {
       const updatedConfig = [...configData];
       updatedConfig[configEditIndex] = newConfig;
@@ -446,7 +485,7 @@ export default function PageTemplatesNew() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-
+      {/*  THIS IS ATTRIBUTES FORM */}
       <ModalForm
         open={openAddAttributesModal}
         formTitle="Add Attribute"
@@ -465,11 +504,10 @@ export default function PageTemplatesNew() {
             <FormList.DropDown
               key="category"
               labelTitle="Category"
-              placeholder="Title"
               defaultValue={newAttributes.fieldType.label}
               resetValue={openAddAttributesModal}
-              // error={!!errors?.category?.message}
-              // helperText={errors?.category?.message}
+              error={!!attributesErrors.fieldType}
+              helperText={attributesErrors.fieldType}
               items={listAttributes}
               onChange={(e: any) => {
                 setNewAttributes({
@@ -485,8 +523,8 @@ export default function PageTemplatesNew() {
             labelRequired
             placeholder="Enter field ID"
             value={newAttributes.fieldId}
-            // error={!!errors?.pageName?.message}
-            // helperText={errors?.pageName?.message}
+            error={!!attributesErrors.fieldId}
+            helperText={attributesErrors.fieldId}
             onChange={(e: any) => {
               setNewAttributes({ ...newAttributes, fieldId: e.target.value });
             }}
@@ -496,8 +534,6 @@ export default function PageTemplatesNew() {
             key="description"
             labelTitle="Description"
             placeholder="Enter description"
-            // error={!!errors?.pageName?.message}
-            // helperText={errors?.pageName?.message}
             value={newAttributes.description}
             onChange={(e: any) => {
               setNewAttributes({ ...newAttributes, description: e.target.value });
@@ -506,7 +542,7 @@ export default function PageTemplatesNew() {
           />
         </div>
       </ModalForm>
-
+      {/*  THIS IS CONFIG FORM */}
       <ModalForm
         open={openAddConfigModal}
         formTitle="Add Configs"
@@ -523,8 +559,8 @@ export default function PageTemplatesNew() {
             labelRequired
             placeholder="Enter key"
             value={newConfig.key}
-            // error={!!errors?.pageName?.message}
-            // helperText={errors?.pageName?.message}
+            error={!!configErrors.key}
+            helperText={configErrors.key}
             onChange={(e: any) => {
               setNewConfig({ ...newConfig, key: e.target.value });
             }}
@@ -544,7 +580,6 @@ export default function PageTemplatesNew() {
           />
         </div>
       </ModalForm>
-
       <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-100 mt-[35px]">
         <div className="flex flex-col gap-[30px]">
           <Controller
