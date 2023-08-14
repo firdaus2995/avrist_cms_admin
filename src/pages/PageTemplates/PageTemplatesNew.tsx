@@ -534,8 +534,6 @@ export default function PageTemplatesNew() {
             key="description"
             labelTitle="Description"
             placeholder="Enter description"
-            // error={!!errors?.pageName?.message}
-            // helperText={errors?.pageName?.message}
             value={newAttributes.description}
             onChange={(e: any) => {
               setNewAttributes({ ...newAttributes, description: e.target.value });
