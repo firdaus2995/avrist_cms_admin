@@ -21,7 +21,7 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
 
   useEffect(() => {
     if (image) {
-      setImgUrl(`${import.meta.env.VITE_API_URL}'/files/get/'${image}`);
+      setImgUrl(`${import.meta.env.VITE_API_URL}/files/get/${image}`);
     } else {
       setImgUrl("");
     }

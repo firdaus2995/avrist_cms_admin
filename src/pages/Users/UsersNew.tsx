@@ -71,10 +71,10 @@ export default function UsersNew () {
           value: Number(element.id),
           label: element.name,
         }
-      })
+      });
       setRoleData(roleList);
-    }
-  }, [data])
+    };
+  }, [data]);
 
   const onSave = () => {
     const payload = {
