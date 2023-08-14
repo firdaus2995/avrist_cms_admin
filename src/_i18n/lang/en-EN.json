@@ -100,6 +100,14 @@
       "placeholder-user-password": "Enter Password",
       "placeholder-user-fullname": "Enter Fullname",
       "placeholder-user-email": "Enter Email"
+    },
+    "edit-profile": {
+      "success-msg": "Success edit Profile {{name}}",
+      "failed-msg": "Failed edit Profile {{name}}"
+    },
+    "change-password": {
+      "success-msg": "Success change password Profile {{name}}",
+      "failed-msg": "Failed change password Profile {{name}}"
     }
   },
   "action": {

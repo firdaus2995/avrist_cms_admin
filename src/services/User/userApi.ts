@@ -198,11 +198,65 @@ export const userApi: any = createApi({
               dob
               gender
               company
+              profilePicture
               isActive
               role {
                 id
                 name
               }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    editUserProfile: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation userUpdateProfile(
+            $fullName: String!
+            $profilePicture: String!
+            $password: String!
+          ) {
+            userUpdateProfile(
+              request: {
+                fullName: $fullName
+                profilePicture: $profilePicture
+                password: $password
+              }
+            ) {
+              id
+              userId
+              fullName
+              email
+              dob
+              gender
+              company
+              isActive
+              role {
+                  id
+                  name
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    changePasswordUserProfile: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation userChangeOwnPassword(
+            $oldPassword: String!
+            $newPassword: String!
+          ) {
+            userChangeOwnPassword(
+              request: {
+                oldPassword: $oldPassword
+                newPassword: $newPassword
+              }
+            ) {
+              message
             }
           }
         `,
@@ -244,6 +298,8 @@ export const {
   useCreateUserMutation,
   useEditUserMutation,
   useGetUserProfileQuery,
+  useEditUserProfileMutation,
+  useChangePasswordUserProfileMutation,
   useGetForgotPasswordMutation,
   useSetNewPasswordMutation,
 } = userApi;

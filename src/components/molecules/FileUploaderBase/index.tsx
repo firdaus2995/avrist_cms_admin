@@ -5,14 +5,8 @@ import Close from '@/assets/close.png';
 import { getCredential } from '@/utils/Credential';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
+import { formatFilename } from '@/utils/logicHelper';
 const baseUrl = import.meta.env.VITE_API_URL;
-
-function formatFilename(filename: string) {
-  const sanitizedFilename = filename.replace(/[^\w.-]/g, '');
-  const lowercaseFilename = sanitizedFilename.toLowerCase();
-  const formattedFilename = lowercaseFilename.replace(/\s+/g, '_');
-  return formattedFilename;
-}
 
 function bytesToSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];

@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { clearAuth } from '@/services/Login/slice';
 
-import { sidebarList } from './list';
 import Menu from '@/assets/menu.png';
 import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
 import ProfilePhoto from '@/assets/Profile-photo.png';
 import ModalForm from '../ModalForm';
+import FileUploaderAvatar from '../FileUploaderAvatar';
+import { clearAuth } from '@/services/Login/slice';
+import { sidebarList } from './list';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { InputPassword } from '@/components/atoms/Input/InputPassword';
+import { useChangePasswordUserProfileMutation, useEditUserProfileMutation, useGetUserProfileQuery } from '../../../services/User/userApi';
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
+import { t } from 'i18next';
+
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -63,13 +69,15 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
 
   const navigate = useNavigate();
   const location = useLocation();
-  
+  const dispatch = useAppDispatch();
+
   const [openedTab, setOpenedTab] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState(1);
   // EDIT PROFILE
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
-  const [fullname, setFullname] = useState("Haykal Shafiq");
-  const [email, setEmail] = useState("haykal@gmail.com");
+  const [avatar, setAvatar] = useState("");
+  const [fullName, setFullName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordError, setPasswordError] = useState(false);
   // CHANGE PASSWORD
@@ -78,6 +86,20 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
+
+  // RTK USER PROFILE
+  const fetchUserDetailQuery = useGetUserProfileQuery({});
+  const { data: dataProfile, refetch: refetchDataProfile } = fetchUserDetailQuery;
+
+  // RTK EDIT PROFILE
+  const [editProfile, {
+    isLoading: isLoadingEditProfileModal
+  }] = useEditUserProfileMutation();
+
+  // RTK CHANGE PASSWORD PROFILE
+  const [changePassword, {
+    isLoading: isLoadingChangePasswordProfileModal
+  }] = useChangePasswordUserProfileMutation();
 
   useEffect(() => {
     const pathName = location.pathname;
@@ -100,6 +122,14 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
     }
   }, [location.pathname]);
 
+  useEffect(() => {    
+    if (dataProfile) {
+      setAvatar(dataProfile?.userProfile?.profilePicture);
+      setFullName(dataProfile?.userProfile?.fullName);
+      setEmail(dataProfile?.userProfile?.email);
+    };
+  }, [JSON.stringify(dataProfile)])
+
   const listTabHandler = (e: string) => {
     if (openedTab.includes(e)) {
       const filtered = openedTab.filter(val => val !== e);
@@ -107,6 +137,19 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
     } else {
       setOpenedTab(val => [...val, e]);
     }
+  };
+
+  const handlerCancel  = () => {
+    setOpenEditProfileModal(false);
+    setOpenChangePasswordModal(false);
+    setPasswordError(false);
+    setConfirmNewPasswordError(false);
+    setRecentPassword("");
+    setNewPassword("");
+    setConfirmNewPassword("");
+    setAvatar(dataProfile?.userProfile?.profilePicture);
+    setFullName(dataProfile?.userProfile?.fullName);
+    setEmail(dataProfile?.userProfile?.email);    
   };
 
   const handlerActionLink = () => {
@@ -121,6 +164,34 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
       setPasswordError(true);
     } else {
       setPasswordError(false);
+
+      const payload = {
+        profilePicture: avatar,
+        fullName,
+        password,
+      };
+      editProfile(payload)
+        .unwrap()
+        .then(() => {
+          dispatch(
+            openToast({
+              type: 'success',
+              title: t('toast-success'),
+              message: t('user.edit-profile.success-msg', { name: payload.fullName }),
+            }),
+          );
+          handlerCancel();
+          refetchDataProfile();
+        })
+        .catch(() => {
+          dispatch(
+            openToast({
+              type: 'error',
+              title: t('toast-failed'),
+              message: t('user.edit-profile.failed-msg', { name: payload.fullName }),
+            }),
+          );
+        });
     };
   };
 
@@ -129,6 +200,34 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
       setConfirmNewPasswordError(true);
     } else {
       setConfirmNewPasswordError(false);
+
+      const payload = {
+        oldPassword: recentPassword,
+        newPassword,
+      };
+      changePassword(payload)
+        .unwrap()
+        .then(() => {
+          dispatch(
+            openToast({
+              type: 'success',
+              title: t('toast-success'),
+              message: t('user.change-password.success-msg', { name: fullName }),
+            }),
+          );
+          handlerCancel();
+        })
+        .catch((err: any) => {
+          console.log(err);
+          
+          dispatch(
+            openToast({
+              type: 'error',
+              title: t('toast-failed'),
+              message: t('user.change-password.failed-msg', { name: fullName }),
+            }),
+          );
+        });
     };
   };
 
@@ -284,35 +383,29 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
         height={700}
         width={600}
         open={openEditProfileModal}
-        // loading={isLoadingEditProfileModal}
+        loading={isLoadingEditProfileModal}
         formTitle="Edit Profile"
         submitTitle="Save"
         cancelTitle="Cancel"
-        cancelAction={() => {
-          setOpenEditProfileModal(false);
-          setPasswordError(false);
-          setConfirmNewPasswordError(false);
-        }}
+        cancelAction={handlerCancel}
         submitAction={submitEditProfile}
       >
-        <img 
-          style={{
-            width: 120,
-            justifySelf: 'center',
-            marginBottom: 20,
+        <FileUploaderAvatar
+          image={avatar}
+          imageChanged={(image: any) => {
+            setAvatar(image);
           }}
-          src='https://i.ibb.co/sC3PRC1/Group-26683.jpg'
         />
         <InputText
           labelTitle="Fullname"
           labelStyle="font-bold	"
           labelWidth={125}
-          value={fullname}
+          value={fullName}
           direction="row"
           themeColor="lavender"
           roundStyle="xl"
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFullname(event.target.value);
+            setFullName(event.target.value);
           }}
         />
         <InputText
@@ -347,18 +440,11 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
       <ModalForm
         width={600}
         open={openChangePasswordModal}
-        // loading={isLoadingEditProfileModal}
+        loading={isLoadingChangePasswordProfileModal}
         formTitle="Change Password"
         submitTitle="Save"
         cancelTitle="Cancel"
-        cancelAction={() => {
-          setOpenChangePasswordModal(false);
-          setPasswordError(false);
-          setConfirmNewPasswordError(false);
-          setRecentPassword("");
-          setNewPassword("");
-          setConfirmNewPassword("");
-        }}
+        cancelAction={handlerCancel}
         submitAction={submitChangePassword}      
       >
         <InputPassword
