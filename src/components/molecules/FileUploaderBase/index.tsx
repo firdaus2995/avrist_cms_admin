@@ -51,7 +51,13 @@ const FileItem = (props: any) => {
   );
 };
 
-export default function FileUploaderBase({ isDocument, multiple, onFilesChange, id }: any) {
+export default function FileUploaderBase({
+  isDocument,
+  multiple,
+  onFilesChange,
+  id,
+  disabled,
+}: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
 
@@ -163,6 +169,7 @@ export default function FileUploaderBase({ isDocument, multiple, onFilesChange, 
             className="hidden"
             accept={isDocument ? 'application/pdf' : 'image/png, image/jpeg, image/jpg'}
             onChange={handleChange}
+            disabled={disabled}
           />
           <div className="flex flex-col justify-center items-center h-[150px]">
             <img src={UploadDocumentIcon} />
