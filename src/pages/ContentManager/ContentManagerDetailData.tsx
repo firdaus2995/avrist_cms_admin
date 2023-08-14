@@ -5,6 +5,7 @@ import {
   useGetCategoryListQuery,
   useGetContentDataDetailQuery,
   useRestoreContentDataMutation,
+  useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
 import { useCreateContentDataMutation } from '@/services/ContentType/contentTypeApi';
@@ -95,8 +96,8 @@ export default function ContentManagerDetailData() {
   }, [contentDataDetail]);
 
   useEffect(() => {
-    void fetchGetContentDataDetail.refetch()
-  }, [])
+    void fetchGetContentDataDetail.refetch();
+  }, []);
 
   const [mainForm] = useState<any>({
     title: '',
@@ -162,7 +163,7 @@ export default function ContentManagerDetailData() {
   }, [categoryListData]);
 
   // RTK POST DATA
-  const [createContentData] = useCreateContentDataMutation();
+  const [updateContentData] = useUpdateContentDataMutation();
   const [updateContentDataStatus] = useUpdateContentDataStatusMutation();
   const [restoreContentData] = useRestoreContentDataMutation();
 
@@ -218,7 +219,7 @@ export default function ContentManagerDetailData() {
       contentData: convertContentData(contentTempData),
     };
 
-    createContentData(payload)
+    updateContentData(payload)
       .unwrap()
       .then(() => {
         dispatch(
@@ -227,6 +228,7 @@ export default function ContentManagerDetailData() {
             title: 'Success',
           }),
         );
+        goBack();
       })
       .catch(() => {
         dispatch(
@@ -235,6 +237,7 @@ export default function ContentManagerDetailData() {
             title: 'Failed',
           }),
         );
+        goBack();
       });
   }
 
@@ -248,9 +251,9 @@ export default function ContentManagerDetailData() {
             value: 'temporary_value',
             fieldType: 'LOOPING',
             contentData: attribute.attributeList.map(
-              (nestedAttribute: { id: any; fieldType: any }) => ({
+              (nestedAttribute: { value: any; id: any; fieldType: any }) => ({
                 id: nestedAttribute.id,
-                value: '',
+                value: nestedAttribute.value,
                 fieldType: nestedAttribute.fieldType,
               }),
             ),
@@ -258,7 +261,7 @@ export default function ContentManagerDetailData() {
         } else {
           return {
             id: attribute.id,
-            value: '',
+            value: attribute.value,
             fieldType: attribute.fieldType,
           };
         }
@@ -781,17 +784,17 @@ export default function ContentManagerDetailData() {
             </button>
           )
         );
-        case 'ARCHIVED':
-          return (
-            <button
-              onClick={() => {
-                setShowArchivedModal(true);
-              }}
-              className="btn bg-secondary-warning border-none text-xs btn-sm w-48 h-10">
-              <img src={Restore} className="mr-3" />
-              Restore
-            </button>
-          );
+      case 'ARCHIVED':
+        return (
+          <button
+            onClick={() => {
+              setShowArchivedModal(true);
+            }}
+            className="btn bg-secondary-warning border-none text-xs btn-sm w-48 h-10">
+            <img src={Restore} className="mr-3" />
+            Restore
+          </button>
+        );
       default:
         return null;
     }
@@ -909,7 +912,11 @@ export default function ContentManagerDetailData() {
         open={showModalApprove}
         title={'Approve'}
         cancelTitle="No"
-        message={contentDataDetailList?.status === 'WAITING_APPROVE' ? 'Do you want to approve this page content?' : 'Do you want to approve delete this page content?'}
+        message={
+          contentDataDetailList?.status === 'WAITING_APPROVE'
+            ? 'Do you want to approve this page content?'
+            : 'Do you want to approve delete this page content?'
+        }
         submitTitle="Yes"
         icon={CheckOrange}
         submitAction={() => {
@@ -1074,7 +1081,8 @@ export default function ContentManagerDetailData() {
           {isEdited && <Footer />}
         </form>
       )}
-      {contentDataDetailList?.status === 'WAITING_REVIEW' || contentDataDetailList?.status === 'DELETE_REVIEW' ? (
+      {contentDataDetailList?.status === 'WAITING_REVIEW' ||
+      contentDataDetailList?.status === 'DELETE_REVIEW' ? (
         <div className="flex flex-row justify-between">
           <div className="w-[30vh] mt-5">
             <CheckBox
