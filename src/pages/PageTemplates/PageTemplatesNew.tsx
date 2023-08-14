@@ -648,8 +648,8 @@ export default function PageTemplatesNew() {
             rules={{
               required: { value: true, message: `Page file name is required` },
               pattern: {
-                value: /^[^\s]+$/,
-                message: "Entered value can't contain spaces",
+                value: /^[^\s-]+$/,
+                message: "Entered value can't contain spaces or dash",
               },
             }}
             render={({ field }) => {
