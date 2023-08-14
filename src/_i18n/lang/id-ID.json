@@ -98,6 +98,14 @@
       "placeholder-user-id": "Masukan User ID",
       "placeholder-user-fullname": "Masukan Fullname",
       "placeholder-user-email": "Masukan Email"
+    },
+    "edit-profile": {
+      "success-msg": "Profile {{name}} berhasil diperbarui",
+      "failed-msg": "Profile {{name}} gagal diperbarui"
+    },
+    "change-password": {
+      "success-msg": "Password Profile {{name}} berhasil diperbarui",
+      "failed-msg": "Password Profile {{name}} gagal diperbarui"
     }
   },
   "action": {
