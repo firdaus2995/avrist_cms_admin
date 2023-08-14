@@ -8,7 +8,6 @@ import {
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
-import { useCreateContentDataMutation } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import FormList from '@/components/molecules/FormList';
 
@@ -758,6 +757,7 @@ export default function ContentManagerDetailData() {
       case 'WAITING_REVIEW':
         return null;
       case 'WAITING_APPROVE':
+      case 'DELETE_APPROVE':
         return (
           <ButtonMenu
             title={''}
@@ -772,6 +772,7 @@ export default function ContentManagerDetailData() {
       case 'DRAFT':
       case 'APPROVED':
       case 'REJECTED':
+      case 'DELETE_REJECTED':
         return (
           !isEdited && (
             <button
