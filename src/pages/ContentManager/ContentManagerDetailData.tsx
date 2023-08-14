@@ -8,10 +8,6 @@ import {
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
-<<<<<<< HEAD
-=======
-// import { useCreateContentDataMutation } from '@/services/ContentType/contentTypeApi';
->>>>>>> 7c5728e53a9e700f88de9d180d1b172308095d85
 import { useNavigate, useParams } from 'react-router-dom';
 import FormList from '@/components/molecules/FormList';
 
@@ -610,88 +606,90 @@ export default function ContentManagerDetailData() {
                 {name}
               </Typography>
               <div className="card w-full shadow-md p-5">
-                {contentData?.map((val: { value: any; name: any; id: any; fieldType: any }) => {
-                  switch (val.fieldType) {
-                    case 'EMAIL':
-                    case 'DOCUMENT':
-                    case 'IMAGE':
-                    case 'TEXT_AREA':
-                    case 'TEXT_EDITOR':
-                    case 'PHONE_NUMBER':
-                    case 'TEXT_FIELD':
-                      return (
-                        <Controller
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue={val.value}
-                          rules={{ required: `${name} is required` }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
+                {contentData?.map((value: { details: Array<{ value: any; name: any; id: any; fieldType: any; }> }) => (
+                  value.details.map((val: { value: any; name: any; id: any; fieldType: any }) => {
+                    switch (val.fieldType) {
+                      case 'EMAIL':
+                      case 'DOCUMENT':
+                      case 'IMAGE':
+                      case 'TEXT_AREA':
+                      case 'TEXT_EDITOR':
+                      case 'PHONE_NUMBER':
+                      case 'TEXT_FIELD':
+                        return (
+                          <Controller
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue={val.value}
+                            rules={{ required: `${name} is required` }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
+                                },
+                                [val.id, val.fieldType, field, handleFormChange],
+                              );
+  
+                              return (
+                                <FormList.TextField
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel="TEXT_FIELD"
+                                  labelTitle={val.name}
+                                  disabled={!isEdited}
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'YOUTUBE_URL':
+                        return (
+                          <Controller
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue={val.value}
+                            rules={{
+                              required: `${val.name} is required`,
+                              pattern: {
+                                value:
+                                  /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                                message: 'Invalid URL',
                               },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
-
-                            return (
-                              <FormList.TextField
-                                {...field}
-                                key={val.id}
-                                fieldTypeLabel="TEXT_FIELD"
-                                labelTitle={val.name}
-                                disabled={!isEdited}
-                                placeholder=""
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'YOUTUBE_URL':
-                      return (
-                        <Controller
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue={val.value}
-                          rules={{
-                            required: `${val.name} is required`,
-                            pattern: {
-                              value:
-                                /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                              message: 'Invalid URL',
-                            },
-                          }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
-                              },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
-                            return (
-                              <FormList.TextField
-                                {...field}
-                                key={val.id}
-                                fieldTypeLabel="YOUTUBE_URL"
-                                labelTitle={val.name}
-                                disabled={!isEdited}
-                                placeholder=""
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    default:
-                      return <p>err</p>;
-                  }
-                })}
+                            }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
+                                },
+                                [val.id, val.fieldType, field, handleFormChange],
+                              );
+                              return (
+                                <FormList.TextField
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel="YOUTUBE_URL"
+                                  labelTitle={val.name}
+                                  disabled={!isEdited}
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      default:
+                        return <p>err</p>;
+                    }
+                  })
+                ))}
                 {showAddDataButton && isEdited && (
                   <div className="flex justify-end mt-8">
                     <button
