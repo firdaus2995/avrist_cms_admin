@@ -1,3 +1,4 @@
+import update from 'immutability-helper';
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { t } from "i18next";
@@ -21,8 +22,12 @@ import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useCreateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
+import DragDrop from "./moduleNewAndUpdate/dragAndDropComponent/DragDrop";
 
 export default function EmailFormBuilderNew () {
+  {
+    
+  }
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   // BACKEND STATE
@@ -429,6 +434,17 @@ export default function EmailFormBuilderNew () {
     setActiveComponent(null);
   };
 
+  const handlerReorderComponent = (dragIndex: number, hoverIndex: number) => {
+    setComponents((prevComponent: any) =>
+      update(prevComponent, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevComponent[dragIndex]],
+        ],
+      }),
+    );
+  };
+
   const renderDragComponents = () => {
     return (
       <React.Fragment>
@@ -455,33 +471,43 @@ export default function EmailFormBuilderNew () {
         switch (element.type) {
           case "TEXTFIELD":
             return (
-              <EFBPreview.TextField 
-                key={index}
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.TextField 
+                  key={index}
+                  name={element.name}
+                  placeholder={element.placeholder}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "TEXTAREA":
             return (
-              <EFBPreview.TextArea 
-                key={index}
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.TextArea 
+                  key={index}
+                  name={element.name}
+                  placeholder={element.placeholder}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "DROPDOWN":
             return (
