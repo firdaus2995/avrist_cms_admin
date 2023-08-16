@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 interface IDragDrop {
@@ -65,10 +65,6 @@ const DragDrop: React.FC<IDragDrop> = ({
   useEffect(() => {
     console.log(index);
   }, [index]);
-
-  useEffect(() => {
-    console.log(ref?.current);
-  }, [ref]);  
 
   return (
     <div 
