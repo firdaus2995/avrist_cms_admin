@@ -72,7 +72,7 @@ export default function ModalLog(props: any) {
               </div>
             </div>
 
-            {datas?.comment !== null || datas?.comment !== '' && (
+            {datas?.comment !== '' && (
               <div className="flex justify-between mt-5">
                 <div className="flex flex-row justify-center ml-3 opacity-80">
                   Comment : 
