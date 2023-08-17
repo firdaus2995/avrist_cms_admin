@@ -79,6 +79,8 @@ const ContentManagerDetailDataPage = React.lazy(
   async () => await import('@/pages/ContentManager/ContentManagerDetailData'),
 );
 
+const GlobalConfigDataPage = React.lazy(async () => await import('@/pages/GlobalConfigData'));
+
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
 
@@ -139,6 +141,8 @@ export default function RoutesComponent() {
             path="content-manager/:id/detail/:dataId"
             element={<ContentManagerDetailDataPage />}
           />
+          {/* GLOBAL CONFIG DATA */}
+          <Route path="global-config-data" element={<GlobalConfigDataPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

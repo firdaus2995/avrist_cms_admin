@@ -41,6 +41,11 @@ export const sidebarList = [
         title: 'Content Manager',
         path: '/content-manager',
       },
+      {
+        id: 43,
+        title: 'Global Config Data',
+        path: '/global-config-data',
+      },
     ],
   },
   {
