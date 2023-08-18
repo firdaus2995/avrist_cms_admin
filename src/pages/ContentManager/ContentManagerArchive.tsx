@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
@@ -11,6 +11,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import { useGetArchiveDataQuery, useRestoreDataMutation } from '@/services/ContentManager/contentManagerApi';
 import { useGetRoleQuery } from '@/services/User/userApi';
+import Typography from '@/components/atoms/Typography';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
@@ -135,11 +136,17 @@ export default function PageManagementArchive() {
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
+        <Link to={`../content-manager/${id}/detail/${info?.row?.original?.id}`}>
+          <Typography
+            type="body"
+            size="s"
+            weight="semi"
+            className="truncate cursor-pointer text-primary">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? info.getValue()
+              : '-'}
+          </Typography>
+        </Link>
       ),
     },
     {

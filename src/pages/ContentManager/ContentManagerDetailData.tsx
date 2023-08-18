@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Key, useCallback, useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import {
@@ -11,7 +11,7 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import FormList from '@/components/molecules/FormList';
 
-import { useAppDispatch } from '@/store';
+import { store, useAppDispatch } from '@/store';
 import { Controller, useForm } from 'react-hook-form';
 import Plus from '@/assets/plus-purple.svg';
 import Edit from '@/assets/edit-purple.svg';
@@ -47,6 +47,7 @@ export default function ContentManagerDetailData() {
   const [showModalRejected, setShowModalRejected] = useState(false);
   const [rejectComments, setRejectComments] = useState('');
   const [showArchivedModal, setShowArchivedModal] = useState(false);
+  const roles = store.getState().loginSlice.roles;
 
   const handleChange = (id: string | number, value: string) => {
     setContentDataDetailList((prevFormValues: any) => ({
@@ -86,8 +87,6 @@ export default function ContentManagerDetailData() {
   const fetchGetContentDataDetail = useGetContentDataDetailQuery({ id });
   const { data: contentDataDetail } = fetchGetContentDataDetail;
 
-  const [loopingDupCount, setLoopingDupCount] = useState<number[]>([]);
-
   useEffect(() => {
     if (contentDataDetail) {
       setContentDataDetailList(contentDataDetail?.contentDataDetail);
@@ -110,6 +109,8 @@ export default function ContentManagerDetailData() {
     fieldType?: string,
     isLooping: boolean = false,
     parentId: any = false,
+    idxLoop: any = false,
+    nestedId: any = false,
   ) => {
     setContentTempData((prevFormValues: any[]) => {
       return prevFormValues.map(item => {
@@ -117,20 +118,20 @@ export default function ContentManagerDetailData() {
           if (!isLooping) {
             return { ...item, value, fieldType };
           } else if (item.fieldType === 'LOOPING') {
-            const updatedContentData = item.contentData.map((data: any) => {
-              if (data.id === id) {
-                return { ...data, value };
-              } else if (data.contentData) {
-                const updatedNestedContentData = data.contentData.map((nestedData: any) => {
-                  if (nestedData.id === id) {
-                    return { ...nestedData, value };
+            const updatedContentData = item.contentData.map((data: any, idx: any) => {
+              if (idxLoop === idx) {
+                const updatedDetails = data.details.map((detail: any) => {
+                  if (detail.id === nestedId) {
+                    return { ...detail, value };
                   }
-                  return nestedData;
+                  return detail;
                 });
-                return { ...data, contentData: updatedNestedContentData };
+
+                return { ...data, details: updatedDetails };
               }
               return data;
             });
+
             return { ...item, contentData: updatedContentData };
           }
         }
@@ -166,46 +167,40 @@ export default function ContentManagerDetailData() {
   const [updateContentDataStatus] = useUpdateContentDataStatusMutation();
   const [restoreContentData] = useRestoreContentDataMutation();
 
-  const convertContentData = (data: any[]) => {
-    const combinedData: any[] = [];
+  const convertContentData = (inputData: any[]) => {
+    const convertedData = [];
 
-    data.forEach((item: { duplicateId: any; contentData: any[] }) => {
-      if (item.duplicateId) {
-        const existingItem = combinedData.find(
-          combinedItem => combinedItem.id === item.duplicateId,
-        );
+    for (const item of inputData) {
+      if (item.fieldType === 'LOOPING' && item.contentData) {
+        const contentData: any = {};
 
-        if (existingItem) {
-          item.contentData.forEach((contentItem: { fieldType: any; value: any[] }) => {
-            const existingContentItem = existingItem.contentData.find(
-              (existingContent: { fieldType: any }) =>
-                existingContent.fieldType === contentItem.fieldType,
-            );
-
-            if (existingContentItem) {
-              if (!Array.isArray(existingContentItem.value)) {
-                existingContentItem.value = [existingContentItem.value];
-              }
-              if (!Array.isArray(contentItem.value)) {
-                contentItem.value = [contentItem.value];
-              }
-              existingContentItem.value.push(...contentItem.value);
-            }
-          });
-        } else {
-          const newItem = { ...item };
-          newItem.contentData = newItem.contentData.map((contentItem: { value: any }) => ({
-            ...contentItem,
-            value: Array.isArray(contentItem.value) ? [...contentItem.value] : [contentItem.value],
-          }));
-          combinedData.push(newItem);
+        for (const detail of item.contentData[0].details) {
+          contentData[detail.id] = {
+            id: detail.id,
+            fieldType: detail.fieldType,
+            value: JSON.stringify(
+              item.contentData.map(
+                (data: { details: any[] }) =>
+                  data.details.find((d: { id: any }) => d.id === detail.id)?.value,
+              ),
+            ),
+          };
         }
-      } else {
-        combinedData.push(item);
-      }
-    });
 
-    return combinedData;
+        const loopItem = {
+          id: item.id,
+          value: item.value,
+          fieldType: item.fieldType,
+          contentData: Object.values(contentData),
+        };
+
+        convertedData.push(loopItem);
+      } else {
+        convertedData.push(item);
+      }
+    }
+
+    return convertedData;
   };
 
   function onSubmitData() {
@@ -244,18 +239,21 @@ export default function ContentManagerDetailData() {
     const attributeList = contentDataDetailList?.contentData || [];
     if (attributeList.length > 0 && contentTempData.length === 0) {
       const defaultFormData = attributeList.map((attribute: any) => {
-        if (attribute.fieldType === 'LOOPING' && attribute.attributeList) {
+        if (attribute.fieldType === 'LOOPING' && attribute.contentData) {
+          const loopingContentData = attribute.contentData.map((nestedAttribute: any) => ({
+            details: nestedAttribute.details.map((detail: any) => ({
+              id: detail.id,
+              name: detail.name,
+              fieldType: detail.fieldType,
+              value: detail.value,
+            })),
+          }));
+
           return {
             id: attribute.id,
-            value: 'temporary_value',
-            fieldType: 'LOOPING',
-            contentData: attribute.attributeList.map(
-              (nestedAttribute: { value: any; id: any; fieldType: any }) => ({
-                id: nestedAttribute.id,
-                value: nestedAttribute.value,
-                fieldType: nestedAttribute.fieldType,
-              }),
-            ),
+            value: attribute.value,
+            fieldType: attribute.fieldType,
+            contentData: loopingContentData,
           };
         } else {
           return {
@@ -277,58 +275,55 @@ export default function ContentManagerDetailData() {
     if (existingLoopingIndex !== -1) {
       const newLoopingField = {
         ...contentDataDetailList.contentData[existingLoopingIndex],
-        id: Math.floor(Math.random() * 100),
-        duplicateId:
-          contentDataDetailList.contentData[existingLoopingIndex].duplicateId || loopingId,
-        name: `${contentDataDetailList.contentData[existingLoopingIndex].name}`,
-        attributeList: contentDataDetailList.contentData[existingLoopingIndex].contentData.map(
-          (attribute: any) => ({
-            ...attribute,
-            id: Math.floor(Math.random() * 100),
-            parentId: loopingId,
-            value: '', // Initialize value to empty
-          }),
-        ),
+        contentData: [
+          ...contentDataDetailList.contentData[existingLoopingIndex].contentData,
+          {
+            details: contentDataDetailList.contentData[
+              existingLoopingIndex
+            ].contentData[0].details.map((detail: any) => ({
+              ...detail,
+              value: '',
+            })),
+          },
+        ],
       };
 
       const newAttributeList = [...contentDataDetailList.contentData];
-      newAttributeList.splice(existingLoopingIndex + 1, 0, newLoopingField);
+      newAttributeList[existingLoopingIndex] = newLoopingField;
 
-      setContentDataDetailList((prevPostTypeDetail: { attributeList: any }) => ({
-        ...prevPostTypeDetail,
-        attributeList: newAttributeList,
+      setContentDataDetailList((prevContentDataDetailList: any) => ({
+        ...prevContentDataDetailList,
+        contentData: newAttributeList,
       }));
 
-      setLoopingDupCount(prevCount => ({
-        ...prevCount,
-        [loopingId]: (prevCount[loopingId] || 0) + 1,
-      }));
+      const updatedContentTempData = contentTempData.map((data: any) => {
+        if (data.id === loopingId) {
+          return {
+            ...data,
+            contentData: [
+              ...data.contentData,
+              {
+                details: data.contentData[0].details.map((detail: any) => ({
+                  ...detail,
+                  value: '',
+                })),
+              },
+            ],
+          };
+        }
+        return data;
+      });
 
-      setContentTempData(prevContentTempData => [
-        ...prevContentTempData,
-        {
-          ...newLoopingField,
-          contentData: newLoopingField.attributeList.map((attribute: any) => ({
-            id: attribute.id,
-            value: '',
-            fieldType: attribute.fieldType,
-          })),
-        },
-      ]);
+      setContentTempData(updatedContentTempData);
     }
   };
 
   const renderFormList = () => {
     // DEFAULT VALUE
 
-    return contentDataDetailList?.contentData.map((props: any, index: number) => {
+    return contentDataDetailList?.contentData.map((props: any, _index: number) => {
       const { id, name, fieldType, contentData, config, value } = props;
       const configs = JSON.parse(config);
-
-      const loopingCount = loopingDupCount[id] || 0;
-      const showAddDataButton =
-        loopingCount === 0 ||
-        (loopingCount > 0 && index === contentDataDetailList.contentData.length - 1);
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -602,107 +597,127 @@ export default function ContentManagerDetailData() {
         case 'LOOPING':
           return (
             <div key={id}>
-              <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
-                {name}
-              </Typography>
-              <div className="card w-full shadow-md p-5">
-                {contentData?.map((value: { details: Array<{ value: any; name: any; id: any; fieldType: any; }> }) => (
-                  value.details.map((val: { value: any; name: any; id: any; fieldType: any }) => {
-                    switch (val.fieldType) {
-                      case 'EMAIL':
-                      case 'DOCUMENT':
-                      case 'IMAGE':
-                      case 'TEXT_AREA':
-                      case 'TEXT_EDITOR':
-                      case 'PHONE_NUMBER':
-                      case 'TEXT_FIELD':
-                        return (
-                          <Controller
-                            name={val.id.toString()}
-                            control={control}
-                            defaultValue={val.value}
-                            rules={{ required: `${name} is required` }}
-                            render={({ field }) => {
-                              const onChange = useCallback(
-                                (e: any) => {
-                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                  field.onChange({ target: { value: e.target.value } });
-                                },
-                                [val.id, val.fieldType, field, handleFormChange],
-                              );
-  
-                              return (
-                                <FormList.TextField
-                                  {...field}
-                                  key={val.id}
-                                  fieldTypeLabel="TEXT_FIELD"
-                                  labelTitle={val.name}
-                                  disabled={!isEdited}
-                                  placeholder=""
-                                  error={!!errors?.[val.id]?.message}
-                                  helperText={errors?.[val.id]?.message}
-                                  onChange={onChange}
-                                />
-                              );
-                            }}
-                          />
-                        );
-                      case 'YOUTUBE_URL':
-                        return (
-                          <Controller
-                            name={val.id.toString()}
-                            control={control}
-                            defaultValue={val.value}
-                            rules={{
-                              required: `${val.name} is required`,
-                              pattern: {
-                                value:
-                                  /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                                message: 'Invalid URL',
-                              },
-                            }}
-                            render={({ field }) => {
-                              const onChange = useCallback(
-                                (e: any) => {
-                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                  field.onChange({ target: { value: e.target.value } });
-                                },
-                                [val.id, val.fieldType, field, handleFormChange],
-                              );
-                              return (
-                                <FormList.TextField
-                                  {...field}
-                                  key={val.id}
-                                  fieldTypeLabel="YOUTUBE_URL"
-                                  labelTitle={val.name}
-                                  disabled={!isEdited}
-                                  placeholder=""
-                                  error={!!errors?.[val.id]?.message}
-                                  helperText={errors?.[val.id]?.message}
-                                  onChange={onChange}
-                                />
-                              );
-                            }}
-                          />
-                        );
-                      default:
-                        return <p>err</p>;
-                    }
-                  })
-                ))}
-                {showAddDataButton && isEdited && (
-                  <div className="flex justify-end mt-8">
-                    <button
-                      onClick={() => {
-                        addNewLoopingField(id);
-                      }}
-                      className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                      <img src={Plus} className="mr-3" />
-                      Add Data
-                    </button>
+              {contentData?.map((value: { details: any[] }, idx: Key | null | undefined) => (
+                <>
+                  <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
+                    {name}
+                  </Typography>
+                  <div key={idx} className="card w-full shadow-md p-5 mt-5">
+                    {value.details.map(
+                      (val: { fieldType: any; id: any; value: any; name: any }) => {
+                        switch (val.fieldType) {
+                          case 'EMAIL':
+                          case 'DOCUMENT':
+                          case 'IMAGE':
+                          case 'TEXT_AREA':
+                          case 'TEXT_EDITOR':
+                          case 'PHONE_NUMBER':
+                          case 'TEXT_FIELD':
+                            return (
+                              <Controller
+                                name={`${idx}_${val.id}`}
+                                control={control}
+                                defaultValue={val.value}
+                                rules={{ required: `${name} is required` }}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(
+                                        val.id,
+                                        e.target.value,
+                                        val.fieldType,
+                                        true,
+                                        id,
+                                        idx,
+                                        val.id,
+                                      );
+                                      field.onChange({ target: { value: e.target.value } });
+                                    },
+                                    [val.id, val.fieldType, field, handleFormChange],
+                                  );
+
+                                  return (
+                                    <FormList.TextField
+                                      {...field}
+                                      key={val.id}
+                                      fieldTypeLabel="TEXT_FIELD"
+                                      labelTitle={val.name}
+                                      disabled={!isEdited}
+                                      placeholder=""
+                                      error={!!errors?.[val.id]?.message}
+                                      helperText={errors?.[val.id]?.message}
+                                      onChange={onChange}
+                                    />
+                                  );
+                                }}
+                              />
+                            );
+                          case 'YOUTUBE_URL':
+                            return (
+                              <Controller
+                                name={`${idx}_${val.id}`}
+                                control={control}
+                                defaultValue={val.value}
+                                rules={{
+                                  required: `${val.name} is required`,
+                                  pattern: {
+                                    value:
+                                      /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                                    message: 'Invalid URL',
+                                  },
+                                }}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(
+                                        val.id,
+                                        e.target.value,
+                                        val.fieldType,
+                                        true,
+                                        id,
+                                        idx,
+                                        val.id,
+                                      );
+                                      field.onChange({ target: { value: e.target.value } });
+                                    },
+                                    [val.id, val.fieldType, field, handleFormChange],
+                                  );
+                                  return (
+                                    <FormList.TextField
+                                      {...field}
+                                      key={val.id}
+                                      fieldTypeLabel="YOUTUBE_URL"
+                                      labelTitle={val.name}
+                                      disabled={!isEdited}
+                                      placeholder=""
+                                      error={!!errors?.[val.id]?.message}
+                                      helperText={errors?.[val.id]?.message}
+                                      onChange={onChange}
+                                    />
+                                  );
+                                }}
+                              />
+                            );
+                          default:
+                            return <p>err</p>;
+                        }
+                      },
+                    )}
                   </div>
-                )}
-              </div>
+                  {idx === contentData?.length - 1 && isEdited && (
+                    <div className="flex justify-end mt-8">
+                      <button
+                        onClick={() => {
+                          addNewLoopingField(id);
+                        }}
+                        className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                        <img src={Plus} className="mr-3" />
+                        Add Data
+                      </button>
+                    </div>
+                  )}
+                </>
+              ))}
             </div>
           );
         default:
@@ -761,31 +776,40 @@ export default function ContentManagerDetailData() {
       case 'WAITING_APPROVE':
       case 'DELETE_APPROVE':
         return (
-          <ButtonMenu
-            title={''}
-            onClickApprove={() => {
-              setShowModalApprove(true);
-            }}
-            onClickReject={() => {
-              setShowModalRejected(true);
-            }}
-          />
+          <>
+            {roles?.includes('CONTENT_MANAGER_APPROVE') ? (
+              <ButtonMenu
+                title={''}
+                onClickApprove={() => {
+                  setShowModalApprove(true);
+                }}
+                onClickReject={() => {
+                  setShowModalRejected(true);
+                }}
+              />
+            ) : null}
+          </>
         );
+
       case 'DRAFT':
       case 'APPROVED':
       case 'REJECTED':
       case 'DELETE_REJECTED':
         return (
-          !isEdited && (
-            <button
-              onClick={() => {
-                setIsEdited(true);
-              }}
-              className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-              <img src={Edit} className="mr-3" />
-              Edit Content
-            </button>
-          )
+          <>
+            {roles?.includes('CONTENT_MANAGER_EDIT')
+              ? !isEdited && (
+                  <button
+                    onClick={() => {
+                      setIsEdited(true);
+                    }}
+                    className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                    <img src={Edit} className="mr-3" />
+                    Edit Content
+                  </button>
+                )
+              : null}
+          </>
         );
       case 'ARCHIVED':
         return (
@@ -1010,7 +1034,7 @@ export default function ContentManagerDetailData() {
                 <StatusBadge status={contentDataDetailList?.status} />
               </div>
               <div className="flex flex-row">
-                <Typography type="body" size="m" weight="bold" className="mt-5 ml-1">
+                <Typography type="body" size="m" weight="bold" className="mt-5 ml-1 w-48 mr-16">
                   Title
                 </Typography>
                 <InputText
@@ -1018,7 +1042,6 @@ export default function ContentManagerDetailData() {
                   value={contentDataDetailList?.title}
                   labelTitle=""
                   disabled={!isEdited}
-                  direction="row"
                   roundStyle="xl"
                   onChange={e => {
                     handleChange(e.target.name, e.target.value);
@@ -1084,21 +1107,23 @@ export default function ContentManagerDetailData() {
           {isEdited && <Footer />}
         </form>
       )}
-      {contentDataDetailList?.status === 'WAITING_REVIEW' ||
-      contentDataDetailList?.status === 'DELETE_REVIEW' ? (
-        <div className="flex flex-row justify-between">
-          <div className="w-[30vh] mt-5">
-            <CheckBox
-              defaultValue={isAlreadyReview}
-              updateFormValue={e => {
-                setIsAlreadyReview(e.value);
-              }}
-              labelTitle="I Already Review This Page Content"
-              updateType={''}
-            />
-          </div>
-          {submitButton()}
-        </div>
+      {roles?.includes('CONTENT_MANAGER_REVIEW') ? (
+        contentDataDetailList?.status === 'WAITING_REVIEW' ||
+          contentDataDetailList?.status === 'DELETE_REVIEW' ? (
+            <div className="flex flex-row justify-between">
+              <div className="w-[30vh] mt-5">
+                <CheckBox
+                  defaultValue={isAlreadyReview}
+                  updateFormValue={e => {
+                    setIsAlreadyReview(e.value);
+                  }}
+                  labelTitle="I Already Review This Page Content"
+                  updateType={''}
+                />
+              </div>
+              {submitButton()}
+            </div>
+          ) : null
       ) : null}
     </TitleCard>
   );

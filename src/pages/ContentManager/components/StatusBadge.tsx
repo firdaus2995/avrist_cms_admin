@@ -18,6 +18,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       title = 'Waiting Approval';
       break;
     case 'draft':
+    case 'archived':
       style = 'bg-[#E4E4E4] border-[#A9AAB5]';
       title = 'Draft';
       break;
