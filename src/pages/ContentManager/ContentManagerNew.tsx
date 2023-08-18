@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { t } from 'i18next';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
@@ -6,16 +7,16 @@ import {
 } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
+import { useForm, Controller } from 'react-hook-form';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Typography from '@/components/atoms/Typography';
-// import DropDown from '@/components/molecules/DropDown';
 import FormList from '@/components/molecules/FormList';
 
 import Plus from '@/assets/plus-purple.svg';
-
-import { useForm, Controller } from 'react-hook-form';
+import CancelIcon from '@/assets/cancel.png';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -46,7 +47,13 @@ export default function ContentManagerNew() {
     formState: { errors },
   } = useForm();
 
+  // LEAVE MODAL STATE
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+
   const [contentTempData, setContentTempData] = useState<any[]>([]);
+
   const handleFormChange = (
     id: string | number,
     value: any,
@@ -300,6 +307,11 @@ export default function ContentManagerNew() {
       setContentTempData(defaultFormData);
     }
   }, [postTypeDetail?.attributeList]);
+
+  const onLeave = () => {
+    setShowLeaveModal(false);
+    goBack();
+  };
 
   const renderFormList = () => {
     // DEFAULT VALUE
@@ -687,11 +699,20 @@ export default function ContentManagerNew() {
     return (
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
-          <button onClick={() => {}} className="btn btn-outline text-xs btn-sm w-28 h-10">
+          <button
+            onClick={e => {
+              e.preventDefault();
+              setLeaveTitleModalShow(t('modal.confirmation'));
+              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setShowLeaveModal(true);
+            }}
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
             Cancel
           </button>
           <button
-            onClick={() => {}}
+            onClick={e => {
+              e.preventDefault();
+            }}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             Save as Draft
           </button>
@@ -705,6 +726,20 @@ export default function ContentManagerNew() {
 
   return (
     <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
+      {/* ON CANCEL */}
+      <ModalConfirm
+        open={showLeaveModal}
+        cancelAction={() => {
+          setShowLeaveModal(false);
+        }}
+        title={titleLeaveModalShow ?? ''}
+        cancelTitle="No"
+        message={messageLeaveModalShow ?? ''}
+        submitAction={onLeave}
+        submitTitle="Yes"
+        icon={CancelIcon}
+        btnSubmitStyle="btn-warning"
+      />
       <form onSubmit={handleSubmit(onSubmitData)}>
         <div className="ml-2 mt-6">
           {/* DEFAULT FORM */}
