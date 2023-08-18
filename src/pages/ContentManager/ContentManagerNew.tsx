@@ -594,21 +594,17 @@ export default function ContentManagerNew() {
                 {name}
               </Typography>
               <div className="card w-full shadow-md p-5">
-                {attributeList?.map((val: { name: any; id: any; fieldType: any }) => {
+                {attributeList?.map((val: { name: any; id: any; fieldType: any; config: any }) => {
+                  const configs = JSON.parse(val?.config);
+
                   switch (val.fieldType) {
-                    case 'EMAIL':
-                    case 'DOCUMENT':
-                    case 'IMAGE':
-                    case 'TEXT_AREA':
-                    case 'TEXT_EDITOR':
-                    case 'PHONE_NUMBER':
                     case 'TEXT_FIELD':
                       return (
                         <Controller
                           name={val.id.toString()}
                           control={control}
                           defaultValue=""
-                          rules={{ required: `${name} is required` }}
+                          rules={{ required: `${val.name} is required` }}
                           render={({ field }) => {
                             const onChange = useCallback(
                               (e: any) => {
@@ -623,6 +619,187 @@ export default function ContentManagerNew() {
                                 {...field}
                                 key={val.id}
                                 fieldTypeLabel="TEXT_FIELD"
+                                labelTitle={val.name}
+                                placeholder=""
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'TEXT_AREA':
+                      return (
+                        <Controller
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: { value: true, message: `${val.name} is required` },
+                            maxLength: {
+                              value: configs?.max_length,
+                              message: `${configs?.max_length} characters maximum`,
+                            },
+                            minLength: {
+                              value: configs?.min_length,
+                              message: `${configs?.min_length} characters minimum`,
+                            },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [val.id, val.fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.TextAreaField
+                                {...field}
+                                key={val.id}
+                                fieldTypeLabel="TEXT_AREA"
+                                labelTitle={val.name}
+                                placeholder=""
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'EMAIL':
+                      return (
+                        <Controller
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{ required: `${val.name} is required` }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [val.id, val.fieldType, field, handleFormChange],
+                            );
+
+                            return (
+                              <FormList.TextField
+                                {...field}
+                                key={val.id}
+                                type="email"
+                                fieldTypeLabel="EMAIL"
+                                labelTitle={val.name}
+                                placeholder=""
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'DOCUMENT':
+                      return (
+                        <Controller
+                          key={val.id}
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: { value: true, message: `${val.name} is required` },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e, val.fieldType, true, id);
+                                field.onChange({ target: { value: e } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.FileUploaderV2
+                                {...field}
+                                key={val.id}
+                                id={val.id}
+                                fieldTypeLabel="DOCUMENT"
+                                labelTitle={val.name}
+                                isDocument={true}
+                                multiple={configs?.media_type === 'multiple_media'}
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'IMAGE':
+                      return (
+                        <Controller
+                          key={val.id}
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: { value: true, message: `${val.name} is required` },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e, val.fieldType, true, id);
+                                field.onChange({ target: { value: e } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.FileUploaderV2
+                                {...field}
+                                key={val.id}
+                                id={val.id}
+                                fieldTypeLabel="IMAGE"
+                                labelTitle={val.name}
+                                isDocument={false}
+                                multiple={configs?.media_type === 'multiple_media'}
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'TEXT_EDITOR':
+                      return <FormList.TextEditor key={val.id} name={val.name} />;
+                    case 'PHONE_NUMBER':
+                      return (
+                        <Controller
+                          key={val.id}
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: `${val.name} is required`,
+                            pattern: {
+                              value: /^[0-9\- ]{8,14}$/,
+                              message: 'Invalid number',
+                            },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.TextField
+                                {...field}
+                                key={val.id}
+                                fieldTypeLabel="PHONE_NUMBER"
                                 labelTitle={val.name}
                                 placeholder=""
                                 error={!!errors?.[val.id]?.message}
