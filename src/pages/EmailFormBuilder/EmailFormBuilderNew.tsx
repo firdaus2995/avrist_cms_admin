@@ -1,8 +1,10 @@
+import update from 'immutability-helper';
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router";
 import { t } from "i18next";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
+import { v4 as uuidv4 } from "uuid";
 
 import Drag from "./moduleNewAndUpdate/dragAndDropComponent/Drag";
 import Drop from "./moduleNewAndUpdate/dragAndDropComponent/Drop";
@@ -21,6 +23,7 @@ import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useCreateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
+import DragDrop from "./moduleNewAndUpdate/dragAndDropComponent/DragDrop";
 
 export default function EmailFormBuilderNew () {
   const navigate = useNavigate();
@@ -283,6 +286,7 @@ export default function EmailFormBuilderNew () {
     switch (item) {
       case "TEXTFIELD":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Text Field Name",
           placeholder: "Enter your field",
@@ -295,6 +299,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "TEXTAREA":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Text Area Name",
           placeholder: "Enter your field",
@@ -309,6 +314,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "DROPDOWN":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Dropdown Name",
           items: ["Content 1", "Content 2"],
@@ -322,6 +328,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "RADIOBUTTON":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Radio Name",
           items: ["Content 1", "Content 2"],
@@ -335,6 +342,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "CHECKBOX":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Checkbox Name",
           items: ["Content 1", "Content 2"],
@@ -348,6 +356,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "EMAIL":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Email Name",
           placeholder: "Enter your email",
@@ -360,6 +369,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "LABEL":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Label Name",
           size: "TITLE",
@@ -371,6 +381,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "NUMBER":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Number Name",
           placeholder: "Enter your field",
@@ -382,6 +393,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "DOCUMENT":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Document Name",
           multipleUpload: false,
@@ -393,6 +405,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "IMAGE":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Image Name",
           multipleUpload: false,
@@ -404,6 +417,7 @@ export default function EmailFormBuilderNew () {
         break;
       case "SUBMITTEREMAIL":
         component = {
+          uuid: uuidv4(),
           type: item,
           name: "Submitter Email Name",
           placeholder: "Enter your email",
@@ -427,6 +441,17 @@ export default function EmailFormBuilderNew () {
     currentComponents.splice(index, 1);
     setComponents(currentComponents);
     setActiveComponent(null);
+  };
+
+  const handlerReorderComponent = (dragIndex: number, hoverIndex: number) => {
+    setComponents((prevComponent: any) =>
+      update(prevComponent, {
+        $splice: [
+          [dragIndex, 1],
+          [hoverIndex, 0, prevComponent[dragIndex]],
+        ],
+      }),
+    );
   };
 
   const renderDragComponents = () => {
@@ -455,165 +480,220 @@ export default function EmailFormBuilderNew () {
         switch (element.type) {
           case "TEXTFIELD":
             return (
-              <EFBPreview.TextField 
-                key={index}
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.TextField 
+                  name={element.name}
+                  placeholder={element.placeholder}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "TEXTAREA":
             return (
-              <EFBPreview.TextArea 
-                key={index}
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.TextArea 
+                  name={element.name}
+                  placeholder={element.placeholder}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "DROPDOWN":
             return (
-              <EFBPreview.Dropdown 
-                key={index}
-                name={element.name}
-                items={element.items}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Dropdown 
+                  name={element.name}
+                  items={element.items}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "RADIOBUTTON":
             return (
-              <EFBPreview.Radio 
-                key={index}
-                name={element.name}
-                items={element.items}
-                other={element.allowOtherValue}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Radio 
+                  name={element.name}
+                  items={element.items}
+                  other={element.allowOtherValue}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "CHECKBOX":
             return (
-              <EFBPreview.Checkbox
-                key={index}
-                name={element.name}
-                items={element.items}
-                other={element.allowOtherValue}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Checkbox
+                  name={element.name}
+                  items={element.items}
+                  other={element.allowOtherValue}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "EMAIL":
             return (
-              <EFBPreview.Email
-                key={index}
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Email
+                  name={element.name}
+                  placeholder={element.placeholder}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "LABEL":
             return (
-              <EFBPreview.Label
-                key={index}
-                name={element.name}
-                isActive={activeComponent?.index === index}
-                alignment={element.position}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Label
+                  name={element.name}
+                  isActive={activeComponent?.index === index}
+                  alignment={element.position}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "NUMBER":
             return (
-              <EFBPreview.Number
-                key={index}
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Number
+                  name={element.name}
+                  placeholder={element.placeholder}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "DOCUMENT":
             return (
-              <EFBPreview.Document
-                key={index}
-                name={element.name}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Document
+                  name={element.name}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "IMAGE":
             return (
-              <EFBPreview.Image
-                key={index}
-                name={element.name}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-                onDelete={() => {
-                  handlerDeleteComponent(index);
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Image
+                  name={element.name}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
             );
           case "SUBMITTEREMAIL":
             return (
-              <EFBPreview.SubmitterEmail
-                key={index}
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index)
-                }}
-              />
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.SubmitterEmail
+                  name={element.name}
+                  placeholder={element.placeholder}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                />
+              </DragDrop>
             );  
           default:
             return (

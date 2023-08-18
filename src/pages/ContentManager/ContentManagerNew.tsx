@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react';
+import { t } from 'i18next';
 import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
@@ -6,16 +7,16 @@ import {
 } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
+import { useForm, Controller } from 'react-hook-form';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Typography from '@/components/atoms/Typography';
-// import DropDown from '@/components/molecules/DropDown';
 import FormList from '@/components/molecules/FormList';
 
 import Plus from '@/assets/plus-purple.svg';
-
-import { useForm, Controller } from 'react-hook-form';
+import CancelIcon from '@/assets/cancel.png';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -46,7 +47,13 @@ export default function ContentManagerNew() {
     formState: { errors },
   } = useForm();
 
+  // LEAVE MODAL STATE
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+
   const [contentTempData, setContentTempData] = useState<any[]>([]);
+
   const handleFormChange = (
     id: string | number,
     value: any,
@@ -177,17 +184,31 @@ export default function ContentManagerNew() {
     return combinedData;
   };
 
+  function convertLoopingToArrays(data: any) {
+    return data.map((field: any) => {
+      if (field.fieldType === 'LOOPING' && field.contentData) {
+        const contentDataValue = field.contentData[0]?.value;
+        if (contentDataValue) {
+          field.contentData[0].value = Array.isArray(contentDataValue)
+            ? JSON.stringify(contentDataValue)
+            : JSON.stringify([contentDataValue]);
+        }
+      }
+      return field;
+    });
+  }
+
   function onSubmitData(value: any) {
+    const convertedData = convertContentData(contentTempData);
+    const stringifyData = convertLoopingToArrays(convertedData);
     const payload = {
       title: value.title,
       shortDesc: value.shortDesc,
       isDraft: false,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
-      contentData: convertContentData(contentTempData),
+      contentData: stringifyData,
     };
-
-    console.log('ini payload => ', payload);
 
     createContentData(payload)
       .unwrap()
@@ -286,6 +307,11 @@ export default function ContentManagerNew() {
       setContentTempData(defaultFormData);
     }
   }, [postTypeDetail?.attributeList]);
+
+  const onLeave = () => {
+    setShowLeaveModal(false);
+    goBack();
+  };
 
   const renderFormList = () => {
     // DEFAULT VALUE
@@ -568,21 +594,17 @@ export default function ContentManagerNew() {
                 {name}
               </Typography>
               <div className="card w-full shadow-md p-5">
-                {attributeList?.map((val: { name: any; id: any; fieldType: any }) => {
+                {attributeList?.map((val: { name: any; id: any; fieldType: any; config: any }) => {
+                  const configs = JSON.parse(val?.config);
+
                   switch (val.fieldType) {
-                    case 'EMAIL':
-                    case 'DOCUMENT':
-                    case 'IMAGE':
-                    case 'TEXT_AREA':
-                    case 'TEXT_EDITOR':
-                    case 'PHONE_NUMBER':
                     case 'TEXT_FIELD':
                       return (
                         <Controller
                           name={val.id.toString()}
                           control={control}
                           defaultValue=""
-                          rules={{ required: `${name} is required` }}
+                          rules={{ required: `${val.name} is required` }}
                           render={({ field }) => {
                             const onChange = useCallback(
                               (e: any) => {
@@ -597,6 +619,187 @@ export default function ContentManagerNew() {
                                 {...field}
                                 key={val.id}
                                 fieldTypeLabel="TEXT_FIELD"
+                                labelTitle={val.name}
+                                placeholder=""
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'TEXT_AREA':
+                      return (
+                        <Controller
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: { value: true, message: `${val.name} is required` },
+                            maxLength: {
+                              value: configs?.max_length,
+                              message: `${configs?.max_length} characters maximum`,
+                            },
+                            minLength: {
+                              value: configs?.min_length,
+                              message: `${configs?.min_length} characters minimum`,
+                            },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [val.id, val.fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.TextAreaField
+                                {...field}
+                                key={val.id}
+                                fieldTypeLabel="TEXT_AREA"
+                                labelTitle={val.name}
+                                placeholder=""
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'EMAIL':
+                      return (
+                        <Controller
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{ required: `${val.name} is required` }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [val.id, val.fieldType, field, handleFormChange],
+                            );
+
+                            return (
+                              <FormList.TextField
+                                {...field}
+                                key={val.id}
+                                type="email"
+                                fieldTypeLabel="EMAIL"
+                                labelTitle={val.name}
+                                placeholder=""
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'DOCUMENT':
+                      return (
+                        <Controller
+                          key={val.id}
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: { value: true, message: `${val.name} is required` },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e, val.fieldType, true, id);
+                                field.onChange({ target: { value: e } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.FileUploaderV2
+                                {...field}
+                                key={val.id}
+                                id={val.id}
+                                fieldTypeLabel="DOCUMENT"
+                                labelTitle={val.name}
+                                isDocument={true}
+                                multiple={configs?.media_type === 'multiple_media'}
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'IMAGE':
+                      return (
+                        <Controller
+                          key={val.id}
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: { value: true, message: `${val.name} is required` },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e, val.fieldType, true, id);
+                                field.onChange({ target: { value: e } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.FileUploaderV2
+                                {...field}
+                                key={val.id}
+                                id={val.id}
+                                fieldTypeLabel="IMAGE"
+                                labelTitle={val.name}
+                                isDocument={false}
+                                multiple={configs?.media_type === 'multiple_media'}
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
+                    case 'TEXT_EDITOR':
+                      return <FormList.TextEditor key={val.id} name={val.name} />;
+                    case 'PHONE_NUMBER':
+                      return (
+                        <Controller
+                          key={val.id}
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{
+                            required: `${val.name} is required`,
+                            pattern: {
+                              value: /^[0-9\- ]{8,14}$/,
+                              message: 'Invalid number',
+                            },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [id, fieldType, field, handleFormChange],
+                            );
+                            return (
+                              <FormList.TextField
+                                {...field}
+                                key={val.id}
+                                fieldTypeLabel="PHONE_NUMBER"
                                 labelTitle={val.name}
                                 placeholder=""
                                 error={!!errors?.[val.id]?.message}
@@ -673,11 +876,20 @@ export default function ContentManagerNew() {
     return (
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
-          <button onClick={() => {}} className="btn btn-outline text-xs btn-sm w-28 h-10">
+          <button
+            onClick={e => {
+              e.preventDefault();
+              setLeaveTitleModalShow(t('modal.confirmation'));
+              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setShowLeaveModal(true);
+            }}
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
             Cancel
           </button>
           <button
-            onClick={() => {}}
+            onClick={e => {
+              e.preventDefault();
+            }}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             Save as Draft
           </button>
@@ -691,6 +903,20 @@ export default function ContentManagerNew() {
 
   return (
     <TitleCard title={`New ${postTypeDetail?.name ?? ''}`} border={true}>
+      {/* ON CANCEL */}
+      <ModalConfirm
+        open={showLeaveModal}
+        cancelAction={() => {
+          setShowLeaveModal(false);
+        }}
+        title={titleLeaveModalShow ?? ''}
+        cancelTitle="No"
+        message={messageLeaveModalShow ?? ''}
+        submitAction={onLeave}
+        submitTitle="Yes"
+        icon={CancelIcon}
+        btnSubmitStyle="btn-warning"
+      />
       <form onSubmit={handleSubmit(onSubmitData)}>
         <div className="ml-2 mt-6">
           {/* DEFAULT FORM */}
