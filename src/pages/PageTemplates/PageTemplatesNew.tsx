@@ -39,8 +39,6 @@ export default function PageTemplatesNew() {
   const dispatch = useAppDispatch();
   const params = useParams();
   const location = useLocation();
-  // DEFAULT MODE
-  const [mode, setMode] = useState('new');
   // FORM VALIDATION
   const {
     control,
@@ -48,6 +46,9 @@ export default function PageTemplatesNew() {
     formState: { errors },
     setValue,
   } = useForm();
+
+  // DEFAULT MODE
+  const [mode, setMode] = useState('new');
 
   // LEAVE MODAL STATE
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
