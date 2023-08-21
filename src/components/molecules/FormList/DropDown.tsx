@@ -33,14 +33,7 @@ const DropDown = ({
   const [searchTerm, setSearchTerm] = useState(defaultValue || '');
   const [isOpen, setIsOpen] = useState(false);
 
-  const filteredOptions = items.filter((option: { label: string }) =>
-    option.label?.toLowerCase().includes(searchTerm?.toLowerCase()),
-  );
-
-  const handleInputChange = (e: { target: { value: React.SetStateAction<string> } }) => {
-    setSearchTerm(e.target.value);
-    setIsOpen(true);
-  };
+  const filteredOptions = items;
 
   const handleOptionClick = (option: string) => {
     setSearchTerm(option);
@@ -75,9 +68,9 @@ const DropDown = ({
           type="text"
           placeholder="Search or select an option..."
           value={searchTerm}
-          onChange={handleInputChange}
-          onFocus={() => {
-            setIsOpen(true);
+          // onChange={handleInputChange}
+          onClick={() => {
+            setIsOpen(!isOpen);
           }}
           className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
             disabled ? 'text-[#637488]' : ''
@@ -108,8 +101,26 @@ const DropDown = ({
                     handleOptionClick(option.label);
                     onChange(option);
                   }}
-                  className="px-4 py-2 rounded-xl cursor-pointer hover:bg-light-purple m-1">
+                  className={`px-4 py-2 rounded-xl cursor-pointer hover:bg-light-purple m-1 ${
+                    option.label === searchTerm &&
+                    'text-primary font-bold flex flex-row justify-between'
+                  }`}>
                   {option.label}
+                  {option.label === searchTerm && (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 font-bold">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 12.75l6 6 9-13.5"
+                      />
+                    </svg>
+                  )}
                 </li>
               ))}
             </ul>
