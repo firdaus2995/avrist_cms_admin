@@ -547,7 +547,8 @@ export default function PageTemplatesNew() {
       {/*  THIS IS CONFIG FORM */}
       <ModalForm
         open={openAddConfigModal}
-        formTitle="Add Configs"
+        formTitle="Add Config"
+        submitType="btn-success"
         submitTitle={t('btn.save')}
         cancelTitle={t('btn.cancel')}
         cancelAction={() => {
