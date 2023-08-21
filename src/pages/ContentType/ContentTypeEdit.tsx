@@ -432,7 +432,7 @@ export default function ContentTypeEdit() {
                 onClick={() => {
                   if (val.code === 'text_field' || val.code === 'text_area') {
                     val.config = '{"min_length":[],"max_length":[]}';
-                  } else if (val.code === 'image') {
+                  } else if (val.code === 'image' || val.code === 'document') {
                     val.config = '{"media_type":"[]"}';
                   }
 
@@ -483,7 +483,7 @@ export default function ContentTypeEdit() {
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
                       data.config = '{"min_length":[],"max_length":[]}';
-                    } else if (val.code === 'image') {
+                    } else if (val.code === 'image' || val.code === 'document') {
                       data.config = '{"media_type":"[]"}';
                     }
 
@@ -505,7 +505,7 @@ export default function ContentTypeEdit() {
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
                       data.config = '{"min_length":[],"max_length":[]}';
-                    } else if (val.code === 'image') {
+                    } else if (val.code === 'image' || val.code === 'document') {
                       data.config = '{"media_type":"[]"}';
                     }
 
@@ -620,7 +620,7 @@ export default function ContentTypeEdit() {
                   }}
                 />
               </div>
-            ) : openedAttribute?.code === 'image' ? (
+            ) : openedAttribute?.code === 'image' || openedAttribute?.code === 'document' ? (
               <div className="flex flex-row gap-4 my-5">
                 <Radio
                   labelTitle=""
@@ -808,7 +808,7 @@ export default function ContentTypeEdit() {
                                   }}
                                 />
                               </div>
-                            ) : val?.fieldType === 'IMAGE' ? (
+                            ) : val?.fieldType === 'IMAGE' || val?.fieldType === 'DOCUMENT' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <Radio
                                   labelTitle=""
@@ -995,7 +995,7 @@ export default function ContentTypeEdit() {
                   }}
                 />
               </div>
-            ) : openedAttribute?.fieldType === 'IMAGE' ? (
+            ) : openedAttribute?.fieldType === 'IMAGE' || openedAttribute?.fieldType === 'DOCUMENT' ? (
               <div className="flex flex-row gap-4 my-5">
                 <Radio
                   labelTitle=""
@@ -1194,7 +1194,7 @@ export default function ContentTypeEdit() {
                                   }}
                                 />
                               </div>
-                            ) : val?.fieldType === 'IMAGE' ? (
+                            ) : val?.fieldType === 'IMAGE' || val?.fieldType === 'DOCUMENT' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <Radio
                                   labelTitle=""

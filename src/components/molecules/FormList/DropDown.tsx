@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ChevronUp from '@/assets/chevronup.png';
 import ChevronDown from '@/assets/chevrondown.png';
 import ErrorSmallIcon from '@/assets/error-small.svg';
