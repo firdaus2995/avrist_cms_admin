@@ -199,12 +199,12 @@ export default function EmailFormBuilderNew () {
       };
     });
 
-    // backendComponents.unshift({
-    //   fieldType: "ENABLE_CAPTCHA",
-    //   name: "ENABLE_CAPTCHA",
-    //   fieldId: "ENABLE_CAPTCHA",
-    //   value: checkCaptcha ? "true" : "false",
-    // });
+    backendComponents.unshift({
+      fieldType: "ENABLE_CAPTCHA",
+      name: "ENABLE_CAPTCHA",
+      fieldId: "ENABLE_CAPTCHA",
+      value: checkCaptcha,
+    });
 
     if (pics.length > 0) {
       backendComponents.unshift({

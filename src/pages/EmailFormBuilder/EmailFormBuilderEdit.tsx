@@ -82,6 +82,7 @@ export default function EmailFormBuilderEdit () {
 
       const name: string = emailFormBuilderDetail?.name;
       const pic: any = emailFormBuilderDetail?.pic?.split(";") ?? [];
+      const captcha: any = emailFormBuilderDetail?.enableCaptcha;
 
       const attributeList: any = emailFormBuilderDetail?.attributeList.map((element: any) => {
         const config: any = JSON.parse(element?.config);
@@ -142,8 +143,9 @@ export default function EmailFormBuilderEdit () {
             
       setFormName(name);
       setPics(pic);
+      setCheckCaptcha(captcha);
       setComponents(attributeList);
-    }
+    };
   }, [dataDetail])
   
   const onSave = () => {
@@ -275,12 +277,12 @@ export default function EmailFormBuilderEdit () {
       };
     });
 
-    // backendComponents.unshift({
-    //   fieldType: "ENABLE_CAPTCHA",
-    //   name: "ENABLE_CAPTCHA",
-    //   fieldId: "ENABLE_CAPTCHA",
-    //   value: checkCaptcha ? "true" : "false",
-    // });
+    backendComponents.unshift({
+      fieldType: "ENABLE_CAPTCHA",
+      name: "ENABLE_CAPTCHA",
+      fieldId: "ENABLE_CAPTCHA",
+      value: checkCaptcha,
+    });
 
     if (pics.length > 0) {
       backendComponents.unshift({
