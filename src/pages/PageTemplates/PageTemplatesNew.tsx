@@ -346,9 +346,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => {
-        mode === 'detail' ? <div /> : <span className="text-[14px]">Action</span>;
-      },
+      header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -413,9 +411,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => {
-        mode === 'detail' ? <div /> : <span className="text-[14px]">Action</span>;
-      },
+      header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
