@@ -950,7 +950,7 @@ export default function ContentManagerDetailData() {
           setShowModalApprove(false);
           const payload = {
             id: contentDataDetailList?.id,
-            status: 'APPROVED',
+            status: contentDataDetailList?. status === 'DELETE_APPROVE' ? 'ARCHIVED' : 'APPROVED',
             comment: 'Already approve',
           };
 
@@ -998,7 +998,7 @@ export default function ContentManagerDetailData() {
           setShowModalRejected(false);
           const payload = {
             id: contentDataDetailList?.id,
-            status: 'REJECTED',
+            status: contentDataDetailList?. status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
             comment: rejectComments,
           };
 
