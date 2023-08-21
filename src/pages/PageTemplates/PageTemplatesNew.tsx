@@ -691,6 +691,12 @@ export default function PageTemplatesNew() {
                   key="imagePreview"
                   labelTitle="Image Preview"
                   labelRequired
+                  labelText={
+                    <>
+                      Drag and Drop Image Template Preview or click to{' '}
+                      <span className="text-primary font-semibold">Browse</span>
+                    </>
+                  }
                   isDocument={false}
                   multiple={false}
                   error={!!errors?.imagePreview?.message}
