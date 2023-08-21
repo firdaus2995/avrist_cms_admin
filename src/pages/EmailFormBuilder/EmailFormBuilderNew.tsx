@@ -203,7 +203,7 @@ export default function EmailFormBuilderNew () {
       fieldType: "ENABLE_CAPTCHA",
       name: "ENABLE_CAPTCHA",
       fieldId: "ENABLE_CAPTCHA",
-      value: checkCaptcha,
+      value: checkCaptcha ? "true" : "false",
     });
 
     if (pics.length > 0) {
