@@ -14,6 +14,7 @@ export default function FileUploaderV2({
   helperText,
   id,
   labelRequired = false,
+  labelText,
   border = true,
   disabled = false,
 }: any) {
@@ -46,7 +47,7 @@ export default function FileUploaderV2({
       <div className="flex flex-row">
         <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
           {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? ' *' : ''}</span>
+          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
         </Typography>
         <div
           className={`
@@ -61,6 +62,7 @@ export default function FileUploaderV2({
               id={id}
               isDocument={isDocument}
               multiple={multiple}
+              label={labelText}
               // onFilesChange={onChange}
               onFilesChange={(e: any) => {
                 const values = convertToArr(e, 'response');

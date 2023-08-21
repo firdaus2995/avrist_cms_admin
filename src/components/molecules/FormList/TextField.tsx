@@ -35,7 +35,7 @@ export default function TextField({
       <div className="flex flex-row">
         <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
           {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? ' *' : ''}</span>
+          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
         </Typography>
         <div
           className={`

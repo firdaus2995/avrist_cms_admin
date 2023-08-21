@@ -51,6 +51,7 @@ export default function FileUploaderBase({
   onFilesChange,
   id,
   disabled,
+  label,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
@@ -168,7 +169,7 @@ export default function FileUploaderBase({
             />
             <div className="flex flex-col justify-center items-center h-[150px]">
               <img src={UploadDocumentIcon} />
-              <span className="text-xs text-center mt-5">Drag and Drop Files or upload image</span>
+              <span className="text-xs text-center mt-5">{label || "Drag and Drop Files or upload image"}</span>
             </div>
           </label>
         )}
