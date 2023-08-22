@@ -17,6 +17,7 @@ export default function FileUploaderV2({
   labelText,
   border = true,
   disabled = false,
+  maxSize,
 }: any) {
   function convertToArr(arr: any[], key: string | number | undefined) {
     if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
@@ -63,12 +64,12 @@ export default function FileUploaderV2({
               isDocument={isDocument}
               multiple={multiple}
               label={labelText}
-              // onFilesChange={onChange}
               onFilesChange={(e: any) => {
                 const values = convertToArr(e, 'response');
                 onChange(values);
               }}
               disabled={disabled}
+              maxSize={maxSize}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">
