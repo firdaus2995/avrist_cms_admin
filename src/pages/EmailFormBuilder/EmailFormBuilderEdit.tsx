@@ -9,10 +9,12 @@ import { v4 as uuidv4 } from "uuid";
 import Drag from "./moduleNewAndUpdate/dragAndDropComponent/Drag";
 import Drop from "./moduleNewAndUpdate/dragAndDropComponent/Drop";
 import CancelIcon from "../../assets/cancel.png";
+import Recaptcha from "../../assets/recaptcha.svg";
 import ModalConfirm from "@/components/molecules/ModalConfirm";
 import EFBList from "./moduleNewAndUpdate/listComponent";
 import EFBPreview from "./moduleNewAndUpdate/previewComponent";
 import EFBConfiguration from "./moduleNewAndUpdate/configurationComponent";
+import DragDrop from "./moduleNewAndUpdate/dragAndDropComponent/DragDrop";
 import { Divider } from "@/components/atoms/Divider";
 import { CheckBox } from "@/components/atoms/Input/CheckBox";
 import { InputText } from "@/components/atoms/Input/InputText";
@@ -23,7 +25,6 @@ import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useGetEmailFormBuilderDetailQuery, useUpdateEmailFormBuilderMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi";
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
-import DragDrop from "./moduleNewAndUpdate/dragAndDropComponent/DragDrop";
 
 export default function EmailFormBuilderEdit () {
   const navigate = useNavigate();
@@ -35,6 +36,7 @@ export default function EmailFormBuilderEdit () {
   // FORM STATE
   const [formName, setFormName] = useState<any>("");
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
+  const [checkCaptcha, setCheckCaptcha] = useState<any>(true);
   const [pics, setPics] = useState<any>([]);
   const [components, setComponents] = useState<any>([]);
   const [activeComponent, setActiveComponent] = useState<any>(null);
@@ -42,6 +44,10 @@ export default function EmailFormBuilderEdit () {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
+  // CAPTCHA MODAL
+  const [showCaptchaModal, setShowCaptchaModal] = useState<boolean>(false);
+  const [titleCaptchaModalShow, setTitleCaptchaModalShow] = useState<string | null>("");
+  const [messageCaptchaModalShow, setMessageCaptchaModalShow] = useState<string | null>("");
 
   // RTK GET ATTRIBUTE
   const { data: dataAttribute } = useGetEmailFormAttributeListQuery({});
@@ -76,9 +82,10 @@ export default function EmailFormBuilderEdit () {
 
       const name: string = emailFormBuilderDetail?.name;
       const pic: any = emailFormBuilderDetail?.pic?.split(";") ?? [];
+      const captcha: any = emailFormBuilderDetail?.enableCaptcha;
 
       const attributeList: any = emailFormBuilderDetail?.attributeList.map((element: any) => {
-        const config: any = JSON.parse(element?.config);
+        const config: any = element?.config !== "" ? JSON.parse(element?.config) : {};        
         const value: any = element?.value;
         const submmiterEmail: any = config?.send_submitted_form_to_email === "true";
 
@@ -136,8 +143,9 @@ export default function EmailFormBuilderEdit () {
             
       setFormName(name);
       setPics(pic);
+      setCheckCaptcha(captcha);
       setComponents(attributeList);
-    }
+    };
   }, [dataDetail])
   
   const onSave = () => {
@@ -257,16 +265,30 @@ export default function EmailFormBuilderEdit () {
             fieldId: "IMAGE",
             config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
+        case "LINEBREAK":
+          return {
+            fieldType: "LINE_BREAK",
+            name: "LINE_BREAK",
+            fieldId: "LINE_BREAK",
+            config: ``, //eslint-disable-line
+          };  
         case "SUBMITTEREMAIL":
           return {
             fieldType: "EMAIL",
             name: element.name,
             fieldId: "EMAIL",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true  \"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
           };
         default:
           return false;
       };
+    });
+
+    backendComponents.unshift({
+      fieldType: "ENABLE_CAPTCHA",
+      name: "ENABLE_CAPTCHA",
+      fieldId: "ENABLE_CAPTCHA",
+      value: checkCaptcha ? "true" : "false",
     });
 
     if (pics.length > 0) {
@@ -312,6 +334,10 @@ export default function EmailFormBuilderEdit () {
     navigate('/email-form-builder');
   };
 
+  const onCloseCaptcha = () => {
+    setShowCaptchaModal(false);
+  };
+
   const functionChangeState = (type: string, value: any) => {
     const currentComponents: any = copyArray(components);
     currentComponents[activeComponent?.index][type] = value;
@@ -336,8 +362,8 @@ export default function EmailFormBuilderEdit () {
     setPics(items);
   };
 
-  const handlerSubmitterEmail = (element: any) => {
-    if (element) {
+  const handlerSubmitterEmail = (value: any) => {
+    if (value) {
       handlerAddComponent("SUBMITTEREMAIL");
       setCheckSubmitterEmail(true);
     } else {
@@ -346,6 +372,17 @@ export default function EmailFormBuilderEdit () {
       })
       handlerDeleteComponent(indexSubmitterEmail);
       setCheckSubmitterEmail(false);
+    };
+  };
+
+  const handlerCaptcha = (value: any) => {
+    if (value === false) {
+      setCheckCaptcha(false);
+      setShowCaptchaModal(true);
+      setTitleCaptchaModalShow("Are you sure?");
+      setMessageCaptchaModalShow("Do you want to Disable Captcha in this form?");
+    } else {
+      setCheckCaptcha(value);
     };
   };
 
@@ -492,6 +529,12 @@ export default function EmailFormBuilderEdit () {
           },
         };
         break;
+      case "LINEBREAK":
+        component = {
+          uuid: uuidv4(),
+          type: item,
+        };
+        break;
       case "SUBMITTEREMAIL":
         component = {
           uuid: uuidv4(),
@@ -514,6 +557,7 @@ export default function EmailFormBuilderEdit () {
   };
 
   const handlerReorderComponent = (dragIndex: number, hoverIndex: number) => {
+    setActiveComponent(null);
     setComponents((prevComponent: any) =>
       update(prevComponent, {
         $splice: [
@@ -755,6 +799,25 @@ export default function EmailFormBuilderEdit () {
                 />
               </DragDrop>
             );
+          case "LINEBREAK":
+            return (
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.LineBreak 
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
+            );  
+
           case "SUBMITTEREMAIL":
             return (
               <DragDrop
@@ -856,9 +919,9 @@ export default function EmailFormBuilderEdit () {
       case "NUMBER":
         return (
           <EFBConfiguration.Number 
-          data={activeComponent?.data}
-          configList={objectFormAttribute[activeComponent?.data?.type]}
-          valueChange={(type: string, value: any) => {
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
+            valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
           />
@@ -921,6 +984,20 @@ export default function EmailFormBuilderEdit () {
           icon={CancelIcon}
           btnSubmitStyle='btn-warning'
         />
+        <ModalConfirm
+          open={showCaptchaModal}
+          cancelAction={() => {
+            setShowCaptchaModal(false);
+            setCheckCaptcha(true);
+          }}
+          title={titleCaptchaModalShow ?? ''}
+          cancelTitle="Cancel"
+          message={messageCaptchaModalShow ?? ''}
+          submitAction={onCloseCaptcha}
+          submitTitle="Yes"
+          icon={Recaptcha}
+          btnSubmitStyle='btn-warning'
+        />
         <form className="flex flex-col w-100 mt-[35px] gap-5">
           {/* TOP SECTION */}
           <div className="flex flex-col gap-3">
@@ -948,15 +1025,25 @@ export default function EmailFormBuilderEdit () {
               onAdd={handlerAddMultipleInput}
               onDelete={handlerDeleteMultipleInput}
             />
-            <CheckBox
-              defaultValue={checkSubmitterEmail}
-              updateFormValue={(event: any) => {
-                handlerSubmitterEmail(event.value);
-              }}
-              labelTitle="Also send to submitter email"
-              labelContainerStyle="justify-start"
-              containerStyle="ml-[225px] "
-            />
+            <div className='flex flex-row justify-start gap-5'>
+              <CheckBox
+                defaultValue={checkSubmitterEmail}
+                updateFormValue={(event: any) => {
+                  handlerSubmitterEmail(event.value);
+                }}
+                labelTitle="Also send to submitter email"
+                labelContainerStyle="justify-start"
+                containerStyle="ml-[225px] "
+              />
+              <CheckBox
+                defaultValue={checkCaptcha}
+                updateFormValue={(event: any) => {
+                  handlerCaptcha(event.value);
+                }}
+                labelTitle="Use Captcha"
+                labelContainerStyle="justify-start"
+              />
+            </div>
           </div>
 
           {/* DIVIDER SECTION */}

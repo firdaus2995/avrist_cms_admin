@@ -23,6 +23,7 @@ export const emailFormBuilderApi = createApi({
               postTypeGroup
               slug
               pic
+              enableCaptcha
               total
               attributeList {
                 id
