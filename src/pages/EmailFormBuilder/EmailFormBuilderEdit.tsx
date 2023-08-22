@@ -85,7 +85,7 @@ export default function EmailFormBuilderEdit () {
       const captcha: any = emailFormBuilderDetail?.enableCaptcha;
 
       const attributeList: any = emailFormBuilderDetail?.attributeList.map((element: any) => {
-        const config: any = JSON.parse(element?.config);
+        const config: any = element?.config !== "" ? JSON.parse(element?.config) : {};        
         const value: any = element?.value;
         const submmiterEmail: any = config?.send_submitted_form_to_email === "true";
 
@@ -265,6 +265,13 @@ export default function EmailFormBuilderEdit () {
             fieldId: "IMAGE",
             config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
+        case "LINEBREAK":
+          return {
+            fieldType: "LINE_BREAK",
+            name: "LINE_BREAK",
+            fieldId: "LINE_BREAK",
+            config: ``, //eslint-disable-line
+          };  
         case "SUBMITTEREMAIL":
           return {
             fieldType: "EMAIL",
@@ -522,6 +529,12 @@ export default function EmailFormBuilderEdit () {
           },
         };
         break;
+      case "LINEBREAK":
+        component = {
+          uuid: uuidv4(),
+          type: item,
+        };
+        break;
       case "SUBMITTEREMAIL":
         component = {
           uuid: uuidv4(),
@@ -544,6 +557,7 @@ export default function EmailFormBuilderEdit () {
   };
 
   const handlerReorderComponent = (dragIndex: number, hoverIndex: number) => {
+    setActiveComponent(null);
     setComponents((prevComponent: any) =>
       update(prevComponent, {
         $splice: [
@@ -785,6 +799,25 @@ export default function EmailFormBuilderEdit () {
                 />
               </DragDrop>
             );
+          case "LINEBREAK":
+            return (
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.LineBreak 
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
+            );  
+
           case "SUBMITTEREMAIL":
             return (
               <DragDrop
@@ -886,9 +919,9 @@ export default function EmailFormBuilderEdit () {
       case "NUMBER":
         return (
           <EFBConfiguration.Number 
-          data={activeComponent?.data}
-          configList={objectFormAttribute[activeComponent?.data?.type]}
-          valueChange={(type: string, value: any) => {
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
+            valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
           />

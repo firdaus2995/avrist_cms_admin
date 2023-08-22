@@ -187,6 +187,13 @@ export default function EmailFormBuilderNew () {
             fieldId: "IMAGE",
             config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
+        case "LINEBREAK":
+          return {
+            fieldType: "LINE_BREAK",
+            name: "LINE_BREAK",
+            fieldId: "LINE_BREAK",
+            config: ``, //eslint-disable-line
+          };
         case "SUBMITTEREMAIL":
           return {
             fieldType: "EMAIL",
@@ -443,6 +450,12 @@ export default function EmailFormBuilderNew () {
           },
         };
         break;
+      case "LINEBREAK":
+        component = {
+          uuid: uuidv4(),
+          type: item,
+        };
+        break;
       case "SUBMITTEREMAIL":
         component = {
           uuid: uuidv4(),
@@ -472,6 +485,7 @@ export default function EmailFormBuilderNew () {
   };
 
   const handlerReorderComponent = (dragIndex: number, hoverIndex: number) => {
+    setActiveComponent(null);
     setComponents((prevComponent: any) =>
       update(prevComponent, {
         $splice: [
@@ -706,6 +720,24 @@ export default function EmailFormBuilderNew () {
                 />
               </DragDrop>
             );
+          case "LINEBREAK":
+            return (
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.LineBreak 
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
+            );  
           case "SUBMITTEREMAIL":
             return (
               <DragDrop
@@ -807,9 +839,9 @@ export default function EmailFormBuilderNew () {
       case "NUMBER":
         return (
           <EFBConfiguration.Number 
-          data={activeComponent?.data}
-          configList={objectFormAttribute[activeComponent?.data?.type]}
-          valueChange={(type: string, value: any) => {
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
+            valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
           />
