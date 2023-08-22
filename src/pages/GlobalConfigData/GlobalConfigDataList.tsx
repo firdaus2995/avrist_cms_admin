@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useDeletePageMutation } from '@/services/PageManagement/pageManagementApi';
-import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeApi';
+import { useGetGlobalConfigDataListQuery } from '../../services/GlobalConfigData/globalConfigDataApi';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
@@ -65,7 +65,7 @@ export default function GlobalConfigDataList() {
   const [sortBy, setSortBy] = useState('id');
 
   // RTK GET DATA
-  const fetchQuery = useGetPostTypeListQuery({
+  const fetchQuery = useGetGlobalConfigDataListQuery({
     pageIndex,
     limit: pageLimit,
     direction,
@@ -79,8 +79,8 @@ export default function GlobalConfigDataList() {
 
   useEffect(() => {
     if (data) {
-      setListData(data?.postTypeList?.postTypeList);
-      setTotal(data?.postTypeList?.total);
+      setListData(data?.configList?.configs);
+      setTotal(data?.configList?.total);
     }
   }, [data]);
 
@@ -103,18 +103,26 @@ export default function GlobalConfigDataList() {
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]">Key</span>,
-      accessorKey: 'isUseCategory',
+      accessorKey: 'variable',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">{info.getValue() ? 'True' : 'False'}</p>
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
       ),
     },
     {
       header: () => <span className="text-[14px]">Value</span>,
-      accessorKey: 'isUseCategory',
+      accessorKey: 'value',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">{info.getValue() ? 'True' : 'False'}</p>
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
       ),
     },
     {
