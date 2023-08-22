@@ -6,7 +6,10 @@ import { getCredential } from '@/utils/Credential';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
+
 const baseUrl = import.meta.env.VITE_API_URL;
+const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
+const maxImgSize = import.meta.env.VITE_MAX_FILE_IMG_SIZE;
 
 function bytesToSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
@@ -52,6 +55,7 @@ export default function FileUploaderBase({
   id,
   disabled,
   label,
+  maxSize,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
@@ -77,7 +81,8 @@ export default function FileUploaderBase({
     const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
-    const maxFileSize = 5 * 1024 * 1024; // 5MB dalam bytes
+    const defaultFileSize = isDocument ? maxDocSize : maxImgSize;
+    const maxFileSize = maxSize || defaultFileSize;
 
     if (files[0].size > maxFileSize) {
       dispatch(
@@ -169,7 +174,9 @@ export default function FileUploaderBase({
             />
             <div className="flex flex-col justify-center items-center h-[150px]">
               <img src={UploadDocumentIcon} />
-              <span className="text-xs text-center mt-5">{label || "Drag and Drop Files or upload image"}</span>
+              <span className="text-xs text-center mt-5">
+                {label || 'Drag and Drop Files or upload image'}
+              </span>
             </div>
           </label>
         )}

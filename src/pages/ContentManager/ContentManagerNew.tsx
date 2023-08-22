@@ -498,6 +498,7 @@ export default function ContentManagerNew() {
                   <FormList.FileUploaderV2
                     {...field}
                     key={id}
+                    id={id}
                     fieldTypeLabel="IMAGE"
                     labelTitle={name}
                     isDocument={false}
