@@ -14,8 +14,10 @@ export default function FileUploaderV2({
   helperText,
   id,
   labelRequired = false,
+  labelText,
   border = true,
   disabled = false,
+  maxSize,
 }: any) {
   function convertToArr(arr: any[], key: string | number | undefined) {
     if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
@@ -46,7 +48,7 @@ export default function FileUploaderV2({
       <div className="flex flex-row">
         <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
           {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? ' *' : ''}</span>
+          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
         </Typography>
         <div
           className={`
@@ -61,12 +63,13 @@ export default function FileUploaderV2({
               id={id}
               isDocument={isDocument}
               multiple={multiple}
-              // onFilesChange={onChange}
+              label={labelText}
               onFilesChange={(e: any) => {
                 const values = convertToArr(e, 'response');
                 onChange(values);
               }}
               disabled={disabled}
+              maxSize={maxSize}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">

@@ -346,9 +346,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => {
-        mode === 'detail' ? <div /> : <span className="text-[14px]">Action</span>;
-      },
+      header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -413,9 +411,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => {
-        mode === 'detail' ? <div /> : <span className="text-[14px]">Action</span>;
-      },
+      header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -488,9 +484,11 @@ export default function PageTemplatesNew() {
       />
       {/*  THIS IS ATTRIBUTES FORM */}
       <ModalForm
+        height={640}
         open={openAddAttributesModal}
         formTitle="Add Attribute"
         submitTitle={t('btn.save')}
+        submitType="btn-success"
         cancelTitle={t('btn.cancel')}
         cancelAction={() => {
           setOpenAddAttributesModal(false);
@@ -499,8 +497,8 @@ export default function PageTemplatesNew() {
         <div className="flex flex-col gap-5 w-full">
           <div className="flex flex-row">
             <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-              Category
-              <span className={'text-reddist text-lg'}>{` *`}</span>
+              Attribute Type
+              <span className={'text-reddist text-lg'}>{`*`}</span>
             </Typography>
             <FormList.DropDown
               key="category"
@@ -509,6 +507,7 @@ export default function PageTemplatesNew() {
               resetValue={openAddAttributesModal}
               error={!!attributesErrors.fieldType}
               helperText={attributesErrors.fieldType}
+              themeColor="primary"
               items={listAttributes}
               onChange={(e: any) => {
                 setNewAttributes({
@@ -522,6 +521,7 @@ export default function PageTemplatesNew() {
             key="fieldId"
             labelTitle="Field ID"
             labelRequired
+            themeColor="primary"
             placeholder="Enter field ID"
             value={newAttributes.fieldId}
             error={!!attributesErrors.fieldId}
@@ -534,6 +534,7 @@ export default function PageTemplatesNew() {
           <FormList.TextAreaField
             key="description"
             labelTitle="Description"
+            themeColor="primary"
             placeholder="Enter description"
             value={newAttributes.description}
             onChange={(e: any) => {
@@ -546,7 +547,8 @@ export default function PageTemplatesNew() {
       {/*  THIS IS CONFIG FORM */}
       <ModalForm
         open={openAddConfigModal}
-        formTitle="Add Configs"
+        formTitle="Add Config"
+        submitType="btn-success"
         submitTitle={t('btn.save')}
         cancelTitle={t('btn.cancel')}
         cancelAction={() => {
@@ -691,6 +693,12 @@ export default function PageTemplatesNew() {
                   key="imagePreview"
                   labelTitle="Image Preview"
                   labelRequired
+                  labelText={
+                    <>
+                      Drag and Drop Image Template Preview or click to{' '}
+                      <span className="text-primary font-semibold">Browse</span>
+                    </>
+                  }
                   isDocument={false}
                   multiple={false}
                   error={!!errors?.imagePreview?.message}
