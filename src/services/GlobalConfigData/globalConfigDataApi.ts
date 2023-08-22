@@ -6,6 +6,21 @@ export const globalConfigDataApi = createApi({
   reducerPath: 'globalConfigDataApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
+    getGlobalConfigById: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query getConfig($variable: String) {
+            getConfig(variable: $variable) {
+              id
+              variable
+              value
+              description
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     getGlobalConfigDataList: builder.query<any, any>({
       query: payload => ({
         document: gql`
@@ -78,8 +93,24 @@ export const globalConfigDataApi = createApi({
         variables: payload,
       }),
     }),
+    deleteGlobalConfigData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation configDelete($id: Int!) {
+            configDelete(id: $id) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
-export const { useGetGlobalConfigDataListQuery, useCreateGlobalConfigDataMutation } =
-  globalConfigDataApi;
+export const {
+  useGetGlobalConfigDataListQuery,
+  useCreateGlobalConfigDataMutation,
+  useUpdateGlobalConfigDataMutation,
+  useDeleteGlobalConfigDataMutation,
+} = globalConfigDataApi;

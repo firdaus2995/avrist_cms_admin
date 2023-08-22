@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useDeletePageMutation } from '@/services/PageManagement/pageManagementApi';
-import { useGetGlobalConfigDataListQuery } from '../../services/GlobalConfigData/globalConfigDataApi';
+import {
+  useGetGlobalConfigDataListQuery,
+  useDeleteGlobalConfigDataMutation,
+} from '@/services/GlobalConfigData/globalConfigDataApi';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
@@ -75,7 +77,7 @@ export default function GlobalConfigDataList() {
   const { data } = fetchQuery;
 
   // RTK DELETE
-  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+  const [deleteData, { isLoading: deleteDataLoading }] = useDeleteGlobalConfigDataMutation();
 
   useEffect(() => {
     if (data) {
@@ -144,7 +146,7 @@ export default function GlobalConfigDataList() {
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
               onClick={() => {
-                onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                onClickDelete(info.getValue(), info?.row?.original?.title);
               }}
             />
           </div>
@@ -153,7 +155,7 @@ export default function GlobalConfigDataList() {
     },
   ];
 
-  const onClickPageDelete = (id: number, title: string) => {
+  const onClickDelete = (id: number, title: string) => {
     setIdDelete(id);
     setTitleConfirm('Are you sure?');
     setMessageConfirm(`Do you want to delete ${title}?`);
@@ -161,8 +163,8 @@ export default function GlobalConfigDataList() {
   };
 
   // FUNCTION FOR DELETE PAGE
-  const submitDeletePage = () => {
-    deletePage({ id: idDelete })
+  const submitDeleteData = () => {
+    deleteData({ id: idDelete })
       .unwrap()
       .then(async d => {
         setShowConfirm(false);
@@ -196,9 +198,9 @@ export default function GlobalConfigDataList() {
         title={titleConfirm}
         cancelTitle="Cancel"
         message={messageConfirm}
-        submitAction={submitDeletePage}
+        submitAction={submitDeleteData}
         submitTitle="Yes"
-        loading={deletePageLoading}
+        loading={deleteDataLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
       />

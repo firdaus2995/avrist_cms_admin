@@ -6,13 +6,22 @@ import { useForm, Controller } from 'react-hook-form';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import FormList from '@/components/molecules/FormList';
 
+import {
+  useCreateGlobalConfigDataMutation,
+  useUpdateGlobalConfigDataMutation,
+} from '@/services/GlobalConfigData/globalConfigDataApi';
+
+import { useAppDispatch } from '@/store';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 
 import CancelIcon from '@/assets/cancel.png';
 
+import { openToast } from '@/components/atoms/Toast/slice';
+
 export default function GlobalConfigDataNew() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   // FORM VALIDATION
   const {
@@ -38,13 +47,81 @@ export default function GlobalConfigDataNew() {
     }
   }, [location.pathname]);
 
+  // RTK CREATE
+  const [createGlobalConfig, { isLoading }] = useCreateGlobalConfigDataMutation();
+  // RTK EDIT
+  const [editGlobalConfig, { isLoading: isLoadingEdit }] = useUpdateGlobalConfigDataMutation();
+
   const onLeave = () => {
     setShowLeaveModal(false);
     navigate('/global-config-data');
   };
 
   const onSubmit = (e: any) => {
-    console.log(e);
+    if (e.pageId) {
+      onSubmitEdit(e);
+    } else {
+      onSubmitNew(e);
+    }
+  };
+
+  const onSubmitEdit = (e: any) => {
+    const payload = {
+      id: Number(e.pageId),
+      variable: e.pageFileName,
+      value: e.pageName,
+      description: e.pageDescription,
+    };
+    editGlobalConfig(payload)
+      .unwrap()
+      .then((d: any) => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('page-template.edit.success-msg', { name: d.configCreate.value }),
+          }),
+        );
+        navigate('/page-template');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('page-template.edit.failed-msg', { name: payload.value }),
+          }),
+        );
+      });
+  };
+
+  const onSubmitNew = (e: any) => {
+    const payload = {
+      variable: e.pageFileName,
+      value: e.pageName,
+      description: e.pageDescription,
+    };
+    createGlobalConfig(payload)
+      .unwrap()
+      .then((d: any) => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('page-template.add.success-msg', { name: d.configCreate.value }),
+          }),
+        );
+        navigate('/page-template');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('page-template.add.failed-msg', { name: payload.value }),
+          }),
+        );
+      });
   };
 
   return (
@@ -120,10 +197,10 @@ export default function GlobalConfigDataNew() {
               setMessageLeaveModalShow(t('modal.leave-confirmation'));
               setShowLeaveModal(true);
             }}>
-            {t('btn.cancel')}
+            {isLoading || isLoadingEdit ? 'Loading...' : t('btn.cancel')}
           </button>
           <button type="submit" className="btn btn-success btn-md text-white">
-            {t('btn.save')}
+            {isLoading || isLoadingEdit ? 'Loading...' : t('btn.save')}
           </button>
         </div>
       </form>
