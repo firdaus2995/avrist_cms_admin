@@ -145,7 +145,7 @@ export default function GlobalConfigDataList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <Link to={`edit/${info.getValue()}`}>
+          <Link to={`edit/${info.row?.original?.variable}`}>
             <div className="tooltip" data-tip={t('action.edit')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}

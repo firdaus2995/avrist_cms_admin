@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { useForm, Controller } from 'react-hook-form';
 import { t } from 'i18next';
 
@@ -7,7 +7,7 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import FormList from '@/components/molecules/FormList';
 
 import {
-  // useGetGlobalConfigByIdQuery,
+  useGetGlobalConfigByIdQuery,
   useCreateGlobalConfigDataMutation,
   useUpdateGlobalConfigDataMutation,
 } from '@/services/GlobalConfigData/globalConfigDataApi';
@@ -20,15 +20,17 @@ import CancelIcon from '@/assets/cancel.png';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function GlobalConfigDataNew() {
-  const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const params = useParams();
+  const location = useLocation();
 
   // FORM VALIDATION
   const {
     control,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm();
 
   // DEFAULT MODE
@@ -39,6 +41,14 @@ export default function GlobalConfigDataNew() {
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
+  // RTK CREATE
+  const [createGlobalConfig, { isLoading }] = useCreateGlobalConfigDataMutation();
+  // RTK EDIT
+  const [editGlobalConfig, { isLoading: isLoadingEdit }] = useUpdateGlobalConfigDataMutation();
+  // RTK GET DATA DETAIL
+  const fetchGlobalConfigQuery = useGetGlobalConfigByIdQuery(params?.key);
+  const { data: defaultGlobalConfig } = fetchGlobalConfigQuery;
+
   // SET DEFAULT PAGE MODE
   useEffect(() => {
     if (location.pathname.includes('/edit')) {
@@ -48,10 +58,31 @@ export default function GlobalConfigDataNew() {
     }
   }, [location.pathname]);
 
-  // RTK CREATE
-  const [createGlobalConfig, { isLoading }] = useCreateGlobalConfigDataMutation();
-  // RTK EDIT
-  const [editGlobalConfig, { isLoading: isLoadingEdit }] = useUpdateGlobalConfigDataMutation();
+  // FETCH DEFAULT FORM DATA FOR DETAIL / EDIT
+  useEffect(() => {
+    if (mode !== 'new') {
+      const refetch = async () => {
+        await fetchGlobalConfigQuery.refetch();
+      };
+      void refetch();
+    }
+  }, [mode]);
+
+  // FILL DATA FOR DETAIL / EDIT
+  useEffect(() => {
+    const data = defaultGlobalConfig?.getConfig;
+    if (data) {
+      const defaultVariable = data?.variable || '';
+      const defaultValue = data?.value || '';
+      const defaultDescription = data?.description || '';
+      const defaultId = data?.id || '';
+
+      setValue('key', defaultVariable);
+      setValue('value', defaultValue);
+      setValue('description', defaultDescription);
+      setValue('defaultId', defaultId);
+    }
+  }, [defaultGlobalConfig]);
 
   const onLeave = () => {
     setShowLeaveModal(false);
@@ -59,7 +90,7 @@ export default function GlobalConfigDataNew() {
   };
 
   const onSubmit = (e: any) => {
-    if (e.pageId) {
+    if (e.defaultId) {
       onSubmitEdit(e);
     } else {
       onSubmitNew(e);
@@ -68,7 +99,7 @@ export default function GlobalConfigDataNew() {
 
   const onSubmitEdit = (e: any) => {
     const payload = {
-      id: Number(e.pageId),
+      id: Number(e.defaultId),
       variable: e.key,
       value: e.value,
       description: e.description,
