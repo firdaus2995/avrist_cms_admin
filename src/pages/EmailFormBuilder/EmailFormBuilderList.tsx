@@ -11,7 +11,6 @@ import TableDelete from '../../assets/table-delete.svg';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
 import PaginationComponent from '@/components/molecules/Pagination';
-import CopyLink from '../../assets/copylink.svg';
 import PreviewModal from './PreviewModal';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
@@ -36,29 +35,6 @@ export default function EmailFormBuilderList() {
             : '-'}
         </p>
       ),
-    },
-    {
-      header: () => <span className="text-[14px]">Link</span>,
-      accessorKey: 'slug',
-      enableSorting: true,
-      cell: (info: any) => {
-        return (
-          <div className="flex gap-3">
-            <p className="text-[14px] truncate">
-              {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-                ? info.getValue()
-                : '-'}
-            </p>
-            <img
-              className="cursor-pointer"
-              src={CopyLink}
-              onClick={() => {
-                void navigator.clipboard.writeText(info.getValue());
-              }}
-            />
-          </div>
-        );
-      },
     },
     {
       header: () => <span className="text-[14px]">Action</span>,
