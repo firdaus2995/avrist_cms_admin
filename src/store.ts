@@ -12,6 +12,7 @@ import { contentTypeApi } from './services/ContentType/contentTypeApi';
 import { emailFormBuilderApi } from './services/EmailFormBuilder/emailFormBuilderApi';
 import { contentManagerApi } from './services/ContentManager/contentManagerApi';
 import { configApi } from './services/Config/configApi';
+import { globalConfigDataApi } from './services/GlobalConfigData/globalConfigDataApi';
 
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
@@ -40,6 +41,7 @@ export const store: any = configureStore({
     [emailFormBuilderApi.reducerPath]: emailFormBuilderApi.reducer,
     [contentManagerApi.reducerPath]: contentManagerApi.reducer,
     [configApi.reducerPath]: configApi.reducer,
+    [globalConfigDataApi.reducerPath]: globalConfigDataApi.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
@@ -53,6 +55,7 @@ export const store: any = configureStore({
       .concat(contentManagerApi.middleware)
       .concat(emailFormBuilderApi.middleware)
       .concat(configApi.middleware)
+      .concat(globalConfigDataApi.middleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
