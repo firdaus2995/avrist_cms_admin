@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-import { t } from 'i18next';
 import { useForm, Controller } from 'react-hook-form';
+import { t } from 'i18next';
+
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import FormList from '@/components/molecules/FormList';
 
 import {
+  // useGetGlobalConfigByIdQuery,
   useCreateGlobalConfigDataMutation,
   useUpdateGlobalConfigDataMutation,
 } from '@/services/GlobalConfigData/globalConfigDataApi';
@@ -68,9 +69,9 @@ export default function GlobalConfigDataNew() {
   const onSubmitEdit = (e: any) => {
     const payload = {
       id: Number(e.pageId),
-      variable: e.pageFileName,
-      value: e.pageName,
-      description: e.pageDescription,
+      variable: e.key,
+      value: e.value,
+      description: e.description,
     };
     editGlobalConfig(payload)
       .unwrap()
@@ -79,17 +80,17 @@ export default function GlobalConfigDataNew() {
           openToast({
             type: 'success',
             title: t('toast-success'),
-            message: t('page-template.edit.success-msg', { name: d.configCreate.value }),
+            message: `Success edit Global Config ${d.configCreate.value}`,
           }),
         );
-        navigate('/page-template');
+        navigate('/global-config-data');
       })
       .catch(() => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('page-template.edit.failed-msg', { name: payload.value }),
+            message: `Failed edit Global Config ${payload.value}`,
           }),
         );
       });
@@ -97,9 +98,9 @@ export default function GlobalConfigDataNew() {
 
   const onSubmitNew = (e: any) => {
     const payload = {
-      variable: e.pageFileName,
-      value: e.pageName,
-      description: e.pageDescription,
+      variable: e.key,
+      value: e.value,
+      description: e.description,
     };
     createGlobalConfig(payload)
       .unwrap()
@@ -108,17 +109,17 @@ export default function GlobalConfigDataNew() {
           openToast({
             type: 'success',
             title: t('toast-success'),
-            message: t('page-template.add.success-msg', { name: d.configCreate.value }),
+            message: `Success register Global Config ${d.configCreate.value}`,
           }),
         );
-        navigate('/page-template');
+        navigate('/global-config-data');
       })
       .catch(() => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('page-template.add.failed-msg', { name: payload.value }),
+            message: `Failed add Global Config ${payload.value}`,
           }),
         );
       });
@@ -182,6 +183,26 @@ export default function GlobalConfigDataNew() {
                 placeholder="Enter value"
                 error={!!errors?.value?.message}
                 helperText={errors?.value?.message}
+                border={false}
+              />
+            )}
+          />
+          <Controller
+            key="description"
+            name="description"
+            control={control}
+            defaultValue=""
+            rules={{
+              required: { value: false, message: `Description is required` },
+            }}
+            render={({ field }) => (
+              <FormList.TextAreaField
+                {...field}
+                key="description"
+                labelTitle="Description"
+                placeholder="Enter description"
+                error={!!errors?.description?.message}
+                helperText={errors?.description?.message}
                 border={false}
               />
             )}

@@ -109,6 +109,7 @@ export const globalConfigDataApi = createApi({
 });
 
 export const {
+  useGetGlobalConfigByIdQuery,
   useGetGlobalConfigDataListQuery,
   useCreateGlobalConfigDataMutation,
   useUpdateGlobalConfigDataMutation,

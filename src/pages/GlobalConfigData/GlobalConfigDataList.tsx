@@ -118,7 +118,19 @@ export default function GlobalConfigDataList() {
     {
       header: () => <span className="text-[14px]">Value</span>,
       accessorKey: 'value',
-      enableSorting: true,
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Description</span>,
+      accessorKey: 'description',
+      enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
