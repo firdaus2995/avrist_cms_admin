@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useDeletePageMutation } from '@/services/PageManagement/pageManagementApi';
-import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeApi';
+import {
+  useGetGlobalConfigDataListQuery,
+  useDeleteGlobalConfigDataMutation,
+} from '@/services/GlobalConfigData/globalConfigDataApi';
 import { useTranslation } from 'react-i18next';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
@@ -65,7 +67,7 @@ export default function GlobalConfigDataList() {
   const [sortBy, setSortBy] = useState('id');
 
   // RTK GET DATA
-  const fetchQuery = useGetPostTypeListQuery({
+  const fetchQuery = useGetGlobalConfigDataListQuery({
     pageIndex,
     limit: pageLimit,
     direction,
@@ -75,12 +77,12 @@ export default function GlobalConfigDataList() {
   const { data } = fetchQuery;
 
   // RTK DELETE
-  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+  const [deleteData, { isLoading: deleteDataLoading }] = useDeleteGlobalConfigDataMutation();
 
   useEffect(() => {
     if (data) {
-      setListData(data?.postTypeList?.postTypeList);
-      setTotal(data?.postTypeList?.total);
+      setListData(data?.configList?.configs);
+      setTotal(data?.configList?.total);
     }
   }, [data]);
 
@@ -103,18 +105,38 @@ export default function GlobalConfigDataList() {
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]">Key</span>,
-      accessorKey: 'isUseCategory',
+      accessorKey: 'variable',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">{info.getValue() ? 'True' : 'False'}</p>
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
       ),
     },
     {
       header: () => <span className="text-[14px]">Value</span>,
-      accessorKey: 'isUseCategory',
-      enableSorting: true,
+      accessorKey: 'value',
+      enableSorting: false,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">{info.getValue() ? 'True' : 'False'}</p>
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Description</span>,
+      accessorKey: 'description',
+      enableSorting: false,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
       ),
     },
     {
@@ -123,7 +145,7 @@ export default function GlobalConfigDataList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <Link to={`edit/${info.getValue()}`}>
+          <Link to={`edit/${info.row?.original?.variable}`}>
             <div className="tooltip" data-tip={t('action.edit')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
@@ -136,7 +158,7 @@ export default function GlobalConfigDataList() {
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
               onClick={() => {
-                onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                onClickDelete(info.getValue(), info?.row?.original?.title);
               }}
             />
           </div>
@@ -145,7 +167,7 @@ export default function GlobalConfigDataList() {
     },
   ];
 
-  const onClickPageDelete = (id: number, title: string) => {
+  const onClickDelete = (id: number, title: string) => {
     setIdDelete(id);
     setTitleConfirm('Are you sure?');
     setMessageConfirm(`Do you want to delete ${title}?`);
@@ -153,8 +175,8 @@ export default function GlobalConfigDataList() {
   };
 
   // FUNCTION FOR DELETE PAGE
-  const submitDeletePage = () => {
-    deletePage({ id: idDelete })
+  const submitDeleteData = () => {
+    deleteData({ id: idDelete })
       .unwrap()
       .then(async d => {
         setShowConfirm(false);
@@ -188,9 +210,9 @@ export default function GlobalConfigDataList() {
         title={titleConfirm}
         cancelTitle="Cancel"
         message={messageConfirm}
-        submitAction={submitDeletePage}
+        submitAction={submitDeleteData}
         submitTitle="Yes"
-        loading={deletePageLoading}
+        loading={deleteDataLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
       />

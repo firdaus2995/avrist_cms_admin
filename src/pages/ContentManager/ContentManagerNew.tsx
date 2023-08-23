@@ -34,12 +34,6 @@ export default function ContentManagerNew() {
     attributeList: [],
   });
 
-  const [mainForm] = useState<any>({
-    title: '',
-    shortDesc: '',
-    categoryName: '',
-  });
-
   // FORM VALIDATION
   const {
     control,
@@ -94,7 +88,6 @@ export default function ContentManagerNew() {
 
   // TABLE PAGINATION STATE
   const [categoryList, setCategoryList] = useState<any>([]);
-  const [postTypeId] = useState(1);
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(5);
   const [direction] = useState('asc');
@@ -118,7 +111,7 @@ export default function ContentManagerNew() {
   }, [postTypeDetailData]);
 
   const fetchGetCategoryList = useGetCategoryListQuery({
-    postTypeId,
+    postTypeId: id,
     pageIndex,
     limit: pageLimit,
     direction,
@@ -138,6 +131,13 @@ export default function ContentManagerNew() {
       setCategoryList(tempCategoryList);
     }
   }, [categoryListData]);
+
+  useEffect(() => {
+    const refetch = async () => {
+      await fetchGetCategoryList.refetch();
+    };
+    void refetch();
+  }, []);
 
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
@@ -206,7 +206,7 @@ export default function ContentManagerNew() {
       shortDesc: value.shortDesc,
       isDraft: false,
       postTypeId: id,
-      categoryName: postTypeDetail?.isUseCategory ? mainForm.categoryName : '',
+      categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
 
