@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {useClickAway} from 'react-use';
+import { useClickAway } from 'react-use';
 
 import Bell from '../../../assets/bell.svg';
 import NotifCheck from '../../../assets/notif-check.svg';
