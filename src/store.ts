@@ -57,7 +57,7 @@ export const store: any = configureStore({
       .concat(contentManagerApi.middleware)
       .concat(emailFormBuilderApi.middleware)
       .concat(configApi.middleware)
-      .concat(globalConfigDataApi.middleware),
+      .concat(globalConfigDataApi.middleware)
       .concat(notificationApi.middleware)
 });
 
