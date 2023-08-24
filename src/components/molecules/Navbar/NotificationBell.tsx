@@ -1,47 +1,87 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useClickAway } from 'react-use';
 
 import Bell from '../../../assets/bell.svg';
 import NotifCheck from '../../../assets/notif-check.svg';
 import { useAppDispatch } from '@/store';
 import { Menu, Transition } from '@headlessui/react';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
+import { useGetNotificationQuery, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
+import dayjs from 'dayjs';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 const NotificationBell: React.FC = () => {
+  const ref = useRef(null);
   const dispatch = useAppDispatch();
+
   const [notifications, setNotifications] = useState<any>([]);
+  const [limit, setLimit] = useState<number>(5);
+  const [total, setTotal] = useState<any>(0);
+
+  useClickAway(ref, () => {
+    setTotal(0);
+    setLimit(5);
+  });
+
+  // RTK SEE NOTIFICATION
+  const [ seeNotification ] = useSeeNotificationMutation();
+
+  // RTK GET NOTIFICATION
+  const fetchQuery = useGetNotificationQuery({
+    limit,
+  }, {
+    refetchOnMountOrArgChange: true,
+  });
 
   useEffect(() => {
-    setNotifications([
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky, your password has been updated!',
-        date: 'Jun 30, 2023 at 19:25',
-        isRead: false,
-      },
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky your Email Form Builder has been Reviewed',
-        date: 'Jun 30, 2023 at 19:35',
-        isRead: true,
-      },
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky you got new approval task for Email Form Builder waiting for you, please do this task immediately',
-        date: 'Jun 30, 2023 at 19:45',
-        isRead: false,
-      },
-    ])
-  }, []);
-
-  const countUnreadedNotification = () => {
-    let count = 0;
-    for (const iterator of notifications) {
-      if (iterator.isRead === false) {
-        count++;
+    const loadMore = async () => {
+      try {
+        const backendData: any = await fetchQuery.refetch();
+        if (backendData) {
+          setTotal(backendData?.data?.notificationList.total);
+          setNotifications(backendData?.data?.notificationList?.notifications);
+        };    
+      } catch (error) {
+        console.error("Error while fetching data:", error);
       };
     };
-    
-    return count;
+
+    if (limit > 5) {
+      void loadMore();
+    };
+  }, [limit])
+
+  // IMPLEMENT IT LATER
+  // const countUnreadedNotification = () => {
+  //   let count = 0;
+  //   for (const iterator of notifications) {
+  //     if (iterator.isRead === false) {
+  //       count++;
+  //     };
+  //   };
+  //   return count;
+  // };
+
+  const handlerOpenNotification = async (open: boolean) => {
+    if (!open) {
+      try {
+        await seeNotification();
+        const backendData: any = await fetchQuery.refetch();
+        if (backendData) {
+          setTotal(backendData?.data?.notificationList.total);
+          setNotifications(backendData?.data?.notificationList?.notifications);
+        };  
+      } catch (error) {
+        console.error("Error while fetching data:", error);
+      };
+    } else {
+      setTotal(0);
+      setLimit(5);
+    };
+  };
+
+  const handlerFetchMore = async () => {
+    setLimit(limit + 5);
   };
 
   const handlerReadAll = (event: any) => {
@@ -49,19 +89,29 @@ const NotificationBell: React.FC = () => {
   };
 
   return (
-    <Menu as="div" className="relative inline-block text-left z-[999]">
-      {({ close }) => (
+    <Menu 
+      ref={ref}
+      as="div" 
+      className="relative inline-block text-left z-[999]"
+    >
+      {({ open, close }) => (
         <React.Fragment>
-          <Menu.Button className={'h-[56px]'}>
+          <Menu.Button 
+            className={'h-[56px]'}
+            onClick={() => {
+              void handlerOpenNotification(open);
+            }}
+          >
             <div className="relative cursor-pointer">
               <img src={Bell} alt="Notif" className="w-[48px]" />
-              {
+              {/* IMPLEMENT IT LATER */}
+              {/* {
                 notifications.length > 0 && (
                   <div className='absolute right-0 top-0 w-[24px] text-reddist font-bold border-2 border-light-purple rounded-full bg-light-purple-2'>
                     {countUnreadedNotification()}
                   </div>
                 )
-              }
+              } */}
             </div>
           </Menu.Button>
           <Transition
@@ -81,7 +131,14 @@ const NotificationBell: React.FC = () => {
                   <span className='text-[14px] font-bold text-purple'>Mark All as Read</span>
                 </div>
               </div>
-              <div className='px-[16px] border-[#D6D6D6]'>
+              <InfiniteScroll
+                className='px-[16px] border-[#D6D6D6]'
+                dataLength={total}
+                next={handlerFetchMore}
+                loader={''}
+                hasMore={notifications.length < total}
+                height={530}
+              >
                 {
                   notifications.length > 0 && (
                     notifications.map((element: any, index: number) => (
@@ -89,14 +146,14 @@ const NotificationBell: React.FC = () => {
                         <div className={`mt-[6px] w-[6px] h-[6px] min-w-[6px] rounded-full ${element.isRead ? 'bg-white' : 'bg-purple'}`} />
                         <div className='flex flex-col flex-1 gap-[6px]'>
                           <h2 className={`text-[12px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
-                          <h4 className='text-[14px] text-body-text-2'>{element.body}</h4>
-                          <h6 className='text-[12px] text-body-text-1'>{element.date}</h6>
+                          <h4 className='text-[14px] text-body-text-2'>{element.content}</h4>
+                          <h6 className='text-[12px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
                         </div>
                       </div>
                     ))
                   )
                 }
-              </div>
+              </InfiniteScroll>
               <div className='flex flex-row justify-end p-[16px]'>
                 <h2
                   className='text-[12px] font-bold text-purple cursor-pointer'
@@ -112,7 +169,6 @@ const NotificationBell: React.FC = () => {
           </Transition>
         </React.Fragment>
       )}
-
     </Menu>
   );
 };

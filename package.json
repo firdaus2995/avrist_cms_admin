@@ -42,9 +42,11 @@
     "react-headless-pagination": "^1.1.4",
     "react-hook-form": "^7.45.2",
     "react-i18next": "^12.2.2",
+    "react-infinite-scroll-component": "^6.1.0",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.10.0",
     "react-sortable-tree-theme-full-node-drag": "^1.1.0",
+    "react-use": "^17.4.0",
     "uuid": "^9.0.0",
     "yup": "^1.2.0"
   },
