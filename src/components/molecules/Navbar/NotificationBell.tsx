@@ -5,10 +5,15 @@ import NotifCheck from '../../../assets/notif-check.svg';
 import { useAppDispatch } from '@/store';
 import { Menu, Transition } from '@headlessui/react';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
+import { getCredential } from '@/utils/Credential';
 
+const baseUrl = import.meta.env.VITE_API_URL;
+const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
 const NotificationBell: React.FC = () => {
+  const token = getCredential().accessToken;
   const dispatch = useAppDispatch();
   const [notifications, setNotifications] = useState<any>([]);
+  const [count, setCount] = useState(0);
 
   useEffect(() => {
     setNotifications([
@@ -33,16 +38,32 @@ const NotificationBell: React.FC = () => {
     ])
   }, []);
 
-  const countUnreadedNotification = () => {
-    let count = 0;
-    for (const iterator of notifications) {
-      if (iterator.isRead === false) {
-        count++;
-      };
-    };
-    
-    return count;
-  };
+  const getCount = async () => {
+    await fetch(`${baseUrl}/notifications/count`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then(async (response) => await response.json())
+    .then((data) => {
+      setCount(data?.data?.result)
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
+
+  useEffect(() => {
+  
+    const interval = setInterval(() => {
+      if(token){
+        void getCount()
+      }
+    }, intervalTime);
+
+    return () => { clearInterval(interval); };
+  }, []);
 
   const handlerReadAll = (event: any) => {
     console.log(event);
@@ -56,9 +77,9 @@ const NotificationBell: React.FC = () => {
             <div className="relative cursor-pointer">
               <img src={Bell} alt="Notif" className="w-[48px]" />
               {
-                notifications.length > 0 && (
+                count > 0 && (
                   <div className='absolute right-0 top-0 w-[24px] text-reddist font-bold border-2 border-light-purple rounded-full bg-light-purple-2'>
-                    {countUnreadedNotification()}
+                    {count}
                   </div>
                 )
               }
