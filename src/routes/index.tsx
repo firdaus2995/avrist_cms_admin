@@ -145,7 +145,7 @@ export default function RoutesComponent() {
           {/* GLOBAL CONFIG DATA */}
           <Route path="global-config-data" element={<GlobalConfigDataPage />} />
           <Route path="global-config-data/new" element={<GlobalConfigDataNewPage />} />
-          <Route path="global-config-data/edit/:id" element={<GlobalConfigDataNewPage />} />
+          <Route path="global-config-data/edit/:key" element={<GlobalConfigDataNewPage />} />
         </Route>
       </Route>
       <Route path="*" element={<NotFoundPage />} />

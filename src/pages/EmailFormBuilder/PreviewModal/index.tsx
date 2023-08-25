@@ -9,17 +9,27 @@ import { v4 as uuidv4 } from 'uuid';
 
 export default function PreviewModal(props: any) {
   const { open, toggle, id } = props;
-  // const [previewData, setPreviewData] = useState<any>({});
-  const { data, isLoading } = useGetEmailFormBuilderDetailQuery({ id, pageIndex: 0, limit: 100 });
+  const fetchGetEmailFormBuilder = useGetEmailFormBuilderDetailQuery({
+    id,
+    pageIndex: 0,
+    limit: 100,
+  });
+  const { data, isLoading } = fetchGetEmailFormBuilder;
   const [listData, setListData] = useState([]);
   const nameId: any = uuidv4();
 
   useEffect(() => {
     if (data) {
-      // setPreviewData(data?.postTypeDetail);
       setListData(data?.postTypeDetail?.attributeList);
     }
   }, [data]);
+
+  useEffect(() => {
+    const refetch = async () => {
+      await fetchGetEmailFormBuilder.refetch();
+    };
+    void refetch();
+  }, [open]);
 
   const renderFormList = () => {
     return listData.map(({ name, fieldType, config }) => {
