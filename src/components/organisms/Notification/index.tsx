@@ -7,37 +7,36 @@ import DeleteSmall from '../../../assets/delete-small.svg';
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { CheckBox } from "@/components/atoms/Input/CheckBox";
 import { copyArray } from "@/utils/logicHelper";
+import dayjs from "dayjs";
 
-const Notification = () => {
+const Notification = ({
+  limit,
+  setLimit,
+  total,
+  setTotal,
+  seeNotification,
+  fetchNotification,
+}: any) => {
   const navigate = useNavigate();
   
   const [isSelectedAll, setIsSelectedAll] = useState<any>(false);
   const [notifications, setNotifications] = useState<any>([]);
 
   useEffect(() => {
-    setNotifications([
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky, your password has been updated!',
-        date: 'Jun 30, 2023 at 19:25',
-        isRead: false,
-        isSelected: false,
-      },
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky your Email Form Builder has been Reviewed',
-        date: 'Jun 30, 2023 at 19:35',
-        isRead: true,
-        isSelected: false,
-      },
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky you got new approval task for Email Form Builder waiting for you, please do this task immediately',
-        date: 'Jun 30, 2023 at 19:45',
-        isRead: false,
-        isSelected: false,
-      },
-    ])
+    const loadFirst = async () => {
+      try {
+        await seeNotification();
+        const backendData: any = await fetchNotification.refetch();
+        if (backendData) {
+          setTotal(backendData?.data?.notificationList.total);
+          setNotifications(backendData?.data?.notificationList?.notifications);
+        };    
+      } catch (error) {
+        console.error("Error while fetching data:", error);
+      };
+    };
+
+    void loadFirst();
   }, []);
 
   useEffect(() => {
@@ -140,8 +139,8 @@ const Notification = () => {
                   </div>
                   <div className="flex flex-col flex-1 gap-[4px]">
                     <h2 className={`text-[14px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
-                    <h4 className='text-[16px] text-body-text-2'>{element.body}</h4>
-                    <h6 className='text-[14px] text-body-text-1'>{element.date}</h6>
+                    <h4 className='text-[16px] text-body-text-2'>{element.content}</h4>
+                    <h6 className='text-[14px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
                   </div>  
                   <div className="flex items-center justify-end min-w-[100px]">
                     {
