@@ -209,7 +209,7 @@ export default function ContentManagerNew() {
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
-
+    console.log(payload)
     createContentData(payload)
       .unwrap()
       .then(() => {
