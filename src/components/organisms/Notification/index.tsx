@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import dayjs from "dayjs";
 
 import NotifCheck from '../../../assets/notif-check.svg';
 import NoNotifications from '../../../assets/no-notifications.svg';
@@ -7,7 +8,6 @@ import DeleteSmall from '../../../assets/delete-small.svg';
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { CheckBox } from "@/components/atoms/Input/CheckBox";
 import { copyArray } from "@/utils/logicHelper";
-import dayjs from "dayjs";
 
 const Notification = ({
   limit,
@@ -21,6 +21,7 @@ const Notification = ({
   
   const [isSelectedAll, setIsSelectedAll] = useState<any>(false);
   const [notifications, setNotifications] = useState<any>([]);
+  const [selected, setSelected] = useState<any>(0);
 
   useEffect(() => {
     const loadFirst = async () => {
@@ -48,6 +49,7 @@ const Notification = ({
       };
     });
 
+    setSelected(selected.length);
     if (selected.length === notifications.length) {
       setIsSelectedAll(true);
     } else {
@@ -111,7 +113,7 @@ const Notification = ({
           />
         </div>
         {
-          isSelectedAll && (
+          selected > 0 && (
             <div className="flex flex-row items-center justify-end gap-3 cursor-pointer">
               <img className="w-[18px] h-[18px]" src={DeleteSmall} />
               <p className="text-[14px] text-body-text-2">Clear All Notifications</p>
