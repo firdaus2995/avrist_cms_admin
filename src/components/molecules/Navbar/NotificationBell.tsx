@@ -8,13 +8,46 @@ import NotifCheck from '../../../assets/notif-check.svg';
 import { useAppDispatch } from '@/store';
 import { Menu, Transition } from '@headlessui/react';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
+import { getCredential } from '@/utils/Credential';
 import { useGetNotificationQuery, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
 
+const baseUrl = import.meta.env.VITE_API_URL;
+const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
 const NotificationBell: React.FC = () => {
+  const token = getCredential().accessToken;
   const ref = useRef(null);
   const dispatch = useAppDispatch();
 
   const [notifications, setNotifications] = useState<any>([]);
+  const [count, setCount] = useState(0);
+
+  const getCount = async () => {
+    await fetch(`${baseUrl}/notifications/count`, {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    .then(async (response) => await response.json())
+    .then((data) => {
+      setCount(data?.data?.result)
+    })
+    .catch(err => {
+      console.log(err);
+    });
+  }
+
+  useEffect(() => {
+  
+    const interval = setInterval(() => {
+      if(token){
+        void getCount()
+      }
+    }, intervalTime);
+
+    return () => { clearInterval(interval); };
+  }, []);
+
   const [limit, setLimit] = useState<number>(5);
   const [total, setTotal] = useState<any>(0);
 
@@ -50,17 +83,6 @@ const NotificationBell: React.FC = () => {
       void loadMore();
     };
   }, [limit]);
-
-  // IMPLEMENT IT LATER
-  // const countUnreadedNotification = () => {
-  //   let count = 0;
-  //   for (const iterator of notifications) {
-  //     if (iterator.isRead === false) {
-  //       count++;
-  //     };
-  //   };
-  //   return count;
-  // };
 
   const handlerOpenNotification = async (open: boolean) => {
     if (!open) {
@@ -104,14 +126,13 @@ const NotificationBell: React.FC = () => {
           >
             <div className="relative cursor-pointer">
               <img src={Bell} alt="Notif" className="w-[48px]" />
-              {/* IMPLEMENT IT LATER */}
-              {/* {
-                notifications.length > 0 && (
+              {
+                count > 0 && (
                   <div className='absolute right-0 top-0 w-[24px] text-reddist font-bold border-2 border-light-purple rounded-full bg-light-purple-2'>
-                    {countUnreadedNotification()}
+                    {count}
                   </div>
                 )
-              } */}
+              }
             </div>
           </Menu.Button>
           <Transition
