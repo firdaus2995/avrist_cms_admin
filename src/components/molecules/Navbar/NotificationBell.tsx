@@ -21,29 +21,6 @@ const NotificationBell: React.FC = () => {
   const [notifications, setNotifications] = useState<any>([]);
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    setNotifications([
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky, your password has been updated!',
-        date: 'Jun 30, 2023 at 19:25',
-        isRead: false,
-      },
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky your Email Form Builder has been Reviewed',
-        date: 'Jun 30, 2023 at 19:35',
-        isRead: true,
-      },
-      {
-        title: 'New Update!',
-        body: 'Hey Rifky you got new approval task for Email Form Builder waiting for you, please do this task immediately',
-        date: 'Jun 30, 2023 at 19:45',
-        isRead: false,
-      },
-    ])
-  }, []);
-
   const getCount = async () => {
     await fetch(`${baseUrl}/notifications/count`, {
       method: "GET",
