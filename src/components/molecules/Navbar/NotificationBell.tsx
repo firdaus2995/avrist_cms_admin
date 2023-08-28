@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { useEffect, useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
 
@@ -7,8 +9,6 @@ import { useAppDispatch } from '@/store';
 import { Menu, Transition } from '@headlessui/react';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
 import { useGetNotificationQuery, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
-import dayjs from 'dayjs';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const NotificationBell: React.FC = () => {
   const ref = useRef(null);
@@ -49,7 +49,7 @@ const NotificationBell: React.FC = () => {
     if (limit > 5) {
       void loadMore();
     };
-  }, [limit])
+  }, [limit]);
 
   // IMPLEMENT IT LATER
   // const countUnreadedNotification = () => {
@@ -80,7 +80,7 @@ const NotificationBell: React.FC = () => {
     };
   };
 
-  const handlerFetchMore = async () => {
+  const handlerFetchMore = () => {
     setLimit(limit + 5);
   };
 
@@ -133,11 +133,11 @@ const NotificationBell: React.FC = () => {
               </div>
               <InfiniteScroll
                 className='px-[16px] border-[#D6D6D6]'
-                dataLength={total}
+                dataLength={notifications.length}
                 next={handlerFetchMore}
                 loader={''}
-                hasMore={notifications.length < total}
-                height={530}
+                hasMore={limit < total}
+                height={500}
               >
                 {
                   notifications.length > 0 && (
