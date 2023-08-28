@@ -1,6 +1,7 @@
+import dayjs from "dayjs";
+import InfiniteScroll from "react-infinite-scroll-component";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import dayjs from "dayjs";
 
 import NotifCheck from '../../../assets/notif-check.svg';
 import NoNotifications from '../../../assets/no-notifications.svg';
@@ -57,6 +58,24 @@ const Notification = ({
     };
   }, [JSON.stringify(notifications)]);
 
+  useEffect(() => {
+    const loadMore = async () => {
+      try {
+        const backendData: any = await fetchNotification.refetch();
+        if (backendData) {
+          setTotal(backendData?.data?.notificationList.total);
+          setNotifications(backendData?.data?.notificationList?.notifications);
+        };    
+      } catch (error) {
+        console.error("Error while fetching data:", error);
+      };
+    };
+
+    if (limit > 10) {
+      void loadMore();
+    };
+  }, [limit]);
+
   const goBack = () => {
     navigate(-1);
   };
@@ -78,6 +97,10 @@ const Notification = ({
     const newNotifications = copyArray(notifications);
     newNotifications[index].isSelected = value;
     setNotifications(newNotifications);
+  };
+
+  const handlerFetchMore = () => {
+    setLimit(limit + 5);
   };
 
   const ReadAllButton = () => {
@@ -123,7 +146,14 @@ const Notification = ({
       </div>
       {
         notifications.length > 0 ? (
-          <div className="flex flex-col">
+          <InfiniteScroll
+            className="flex flex-col"
+            dataLength={notifications.length}
+            next={handlerFetchMore}
+            loader={''}
+            hasMore={limit < total}
+            height={1050}
+          >
             {
               notifications.map((element: any, index: number) => (
                 <div 
@@ -157,7 +187,7 @@ const Notification = ({
                 </div>
               ))
             }
-          </div>
+          </InfiniteScroll>
         ) : (
           <div className="flex justify-center p-[150px]">
             <img className="w-[150px]" src={NoNotifications} />

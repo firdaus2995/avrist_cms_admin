@@ -26,8 +26,6 @@ const Layout: React.FC<any> = props => {
   // RTK GET NOTIFICATION
   const fetchNotification = useGetNotificationQuery({
     limit,
-  }, {
-    refetchOnMountOrArgChange: true,
   });
 
   useEffect(() => {
