@@ -17,7 +17,6 @@ const NotificationBell: React.FC = () => {
   const [notifications, setNotifications] = useState<any>([]);
   const [limit, setLimit] = useState<number>(5);
   const [total, setTotal] = useState<any>(0);
-  const [hasMore, setHasMore] = useState<any>(false);
 
   useClickAway(ref, () => {
     setTotal(0);
