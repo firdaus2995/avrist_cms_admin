@@ -16,7 +16,7 @@ import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { copyArray } from '@/utils/logicHelper';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
-import { useGetNotificationQuery, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
+import { useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
 
 const Layout: React.FC<any> = props => {
   const location = useLocation();
@@ -38,6 +38,9 @@ const Layout: React.FC<any> = props => {
   const fetchNotification = useGetNotificationQuery({
     limit,
   });
+
+  // RTK READ NOTIFICATION
+  const [ readNotification ] = useReadNotificationMutation();
 
   useEffect(() => {
     dispatch(setActivatedNotificationPage(false));
@@ -99,8 +102,20 @@ const Layout: React.FC<any> = props => {
     navigate(-1);
   };
 
-  const handlerReadAll = () => {
-    console.log("READ_ALL");
+  const handlerReadNotificationAll = async () => {
+    const payload = {
+      notificationId: "all",
+    };
+    try {
+      void await readNotification(payload);
+      const backendData: any = await fetchNotification.refetch();
+      if (backendData) {
+        setTotal(backendData?.data?.notificationList.total);
+        setNotifications(backendData?.data?.notificationList?.notifications);
+      };
+    } catch (error) {
+      console.log(error);
+    };
   };
 
   const handlerSelectAll = (value: any, ) => {
@@ -118,6 +133,22 @@ const Layout: React.FC<any> = props => {
     setNotifications(newNotifications);
   };
 
+  const handlerReadNotificationSingle = async (id: any) => {
+    const payload = {
+      notificationId: id.toString(),
+    };
+    try {
+      void await readNotification(payload);
+      const backendData: any = await fetchNotification.refetch();
+      if (backendData) {
+        setTotal(backendData?.data?.notificationList.total);
+        setNotifications(backendData?.data?.notificationList?.notifications);
+      };
+    } catch (error) {
+      console.log(error);
+    };
+  };
+
   const handlerFetchMore = () => {
     setLimit(limit + 5);
   };
@@ -127,7 +158,7 @@ const Layout: React.FC<any> = props => {
       <div 
         className="flex flex-row gap-3 cursor-pointer"
         onClick={() => {
-          handlerReadAll();
+          void handlerReadNotificationAll();
         }}
       >
         <img className="w-[18px]" src={NotifCheck} />
@@ -192,7 +223,7 @@ const Layout: React.FC<any> = props => {
                     next={handlerFetchMore}
                     loader={''}
                     hasMore={limit < total}
-                    height={1050}
+                    height={900}
                   >
                     {
                       notifications.map((element: any, index: number) => (
@@ -209,7 +240,12 @@ const Layout: React.FC<any> = props => {
                               }}        
                             />
                           </div>
-                          <div className="flex flex-col flex-1 gap-[4px]">
+                          <div 
+                            className="flex flex-col flex-1 gap-[4px] cursor-pointer"
+                            onClick={() => {
+                              void handlerReadNotificationSingle(element.id)
+                            }}
+                          >
                             <h2 className={`text-[14px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
                             <h4 className='text-[16px] text-body-text-2'>{element.content}</h4>
                             <h6 className='text-[14px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
