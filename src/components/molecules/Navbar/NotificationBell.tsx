@@ -13,6 +13,7 @@ import { useGetNotificationQuery, useSeeNotificationMutation } from '@/services/
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
+
 const NotificationBell: React.FC = () => {
   const token = getCredential().accessToken;
   const ref = useRef(null);
@@ -20,6 +21,8 @@ const NotificationBell: React.FC = () => {
 
   const [notifications, setNotifications] = useState<any>([]);
   const [count, setCount] = useState(0);
+  const [limit, setLimit] = useState<number>(5);
+  const [total, setTotal] = useState<any>(0);
 
   const getCount = async () => {
     await fetch(`${baseUrl}/notifications/count`, {
@@ -37,20 +40,6 @@ const NotificationBell: React.FC = () => {
     });
   }
 
-  useEffect(() => {
-  
-    const interval = setInterval(() => {
-      if(token){
-        void getCount()
-      }
-    }, intervalTime);
-
-    return () => { clearInterval(interval); };
-  }, []);
-
-  const [limit, setLimit] = useState<number>(5);
-  const [total, setTotal] = useState<any>(0);
-
   useClickAway(ref, () => {
     setTotal(0);
     setLimit(5);
@@ -65,6 +54,16 @@ const NotificationBell: React.FC = () => {
   }, {
     refetchOnMountOrArgChange: true,
   });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if(token){
+        void getCount()
+      }
+    }, intervalTime);
+
+    return () => { clearInterval(interval); };
+  }, []);
 
   useEffect(() => {
     const loadMore = async () => {
@@ -167,7 +166,7 @@ const NotificationBell: React.FC = () => {
                         <div className={`mt-[6px] w-[6px] h-[6px] min-w-[6px] rounded-full ${element.isRead ? 'bg-white' : 'bg-purple'}`} />
                         <div className='flex flex-col flex-1 gap-[6px]'>
                           <h2 className={`text-[12px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
-                          <h4 className='text-[14px] text-body-text-2'>{element.content}</h4>
+                          <h4 className='text-[14px] text-body-text-2 cursor-pointer'>{element.content}</h4>
                           <h6 className='text-[12px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
                         </div>
                       </div>

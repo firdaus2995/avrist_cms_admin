@@ -60,8 +60,10 @@ const Layout: React.FC<any> = props => {
       };
     };
 
-    void loadFirst();
-  }, []);
+    if (activatedNotificationPage) {
+      void loadFirst();
+    };
+  }, [activatedNotificationPage]);
 
   useEffect(() => {
     const loadMore = async () => {
