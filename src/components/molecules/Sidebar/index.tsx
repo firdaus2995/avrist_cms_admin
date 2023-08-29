@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { To, useLocation, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 
 import Menu from '@/assets/menu.png';
@@ -11,10 +11,15 @@ import { clearAuth } from '@/services/Login/slice';
 import { sidebarList } from './list';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { InputPassword } from '@/components/atoms/Input/InputPassword';
-import { useChangePasswordUserProfileMutation, useEditUserProfileMutation, useGetUserProfileQuery } from '../../../services/User/userApi';
-import { useAppDispatch } from '@/store';
+import {
+  useChangePasswordUserProfileMutation,
+  useEditUserProfileMutation,
+  useGetUserProfileQuery,
+} from '../../../services/User/userApi';
+import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { t } from 'i18next';
+import { getCredential } from '@/utils/Credential';
 
 interface ISidebar {
   open: boolean;
@@ -51,9 +56,8 @@ const HeadSidebar: React.FC<IHeadSidebar> = props => {
 };
 
 interface IMenuSidebar extends ISidebar {}
-const MenuSidebar: React.FC<IMenuSidebar> = ({
-  open,
-}) => {
+const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
+  const token = getCredential().accessToken;
   const footerList = [
     {
       id: 98,
@@ -70,21 +74,22 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
+  const roles = store.getState().loginSlice.roles;
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   const [openedTab, setOpenedTab] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState(1);
   // EDIT PROFILE
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
-  const [avatar, setAvatar] = useState("");
-  const [fullName, setFullName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
+  const [avatar, setAvatar] = useState('');
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [role, setRole] = useState('');
   // CHANGE PASSWORD
   const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
-  const [recentPassword, setRecentPassword] = useState("");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [recentPassword, setRecentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
 
   // RTK USER PROFILE
@@ -92,14 +97,19 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const { data: dataProfile, refetch: refetchDataProfile } = fetchUserDetailQuery;
 
   // RTK EDIT PROFILE
-  const [editProfile, {
-    isLoading: isLoadingEditProfileModal
-  }] = useEditUserProfileMutation();
+  const [editProfile, { isLoading: isLoadingEditProfileModal }] = useEditUserProfileMutation();
 
   // RTK CHANGE PASSWORD PROFILE
-  const [changePassword, {
-    isLoading: isLoadingChangePasswordProfileModal
-  }] = useChangePasswordUserProfileMutation();
+  const [changePassword, { isLoading: isLoadingChangePasswordProfileModal }] =
+    useChangePasswordUserProfileMutation();
+
+  const [isHovering, setIsHovering] = useState(false);
+  const [dataHover, setDataHover] = useState<any>([]);
+
+  const handleMouseOver = (val: any) => {
+    setIsHovering(true);
+    setDataHover(val);
+  };
 
   useEffect(() => {
     const pathName = location.pathname;
@@ -122,13 +132,37 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
     }
   }, [location.pathname]);
 
-  useEffect(() => {    
+  useEffect(() => {
     if (dataProfile) {
-      setAvatar(dataProfile?.userProfile?.profilePicture);
       setFullName(dataProfile?.userProfile?.fullName);
       setEmail(dataProfile?.userProfile?.email);
-    };
-  }, [JSON.stringify(dataProfile)])
+      setRole(dataProfile?.userProfile?.role?.name);
+
+      if (
+        dataProfile?.userProfile?.profilePicture !== null ||
+        dataProfile?.userProfile?.profilePicture !== ''
+      ) {
+        void getImage(dataProfile?.userProfile?.profilePicture);
+      }
+    }
+  }, [JSON.stringify(dataProfile)]);
+
+  const getImage = async (img: any) => {
+    await fetch(`${baseUrl}/files/get/${img}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async response => await response.blob())
+      .then(blob => {
+        const objectUrl = URL.createObjectURL(blob);
+        setAvatar(objectUrl);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
 
   const listTabHandler = (e: string) => {
     if (openedTab.includes(e)) {
@@ -139,17 +173,16 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
     }
   };
 
-  const handlerCancel  = () => {
+  const handlerCancel = () => {
     setOpenEditProfileModal(false);
     setOpenChangePasswordModal(false);
-    setPasswordError(false);
     setConfirmNewPasswordError(false);
-    setRecentPassword("");
-    setNewPassword("");
-    setConfirmNewPassword("");
+    setRecentPassword('');
+    setNewPassword('');
+    setConfirmNewPassword('');
     setAvatar(dataProfile?.userProfile?.profilePicture);
     setFullName(dataProfile?.userProfile?.fullName);
-    setEmail(dataProfile?.userProfile?.email);    
+    setEmail(dataProfile?.userProfile?.email);
   };
 
   const handlerActionLink = () => {
@@ -160,39 +193,32 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   };
 
   const submitEditProfile = () => {
-    if (!password) {
-      setPasswordError(true);
-    } else {
-      setPasswordError(false);
-
-      const payload = {
-        profilePicture: avatar,
-        fullName,
-        password,
-      };
-      editProfile(payload)
-        .unwrap()
-        .then(() => {
-          dispatch(
-            openToast({
-              type: 'success',
-              title: t('toast-success'),
-              message: t('user.edit-profile.success-msg', { name: payload.fullName }),
-            }),
-          );
-          handlerCancel();
-          refetchDataProfile();
-        })
-        .catch(() => {
-          dispatch(
-            openToast({
-              type: 'error',
-              title: t('toast-failed'),
-              message: t('user.edit-profile.failed-msg', { name: payload.fullName }),
-            }),
-          );
-        });
+    const payload = {
+      profilePicture: avatar,
+      fullName,
     };
+    editProfile(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('user.edit-profile.success-msg', { name: payload.fullName }),
+          }),
+        );
+        handlerCancel();
+        refetchDataProfile();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('user.edit-profile.failed-msg', { name: payload.fullName }),
+          }),
+        );
+      });
   };
 
   const submitChangePassword = () => {
@@ -219,7 +245,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
         })
         .catch((err: any) => {
           console.log(err);
-          
+
           dispatch(
             openToast({
               type: 'error',
@@ -228,22 +254,27 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
             }),
           );
         });
-    };
+    }
   };
 
   const renderHeader = () => {
     return (
-      <div className="flex flex-col items-center justify-center my-5">
+      <div className={`flex flex-col items-center justify-center my-5 ${open ? 'w-[95%]' : ''}`}>
         <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-          <div
-            className="w-11 h-11 rounded-full bg-black bg-cover"
-            style={{ backgroundImage: `url(${ProfilePhoto})` }}></div>
+          {avatar !== null || avatar !== '' ? (
+            <div
+              className="w-11 h-11 rounded-full bg-[#5E217C] bg-cover"
+              style={{ backgroundImage: `url(${avatar})` }}></div>
+          ) : (
+            <div
+              className="w-11 h-11 rounded-full bg-[#5E217C] bg-cover"
+              style={{ backgroundImage: `url(${ProfilePhoto})` }}></div>
+          )}
         </div>
         {open && (
           <div className="text-white flex flex-col mt-2 items-center justify-center">
-            <p className="font-bold">Haykal</p>
-            <p>600234563</p>
-            <p>Employee - Submitter</p>
+            <p className="font-bold">{fullName}</p>
+            <p>{role}</p>
           </div>
         )}
       </div>
@@ -253,83 +284,123 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const renderListMenu = () => {
     return (
       <div className="border-b pb-5">
-        {sidebarList.map((val: any) => (
-          <div key={val.id}>
-            <div
-              role="button"
-              onClick={() => {
-                val.list ? listTabHandler(`Tab_${val.id}`) : setActiveTab(val.id);
-                if (val.path) navigate(val.path);
-              }}
-              className={`${activeTab === val.id ? 'bg-[#9B86BA]' : ''} ${
-                open ? 'justify-between m-2' : 'justify-center m-3'
-              } flex flex-row p-2 rounded-xl items-center hover:bg-[#9B86BA]`}>
-              <div className="flex flex-row">
-                <img src={val.icon} alt={`Menu_${val.id}`} className="w-4 h-4" />
-                {open && (
-                  <p
-                    className={`${
-                      activeTab === val.id ? 'font-bold' : 'font-base'
-                    } text-white text-sm ml-4`}>
-                    {val.title}
-                  </p>
-                )}
-              </div>
-              {val.list && open ? (
-                openedTab.includes(`Tab_${val.id}`) ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6 text-white">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6 text-white">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                    />
-                  </svg>
-                )
-              ) : null}
-            </div>
-            {openedTab.includes(`Tab_${val.id}`) && open
-              ? val.list?.map((e: any) => (
-                  <div
-                    key={e.id}
-                    className={`${
-                      activeTab === e.id ? 'bg-[#9B86BA]' : ''
-                    } flex flex-row p-2 m-2 rounded-xl items-center justify-between hover:bg-[#9B86BA]`}
-                    role="button"
-                    onClick={() => {
-                      setActiveTab(e.id);
-                      if (e.path) navigate(e.path);
-                    }}>
+        {sidebarList.map((val: any) =>
+          roles?.includes(val.role) || !val.role ? (
+            <div key={val.id}>
+              <div
+                role="button"
+                onMouseOver={() => {
+                  handleMouseOver(val);
+                }}
+                onClick={() => {
+                  val.list ? listTabHandler(`Tab_${val.id}`) : setActiveTab(val.id);
+                  if (val.path) navigate(val.path);
+                }}
+                className={`${activeTab === val.id ? 'bg-[#9B86BA]' : ''} ${
+                  open ? 'justify-between m-2 w-[95%]' : 'justify-center m-3'
+                } flex flex-row p-2 rounded-xl items-center hover:bg-[#9B86BA]`}>
+                <div className="flex flex-row">
+                  <img src={val.icon} alt={`Menu_${val.id}`} className="w-4 h-4" />
+                  {open && (
                     <p
                       className={`${
-                        activeTab === e.id ? 'font-bold' : 'font-base'
-                      } text-white text-sm ml-8`}>
-                      {e.title}
+                        activeTab === val.id ? 'font-bold' : 'font-base'
+                      } text-white text-sm ml-4`}>
+                      {val.title}
                     </p>
-                  </div>
-                ))
-              : null}
-          </div>
-        ))}
+                  )}
+                </div>
+                {val.list && open ? (
+                  openedTab.includes(`Tab_${val.id}`) ? (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 text-white">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6 text-white">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                      />
+                    </svg>
+                  )
+                ) : null}
+              </div>
+              {!open && isHovering && val.list && dataHover.id === val.id && (
+                <div className="p-4 w-[25vh] flex flex-col gap-4 bg-light-purple absolute ml-[100%] mt-[-75%] rounded-lg">
+                  {dataHover?.list.map(
+                    (value: {
+                      role: any;
+                      path: To;
+                      id: React.Key | null | undefined;
+                      title:
+                        | string
+                        | number
+                        | boolean
+                        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+                        | React.ReactFragment
+                        | React.ReactPortal
+                        | null
+                        | undefined;
+                    }) =>
+                      roles?.includes(value?.role) && (
+                        <div
+                          role="button"
+                          onClick={() => {
+                            setIsHovering(false);
+                            navigate(value.path);
+                          }}
+                          key={value.id}
+                          className="text-xs font-bold text-bright-purple">
+                          {value.title}
+                        </div>
+                      ),
+                  )}
+                </div>
+              )}
+              {openedTab.includes(`Tab_${val.id}`) && open
+                ? val.list?.map(
+                    (e: any) =>
+                      roles?.includes(e.role) && (
+                        <div
+                          key={e.id}
+                          className={`${
+                            activeTab === e.id ? 'bg-[#9B86BA]' : ''
+                          } flex flex-row p-2 m-2 rounded-xl items-center justify-between hover:bg-[#9B86BA]`}
+                          role="button"
+                          onClick={() => {
+                            setActiveTab(e.id);
+                            if (e.path) navigate(e.path);
+                          }}>
+                          <p
+                            className={`${
+                              activeTab === e.id ? 'font-bold' : 'font-base'
+                            } text-white text-sm ml-8`}>
+                            {e.title}
+                          </p>
+                        </div>
+                      ),
+                  )
+                : null}
+            </div>
+          ) : null,
+        )}
       </div>
     );
   };
@@ -343,36 +414,31 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
     };
 
     return (
-      <div className="flex flex-col items-center justify-center my-10">
-        {
-          footerList.map(val => (
-            <div
-              key={val.id}
-              role="button"
-              onClick={() => {
-                if (val.id === 99) {
-                  setActiveTab(val.id);
-                  handleLogout();
-                } else if (val.id === 98) {
-                  setOpenEditProfileModal(true);
-                };
-              }}
-              className={`
+      <div className={`flex flex-col items-center justify-center my-10 ${open ? 'w-[95%]' : ''}`}>
+        {footerList.map(val => (
+          <div
+            key={val.id}
+            role="button"
+            onClick={() => {
+              if (val.id === 99) {
+                setActiveTab(val.id);
+                handleLogout();
+              } else if (val.id === 98) {
+                setOpenEditProfileModal(true);
+              }
+            }}
+            className={`
                 ${activeTab === val.id ? 'bg-[#9B86BA] font-bold' : ''} 
                 ${val.bordered && open && ' border border-white'}
                 ${open ? 'w-40' : 'p-2'} 
                 p-2 text-white rounded-2xl mb-2 text-center flex items-center justify-center
-              `}
-            >
-              {
-                val.icon && (
-                  <img src={val.icon} alt={`Menu_${val.id}`} className={`${open && 'mr-4'} w-4 h-4`} />
-                )
-              }
-              {open && val.title}
-            </div>
-          ))
-        }
+              `}>
+            {val.icon && (
+              <img src={val.icon} alt={`Menu_${val.id}`} className={`${open && 'mr-4'} w-4 h-4`} />
+            )}
+            {open && val.title}
+          </div>
+        ))}
       </div>
     );
   };
@@ -389,7 +455,12 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
         cancelTitle="Cancel"
         cancelAction={handlerCancel}
         submitAction={submitEditProfile}
-      >
+        submitType=""
+        additionalButton={
+          <button className="btn btn-outline btn-primary" onClick={handlerActionLink}>
+            Change Password
+          </button>
+        }>
         <FileUploaderAvatar
           image={avatar}
           imageChanged={(image: any) => {
@@ -421,21 +492,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
             setEmail(event.target.value);
           }}
         />
-        <InputPassword
-          labelTitle="Password"
-          labelStyle="font-bold	"
-          labelWidth={125}
-          value={password}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          isError={passwordError}
-          actionLink='Change Password'
-          actionLinkClicked={handlerActionLink}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setPassword(event.target.value);
-          }}
-        />
       </ModalForm>
       <ModalForm
         width={600}
@@ -445,8 +501,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
         submitTitle="Save"
         cancelTitle="Cancel"
         cancelAction={handlerCancel}
-        submitAction={submitChangePassword}      
-      >
+        submitAction={submitChangePassword}>
         <InputPassword
           labelTitle="Recent Password"
           labelStyle="font-bold	"
@@ -488,8 +543,10 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
       </ModalForm>
       <div
         className={`${
-          open ? 'px-2 pt-3 pb-24' : ''
-        } w-full h-full flex flex-col border bg-[#5E217C] overflow-auto`}>
+          open
+            ? 'px-2 pt-3 pb-24 overflow-scroll scrollbar scrollbar-w-3 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl scrollbar-thumb-light-purple'
+            : ''
+        } w-full h-full flex flex-col items-center border bg-[#5E217C]`}>
         {renderHeader()}
         {renderListMenu()}
         {renderFooter()}

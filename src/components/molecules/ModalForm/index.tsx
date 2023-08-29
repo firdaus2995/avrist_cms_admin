@@ -17,6 +17,7 @@ export default function ModalForm ({
   submitAction,
   cancelAction,
   children,
+  additionalButton,
 }: IModalForm ) {
   return (
     <Modal
@@ -36,13 +37,22 @@ export default function ModalForm ({
             children
           }
         </div>
-        <div className="flex justify-end gap-3">
-          <button className="btn btn-outline w-[105px]" onClick={cancelAction}>
-            {cancelTitle}
-          </button>
-          <button disabled={submitDisabled} className={`btn ${submitType !== '' ? submitType : 'btn-success'} w-[105px]`} onClick={submitAction}>
-            {loading ? 'Loading...' : submitTitle}
-          </button>
+        <div className="flex justify-between">
+          {
+            additionalButton && (
+              <div className="w-full flex gap-3">
+                {additionalButton}
+              </div>
+            )
+          }
+          <div className="w-full flex justify-end gap-3">
+            <button className="btn btn-outline w-[105px]" onClick={cancelAction}>
+              {cancelTitle}
+            </button>
+            <button disabled={submitDisabled} className={`btn ${submitType !== '' ? submitType : 'btn-success'} w-[105px]`} onClick={submitAction}>
+              {loading ? 'Loading...' : submitTitle}
+            </button>
+          </div>
         </div>
       </div>
     </Modal>

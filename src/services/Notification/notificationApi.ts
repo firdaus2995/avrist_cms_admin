@@ -45,10 +45,27 @@ export const notificationApi: any = createApi({
         variables: payload,
       }),
     }),
+    readNotification: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation notificationMarkAsRead (
+            $notificationId: String!
+          ) {
+            notificationMarkAsRead (
+              notificationId: $notificationId
+            ) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      })
+    }),
   })
 })
 
 export const {
   useSeeNotificationMutation,
   useGetNotificationQuery,
+  useReadNotificationMutation,
 } = notificationApi;
