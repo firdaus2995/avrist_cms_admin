@@ -389,6 +389,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
         cancelTitle="Cancel"
         cancelAction={handlerCancel}
         submitAction={submitEditProfile}
+        submitType=''
       >
         <FileUploaderAvatar
           image={avatar}
