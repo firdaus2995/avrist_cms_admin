@@ -84,10 +84,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   const [avatar, setAvatar] = useState('');
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [passwordError, setPasswordError] = useState(false);
   const [role, setRole] = useState('');
-
   // CHANGE PASSWORD
   const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
   const [recentPassword, setRecentPassword] = useState('');
@@ -160,7 +157,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       .then(async response => await response.blob())
       .then(blob => {
         const objectUrl = URL.createObjectURL(blob);
-        setAvatar(objectUrl)
+        setAvatar(objectUrl);
       })
       .catch(err => {
         console.log(err);
@@ -179,7 +176,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   const handlerCancel = () => {
     setOpenEditProfileModal(false);
     setOpenChangePasswordModal(false);
-    setPasswordError(false);
     setConfirmNewPasswordError(false);
     setRecentPassword('');
     setNewPassword('');
@@ -197,39 +193,32 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   };
 
   const submitEditProfile = () => {
-    if (!password) {
-      setPasswordError(true);
-    } else {
-      setPasswordError(false);
-
-      const payload = {
-        profilePicture: avatar,
-        fullName,
-        password,
-      };
-      editProfile(payload)
-        .unwrap()
-        .then(() => {
-          dispatch(
-            openToast({
-              type: 'success',
-              title: t('toast-success'),
-              message: t('user.edit-profile.success-msg', { name: payload.fullName }),
-            }),
-          );
-          handlerCancel();
-          refetchDataProfile();
-        })
-        .catch(() => {
-          dispatch(
-            openToast({
-              type: 'error',
-              title: t('toast-failed'),
-              message: t('user.edit-profile.failed-msg', { name: payload.fullName }),
-            }),
-          );
-        });
-    }
+    const payload = {
+      profilePicture: avatar,
+      fullName,
+    };
+    editProfile(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('user.edit-profile.success-msg', { name: payload.fullName }),
+          }),
+        );
+        handlerCancel();
+        refetchDataProfile();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('user.edit-profile.failed-msg', { name: payload.fullName }),
+          }),
+        );
+      });
   };
 
   const submitChangePassword = () => {
@@ -355,20 +344,34 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
               </div>
               {!open && isHovering && val.list && dataHover.id === val.id && (
                 <div className="p-4 w-[25vh] flex flex-col gap-4 bg-light-purple absolute ml-[100%] mt-[-75%] rounded-lg">
-                  {dataHover?.list.map((value: { role: any; path: To; id: React.Key | null | undefined; title: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
-                    roles?.includes(value?.role) && (
-                      <div
-                        role="button"
-                        onClick={() => {
-                          setIsHovering(false);
-                          navigate(value.path);
-                        }}
-                        key={value.id}
-                        className="text-xs font-bold text-bright-purple">
-                        {value.title}
-                      </div>
-                    )
-                  ))}
+                  {dataHover?.list.map(
+                    (value: {
+                      role: any;
+                      path: To;
+                      id: React.Key | null | undefined;
+                      title:
+                        | string
+                        | number
+                        | boolean
+                        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+                        | React.ReactFragment
+                        | React.ReactPortal
+                        | null
+                        | undefined;
+                    }) =>
+                      roles?.includes(value?.role) && (
+                        <div
+                          role="button"
+                          onClick={() => {
+                            setIsHovering(false);
+                            navigate(value.path);
+                          }}
+                          key={value.id}
+                          className="text-xs font-bold text-bright-purple">
+                          {value.title}
+                        </div>
+                      ),
+                  )}
                 </div>
               )}
               {openedTab.includes(`Tab_${val.id}`) && open
@@ -451,7 +454,13 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
         submitTitle="Save"
         cancelTitle="Cancel"
         cancelAction={handlerCancel}
-        submitAction={submitEditProfile}>
+        submitAction={submitEditProfile}
+        submitType=""
+        additionalButton={
+          <button className="btn btn-outline btn-primary" onClick={handlerActionLink}>
+            Change Password
+          </button>
+        }>
         <FileUploaderAvatar
           image={avatar}
           imageChanged={(image: any) => {
@@ -481,21 +490,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           disabled
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setEmail(event.target.value);
-          }}
-        />
-        <InputPassword
-          labelTitle="Password"
-          labelStyle="font-bold	"
-          labelWidth={125}
-          value={password}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          isError={passwordError}
-          actionLink="Change Password"
-          actionLinkClicked={handlerActionLink}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setPassword(event.target.value);
           }}
         />
       </ModalForm>

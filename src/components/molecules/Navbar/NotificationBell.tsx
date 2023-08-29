@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { useEffect, useRef, useState } from 'react';
 import { useClickAway } from 'react-use';
 
@@ -8,11 +10,10 @@ import { Menu, Transition } from '@headlessui/react';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
 import { getCredential } from '@/utils/Credential';
 import { useGetNotificationQuery, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
-import dayjs from 'dayjs';
-import InfiniteScroll from 'react-infinite-scroll-component';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
+
 const NotificationBell: React.FC = () => {
   const token = getCredential().accessToken;
   const ref = useRef(null);
@@ -20,6 +21,8 @@ const NotificationBell: React.FC = () => {
 
   const [notifications, setNotifications] = useState<any>([]);
   const [count, setCount] = useState(0);
+  const [limit, setLimit] = useState<number>(5);
+  const [total, setTotal] = useState<any>(0);
 
   const getCount = async () => {
     await fetch(`${baseUrl}/notifications/count`, {
@@ -37,20 +40,6 @@ const NotificationBell: React.FC = () => {
     });
   }
 
-  useEffect(() => {
-  
-    const interval = setInterval(() => {
-      if(token){
-        void getCount()
-      }
-    }, intervalTime);
-
-    return () => { clearInterval(interval); };
-  }, []);
-
-  const [limit, setLimit] = useState<number>(5);
-  const [total, setTotal] = useState<any>(0);
-
   useClickAway(ref, () => {
     setTotal(0);
     setLimit(5);
@@ -65,6 +54,16 @@ const NotificationBell: React.FC = () => {
   }, {
     refetchOnMountOrArgChange: true,
   });
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if(token){
+        void getCount()
+      }
+    }, intervalTime);
+
+    return () => { clearInterval(interval); };
+  }, []);
 
   useEffect(() => {
     const loadMore = async () => {
@@ -82,7 +81,7 @@ const NotificationBell: React.FC = () => {
     if (limit > 5) {
       void loadMore();
     };
-  }, [limit])
+  }, [limit]);
 
   const handlerOpenNotification = async (open: boolean) => {
     if (!open) {
@@ -102,7 +101,7 @@ const NotificationBell: React.FC = () => {
     };
   };
 
-  const handlerFetchMore = async () => {
+  const handlerFetchMore = () => {
     setLimit(limit + 5);
   };
 
@@ -154,11 +153,11 @@ const NotificationBell: React.FC = () => {
               </div>
               <InfiniteScroll
                 className='px-[16px] border-[#D6D6D6]'
-                dataLength={total}
+                dataLength={notifications.length}
                 next={handlerFetchMore}
                 loader={''}
-                hasMore={notifications.length < total}
-                height={530}
+                hasMore={limit < total}
+                height={500}
               >
                 {
                   notifications.length > 0 && (
@@ -167,7 +166,7 @@ const NotificationBell: React.FC = () => {
                         <div className={`mt-[6px] w-[6px] h-[6px] min-w-[6px] rounded-full ${element.isRead ? 'bg-white' : 'bg-purple'}`} />
                         <div className='flex flex-col flex-1 gap-[6px]'>
                           <h2 className={`text-[12px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
-                          <h4 className='text-[14px] text-body-text-2'>{element.content}</h4>
+                          <h4 className='text-[14px] text-body-text-2 cursor-pointer'>{element.content}</h4>
                           <h6 className='text-[12px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
                         </div>
                       </div>
