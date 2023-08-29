@@ -78,8 +78,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const [avatar, setAvatar] = useState("");
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [passwordError, setPasswordError] = useState(false);
   // CHANGE PASSWORD
   const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
   const [recentPassword, setRecentPassword] = useState("");
@@ -142,7 +140,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   const handlerCancel  = () => {
     setOpenEditProfileModal(false);
     setOpenChangePasswordModal(false);
-    setPasswordError(false);
     setConfirmNewPasswordError(false);
     setRecentPassword("");
     setNewPassword("");
@@ -160,39 +157,32 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
   };
 
   const submitEditProfile = () => {
-    if (!password) {
-      setPasswordError(true);
-    } else {
-      setPasswordError(false);
-
-      const payload = {
-        profilePicture: avatar,
-        fullName,
-        password,
-      };
-      editProfile(payload)
-        .unwrap()
-        .then(() => {
-          dispatch(
-            openToast({
-              type: 'success',
-              title: t('toast-success'),
-              message: t('user.edit-profile.success-msg', { name: payload.fullName }),
-            }),
-          );
-          handlerCancel();
-          refetchDataProfile();
-        })
-        .catch(() => {
-          dispatch(
-            openToast({
-              type: 'error',
-              title: t('toast-failed'),
-              message: t('user.edit-profile.failed-msg', { name: payload.fullName }),
-            }),
-          );
-        });
-    };
+  const payload = {
+    profilePicture: avatar,
+    fullName,
+  };
+  editProfile(payload)
+    .unwrap()
+    .then(() => {
+      dispatch(
+        openToast({
+          type: 'success',
+          title: t('toast-success'),
+          message: t('user.edit-profile.success-msg', { name: payload.fullName }),
+        }),
+      );
+      handlerCancel();
+      refetchDataProfile();
+    })
+    .catch(() => {
+      dispatch(
+        openToast({
+          type: 'error',
+          title: t('toast-failed'),
+          message: t('user.edit-profile.failed-msg', { name: payload.fullName }),
+        }),
+      );
+    });
   };
 
   const submitChangePassword = () => {
@@ -390,6 +380,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
         cancelAction={handlerCancel}
         submitAction={submitEditProfile}
         submitType=''
+        additionalButton={<button className='btn btn-outline btn-primary' onClick={handlerActionLink}>Change Password</button>}
       >
         <FileUploaderAvatar
           image={avatar}
@@ -420,21 +411,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({
           disabled
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setEmail(event.target.value);
-          }}
-        />
-        <InputPassword
-          labelTitle="Password"
-          labelStyle="font-bold	"
-          labelWidth={125}
-          value={password}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          isError={passwordError}
-          actionLink='Change Password'
-          actionLinkClicked={handlerActionLink}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setPassword(event.target.value);
           }}
         />
       </ModalForm>
