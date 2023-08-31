@@ -232,8 +232,8 @@ export const userApi: any = createApi({
               company
               isActive
               role {
-                  id
-                  name
+                id
+                name
               }
             }
           }
