@@ -206,28 +206,26 @@ export default function ContentTypeEdit() {
             </div>
             <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
             <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
-              {idx && idx > 1 ? (
-                <>
-                  <img
-                    role="button"
-                    onClick={() => {
-                      setEditedIndex(idx);
-                      openAddModal(val, true);
-                    }}
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableEdit}
-                  />
-                  <img
-                    role="button"
-                    onClick={() => {
-                      const updated = listItems?.filter((_val: any, index: any) => index !== idx);
-                      setListItems(updated);
-                    }}
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableDelete}
-                  />
-                </>
-              ) : null}
+              <>
+                <img
+                  role="button"
+                  onClick={() => {
+                    setEditedIndex(idx);
+                    openAddModal(val, true);
+                  }}
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                />
+                <img
+                  role="button"
+                  onClick={() => {
+                    const updated = listItems?.filter((_val: any, index: any) => index !== idx);
+                    setListItems(updated);
+                  }}
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableDelete}
+                />
+              </>
             </div>
           </div>
         ))}
