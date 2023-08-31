@@ -79,6 +79,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
 
   const [openedTab, setOpenedTab] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState(1);
+  const [sidebarAvatar, setSidebarAvatar] = useState(null);
   // EDIT PROFILE
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
   const [avatar, setAvatar] = useState('');
@@ -111,6 +112,23 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     setDataHover(val);
   };
 
+  const getImage = async (img: any) => {
+    await fetch(`${baseUrl}/files/get/${img}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async response => await response.blob())
+      .then(blob => {
+        const objectUrl: any = URL.createObjectURL(blob);
+        setSidebarAvatar(objectUrl);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     const pathName = location.pathname;
 
@@ -137,6 +155,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       setFullName(dataProfile?.userProfile?.fullName);
       setEmail(dataProfile?.userProfile?.email);
       setRole(dataProfile?.userProfile?.role?.name);
+      setAvatar(dataProfile?.userProfile?.profilePicture);
 
       if (
         dataProfile?.userProfile?.profilePicture !== null ||
@@ -146,23 +165,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       }
     }
   }, [JSON.stringify(dataProfile)]);
-
-  const getImage = async (img: any) => {
-    await fetch(`${baseUrl}/files/get/${img}`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async response => await response.blob())
-      .then(blob => {
-        const objectUrl = URL.createObjectURL(blob);
-        setAvatar(objectUrl);
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  };
 
   const listTabHandler = (e: string) => {
     if (openedTab.includes(e)) {
@@ -243,9 +245,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           );
           handlerCancel();
         })
-        .catch((err: any) => {
-          console.log(err);
-
+        .catch(() => {
           dispatch(
             openToast({
               type: 'error',
@@ -261,10 +261,10 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     return (
       <div className={`flex flex-col items-center justify-center my-5 ${open ? 'w-[95%]' : ''}`}>
         <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-          {avatar !== null || avatar !== '' ? (
+          {sidebarAvatar !== null || sidebarAvatar !== '' ? (
             <div
               className="w-11 h-11 rounded-full bg-[#5E217C] bg-cover"
-              style={{ backgroundImage: `url(${avatar})` }}></div>
+              style={{ backgroundImage: `url(${sidebarAvatar})` }}></div>
           ) : (
             <div
               className="w-11 h-11 rounded-full bg-[#5E217C] bg-cover"
