@@ -16,7 +16,7 @@ import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { copyArray } from '@/utils/logicHelper';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
-import { useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
+import { useDeleteNotificationMutation, useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
 
 const Layout: React.FC<any> = props => {
   const location = useLocation();
@@ -41,6 +41,9 @@ const Layout: React.FC<any> = props => {
 
   // RTK READ NOTIFICATION
   const [ readNotification ] = useReadNotificationMutation();
+
+  // RTK DELETE NOTIFICATION
+  const [ deleteNotification ] = useDeleteNotificationMutation();
 
   useEffect(() => {
     dispatch(setActivatedNotificationPage(false));
@@ -92,7 +95,7 @@ const Layout: React.FC<any> = props => {
       };
     });
 
-    setSelected(selected.length);
+    setSelected(selected);
     if (selected.length === notifications.length) {
       setIsSelectedAll(true);
     } else {
@@ -120,6 +123,22 @@ const Layout: React.FC<any> = props => {
     };
   };
 
+  const handlerDeleteNotificationSelected = async () => {
+    const payload = selected.map((element: any) => {
+      return element.id;
+    }).join('|');
+    try {
+      void await deleteNotification({notificationId: payload});
+      const backendData: any = await fetchNotification.refetch();
+      if (backendData) {
+        setTotal(backendData?.data?.notificationList.total);
+        setNotifications(backendData?.data?.notificationList?.notifications);
+      };
+    } catch (error) {
+      console.log(error);
+    };    
+  };
+
   const handlerSelectAll = (value: any, ) => {
     const newNotifications = copyArray(notifications);
     newNotifications.forEach((element: any) => {
@@ -141,6 +160,22 @@ const Layout: React.FC<any> = props => {
     };
     try {
       void await readNotification(payload);
+      const backendData: any = await fetchNotification.refetch();
+      if (backendData) {
+        setTotal(backendData?.data?.notificationList.total);
+        setNotifications(backendData?.data?.notificationList?.notifications);
+      };
+    } catch (error) {
+      console.log(error);
+    };
+  };
+
+  const handlerDeleteNotificationSingle = async (id: any) => {
+    const payload = {
+      notificationId: id.toString(),
+    };
+    try {
+      void await deleteNotification(payload);
       const backendData: any = await fetchNotification.refetch();
       if (backendData) {
         setTotal(backendData?.data?.notificationList.total);
@@ -209,10 +244,17 @@ const Layout: React.FC<any> = props => {
                   />
                 </div>
                 {
-                  selected > 0 && (
+                  selected.length > 0 && (
                     <div className="flex flex-row items-center justify-end gap-3 cursor-pointer">
                       <img className="w-[18px] h-[18px]" src={DeleteSmall} />
-                      <p className="text-[14px] text-body-text-2">Clear All Notifications</p>
+                      <p 
+                        className="text-[14px] text-body-text-2"
+                        onClick={() => {
+                          void handlerDeleteNotificationSelected();
+                        }}
+                      >
+                        Delete Selected
+                      </p>
                     </div>
                   )
                 }
@@ -255,7 +297,12 @@ const Layout: React.FC<any> = props => {
                           <div className="flex items-center justify-end min-w-[100px]">
                             {
                               element.isSelected && (
-                                <div className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer">
+                                <div 
+                                  className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer"
+                                  onClick={() => {
+                                    void handlerDeleteNotificationSingle(element.id);
+                                  }}
+                                >
                                   <img className="w-[18px] h-[18px]" src={DeleteSmall} />
                                   <p className="text-[14px] text-body-text-2">Delete</p>
                                 </div>
