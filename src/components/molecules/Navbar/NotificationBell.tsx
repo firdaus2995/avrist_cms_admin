@@ -62,10 +62,8 @@ const NotificationBell: React.FC = () => {
   );
 
   useEffect(() => {
-    // eslint-disable-next-line no-constant-condition
-    if (false) {
       const interval = setInterval(() => {
-        if (token) {
+        if (token && window.location.pathname === '/') {
           void getCount();
         }
       }, intervalTime);
@@ -73,7 +71,6 @@ const NotificationBell: React.FC = () => {
       return () => {
         clearInterval(interval);
       };
-    }
   }, []);
 
   useEffect(() => {
@@ -127,6 +124,7 @@ const NotificationBell: React.FC = () => {
           <Menu.Button
             className={'h-[56px]'}
             onClick={() => {
+              setCount(0);
               void handlerOpenNotification(open);
             }}>
             <div className="relative cursor-pointer">

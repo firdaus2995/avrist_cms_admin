@@ -94,22 +94,7 @@ export default function ContentTypeNew() {
     }
   }
 
-  const [listItems, setListItems] = useState<any>([
-    {
-      fieldType: 'TEXT_FIELD',
-      name: 'Title',
-      fieldId: '',
-      config: [],
-      isDeleted: false,
-    },
-    {
-      fieldType: 'TEXT_AREA',
-      name: 'Short Description',
-      fieldId: '',
-      config: [],
-      isDeleted: false,
-    },
-  ]);
+  const [listItems, setListItems] = useState<any>([]);
   
   function onAddList() {
     if (openedAttribute?.code === 'looping') {

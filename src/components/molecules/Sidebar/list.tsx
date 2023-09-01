@@ -31,7 +31,7 @@ export const sidebarList = [
   },
   {
     id: 4,
-    title: 'Template Management',
+    title: 'Content Management',
     icon: TemplateIcon,
     list: [
       {
