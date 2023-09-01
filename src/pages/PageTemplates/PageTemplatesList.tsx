@@ -64,7 +64,7 @@ export default function PageTemplatesList() {
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
             <button
-              className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-4 text-sm"
+              className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs"
               // onClick={() => {
               //   onClickPageTemplateEdit(info.getValue(), info?.row?.original?.filenameCode, info?.row?.original?.name, info?.row?.original?.shortDesc);
               // }}

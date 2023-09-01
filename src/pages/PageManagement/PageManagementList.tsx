@@ -10,7 +10,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-import TableEdit from '@/assets/table-edit.png';
+// import TableEdit from '@/assets/table-edit.png';
 // import TableView from '@/assets/table-view.png';
 import TableDelete from '@/assets/table-delete.svg';
 import FilterIcon from '@/assets/filter.svg';
@@ -217,14 +217,11 @@ export default function PageManagementList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <Link to={`edit/${info.getValue()}`}>
-            <div className="tooltip" data-tip="Edit">
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableEdit}
-              />
-            </div>
-          </Link>
+          <div className="tooltip" data-tip={'View Detail'}>
+            <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
+              View Detail
+            </button>
+          </div>
           <div className="tooltip" data-tip="Delete">
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}

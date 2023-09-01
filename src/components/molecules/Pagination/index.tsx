@@ -31,7 +31,7 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
   page, 
   total, 
   pageSize,
-  rangePageSize = [5, 10, 25, 50, 100], 
+  rangePageSize = [10, 20, 50, 100], 
   setPage, 
   setPageSize,
 }) => {

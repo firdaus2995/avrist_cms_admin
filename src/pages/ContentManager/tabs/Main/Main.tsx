@@ -152,7 +152,7 @@ export default function MainTab(props: { id: any }) {
             <div className="tooltip" data-tip={'View Detail'}>
               <div
                 role="button"
-                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
+                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary text-xs">
                 View Detail
               </div>
             </div>

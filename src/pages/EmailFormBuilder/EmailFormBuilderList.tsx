@@ -226,7 +226,7 @@ export default function EmailFormBuilderList() {
           total={total}
           page={pageIndex}
           pageSize={pageLimit}
-          rangePageSize={[10, 20, 30]}
+          // rangePageSize={[10, 20, 30]}
           setPageSize={(page: number) => {
             setPageLimit(page);
             setPageIndex(0);
