@@ -36,6 +36,10 @@ export default function MyTaskTab(props: { id: any }) {
     }
   }, [data]);
 
+  useEffect(() => {
+    void fetchQuery.refetch()
+  }, [])
+
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
