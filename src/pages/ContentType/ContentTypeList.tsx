@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useDeletePageMutation } from '@/services/PageManagement/pageManagementApi';
+import {
+  useDeletePageMutation,
+  useDuplicatePageMutation,
+} from '@/services/PageManagement/pageManagementApi';
 import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeApi';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch } from '@/store';
+import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
@@ -50,6 +53,9 @@ const CreateButton = () => {
 };
 
 export default function ContentTypeList() {
+  const roles = store.getState().loginSlice.roles;
+  const contentTypeRegistrationRole = roles?.includes('CONTENT_TYPE_REGISTRATION');
+
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
@@ -84,6 +90,8 @@ export default function ContentTypeList() {
 
   // RTK DELETE
   const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+  // RTK DUPLICATE
+  const [duplicatePage] = useDuplicatePageMutation();
 
   useEffect(() => {
     if (data) {
@@ -142,15 +150,17 @@ export default function ContentTypeList() {
       cell: (info: any) => {
         return (
           <div className="flex gap-3">
-            <div className="tooltip" data-tip="Duplicate">
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableDuplicate}
-                onClick={() => {
-                  onClickPageDuplicate(info.getValue(), info?.row?.original?.name);
-                }}
-              />
-            </div>
+            {contentTypeRegistrationRole && (
+              <div className="tooltip" data-tip="Duplicate">
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableDuplicate}
+                  onClick={() => {
+                    onClickPageDuplicate(info.getValue(), info?.row?.original?.name);
+                  }}
+                />
+              </div>
+            )}
             <Link to={`edit/${info.getValue()}`}>
               <div className="tooltip" data-tip={t('action.edit')}>
                 <img
@@ -217,7 +227,28 @@ export default function ContentTypeList() {
 
   // FUNCTION FOR DUPLICATE PAGE
   const submitDuplicatePage = () => {
-    console.log('test', idDuplicate);
+    duplicatePage({ id: idDuplicate })
+      .unwrap()
+      .then(async () => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Duplicate Page',
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Duplicate Page',
+            message: 'Something went wrong!',
+          }),
+        );
+      });
   };
 
   return (
