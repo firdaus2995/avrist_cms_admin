@@ -109,11 +109,9 @@ export default function MyTaskTab(props: { id: any }) {
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
             <div className="tooltip" data-tip={'View Detail'}>
-              <div
-                role="button"
-                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
+              <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
                 View Detail
-              </div>
+              </button>
             </div>
           </Link>
         </div>

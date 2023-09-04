@@ -1,17 +1,22 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useDeletePageMutation } from '@/services/PageManagement/pageManagementApi';
+import {
+  useDeletePageMutation,
+  useDuplicatePageMutation,
+} from '@/services/PageManagement/pageManagementApi';
 import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeApi';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch } from '@/store';
+import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import TableEdit from '@/assets/table-edit.png';
 import TableDelete from '@/assets/table-delete.svg';
+import TableDuplicate from '@/assets/table-duplicate.svg';
 import WarningIcon from '@/assets/warning.png';
+import DuplicateIcon from '@/assets/duplicate.svg';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import Typography from '@/components/atoms/Typography';
@@ -48,6 +53,9 @@ const CreateButton = () => {
 };
 
 export default function ContentTypeList() {
+  const roles = store.getState().loginSlice.roles;
+  const contentTypeRegistrationRole = roles?.includes('CONTENT_TYPE_REGISTRATION');
+
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
@@ -56,6 +64,11 @@ export default function ContentTypeList() {
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
+
+  const [showConfirmDuplicate, setShowConfirmDuplicate] = useState(false);
+  const [titleConfirmDuplicate, setTitleConfirmDuplicate] = useState('');
+  const [messageConfirmDuplicate, setMessageConfirmDuplicate] = useState('');
+  const [idDuplicate, setIdDuplicate] = useState(0);
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -77,6 +90,8 @@ export default function ContentTypeList() {
 
   // RTK DELETE
   const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+  // RTK DUPLICATE
+  const [duplicatePage] = useDuplicatePageMutation();
 
   useEffect(() => {
     if (data) {
@@ -132,27 +147,40 @@ export default function ContentTypeList() {
       header: () => <span className="text-[14px]">{t('action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
-      cell: (info: any) => (
-        <div className="flex gap-3">
-          <Link to={`edit/${info.getValue()}`}>
-            <div className="tooltip" data-tip={t('action.edit')}>
+      cell: (info: any) => {
+        return (
+          <div className="flex gap-3">
+            {contentTypeRegistrationRole && (
+              <div className="tooltip" data-tip="Duplicate">
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableDuplicate}
+                  onClick={() => {
+                    onClickPageDuplicate(info.getValue(), info?.row?.original?.name);
+                  }}
+                />
+              </div>
+            )}
+            <Link to={`edit/${info.getValue()}`}>
+              <div className="tooltip" data-tip={t('action.edit')}>
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                />
+              </div>
+            </Link>
+            <div className="tooltip" data-tip={t('action.delete')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableEdit}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageDelete(info.getValue(), info?.row?.original?.name);
+                }}
               />
             </div>
-          </Link>
-          <div className="tooltip" data-tip={t('action.delete')}>
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={() => {
-                onClickPageDelete(info.getValue(), info?.row?.original?.title);
-              }}
-            />
           </div>
-        </div>
-      ),
+        );
+      },
     },
   ];
 
@@ -161,6 +189,13 @@ export default function ContentTypeList() {
     setTitleConfirm('Are you sure?');
     setMessageConfirm(`Do you want to delete ${title}?`);
     setShowConfirm(true);
+  };
+
+  const onClickPageDuplicate = (id: number, title: string) => {
+    setIdDuplicate(id);
+    setTitleConfirmDuplicate('Are you sure?');
+    setMessageConfirmDuplicate(`Do you want to duplicate ${title}?`);
+    setShowConfirmDuplicate(true);
   };
 
   // FUNCTION FOR DELETE PAGE
@@ -189,6 +224,33 @@ export default function ContentTypeList() {
         );
       });
   };
+
+  // FUNCTION FOR DUPLICATE PAGE
+  const submitDuplicatePage = () => {
+    duplicatePage({ id: idDuplicate })
+      .unwrap()
+      .then(async () => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Duplicate Page',
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Duplicate Page',
+            message: 'Something went wrong!',
+          }),
+        );
+      });
+  };
+
   return (
     <>
       <ModalConfirm
@@ -204,6 +266,19 @@ export default function ContentTypeList() {
         loading={deletePageLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
+      />
+      <ModalConfirm
+        open={showConfirmDuplicate}
+        cancelAction={() => {
+          setShowConfirmDuplicate(false);
+        }}
+        title={titleConfirmDuplicate}
+        cancelTitle="No"
+        message={messageConfirmDuplicate}
+        submitAction={submitDuplicatePage}
+        submitTitle="Yes"
+        icon={DuplicateIcon}
+        btnSubmitStyle={'btn-warning text-white'}
       />
       <TitleCard
         title="Content Type List"

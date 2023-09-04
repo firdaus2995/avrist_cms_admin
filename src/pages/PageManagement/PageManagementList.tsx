@@ -10,10 +10,10 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-import TableEdit from '@/assets/table-edit.png';
+// import TableEdit from '@/assets/table-edit.png';
 // import TableView from '@/assets/table-view.png';
 import TableDelete from '@/assets/table-delete.svg';
-import FilterIcon from '@/assets/filter.svg';
+// import FilterIcon from '@/assets/filter.svg';
 import ArchiveBox from '@/assets/archive-box.svg';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
@@ -22,6 +22,7 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import StatusBadge from './components/StatusBadge';
 import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
+import { FilterButton } from '../../components/molecules/FilterButton/index.';
 
 const TopRightButton = () => {
   return (
@@ -44,18 +45,6 @@ const ArchiveButton = () => {
           </div>
         </button>
       </Link>
-    </div>
-  );
-};
-
-const FilterButton = () => {
-  return (
-    <div className="inline-block float-right mr-5">
-      <button className=" border-grey border-[1px] rounded-xl px-3 py-3">
-        <div className="flex flex-row gap-2 items-center justify-center">
-          <img src={FilterIcon} className="w-6 h-6" />
-        </div>
-      </button>
     </div>
   );
 };
@@ -217,14 +206,11 @@ export default function PageManagementList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <Link to={`edit/${info.getValue()}`}>
-            <div className="tooltip" data-tip="Edit">
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableEdit}
-              />
-            </div>
-          </Link>
+          <div className="tooltip" data-tip={'View Detail'}>
+            <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
+              View Detail
+            </button>
+          </div>
           <div className="tooltip" data-tip="Delete">
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}

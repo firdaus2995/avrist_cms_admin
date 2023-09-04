@@ -177,11 +177,29 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    duplicatePage: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation postTypeDuplicate($id: Int!) {
+            postTypeDuplicate(request: { postTypeGroup: "CONTENT_TYPE", id: $id }) {
+              id
+              name
+              postTypeGroup
+              slug
+              isUseCategory
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
+
 export const {
   useGetPageManagementListQuery,
   useDeletePageMutation,
   useRestorePageMutation,
   usePageLogApprovalQuery,
+  useDuplicatePageMutation,
 } = pageManagementApi;
