@@ -49,7 +49,7 @@ export const sidebarList = [
         id: 43,
         title: 'Global Config Data',
         path: '/global-config-data',
-        role: ''
+        role: 'GLOBAL_CONFIG_DATA_READ'
       },
     ],
   },

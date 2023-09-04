@@ -284,13 +284,20 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       </div>
     );
   };
-
+  
   const renderListMenu = () => {
     return (
       <div className="border-b pb-5">
-        {sidebarList.map((val: any) =>
-          roles?.includes(val.role) || !val.role ? (
-            <div key={val.id}>
+        {sidebarList.map((val: any) => {
+          const hasRole = val.role && roles?.includes(val.role);
+
+          // Periksa apakah elemen memiliki list dan elemen-elemen dalam listnya memiliki role yang sesuai
+          const hasList =
+            val.list?.some((item: { role: any; }) => item.role && roles?.includes(item.role));
+          
+          if (hasRole || hasList) {
+            return (
+              <div key={val.id}>
               <div
                 role="button"
                 onMouseOver={() => {
@@ -403,8 +410,11 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
                   )
                 : null}
             </div>
-          ) : null,
-        )}
+            )
+          }
+
+          return null;
+                          })}
       </div>
     );
   };
