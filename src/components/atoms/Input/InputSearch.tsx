@@ -8,7 +8,7 @@ interface IInputSearch {
   value?: string;
   placeholder?: string;
   disabled?: boolean;
-  onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: any;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   width?: number;
 }
