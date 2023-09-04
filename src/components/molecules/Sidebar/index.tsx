@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import Menu from '@/assets/menu.png';
 import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
+import EditIcon from '@/assets/sidebar/Edit-user.png';
 import ProfilePhoto from '@/assets/Profile-photo.png';
 import ModalForm from '../ModalForm';
 import FileUploaderAvatar from '../FileUploaderAvatar';
@@ -62,6 +63,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     {
       id: 98,
       title: 'Edit Profile',
+      icon: EditIcon,
       bordered: true,
     },
     {

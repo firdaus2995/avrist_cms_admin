@@ -2,7 +2,6 @@ import HomeIcon from '../../../assets/sidebar/Home-icon.png';
 import MenuIcon from '../../../assets/sidebar/Menu-icon.png';
 import PageIcon from '../../../assets/sidebar/Page-icon.png';
 import PageTemplateIcon from '../../../assets/sidebar/Page-template-icon.png';
-import SidebarIcon from '../../../assets/sidebar/Sidebar-icon.png';
 import TemplateIcon from '../../../assets/sidebar/Template-icon.png';
 import UserIcon from '../../../assets/sidebar/User-icon.svg';
 import EmailIcon from '../../../assets/sidebar/Email-icon.svg';
