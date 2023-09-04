@@ -5,12 +5,15 @@ interface ITypographyProps {
   type?: 'heading' | 'heading1' | 'heading2' | 'heading3' | 'heading4' | 'heading5' | 'body';
   size?: 'xl' | 'l' | 'm' | 'normal' | 's' | 'xs';
   weight?: 'bold' | 'medium' | 'regular' | 'light' | 'semi';
+  alignment?: 'left' | 'center' | 'right';
   children: React.ReactNode;
 }
 
 type IFontSizeClasses = Record<string, string | Record<string, string>>;
 
 type IFontWeightClasses = Record<string, string>;
+
+type IFontAlignmentClasses = Record<string, string>;
 
 const fontSizeClasses: IFontSizeClasses = {
   heading: 'text-6xl',
@@ -37,11 +40,18 @@ const fontWeightClasses: IFontWeightClasses = {
   light: 'font-light',
 };
 
+const fontAlignmentClasses: IFontAlignmentClasses = {
+  left: 'text-left',
+  center: 'text-center',
+  right: 'text-right',
+};
+
 const Typography: React.FC<ITypographyProps> = ({
   className = '',
   type = 'body',
   size = 'xl',
   weight = 'regular',
+  alignment = 'left',
   children,
 }) => {
   const getSizeClass = (): string => {
@@ -56,10 +66,15 @@ const Typography: React.FC<ITypographyProps> = ({
     return fontWeightClasses[weight] || fontWeightClasses.regular;
   };
 
+  const getAlignmentClass = (): string => {
+    return fontAlignmentClasses[alignment] || fontWeightClasses.left;
+  };
+
   const sizeClass = getSizeClass();
   const weightClass = getWeightClass();
+  const alignmentClass = getAlignmentClass();
 
-  const classNames = `${sizeClass} ${weightClass} ${className}`;
+  const classNames = `${sizeClass} ${weightClass} ${alignmentClass} ${className}`;
 
   return <div className={classNames}>{children}</div>;
 };
