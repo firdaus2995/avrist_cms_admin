@@ -55,12 +55,6 @@ export const sidebarList = [
     ],
   },
   {
-    id: 5,
-    title: 'Sidebar Template',
-    icon: SidebarIcon,
-    role: 'HOME_READ'
-  },
-  {
     id: 6,
     title: 'Page Template',
     icon: PageTemplateIcon,
