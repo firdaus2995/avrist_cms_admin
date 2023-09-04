@@ -123,8 +123,11 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     })
       .then(async response => await response.blob())
       .then(blob => {
-        const objectUrl: any = URL.createObjectURL(blob);
-        setSidebarAvatar(objectUrl);
+        if (blob?.size > 0) {
+          const objectUrl: any = URL.createObjectURL(blob);
+          setSidebarAvatar(objectUrl);
+        }
+        console.log(sidebarAvatar)
       })
       .catch(err => {
         console.log(err);
@@ -158,7 +161,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       setEmail(dataProfile?.userProfile?.email);
       setRole(dataProfile?.userProfile?.role?.name);
       setAvatar(dataProfile?.userProfile?.profilePicture);
-
       if (
         dataProfile?.userProfile?.profilePicture !== null ||
         dataProfile?.userProfile?.profilePicture !== ''
@@ -263,7 +265,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     return (
       <div className={`flex flex-col items-center justify-center my-5 ${open ? 'w-[95%]' : ''}`}>
         <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-          {sidebarAvatar !== null || sidebarAvatar !== '' ? (
+          {sidebarAvatar ? (
             <div
               className="w-11 h-11 rounded-full bg-[#5E217C] bg-cover"
               style={{ backgroundImage: `url(${sidebarAvatar})` }}></div>
