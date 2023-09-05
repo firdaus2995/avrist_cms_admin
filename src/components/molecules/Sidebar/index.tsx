@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import Menu from '@/assets/menu.png';
 import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
+import EditIcon from '@/assets/sidebar/Edit-user.png';
 import ProfilePhoto from '@/assets/Profile-photo.png';
 import ModalForm from '../ModalForm';
 import FileUploaderAvatar from '../FileUploaderAvatar';
@@ -62,6 +63,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     {
       id: 98,
       title: 'Edit Profile',
+      icon: EditIcon,
       bordered: true,
     },
     {
@@ -121,8 +123,11 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     })
       .then(async response => await response.blob())
       .then(blob => {
-        const objectUrl: any = URL.createObjectURL(blob);
-        setSidebarAvatar(objectUrl);
+        if (blob?.size > 0) {
+          const objectUrl: any = URL.createObjectURL(blob);
+          setSidebarAvatar(objectUrl);
+        }
+        console.log(sidebarAvatar)
       })
       .catch(err => {
         console.log(err);
@@ -156,7 +161,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       setEmail(dataProfile?.userProfile?.email);
       setRole(dataProfile?.userProfile?.role?.name);
       setAvatar(dataProfile?.userProfile?.profilePicture);
-
       if (
         dataProfile?.userProfile?.profilePicture !== null ||
         dataProfile?.userProfile?.profilePicture !== ''
@@ -261,7 +265,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     return (
       <div className={`flex flex-col items-center justify-center my-5 ${open ? 'w-[95%]' : ''}`}>
         <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center">
-          {sidebarAvatar !== null || sidebarAvatar !== '' ? (
+          {sidebarAvatar ? (
             <div
               className="w-11 h-11 rounded-full bg-[#5E217C] bg-cover"
               style={{ backgroundImage: `url(${sidebarAvatar})` }}></div>
@@ -280,13 +284,20 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       </div>
     );
   };
-
+  
   const renderListMenu = () => {
     return (
       <div className="border-b pb-5">
-        {sidebarList.map((val: any) =>
-          roles?.includes(val.role) || !val.role ? (
-            <div key={val.id}>
+        {sidebarList.map((val: any) => {
+          const hasRole = val.role && roles?.includes(val.role);
+
+          // Periksa apakah elemen memiliki list dan elemen-elemen dalam listnya memiliki role yang sesuai
+          const hasList =
+            val.list?.some((item: { role: any; }) => item.role && roles?.includes(item.role));
+          
+          if (hasRole || hasList) {
+            return (
+              <div key={val.id}>
               <div
                 role="button"
                 onMouseOver={() => {
@@ -399,8 +410,11 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
                   )
                 : null}
             </div>
-          ) : null,
-        )}
+            )
+          }
+
+          return null;
+                          })}
       </div>
     );
   };

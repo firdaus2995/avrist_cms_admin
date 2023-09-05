@@ -6,9 +6,18 @@ import TemplateHome from '@/assets/template-home.jpg';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import ModalConfirmLeave from '@/components/molecules/ModalConfirm';
+// import { useParams } from 'react-router-dom';
+// import { useGetPageByIdQuery } from '@/services/PageManagement/pageManagementApi';
 
 export default function PageManagementDetail() {
+  // const params = useParams();
+  // const [id] = useState<any>(Number(params.dataId));
   const [showApproveModal, setShowApproveModal] = useState(false);
+
+  // RTK GET DATA
+  // const _fetchDataById = useGetPageByIdQuery({ id });
+  // const { data: pageManagementDetail } = fetchDataById;
+
   const Badge = () => {
     return (
       <div className="ml-5">
