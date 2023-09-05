@@ -4,19 +4,27 @@ import Typography from '@/components/atoms/Typography';
 import Radio from '@/components/molecules/Radio';
 import { InputDate } from '@/components/atoms/Input/InputDate';
 
-export const FilterButton: React.FC<any> = () => {
+export const FilterButton: React.FC<any> = ({ onSubmit, onCancel }) => {
   const [open, setOpen] = useState(false);
   const [selection, setSelection] = useState<string | number | boolean>('');
 
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const defaultDate = new Date();
+
+  const [startDate, setStartDate] = useState<any>(defaultDate);
+  const [endDate, setEndDate] = useState<any>(defaultDate);
 
   const onCancelPress = () => {
     setOpen(false);
+    onCancel();
   };
 
   const onSubmitPress = () => {
-    setOpen(false);
+    const payload = {
+      selection,
+      startDate,
+      endDate,
+    };
+    onSubmit(payload);
   };
   return (
     <div className={`dropdown-open dropdown dropdown-end mr-3`}>
@@ -46,11 +54,11 @@ export const FilterButton: React.FC<any> = () => {
             containerStyle="flex flex-col items-start"
             items={[
               {
-                value: 'created',
+                value: 'createdAt',
                 label: 'Created Date',
               },
               {
-                value: 'updated',
+                value: 'updatedAt',
                 label: 'Updated Date',
               },
             ]}

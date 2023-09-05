@@ -22,18 +22,21 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import StatusBadge from './components/StatusBadge';
 import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
-import { FilterButton } from '../../components/molecules/FilterButton/index.';
+import { FilterButton } from '@/components/molecules/FilterButton/index.';
 
 const TopRightButton = () => {
   return (
     <div className="flex flex-row">
-      <FilterButton />
+      <FilterButton
+        onSubmit={(data: any) => {
+          console.log(data);
+        }}
+      />
       <CreateButton />
     </div>
   );
 };
 
-// nanti dipisah
 const ArchiveButton = () => {
   return (
     <div className="inline-block float-right">

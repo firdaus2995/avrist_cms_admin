@@ -18,6 +18,9 @@ export const pageManagementApi = createApi({
             $sortBy: String
             $direction: String
             $search: String
+            $filterBy: String
+            $startDate: String
+            $endDate: String
             $isArchive: Boolean
           ) {
             pageList(
@@ -27,6 +30,9 @@ export const pageManagementApi = createApi({
                 sortBy: $sortBy
                 direction: $direction
                 search: $search
+                filterBy: $filterBy
+                startDate: $startDate
+                endDate: $endDate
                 isArchive: $isArchive
               }
             ) {
@@ -47,85 +53,25 @@ export const pageManagementApi = createApi({
                 isDeleted
                 isPublished
                 createdAt
-                createdBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                createdBy
                 updatedAt
-                updatedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                updatedBy
                 reviewedAt
-                reviewedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                reviewedBy
                 publishedAt
-                publishedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                publishedBy
                 rejectedAt
-                rejectedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                rejectedBy
                 requestDeleteAt
-                requestDeleteBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                requestDeleteBy
                 deleteReviewAt
-                deleteReviewBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                deleteReviewBy
                 deleteApproveAt
-                deleteApproveBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                deleteApproveBy
                 deleteRejectAt
-                deleteRejectBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                deleteRejectBy
                 restoredAt
-                restoredBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
+                restoredBy
               }
             }
           }
@@ -193,6 +139,49 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    getPageMyTaskList: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query pageList(
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+            $search: String
+            $filterBy: String
+            $startDate: String
+            $endDate: String
+            $isArchive: Boolean
+          ) {
+            pageList(
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                sortBy: $sortBy
+                direction: $direction
+                search: $search
+                filterBy: $filterBy
+                startDate: $startDate
+                endDate: $endDate
+                isArchive: $isArchive
+              }
+            ) {
+              total
+              pages {
+                id
+                title
+                pageStatus
+                createdAt
+                createdBy
+                updatedAt
+                updatedBy
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -202,4 +191,5 @@ export const {
   useRestorePageMutation,
   usePageLogApprovalQuery,
   useDuplicatePageMutation,
+  useGetPageMyTaskListQuery,
 } = pageManagementApi;
