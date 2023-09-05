@@ -18,8 +18,8 @@ export default function PageManagementNew() {
     formState: {},
   } = useForm();
 
-  const [setSearch] = useState<any>('');
-  const [total, setTotal] = useState<number>(0); //eslint-disable-line
+  const [search, setSearch] = useState<any>(''); //eslint-disable-line
+  const [total, setTotal] = useState<number>(60); //eslint-disable-line
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit] = useState(6);
   // PAGE TEMPLACE SELECTION STATE
@@ -231,7 +231,7 @@ export default function PageManagementNew() {
             </div>
             <div className='w-full flex justify-center'>
               <PaginationComponent
-                total={18}
+                total={total}
                 page={pageIndex}
                 pageSize={pageLimit}
                 setPageOnly={true}
