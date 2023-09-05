@@ -193,6 +193,36 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    getPageById: builder.query<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          query pageById($id: Int!){
+            pageById(id: $id) {    
+                id
+                title
+                slug
+                metaTitle
+                metaDescription
+                shortDesc
+                content
+                imgFilename
+                pageTemplate {
+                    id
+                    name
+                    imageUrl
+                }        
+                postType {
+                    id
+                    name
+                }
+                pageStatus
+                comment
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -202,4 +232,5 @@ export const {
   useRestorePageMutation,
   usePageLogApprovalQuery,
   useDuplicatePageMutation,
+  useGetPageByIdQuery,
 } = pageManagementApi;
