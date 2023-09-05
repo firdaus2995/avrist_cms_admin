@@ -8,6 +8,7 @@ import CkEditor from '@/components/atoms/Ckeditor';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { useEffect, useState } from 'react';
 import DropDown from '@/components/molecules/DropDown';
+import PaginationComponent from '@/components/molecules/Pagination';
 
 export default function PageManagementNew() {
   const {
@@ -18,8 +19,13 @@ export default function PageManagementNew() {
   } = useForm();
 
   const [setSearch] = useState<any>('');
+  const [total, setTotal] = useState<number>(0); //eslint-disable-line
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit] = useState(6);
+  // PAGE TEMPLACE SELECTION STATE
   const [pageTemplates, setPageTemplates] = useState<any>([]);
   const [selected, setSelected] = useState<any>(null);
+  // CONTENT SELECTION STATE
   const [setContentTypeId] = useState<any>(null);
 
   useEffect(() => {
@@ -78,7 +84,7 @@ export default function PageManagementNew() {
             Preview
           </button>
         </div>
-        <form className="flex flex-col gap-3" onSubmit={handleSubmit(handlerSubmit)}>
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit(handlerSubmit)}>
           {/* FORM SECTION */}
           <div className="flex flex-col gap-3">
             <Typography weight="bold" size="l">
@@ -223,14 +229,26 @@ export default function PageManagementNew() {
                   </div>
                 ))}
             </div>
+            <div className='w-full flex justify-center'>
+              <PaginationComponent
+                total={18}
+                page={pageIndex}
+                pageSize={pageLimit}
+                setPageOnly={true}
+                setPage={(page: number) => {
+                  setPageIndex(page);
+                }}
+              />
+            </div>
           </div>
           {/* CONTENT TYPE SECTION */}
-          <div className="flex justify-center">
-            <div className="w-[35%]">
+          <div className="flex justify-center mt-5">
+            <div className="w-[50%]">
               <DropDown
                 labelTitle="Choose Content Type"
                 labelStyle="font-bold	"
-                labelRequired
+                labelWidth={175}
+                direction='row'
                 defaultValue=""
                 labelEmpty=""
                 items={[
