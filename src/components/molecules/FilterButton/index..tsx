@@ -1,22 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import FilterIcon from '@/assets/filter.svg';
 import Typography from '@/components/atoms/Typography';
 import Radio from '@/components/molecules/Radio';
 import { InputDate } from '@/components/atoms/Input/InputDate';
+import dayjs from 'dayjs';
 
-export const FilterButton: React.FC<any> = ({ onSubmit, onCancel }) => {
-  const [open, setOpen] = useState(false);
-  const [selection, setSelection] = useState<string | number | boolean>('');
+export const FilterButton: React.FC<any> = ({
+  open,
+  setOpen,
+  onSubmit,
+  startDate: propStartDate,
+  endDate: propEndDate,
+  defaultSelected,
+  onResetFilter: propsOnResetFilter,
+  onCancelPress,
+}) => {
+  const now = dayjs().format('YYYY-MM-DD');
+  const [selection, setSelection] = useState<string | number | boolean>(defaultSelected);
+  const [startDate, setStartDate] = useState(propStartDate);
+  const [endDate, setEndDate] = useState(propEndDate);
 
-  const defaultDate = new Date();
-
-  const [startDate, setStartDate] = useState<any>(defaultDate);
-  const [endDate, setEndDate] = useState<any>(defaultDate);
-
-  const onCancelPress = () => {
-    setOpen(false);
-    onCancel();
-  };
+  useEffect(() => {
+    // Ensure start date is not greater than end date
+    if (dayjs(startDate).isAfter(endDate)) {
+      setStartDate(endDate);
+    }
+  }, [startDate, endDate]);
 
   const onSubmitPress = () => {
     const payload = {
@@ -26,6 +35,14 @@ export const FilterButton: React.FC<any> = ({ onSubmit, onCancel }) => {
     };
     onSubmit(payload);
   };
+
+  const onResetPress = () => {
+    propsOnResetFilter();
+    setSelection('CREATED_AT');
+    setStartDate(propStartDate);
+    setEndDate(propEndDate);
+  };
+
   return (
     <div className={`dropdown-open dropdown dropdown-end mr-3`}>
       <label tabIndex={0} className="">
@@ -46,19 +63,21 @@ export const FilterButton: React.FC<any> = ({ onSubmit, onCancel }) => {
             <Typography type="body" size="s" weight="semi" className="text-body-text-2">
               Filter
             </Typography>
-            <Typography type="body" size="s" weight="regular" className="text-body-text-2">
-              Reset Filter
-            </Typography>
+            <div className="cursor-pointer w-20 h-7" onClick={onResetPress}>
+              <Typography type="body" size="s" weight="regular" className="text-body-text-2">
+                Reset Filter
+              </Typography>
+            </div>
           </div>
           <Radio
             containerStyle="flex flex-col items-start"
             items={[
               {
-                value: 'createdAt',
+                value: 'CREATED_AT',
                 label: 'Created Date',
               },
               {
-                value: 'updatedAt',
+                value: 'UPDATED_AT',
                 label: 'Updated Date',
               },
             ]}
@@ -74,24 +93,29 @@ export const FilterButton: React.FC<any> = ({ onSubmit, onCancel }) => {
           />
           <div className="flex flex-row gap-2">
             <InputDate
+              max={endDate}
               labelTitle="Start Date:"
               value={startDate}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setStartDate(event.target.value);
+                setStartDate(dayjs(event.target.value).format('YYYY-MM-DD'));
               }}
             />
             <InputDate
+              max={now}
               labelTitle="End Date:"
               value={endDate}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setEndDate(event.target.value);
+                setEndDate(dayjs(event.target.value).format('YYYY-MM-DD'));
               }}
             />
           </div>
           <div className="divider" />
           <div className="flex flex-row gap-2 justify-between">
             <button
-              onClick={onCancelPress}
+              onClick={() => {
+                onCancelPress();
+                onResetPress();
+              }}
               className="btn flex flex-1 btn-outline btn-primary text-xs btn-sm h-10">
               Cancel
             </button>

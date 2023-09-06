@@ -4,6 +4,7 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useGetPageManagementListQuery,
   useDeletePageMutation,
+  useGetPageMyTaskListQuery,
 } from '@/services/PageManagement/pageManagementApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
@@ -23,19 +24,6 @@ import StatusBadge from './components/StatusBadge';
 import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
 import { FilterButton } from '@/components/molecules/FilterButton/index.';
-
-const TopRightButton = () => {
-  return (
-    <div className="flex flex-row">
-      <FilterButton
-        onSubmit={(data: any) => {
-          console.log(data);
-        }}
-      />
-      <CreateButton />
-    </div>
-  );
-};
 
 const ArchiveButton = () => {
   return (
@@ -76,8 +64,24 @@ const CreateButton = () => {
 };
 
 export default function PageManagementList() {
+  const listTabs = [
+    {
+      name: 'Page List',
+      isActive: 1,
+    },
+    {
+      name: 'My Task',
+      isActive: 2,
+    },
+  ];
+  const now = dayjs().format('YYYY-MM-DD');
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState(1);
+  const isPageListActive = activeTab === 1;
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
+  const [listDataMyTask, setListDataMyTask] = useState<any>([]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -86,7 +90,11 @@ export default function PageManagementList() {
   const [idLog, setIdLog] = useState(null);
   const [logTitle, setLogTitle] = useState(null);
 
-  // TABLE PAGINATION STATE
+  const [filterBy, setFilterBy] = useState('CREATED_AT');
+  const [startDate, setStartDate] = useState(now);
+  const [endDate, setEndDate] = useState(now);
+
+  // TABLE PAGINATION STATE - PAGE LIST
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
@@ -98,26 +106,53 @@ export default function PageManagementList() {
   const fetchQuery = useGetPageManagementListQuery({
     pageIndex,
     limit: pageLimit,
+    sortBy,
     direction,
     search,
-    sortBy,
+    filterBy,
+    startDate,
+    endDate,
     isArchive: false,
   });
   const { data } = fetchQuery;
+
+  const fetchQueryMyTask = useGetPageMyTaskListQuery({
+    pageIndex,
+    limit: pageLimit,
+    sortBy,
+    direction,
+    search,
+    isArchive: false,
+  });
+  const { data: dataMyTask } = fetchQueryMyTask;
 
   // RTK DELETE
   const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
 
   useEffect(() => {
-    if (data) {
+    if (data && isPageListActive) {
       setListData(data?.pageList?.pages);
       setTotal(data?.pageList?.total);
     }
   }, [data]);
 
   useEffect(() => {
+    if (dataMyTask && !isPageListActive) {
+      setListDataMyTask(data?.pageList?.pages);
+      setTotal(data?.pageList?.total);
+    }
+  }, [dataMyTask]);
+
+  useEffect(() => {
     const refetch = async () => {
       await fetchQuery.refetch();
+    };
+    void refetch();
+  }, []);
+
+  useEffect(() => {
+    const refetch = async () => {
+      await fetchQueryMyTask.refetch();
     };
     void refetch();
   }, []);
@@ -261,6 +296,43 @@ export default function PageManagementList() {
         );
       });
   };
+
+  const resetState = () => {
+    setFilterBy('CREATED_AT');
+    setStartDate(now);
+    setEndDate(now);
+  };
+
+  const TopRightButton = () => {
+    return (
+      <div className="flex flex-row">
+        {isPageListActive && (
+          <FilterButton
+            open={filterOpen}
+            setOpen={setFilterOpen}
+            startDate={startDate}
+            endDate={endDate}
+            defaultSelected={filterBy}
+            onSubmit={(e: any) => {
+              setFilterBy(e.selection);
+              setStartDate(e.startDate);
+              setEndDate(e.endDate);
+              setFilterOpen(false);
+            }}
+            onResetFilter={() => {
+              resetState();
+            }}
+            onCancelPress={() => {
+              setFilterOpen(false);
+              resetState();
+            }}
+          />
+        )}
+        <CreateButton />
+      </div>
+    );
+  };
+
   return (
     <>
       <ModalLog
@@ -299,22 +371,45 @@ export default function PageManagementList() {
         TopSideButtons={<TopRightButton />}>
         <div className="flex flex-row justify-between mb-5">
           <div className="btn-group">
-            <button className="btn btn-primary text-xs w-40">Page List</button>
-            <button className="btn btn-disabled text-xs w-40">My Task</button>
+            {listTabs.map(val => (
+              <button
+                key={val.isActive}
+                onClick={() => {
+                  setFilterOpen(false);
+                  resetState();
+                  setActiveTab(val.isActive);
+                }}
+                className={`btn ${
+                  activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-500'
+                } text-xs w-40`}>
+                {val.name}
+              </button>
+            ))}
           </div>
-          <ArchiveButton />
+          {isPageListActive && <ArchiveButton />}
         </div>
-
         <div className="overflow-x-auto w-full mb-5">
-          <Table
-            rows={listData}
-            columns={COLUMNS}
-            loading={false}
-            error={false}
-            manualPagination={true}
-            manualSorting={true}
-            onSortModelChange={handleSortModelChange}
-          />
+          {isPageListActive ? (
+            <Table
+              rows={listData}
+              columns={COLUMNS}
+              loading={false}
+              error={false}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+            />
+          ) : (
+            <Table
+              rows={listDataMyTask}
+              columns={COLUMNS}
+              loading={false}
+              error={false}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+            />
+          )}
         </div>
         <PaginationComponent
           total={total}

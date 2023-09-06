@@ -1,14 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { gql } from 'graphql-request';
-import { IGetPageManagementListPayload } from './types';
-import customFetchBase from '../../utils/Interceptor';
+import customFetchBase from '@/utils/Interceptor';
 
 export const pageManagementApi = createApi({
   reducerPath: 'pageManagementApi',
   baseQuery: customFetchBase,
   tagTypes: ['getPageManagement'],
   endpoints: builder => ({
-    getPageManagementList: builder.query<any, IGetPageManagementListPayload>({
+    getPageManagementList: builder.query<any, any>({
       providesTags: ['getPageManagement'],
       query: payload => ({
         document: gql`
@@ -53,25 +52,85 @@ export const pageManagementApi = createApi({
                 isDeleted
                 isPublished
                 createdAt
-                createdBy
+                createdBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 updatedAt
-                updatedBy
+                updatedBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 reviewedAt
-                reviewedBy
+                reviewedBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 publishedAt
-                publishedBy
+                publishedBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 rejectedAt
-                rejectedBy
+                rejectedBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 requestDeleteAt
-                requestDeleteBy
+                requestDeleteBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 deleteReviewAt
-                deleteReviewBy
+                deleteReviewBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 deleteApproveAt
-                deleteApproveBy
+                deleteApproveBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 deleteRejectAt
-                deleteRejectBy
+                deleteRejectBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
                 restoredAt
-                restoredBy
+                restoredBy {
+                  id
+                  name
+                  role {
+                    name
+                  }
+                }
               }
             }
           }
@@ -142,28 +201,25 @@ export const pageManagementApi = createApi({
     getPageMyTaskList: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query pageList(
+          query pageMyTaskList(
             $pageIndex: Int!
             $limit: Int!
             $sortBy: String
             $direction: String
-            $search: String
-            $filterBy: String
-            $startDate: String
-            $endDate: String
-            $isArchive: Boolean
-          ) {
-            pageList(
+            $search: String # $filterBy: String
+          ) # $startDate: String
+          # $endDate: String
+          {
+            pageMyTaskList(
               pageableRequest: {
                 pageIndex: $pageIndex
                 limit: $limit
                 sortBy: $sortBy
                 direction: $direction
                 search: $search
-                filterBy: $filterBy
-                startDate: $startDate
-                endDate: $endDate
-                isArchive: $isArchive
+                # filterBy: $filterBy
+                # startDate: $startDate
+                # endDate: $endDate
               }
             ) {
               total
