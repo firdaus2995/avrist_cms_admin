@@ -9,6 +9,7 @@ import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { useEffect, useState } from 'react';
 import DropDown from '@/components/molecules/DropDown';
 import PaginationComponent from '@/components/molecules/Pagination';
+import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 
 export default function PageManagementNew() {
   const {
@@ -26,10 +27,32 @@ export default function PageManagementNew() {
   const [pageTemplates, setPageTemplates] = useState<any>([]);
   const [selected, setSelected] = useState<any>(null);
   // CONTENT SELECTION STATE
+  const [listContents, setListContents] = useState<any>([]);
   const [setContentTypeId] = useState<any>(null);
+
+  // RTK GET CONTENT
+  const fetchQuery = useGetPostTypeListQuery({
+    pageIndex: 0,
+    limit: 999999,
+    sortBy: "name",
+    direction: "asc",
+    search: "",
+  }, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: dataContents } = fetchQuery;
 
   useEffect(() => {
     setTimeout(() => {
+      if (dataContents) {
+        setListContents(dataContents?.postTypeList?.postTypeList.map((element: any) => {
+          return {
+            value: element.id,
+            label: element.name,
+          };
+        }));
+      };
+
       setPageTemplates([
         {
           id: 1,
@@ -69,7 +92,7 @@ export default function PageManagementNew() {
         },
       ]);
     }, 50);
-  }, []);
+  }, [dataContents]);
 
   const handlerSubmit = (formData: any) => {
     console.log(formData);
@@ -198,7 +221,7 @@ export default function PageManagementNew() {
           <div className="flex flex-col gap-3">
             <div className="flex flex-row justify-between">
               <Typography size="m" weight="bold">
-                Choose Your Template
+                Choose Your Template<span className='text-reddist'>*</span>
               </Typography>
               <InputSearch
                 onBlur={(e: any) => {
@@ -251,16 +274,7 @@ export default function PageManagementNew() {
                 direction='row'
                 defaultValue=""
                 labelEmpty=""
-                items={[
-                  {
-                    value: 1,
-                    label: 'Content Type 1',
-                  },
-                  {
-                    value: 2,
-                    label: 'Content Type 2',
-                  },
-                ]}
+                items={listContents}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                   if (event) {
                     setContentTypeId(value);
