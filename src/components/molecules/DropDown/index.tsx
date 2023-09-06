@@ -17,6 +17,8 @@ const DropDown = ({
   labelStyle,
   labelEmpty,
   labelRequired,
+  labelWidth = 225,
+  direction,
   items,
   defaultValue,
   onSelect,
@@ -65,39 +67,47 @@ const DropDown = ({
   }
 
   return (
-    <div className="w-full relative" ref={componentRef}>
-      <label className="label">
+    <div className={`w-full flex ${direction === "row" ? "flex-row" : "flex-col"}`}>
+      <label 
+        style={{
+          width: direction === 'row' ? labelWidth : '',
+          minWidth: direction === 'row' ? labelWidth : '',
+        }}
+        className="label"
+      >
         <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-lg ml-1'}>{labelRequired ? '*' : ''}</span></span>
       </label>
-      <button onClick={(event: React.SyntheticEvent) => {
-        event.preventDefault();
-        setOpen(!open); 
-      }} tabIndex={0} className="flex flex-row justify-between items-center p-3 w-full h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple">
-        {selectedLabel}
-        <img src={open ? ChevronUp : ChevronDown} className="w-6 h-6" />
-      </button>
-      <ul tabIndex={0} className={`absolute p-2 mt-0.5 shadow bg-base-100 rounded-box w-full max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-xl ${!open && `hidden`}`}>
-        {
-          items.map((element: IItems, keyIndex: number) => {
-            return (
-              selected === element.value ? (
-                <li className="flex flex-row justify-between items-center	active:bg-purple hover:bg-light-purple p-3 rounded-xl text-purple font-bold text-sm active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
-                  handleSelect(event, element.value, element.label)
-                }}>
-                  <a className="">{element.label}</a>
-                  <img src={CheckMark} className="w-6 h-6" />
-                </li>
-              ) : (
-                <li className="flex flex-row justify-between items-center active:bg-purple text-sm hover:bg-light-purple p-3 rounded-xl active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
-                  handleSelect(event, element.value, element.label)
-                }}>
-                  <a>{element.label}</a>
-                </li>
+      <div className="w-full relative" ref={componentRef}>
+        <button onClick={(event: React.SyntheticEvent) => {
+          event.preventDefault();
+          setOpen(!open); 
+        }} tabIndex={0} className="flex flex-row justify-between items-center p-3 w-full h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple">
+          {selectedLabel}
+          <img src={open ? ChevronUp : ChevronDown} className="w-6 h-6" />
+        </button>
+        <ul tabIndex={0} className={`absolute p-2 mt-0.5 shadow bg-base-100 rounded-box w-full max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-xl ${!open && `hidden`}`}>
+          {
+            items.map((element: IItems, keyIndex: number) => {
+              return (
+                selected === element.value ? (
+                  <li className="flex flex-row justify-between items-center	cursor-pointer active:bg-purple hover:bg-light-purple p-3 rounded-xl text-purple font-bold text-sm active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
+                    handleSelect(event, element.value, element.label)
+                  }}>
+                    <a className="">{element.label}</a>
+                    <img src={CheckMark} className="w-6 h-6" />
+                  </li>
+                ) : (
+                  <li className="flex flex-row justify-between items-center cursor-pointer active:bg-purple text-sm hover:bg-light-purple p-3 rounded-xl active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
+                    handleSelect(event, element.value, element.label)
+                  }}>
+                    <a>{element.label}</a>
+                  </li>
+                )
               )
-            )
-          })
-        }
-      </ul>
+            })
+          }
+        </ul>
+      </div>
     </div>
   )
 }
