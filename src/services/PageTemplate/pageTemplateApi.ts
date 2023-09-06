@@ -29,10 +29,9 @@ export const pageTemplateApi: any = createApi({
               total
               templates {
                 id
-                filenameCode
                 name
-                shortDesc
-                createdBy {
+                imageUrl
+                uploadedBy {
                   id
                   name
                 }

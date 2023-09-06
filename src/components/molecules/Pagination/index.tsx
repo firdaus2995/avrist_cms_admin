@@ -104,17 +104,24 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
           truncableClassName="w-10 px-0.5 text-center text-[14px] items-center flex justify-center rounded-2xl bg-[#E5DFEC] w-[48px] h-[48px] text-white"
           truncableText="..."
         >
-          <Pagination.PrevButton className="flex justify-center items-center w-[48px] h-[48px]">
+          <Pagination.PrevButton 
+            type='button' 
+            className="flex justify-center items-center w-[48px] h-[48px]"
+          >
             <img src={TablePrev} />
           </Pagination.PrevButton>
 
           <Pagination.PageButton
+            type='button'
             activeClassName="text-white bg-primary font-semibold"
             className="flex justify-center items-center w-[48px] h-[48px] cursor-pointer text-sm gap-1 rounded-2xl"
             inactiveClassName="text-white bg-[#E5DFEC] font-semibold"
           />
 
-          <Pagination.NextButton className="flex justify-center items-center w-[48px] h-[48px]">
+          <Pagination.NextButton 
+            type='button' 
+            className="flex justify-center items-center w-[48px] h-[48px]"
+          >
             <img src={TableNext} />
           </Pagination.NextButton>
         </Pagination>
