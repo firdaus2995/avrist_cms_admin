@@ -11,13 +11,12 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-// import TableEdit from '@/assets/table-edit.png';
-// import TableView from '@/assets/table-view.png';
+
 import TableDelete from '@/assets/table-delete.svg';
-// import FilterIcon from '@/assets/filter.svg';
 import ArchiveBox from '@/assets/archive-box.svg';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
+
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import StatusBadge from './components/StatusBadge';
@@ -98,9 +97,18 @@ export default function PageManagementList() {
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(5);
-  const [direction, setDirection] = useState('asc');
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('id');
+
+  const [directionPageList, setDirectionPageList] = useState('asc');
+  const [directionMyTask, setDirectionMyTask] = useState('asc');
+
+  const [searchPageList, setSearchPageList] = useState('');
+  const [searchMyTask, setSearchMyTask] = useState('');
+  const [sortByPageList, setSortByPageList] = useState('id');
+  const [sortByMyTask, setSortByMyTask] = useState('id');
+
+  const sortBy = isPageListActive ? sortByPageList : sortByMyTask;
+  const direction = isPageListActive ? directionPageList : directionMyTask;
+  const searchQuery = isPageListActive ? searchPageList : searchMyTask;
 
   // RTK GET DATA
   const fetchQuery = useGetPageManagementListQuery({
@@ -108,7 +116,7 @@ export default function PageManagementList() {
     limit: pageLimit,
     sortBy,
     direction,
-    search,
+    search: searchQuery,
     filterBy,
     startDate,
     endDate,
@@ -121,7 +129,7 @@ export default function PageManagementList() {
     limit: pageLimit,
     sortBy,
     direction,
-    search,
+    search: searchQuery,
     isArchive: false,
   });
   const { data: dataMyTask } = fetchQueryMyTask;
@@ -134,36 +142,41 @@ export default function PageManagementList() {
       setListData(data?.pageList?.pages);
       setTotal(data?.pageList?.total);
     }
-  }, [data]);
-
-  useEffect(() => {
     if (dataMyTask && !isPageListActive) {
-      setListDataMyTask(data?.pageList?.pages);
-      setTotal(data?.pageList?.total);
+      setListDataMyTask(dataMyTask?.pageList?.pages);
+      setTotal(dataMyTask?.pageList?.total);
     }
-  }, [dataMyTask]);
+  }, [data, dataMyTask, isPageListActive]);
 
   useEffect(() => {
-    const refetch = async () => {
-      await fetchQuery.refetch();
+    const refetchData = async () => {
+      if (isPageListActive) {
+        await fetchQuery.refetch();
+      } else {
+        await fetchQueryMyTask.refetch();
+      }
     };
-    void refetch();
-  }, []);
-
-  useEffect(() => {
-    const refetch = async () => {
-      await fetchQueryMyTask.refetch();
-    };
-    void refetch();
-  }, []);
+    void refetchData();
+  }, [isPageListActive]);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
-    if (sortModel.length) {
-      setSortBy(sortModel[0].id);
-      setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }
-  }, []);
+  const handleSortModelChange = useCallback(
+    (sortModel: SortingState) => {
+      if (sortModel.length) {
+        const sortBy = sortModel[0].id;
+        const direction = sortModel[0].desc ? 'desc' : 'asc';
+
+        if (isPageListActive) {
+          setSortByPageList(sortBy);
+          setDirectionPageList(direction);
+        } else {
+          setSortByMyTask(sortBy);
+          setDirectionMyTask(direction);
+        }
+      }
+    },
+    [isPageListActive],
+  );
 
   // TABLE COLUMN
   const COLUMNS = [
@@ -363,7 +376,11 @@ export default function PageManagementList() {
         SearchBar={
           <InputSearch
             onBlur={(e: any) => {
-              setSearch(e.target.value);
+              if (isPageListActive) {
+                setSearchPageList(e.target.value);
+              } else {
+                setSearchMyTask(e.target.value);
+              }
             }}
             placeholder="Search"
           />
