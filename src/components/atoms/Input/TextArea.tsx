@@ -59,7 +59,7 @@ export const TextArea: React.FC<ITextArea> = ({
         onChange={e => {
           onChange(e);
         }}
-        className={`textarea textarea-bordered w-full py-3 rounded-xl ${textAreaStyle}`}
+        className={`textarea textarea-bordered w-full text-base py-3 rounded-xl ${textAreaStyle}`}
       />
     </div>
   );
