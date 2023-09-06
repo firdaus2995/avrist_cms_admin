@@ -206,10 +206,8 @@ export const pageManagementApi = createApi({
             $limit: Int!
             $sortBy: String
             $direction: String
-            $search: String # $filterBy: String
-          ) # $startDate: String
-          # $endDate: String
-          {
+            $search: String
+          ) {
             pageMyTaskList(
               pageableRequest: {
                 pageIndex: $pageIndex
@@ -217,9 +215,6 @@ export const pageManagementApi = createApi({
                 sortBy: $sortBy
                 direction: $direction
                 search: $search
-                # filterBy: $filterBy
-                # startDate: $startDate
-                # endDate: $endDate
               }
             ) {
               total
