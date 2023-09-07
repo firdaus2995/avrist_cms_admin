@@ -198,41 +198,7 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
-    getPageMyTaskList: builder.query<any, any>({
-      query: payload => ({
-        document: gql`
-          query pageMyTaskList(
-            $pageIndex: Int!
-            $limit: Int!
-            $sortBy: String
-            $direction: String
-            $search: String
-          ) {
-            pageMyTaskList(
-              pageableRequest: {
-                pageIndex: $pageIndex
-                limit: $limit
-                sortBy: $sortBy
-                direction: $direction
-                search: $search
-              }
-            ) {
-              total
-              pages {
-                id
-                title
-                pageStatus
-                createdAt
-                createdBy
-                updatedAt
-                updatedBy
-              }
-            }
-          }
-        `,
-        variables: payload,
-      }),
-    }),
+
   }),
 });
 
