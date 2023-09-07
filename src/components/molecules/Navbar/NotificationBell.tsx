@@ -63,8 +63,10 @@ const NotificationBell: React.FC = () => {
 
   useEffect(() => {
       const interval = setInterval(() => {
-        if (token && window.location.pathname === '/') {
-          void getCount();
+        if (document.visibilityState === 'visible') {
+          if (token) {
+            void getCount();
+          }
         }
       }, intervalTime);
 
