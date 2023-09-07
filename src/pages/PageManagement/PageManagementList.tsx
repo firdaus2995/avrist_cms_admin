@@ -257,11 +257,13 @@ export default function PageManagementList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <div className="tooltip" data-tip={'View Detail'}>
-            <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
-              View Detail
-            </button>
-          </div>
+          <Link to={`detail/${info.getValue()}`}>
+            <div className="tooltip" data-tip={'View Detail'}>
+              <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
+                View Detail
+              </button>
+            </div>
+          </Link>
           <div className="tooltip" data-tip="Delete">
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}

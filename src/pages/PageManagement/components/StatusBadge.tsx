@@ -1,5 +1,5 @@
 import React from 'react';
-import Typography from '@/components/atoms/Typography';
+import Typography from '../../../components/atoms/Typography';
 
 interface StatusBadgeProps {
   status: string;
@@ -10,14 +10,15 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
   let title = '';
   switch (status.toLowerCase()) {
     case 'waiting_review':
-      style = 'bg-[#F8E7D2] border-[#FF8E3C]';
+      style = 'bg-[#F8E7CF] border-[#FF8E3C]';
       title = 'Waiting Review';
       break;
-    case 'waiting_approval':
-      style = 'bg-[#CFE3FB] border-[#829BC7]';
+    case 'waiting_approve':
+      style = 'bg-[#CFE3FB] border-[#6F92C6]';
       title = 'Waiting Approval';
       break;
     case 'draft':
+    case 'archived':
       style = 'bg-[#E4E4E4] border-[#A9AAB5]';
       title = 'Draft';
       break;
@@ -25,17 +26,21 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
       style = 'bg-[#EBD2CE] border-[#D09191]';
       title = 'Delete Review';
       break;
-    case 'delete_approval':
+    case 'delete_approve':
       style = 'bg-[#EBD2CE] border-[#D09191]';
       title = 'Delete Approval';
       break;
-    case 'approve':
-      style = 'bg-[#F8E7D2] border-[#FF8E3C]';
+    case 'approved':
+      style = 'bg-[#D9E7D6] border-[#8AA97C]';
       title = 'Approve';
       break;
     case 'rejected':
       style = 'bg-[#EBD2CE] border-[#D09191]';
       title = 'Rejected';
+      break;
+    case 'delete_rejected':
+      style = 'bg-[#EBD2CE] border-[#D09191]';
+      title = 'Delete Rejected';
       break;
     default:
       style = 'bg-[#E4E4E4] border-[#A9AAB5]';

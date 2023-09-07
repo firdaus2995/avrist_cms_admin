@@ -50,6 +50,23 @@ export default function ContentTypeEdit() {
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(-1);
 
+  const [defaultItems] = useState<any>([
+    {
+      fieldType: 'TEXT_FIELD',
+      name: 'Title',
+      fieldId: '',
+      config: [],
+      isDeleted: false,
+    },
+    {
+      fieldType: 'TEXT_AREA',
+      name: 'Short Description',
+      fieldId: '',
+      config: [],
+      isDeleted: false,
+    },
+  ]);
+
   const [listItems, setListItems] = useState<any>([]);
 
   // RTK GET DATA
@@ -196,6 +213,18 @@ export default function ContentTypeEdit() {
   const renderListItems = () => {
     return (
       <div className="my-5">
+        {defaultItems.map((val: any, idx: undefined) => (
+          <div
+            key={idx}
+            className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
+            <div className="w-1/4 text-left font-semibold">{val.name}</div>
+            <div className="w-1/4 text-center font-semibold">
+              {val.fieldId ? val.fieldId : getFieldId(val.name)}
+            </div>
+            <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
+            <div className="w-1/4 text-right capitalize"></div>
+          </div>
+        ))}
         {listItems.map((val: any, idx: undefined) => (
           <div
             key={idx}
@@ -993,7 +1022,8 @@ export default function ContentTypeEdit() {
                   }}
                 />
               </div>
-            ) : openedAttribute?.fieldType === 'IMAGE' || openedAttribute?.fieldType === 'DOCUMENT' ? (
+            ) : openedAttribute?.fieldType === 'IMAGE' ||
+              openedAttribute?.fieldType === 'DOCUMENT' ? (
               <div className="flex flex-row gap-4 my-5">
                 <Radio
                   labelTitle=""
@@ -1135,25 +1165,34 @@ export default function ContentTypeEdit() {
                                   labelTitle={`Minimum Length (Optional)`}
                                   labelStyle="font-bold"
                                   type="number"
-                                  value={val?.config && JSON.parse(val.config).min_length ? JSON.parse(val.config).min_length : ''}
+                                  value={
+                                    val?.config && JSON.parse(val.config).min_length
+                                      ? JSON.parse(val.config).min_length
+                                      : ''
+                                  }
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
-                                    const updatedAttributeList = openedAttribute.attributeList.map((attribute: { id: any; config: any }) => {
-                                      if (attribute.id === val.id) {
-                                        const updatedAttribute = { ...attribute };
-                                        if (updatedAttribute.config) {
-                                          const config = JSON.parse(updatedAttribute.config);
-                                          config.min_length = e.target.value;
-                                          updatedAttribute.config = JSON.stringify(config);
-                                        } else {
-                                          // Jika val.config adalah null, buat objek config baru dengan properti min_length
-                                          const newConfig = { min_length: e.target.value, max_length: '' };
-                                          updatedAttribute.config = JSON.stringify(newConfig);
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any; config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          if (updatedAttribute.config) {
+                                            const config = JSON.parse(updatedAttribute.config);
+                                            config.min_length = e.target.value;
+                                            updatedAttribute.config = JSON.stringify(config);
+                                          } else {
+                                            // Jika val.config adalah null, buat objek config baru dengan properti min_length
+                                            const newConfig = {
+                                              min_length: e.target.value,
+                                              max_length: '',
+                                            };
+                                            updatedAttribute.config = JSON.stringify(newConfig);
+                                          }
+                                          return updatedAttribute;
                                         }
-                                        return updatedAttribute;
-                                      }
-                                      return attribute;
-                                    });
+                                        return attribute;
+                                      },
+                                    );
 
                                     setOpenedAttribute((prevState: any) => ({
                                       ...prevState,
@@ -1165,25 +1204,34 @@ export default function ContentTypeEdit() {
                                   labelTitle={`Maximum Length (Optional)`}
                                   labelStyle="font-bold"
                                   type="number"
-                                  value={val?.config && JSON.parse(val.config).max_length ? JSON.parse(val.config).max_length : ''}
+                                  value={
+                                    val?.config && JSON.parse(val.config).max_length
+                                      ? JSON.parse(val.config).max_length
+                                      : ''
+                                  }
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
-                                    const updatedAttributeList = openedAttribute.attributeList.map((attribute: { id: any; config: any }) => {
-                                      if (attribute.id === val.id) {
-                                        const updatedAttribute = { ...attribute };
-                                        if (updatedAttribute.config) {
-                                          const config = JSON.parse(updatedAttribute.config);
-                                          config.max_length = e.target.value;
-                                          updatedAttribute.config = JSON.stringify(config);
-                                        } else {
-                                          // Jika val.config adalah null, buat objek config baru dengan properti min_length
-                                          const newConfig = { min_length: '', max_length: e.target.value };
-                                          updatedAttribute.config = JSON.stringify(newConfig);
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: { id: any; config: any }) => {
+                                        if (attribute.id === val.id) {
+                                          const updatedAttribute = { ...attribute };
+                                          if (updatedAttribute.config) {
+                                            const config = JSON.parse(updatedAttribute.config);
+                                            config.max_length = e.target.value;
+                                            updatedAttribute.config = JSON.stringify(config);
+                                          } else {
+                                            // Jika val.config adalah null, buat objek config baru dengan properti min_length
+                                            const newConfig = {
+                                              min_length: '',
+                                              max_length: e.target.value,
+                                            };
+                                            updatedAttribute.config = JSON.stringify(newConfig);
+                                          }
+                                          return updatedAttribute;
                                         }
-                                        return updatedAttribute;
-                                      }
-                                      return attribute;
-                                    });
+                                        return attribute;
+                                      },
+                                    );
 
                                     setOpenedAttribute((prevState: any) => ({
                                       ...prevState,

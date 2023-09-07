@@ -94,7 +94,22 @@ export default function ContentTypeNew() {
     }
   }
 
-  const [listItems, setListItems] = useState<any>([]);
+  const [listItems, setListItems] = useState<any>([
+    {
+      fieldType: 'TEXT_FIELD',
+      name: 'Title',
+      fieldId: '',
+      config: [],
+      isDeleted: false,
+    },
+    {
+      fieldType: 'TEXT_AREA',
+      name: 'Short Description',
+      fieldId: '',
+      config: [],
+      isDeleted: false,
+    },
+  ]);
   
   function onAddList() {
     if (openedAttribute?.code === 'looping') {
@@ -323,7 +338,7 @@ export default function ContentTypeNew() {
       name,
       slug,
       isUseCategory,
-      attributeRequests: transformedData,
+      attributeRequests: transformedData.filter((_element: any, index: number) => index >= 2),
     };
 
     postCreate(payload)

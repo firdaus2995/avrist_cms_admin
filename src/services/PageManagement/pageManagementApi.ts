@@ -198,7 +198,139 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
-
+    getPageMyTaskList: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query pageMyTaskList(
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+            $search: String
+          ) {
+            pageMyTaskList(
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                sortBy: $sortBy
+                direction: $direction
+                search: $search
+              }
+            ) {
+              total
+              pages {
+                id
+                title
+                pageStatus
+                createdAt
+                createdBy
+                updatedAt
+                updatedBy
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    getPageById: builder.query<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          query pageById($id: Int!) {
+            pageById(id: $id) {
+              id
+              title
+              slug
+              metaTitle
+              metaDescription
+              shortDesc
+              content
+              imgFilename
+              pageTemplate {
+                id
+                name
+                imageUrl
+              }
+              postType {
+                id
+                name
+              }
+              pageStatus
+              comment
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    updatePageStatus: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation pageUpdateStatus($id: Int!, $status: String!, $comment: String!) {
+            pageUpdateStatus(request: { id: $id, status: $status, comment: $comment }) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    updatePageData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation pageUpdate(
+            $id: Int!
+            $title: String!
+            $slug: String!
+            $metatitle: String!
+            $metaDescription: String!
+            $shortDesc: String!
+            $content: String!
+            $imgFilename: String!
+            $isDraft: Boolean!
+            $pageTemplateId: Boolean!
+            $postTypeId: Boolean!
+          ) {
+            pageUpdate(
+              request: {
+                title: $title
+                slug: $slug
+                metaTitle: $metatitle
+                metaDescription: $metaDescription
+                shortDesc: $shortDesc
+                content: $content
+                imgFilename: $imgFilename
+                isDraft: $isDraft
+                pageTemplateId: $pageTemplateId
+                postTypeId: $postTypeId
+              }
+              id: $id
+            ) {
+              id
+              title
+              slug
+              metaTitle
+              metaDescription
+              shortDesc
+              content
+              imgFilename
+              pageTemplate {
+                id
+                name
+                imageUrl
+              }
+              postType {
+                id
+                name
+              }
+              pageStatus
+              comment
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -209,4 +341,7 @@ export const {
   usePageLogApprovalQuery,
   useDuplicatePageMutation,
   useGetPageMyTaskListQuery,
+  useGetPageByIdQuery,
+  useUpdatePageStatusMutation,
+  useUpdatePageDataMutation,
 } = pageManagementApi;

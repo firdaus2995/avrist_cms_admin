@@ -46,7 +46,7 @@ export default function PageTemplatesList() {
     },
     {
       header: () => <span className="text-[14px]">Uploaded By</span>,
-      accessorKey: 'createdBy.name',
+      accessorKey: 'uploadedBy.name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -65,9 +65,6 @@ export default function PageTemplatesList() {
           <Link to={`detail/${info.getValue()}`}>
             <button
               className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs"
-              // onClick={() => {
-              //   onClickPageTemplateEdit(info.getValue(), info?.row?.original?.filenameCode, info?.row?.original?.name, info?.row?.original?.shortDesc);
-              // }}
             >
               View Detail
             </button>
