@@ -223,6 +223,80 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    updatePageStatus: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation pageUpdateStatus(
+            $id: Int!
+            $status: String!
+            $comment: String!
+          ){
+            pageUpdateStatus(        
+                request: {
+                    id: $id,
+                    status: $status
+                    comment: $comment
+            }) {    
+                message
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
+    updatePageData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation pageUpdate(
+            $id: Int!
+            $title: String!
+            $slug: String!
+            $metatitle: String!
+            $metaDescription: String!
+            $shortDesc: String!
+            $content: String!
+            $imgFilename: String!
+            $isDraft: Boolean!
+            $pageTemplateId: Boolean!
+            $postTypeId: Boolean!
+          ){
+            pageUpdate(request: {
+                title: $title,
+                slug: $slug,
+                metaTitle: $metatitle,
+                metaDescription: $metaDescription,
+                shortDesc: $shortDesc,
+                content: $content,
+                imgFilename: $imgFilename,
+                isDraft: $isDraft,
+                pageTemplateId: $pageTemplateId,
+                postTypeId: $postTypeId
+            }, id: $id) {    
+                id
+                title
+                slug
+                metaTitle
+                metaDescription
+                shortDesc
+                content
+                imgFilename
+                pageTemplate {
+                    id
+                    name
+                    imageUrl
+                }        
+                postType {
+                    id
+                    name
+                }
+                pageStatus
+                comment
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -233,4 +307,6 @@ export const {
   usePageLogApprovalQuery,
   useDuplicatePageMutation,
   useGetPageByIdQuery,
+  useUpdatePageStatusMutation,
+  useUpdatePageDataMutation,
 } = pageManagementApi;

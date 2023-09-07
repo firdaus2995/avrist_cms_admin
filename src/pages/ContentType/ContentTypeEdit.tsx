@@ -50,7 +50,7 @@ export default function ContentTypeEdit() {
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(-1);
 
-  const [defaultItems, setDefaultItems] = useState<any>([
+  const [defaultItems] = useState<any>([
     {
       fieldType: 'TEXT_FIELD',
       name: 'Title',
