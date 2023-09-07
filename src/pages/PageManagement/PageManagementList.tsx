@@ -96,7 +96,7 @@ export default function PageManagementList() {
   // TABLE PAGINATION STATE - PAGE LIST
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
 
   const [directionPageList, setDirectionPageList] = useState('asc');
   const [directionMyTask, setDirectionMyTask] = useState('asc');

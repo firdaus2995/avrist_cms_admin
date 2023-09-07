@@ -56,7 +56,7 @@ export default function MenuList() {
 
   // TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
-  const [pageLimit] = useState(5);
+  const [pageLimit] = useState(10);
   const [direction] = useState('asc');
   const [search] = useState('');
   const [sortBy] = useState('id');

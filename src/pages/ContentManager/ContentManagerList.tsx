@@ -14,7 +14,7 @@ export default function ContentManagerList() {
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
   const [direction, setDirection] = useState('asc');
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('id');
