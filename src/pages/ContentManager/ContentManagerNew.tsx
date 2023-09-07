@@ -89,7 +89,7 @@ export default function ContentManagerNew() {
   // TABLE PAGINATION STATE
   const [categoryList, setCategoryList] = useState<any>([]);
   const [pageIndex] = useState(0);
-  const [pageLimit] = useState(5);
+  const [pageLimit] = useState(10);
   const [direction] = useState('asc');
   const [search] = useState('');
   const [sortBy] = useState('id');

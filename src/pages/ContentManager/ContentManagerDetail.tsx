@@ -37,7 +37,7 @@ export default function ContentManagerDetail() {
 
   // TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
-  const [pageLimit] = useState(5);
+  const [pageLimit] = useState(10);
   // PERMISSION STATE
   const [canAddContentCategory] = useState(() => {
     return !!getCredential().roles.find((element: any) => {
