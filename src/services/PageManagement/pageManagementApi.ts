@@ -1,14 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { gql } from 'graphql-request';
-import { IGetPageManagementListPayload } from './types';
-import customFetchBase from '../../utils/Interceptor';
+import customFetchBase from '@/utils/Interceptor';
 
 export const pageManagementApi = createApi({
   reducerPath: 'pageManagementApi',
   baseQuery: customFetchBase,
   tagTypes: ['getPageManagement'],
   endpoints: builder => ({
-    getPageManagementList: builder.query<any, IGetPageManagementListPayload>({
+    getPageManagementList: builder.query<any, any>({
       providesTags: ['getPageManagement'],
       query: payload => ({
         document: gql`
@@ -18,6 +17,9 @@ export const pageManagementApi = createApi({
             $sortBy: String
             $direction: String
             $search: String
+            $filterBy: String
+            $startDate: String
+            $endDate: String
             $isArchive: Boolean
           ) {
             pageList(
@@ -27,6 +29,9 @@ export const pageManagementApi = createApi({
                 sortBy: $sortBy
                 direction: $direction
                 search: $search
+                filterBy: $filterBy
+                startDate: $startDate
+                endDate: $endDate
                 isArchive: $isArchive
               }
             ) {
@@ -193,32 +198,67 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    getPageMyTaskList: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query pageMyTaskList(
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+            $search: String
+          ) {
+            pageMyTaskList(
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                sortBy: $sortBy
+                direction: $direction
+                search: $search
+              }
+            ) {
+              total
+              pages {
+                id
+                title
+                pageStatus
+                createdAt
+                createdBy
+                updatedAt
+                updatedBy
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     getPageById: builder.query<any, { id: number }>({
       query: payload => ({
         document: gql`
-          query pageById($id: Int!){
-            pageById(id: $id) {    
+          query pageById($id: Int!) {
+            pageById(id: $id) {
+              id
+              title
+              slug
+              metaTitle
+              metaDescription
+              shortDesc
+              content
+              imgFilename
+              pageTemplate {
                 id
-                title
-                slug
-                metaTitle
-                metaDescription
-                shortDesc
-                content
-                imgFilename
-                pageTemplate {
-                    id
-                    name
-                    imageUrl
-                }        
-                postType {
-                    id
-                    name
-                }
-                pageStatus
-                comment
+                name
+                imageUrl
+              }
+              postType {
+                id
+                name
+              }
+              pageStatus
+              comment
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -226,20 +266,11 @@ export const pageManagementApi = createApi({
     updatePageStatus: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation pageUpdateStatus(
-            $id: Int!
-            $status: String!
-            $comment: String!
-          ){
-            pageUpdateStatus(        
-                request: {
-                    id: $id,
-                    status: $status
-                    comment: $comment
-            }) {    
-                message
+          mutation pageUpdateStatus($id: Int!, $status: String!, $comment: String!) {
+            pageUpdateStatus(request: { id: $id, status: $status, comment: $comment }) {
+              message
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -259,40 +290,43 @@ export const pageManagementApi = createApi({
             $isDraft: Boolean!
             $pageTemplateId: Boolean!
             $postTypeId: Boolean!
-          ){
-            pageUpdate(request: {
-                title: $title,
-                slug: $slug,
-                metaTitle: $metatitle,
-                metaDescription: $metaDescription,
-                shortDesc: $shortDesc,
-                content: $content,
-                imgFilename: $imgFilename,
-                isDraft: $isDraft,
-                pageTemplateId: $pageTemplateId,
+          ) {
+            pageUpdate(
+              request: {
+                title: $title
+                slug: $slug
+                metaTitle: $metatitle
+                metaDescription: $metaDescription
+                shortDesc: $shortDesc
+                content: $content
+                imgFilename: $imgFilename
+                isDraft: $isDraft
+                pageTemplateId: $pageTemplateId
                 postTypeId: $postTypeId
-            }, id: $id) {    
+              }
+              id: $id
+            ) {
+              id
+              title
+              slug
+              metaTitle
+              metaDescription
+              shortDesc
+              content
+              imgFilename
+              pageTemplate {
                 id
-                title
-                slug
-                metaTitle
-                metaDescription
-                shortDesc
-                content
-                imgFilename
-                pageTemplate {
-                    id
-                    name
-                    imageUrl
-                }        
-                postType {
-                    id
-                    name
-                }
-                pageStatus
-                comment
+                name
+                imageUrl
+              }
+              postType {
+                id
+                name
+              }
+              pageStatus
+              comment
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -306,6 +340,7 @@ export const {
   useRestorePageMutation,
   usePageLogApprovalQuery,
   useDuplicatePageMutation,
+  useGetPageMyTaskListQuery,
   useGetPageByIdQuery,
   useUpdatePageStatusMutation,
   useUpdatePageDataMutation,
