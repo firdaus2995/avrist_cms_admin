@@ -5,7 +5,7 @@ import { useClickAway } from 'react-use';
 
 import Bell from '../../../assets/bell.svg';
 import NotifCheck from '../../../assets/notif-check.svg';
-import { useAppDispatch } from '@/store';
+import { store, useAppDispatch } from '@/store';
 import { Menu, Transition } from '@headlessui/react';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
 import { getCredential } from '@/utils/Credential';
@@ -43,6 +43,10 @@ const NotificationBell: React.FC = () => {
       });
   };
 
+  // useEffect(() => {
+  //   console.log(isOpenAllNotification)
+  // })
+
   useClickAway(ref, () => {
     setTotal(0);
     setLimit(5);
@@ -63,7 +67,7 @@ const NotificationBell: React.FC = () => {
 
   useEffect(() => {
       const interval = setInterval(() => {
-        if (document.visibilityState === 'visible') {
+        if (document.visibilityState === 'visible' && !store.getState().notificationSlice.activatedNotificationPage) {
           if (token) {
             void getCount();
           }
