@@ -26,6 +26,7 @@ const NotificationBell: React.FC = () => {
   const [count, setCount] = useState(0);
   const [limit, setLimit] = useState<number>(5);
   const [total, setTotal] = useState<any>(0);
+  const [isShow, setIsShow] = useState(false);
 
   const getCount = async () => {
     await fetch(`${baseUrl}/notifications/count`, {
@@ -42,10 +43,6 @@ const NotificationBell: React.FC = () => {
         console.log(err);
       });
   };
-
-  // useEffect(() => {
-  //   console.log(isOpenAllNotification)
-  // })
 
   useClickAway(ref, () => {
     setTotal(0);
@@ -66,18 +63,22 @@ const NotificationBell: React.FC = () => {
   );
 
   useEffect(() => {
+    if (!isShow) {
       const interval = setInterval(() => {
-        if (document.visibilityState === 'visible' && !store.getState().notificationSlice.activatedNotificationPage) {
+        if (
+          document.visibilityState === 'visible' &&
+          !store.getState().notificationSlice.activatedNotificationPage
+        ) {
           if (token) {
             void getCount();
           }
         }
       }, intervalTime);
-
       return () => {
         clearInterval(interval);
       };
-  }, []);
+    }
+  }, [isShow]);
 
   useEffect(() => {
     const loadMore = async () => {
@@ -149,7 +150,13 @@ const NotificationBell: React.FC = () => {
             enterTo="transform opacity-100 scale-100"
             leave="transition ease-in duration-75"
             leaveFrom="transform opacity-100 scale-100"
-            leaveTo="transform opacity-0 scale-95">
+            leaveTo="transform opacity-0 scale-95"
+            beforeEnter={() => {
+              setIsShow(true);
+            }}
+            beforeLeave={() => {
+              setIsShow(false);
+            }}>
             <Menu.Items className="fixed right-1 mt-3 w-96 translate-x-0 shadow-lg bg-white">
               <div className="p-[14px] border-b-[1px] border-[#D6D6D6] flex justify-between">
                 <h1 className="text-[14px] font-bold">Notifications</h1>
