@@ -123,15 +123,17 @@ export default function ContentTypeList() {
       enableSorting: true,
       cell: (info: any) => (
         <Link to={`${info?.row?.original?.id}`}>
-          <Typography
-            type="body"
-            size="s"
-            weight="semi"
-            className="truncate cursor-pointer text-primary">
-            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-              ? info.getValue()
-              : '-'}
-          </Typography>
+          <div className="flex justify-center items-center w-96">
+            <Typography
+              type="body"
+              size="s"
+              weight="semi"
+              className="truncate cursor-pointer text-primary">
+              {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+                ? info.getValue()
+                : '-'}
+            </Typography>
+          </div>
         </Link>
       ),
     },
