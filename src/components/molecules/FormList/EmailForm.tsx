@@ -77,9 +77,9 @@ const EmailForm = ({
 
   useEffect(() => {
     if (defaultValue && itemList) {
-      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
-      const selected = itemList.find(obj => obj.value === Number(defaultValue));
-      setSelectedDefaultValue(selected);
+      const intDefaultValue = Number(defaultValue);
+      const selected = itemList.filter((obj: any) => obj.value === intDefaultValue);
+      setSelectedDefaultValue(selected[0]);
     }
   }, [defaultValue, itemList]);
 
