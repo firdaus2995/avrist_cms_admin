@@ -41,7 +41,7 @@ export default function CkEditor() {
   return (
     <CKEditor
       disabled={false}
-      data={''}
+      data=''
       editor={Editor}
       config={{
         extraPlugins: [uploadPlugin],

@@ -216,13 +216,11 @@ export const userApi: any = createApi({
           mutation userUpdateProfile(
             $fullName: String!
             $profilePicture: String!
-            $password: String!
           ) {
             userUpdateProfile(
               request: {
                 fullName: $fullName
                 profilePicture: $profilePicture
-                password: $password
               }
             ) {
               id
@@ -234,8 +232,8 @@ export const userApi: any = createApi({
               company
               isActive
               role {
-                  id
-                  name
+                id
+                name
               }
             }
           }

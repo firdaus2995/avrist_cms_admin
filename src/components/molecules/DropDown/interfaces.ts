@@ -3,6 +3,8 @@ export interface IDropDown {
   labelStyle?: string;
   labelEmpty?: string;
   labelRequired?: boolean;
+  labelWidth? : number;
+  direction?: string;
   items?: Array<{
     value: string | number | boolean;
     label: string;

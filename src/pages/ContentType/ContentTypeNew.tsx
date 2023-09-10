@@ -338,7 +338,7 @@ export default function ContentTypeNew() {
       name,
       slug,
       isUseCategory,
-      attributeRequests: transformedData,
+      attributeRequests: transformedData.filter((_element: any, index: number) => index >= 2),
     };
 
     postCreate(payload)

@@ -125,7 +125,7 @@ export default function RoutesComponent() {
           <Route path="page-management" element={<PageManagementPage />} />
           <Route path="page-management/archive" element={<PageManagementArchivePage />} />
           <Route path="page-management/new" element={<PageManagementNewPage />} />
-          <Route path="page-management/detail" element={<PageManagementDetailPage />} />
+          <Route path="page-management/detail/:id" element={<PageManagementDetailPage />} />
           {/* CONTENT TYPE */}
           <Route path="content-type" element={<ContentTypePage />} />
           <Route path="content-type/new" element={<ContentTypeNewPage />} />

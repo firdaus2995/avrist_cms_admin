@@ -4,8 +4,8 @@ import RejectUser from '@/assets/RejectUser.svg';
 
 interface IButtonMenu {
   title: string;
-  onClickApprove: any;
-  onClickReject: any;
+  onClickApprove?: any;
+  onClickReject?: any;
 }
 export const ButtonMenu: React.FC<IButtonMenu> = ({onClickApprove, onClickReject}) => {
   return (

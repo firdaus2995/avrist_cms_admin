@@ -4,35 +4,26 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useGetPageManagementListQuery,
   useDeletePageMutation,
+  useGetPageMyTaskListQuery,
 } from '@/services/PageManagement/pageManagementApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
-import TableEdit from '@/assets/table-edit.png';
-// import TableView from '@/assets/table-view.png';
+
 import TableDelete from '@/assets/table-delete.svg';
-import FilterIcon from '@/assets/filter.svg';
 import ArchiveBox from '@/assets/archive-box.svg';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
+
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import StatusBadge from './components/StatusBadge';
 import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
+import { FilterButton } from '@/components/molecules/FilterButton/index.';
 
-const TopRightButton = () => {
-  return (
-    <div className="flex flex-row">
-      <FilterButton />
-      <CreateButton />
-    </div>
-  );
-};
-
-// nanti dipisah
 const ArchiveButton = () => {
   return (
     <div className="inline-block float-right">
@@ -44,18 +35,6 @@ const ArchiveButton = () => {
           </div>
         </button>
       </Link>
-    </div>
-  );
-};
-
-const FilterButton = () => {
-  return (
-    <div className="inline-block float-right mr-5">
-      <button className=" border-grey border-[1px] rounded-xl px-3 py-3">
-        <div className="flex flex-row gap-2 items-center justify-center">
-          <img src={FilterIcon} className="w-6 h-6" />
-        </div>
-      </button>
     </div>
   );
 };
@@ -84,8 +63,24 @@ const CreateButton = () => {
 };
 
 export default function PageManagementList() {
+  const listTabs = [
+    {
+      name: 'Page List',
+      isActive: 1,
+    },
+    {
+      name: 'My Task',
+      isActive: 2,
+    },
+  ];
+  const now = dayjs().format('YYYY-MM-DD');
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState(1);
+  const isPageListActive = activeTab === 1;
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
+  const [listDataMyTask, setListDataMyTask] = useState<any>([]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -94,49 +89,94 @@ export default function PageManagementList() {
   const [idLog, setIdLog] = useState(null);
   const [logTitle, setLogTitle] = useState(null);
 
-  // TABLE PAGINATION STATE
+  const [filterBy, setFilterBy] = useState('CREATED_AT');
+  const [startDate, setStartDate] = useState(now);
+  const [endDate, setEndDate] = useState(now);
+
+  // TABLE PAGINATION STATE - PAGE LIST
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
-  const [direction, setDirection] = useState('asc');
-  const [search, setSearch] = useState('');
-  const [sortBy, setSortBy] = useState('id');
+  const [pageLimit, setPageLimit] = useState(10);
+
+  const [directionPageList, setDirectionPageList] = useState('asc');
+  const [directionMyTask, setDirectionMyTask] = useState('asc');
+
+  const [searchPageList, setSearchPageList] = useState('');
+  const [searchMyTask, setSearchMyTask] = useState('');
+  const [sortByPageList, setSortByPageList] = useState('id');
+  const [sortByMyTask, setSortByMyTask] = useState('id');
+
+  const sortBy = isPageListActive ? sortByPageList : sortByMyTask;
+  const direction = isPageListActive ? directionPageList : directionMyTask;
+  const searchQuery = isPageListActive ? searchPageList : searchMyTask;
 
   // RTK GET DATA
   const fetchQuery = useGetPageManagementListQuery({
     pageIndex,
     limit: pageLimit,
-    direction,
-    search,
     sortBy,
+    direction,
+    search: searchQuery,
+    filterBy,
+    startDate,
+    endDate,
     isArchive: false,
   });
   const { data } = fetchQuery;
+
+  const fetchQueryMyTask = useGetPageMyTaskListQuery({
+    pageIndex,
+    limit: pageLimit,
+    sortBy,
+    direction,
+    search: searchQuery,
+    isArchive: false,
+  });
+  const { data: dataMyTask } = fetchQueryMyTask;
 
   // RTK DELETE
   const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
 
   useEffect(() => {
-    if (data) {
+    if (data && isPageListActive) {
       setListData(data?.pageList?.pages);
       setTotal(data?.pageList?.total);
     }
-  }, [data]);
+    if (dataMyTask && !isPageListActive) {
+      setListDataMyTask(dataMyTask?.pageList?.pages);
+      setTotal(dataMyTask?.pageList?.total);
+    }
+  }, [data, dataMyTask, isPageListActive]);
 
   useEffect(() => {
-    const refetch = async () => {
-      await fetchQuery.refetch();
+    const refetchData = async () => {
+      if (isPageListActive) {
+        await fetchQuery.refetch();
+      } else {
+        await fetchQueryMyTask.refetch();
+      }
     };
-    void refetch();
-  }, []);
+    void refetchData();
+  }, [isPageListActive]);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
-    if (sortModel.length) {
-      setSortBy(sortModel[0].id);
-      setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }
-  }, []);
+  const handleSortModelChange = useCallback(
+    (sortModel: SortingState) => {
+      if (sortModel.length) {
+        const sortBy = sortModel[0].id;
+        const direction = sortModel[0].desc ? 'desc' : 'asc';
+
+        if (isPageListActive) {
+          setSortByPageList(sortBy);
+          setDirectionPageList(direction);
+        } else {
+          setSortByMyTask(sortBy);
+          setDirectionMyTask(direction);
+        }
+      }
+    },
+    [isPageListActive],
+  );
 
   // TABLE COLUMN
   const COLUMNS = [
@@ -217,12 +257,11 @@ export default function PageManagementList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <Link to={`edit/${info.getValue()}`}>
-            <div className="tooltip" data-tip="Edit">
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableEdit}
-              />
+          <Link to={`detail/${info.getValue()}`}>
+            <div className="tooltip" data-tip={'View Detail'}>
+              <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
+                View Detail
+              </button>
             </div>
           </Link>
           <div className="tooltip" data-tip="Delete">
@@ -272,6 +311,43 @@ export default function PageManagementList() {
         );
       });
   };
+
+  const resetState = () => {
+    setFilterBy('CREATED_AT');
+    setStartDate(now);
+    setEndDate(now);
+  };
+
+  const TopRightButton = () => {
+    return (
+      <div className="flex flex-row">
+        {isPageListActive && (
+          <FilterButton
+            open={filterOpen}
+            setOpen={setFilterOpen}
+            startDate={startDate}
+            endDate={endDate}
+            defaultSelected={filterBy}
+            onSubmit={(e: any) => {
+              setFilterBy(e.selection);
+              setStartDate(e.startDate);
+              setEndDate(e.endDate);
+              setFilterOpen(false);
+            }}
+            onResetFilter={() => {
+              resetState();
+            }}
+            onCancelPress={() => {
+              setFilterOpen(false);
+              resetState();
+            }}
+          />
+        )}
+        <CreateButton />
+      </div>
+    );
+  };
+
   return (
     <>
       <ModalLog
@@ -302,7 +378,11 @@ export default function PageManagementList() {
         SearchBar={
           <InputSearch
             onBlur={(e: any) => {
-              setSearch(e.target.value);
+              if (isPageListActive) {
+                setSearchPageList(e.target.value);
+              } else {
+                setSearchMyTask(e.target.value);
+              }
             }}
             placeholder="Search"
           />
@@ -310,22 +390,45 @@ export default function PageManagementList() {
         TopSideButtons={<TopRightButton />}>
         <div className="flex flex-row justify-between mb-5">
           <div className="btn-group">
-            <button className="btn btn-primary text-xs w-40">Page List</button>
-            <button className="btn btn-disabled text-xs w-40">My Task</button>
+            {listTabs.map(val => (
+              <button
+                key={val.isActive}
+                onClick={() => {
+                  setFilterOpen(false);
+                  resetState();
+                  setActiveTab(val.isActive);
+                }}
+                className={`btn ${
+                  activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-500'
+                } text-xs w-40`}>
+                {val.name}
+              </button>
+            ))}
           </div>
-          <ArchiveButton />
+          {isPageListActive && <ArchiveButton />}
         </div>
-
         <div className="overflow-x-auto w-full mb-5">
-          <Table
-            rows={listData}
-            columns={COLUMNS}
-            loading={false}
-            error={false}
-            manualPagination={true}
-            manualSorting={true}
-            onSortModelChange={handleSortModelChange}
-          />
+          {isPageListActive ? (
+            <Table
+              rows={listData}
+              columns={COLUMNS}
+              loading={false}
+              error={false}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+            />
+          ) : (
+            <Table
+              rows={listDataMyTask}
+              columns={COLUMNS}
+              loading={false}
+              error={false}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+            />
+          )}
         </div>
         <PaginationComponent
           total={total}

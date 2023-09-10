@@ -28,7 +28,7 @@ export default function MainTab(props: { id: any }) {
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
   const [direction, setDirection] = useState('asc');
   const [sortBy, setSortBy] = useState('id');
 
@@ -152,7 +152,7 @@ export default function MainTab(props: { id: any }) {
             <div className="tooltip" data-tip={'View Detail'}>
               <div
                 role="button"
-                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary">
+                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary text-xs">
                 View Detail
               </div>
             </div>

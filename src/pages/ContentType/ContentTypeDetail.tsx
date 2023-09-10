@@ -20,7 +20,7 @@ export default function ContentTypeDetail() {
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
 
   // RTK GET DATA
   const fetchQuery = useGetPostTypeDetailQuery({

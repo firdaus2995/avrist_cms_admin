@@ -10,5 +10,6 @@ export interface IModalForm {
   submitAction: () => void;
   cancelAction: () => void;
   children?: any;
-  submitDisabled?: boolean
+  submitDisabled?: boolean;
+  additionalButton?: any;
 }

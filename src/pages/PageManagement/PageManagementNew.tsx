@@ -1,144 +1,318 @@
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useForm, Controller } from 'react-hook-form';
+import { t } from 'i18next';
+
 import Typography from '@/components/atoms/Typography';
-import { InputText } from '@/components/atoms/Input/InputText';
+import PreviewEye from '../../assets/preview-eye.svg';
 import CkEditor from '@/components/atoms/Ckeditor';
-import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import DropDown from '@/components/molecules/DropDown';
-import TemplateHome from '@/assets/template-home.jpg';
+import PaginationComponent from '@/components/molecules/Pagination';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import CancelIcon from "../../assets/cancel.png";
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { TextArea } from '@/components/atoms/Input/TextArea';
+import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
+import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
 
 export default function PageManagementNew() {
-  const Footer = () => {
-    return (
-      <div className="flex justify-end mt-10">
-        <div className="flex flex-row p-2 gap-2">
-          <button onClick={() => {}} className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
-          </button>
-          <button onClick={() => {}} className="btn btn-success text-xs btn-sm w-28 h-10">
-            Submit
+  const {
+    control,
+    handleSubmit,
+    // eslint-disable-next-line no-empty-pattern
+    formState: {},
+  } = useForm();
+  const navigate = useNavigate();
+
+  // PAGE TEMPLACE SELECTION STATE
+  const [pageTemplates, setPageTemplates] = useState<any>([]);
+  const [selected, setSelected] = useState<any>(null);
+  const [search, setSearch] = useState<any>('');
+  const [total, setTotal] = useState<number>(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit] = useState(6);
+  // CONTENT SELECTION STATE
+  const [listContents, setListContents] = useState<any>([]);
+  const [contentTypeId, setContentTypeId] = useState<any>(null);
+  // LEAVE MODAL
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
+
+  // RTK GET PAGE TEMPLATE
+  const fetchPageTemplatesQuery = useGetPageTemplateQuery({
+    pageIndex,
+    limit: pageLimit,
+    sortBy: 'id',
+    direction: 'desc',
+    search,
+  }, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: dataPageTemplates } = fetchPageTemplatesQuery;
+
+  // RTK GET CONTENT
+  const fetchContentsQuery = useGetPostTypeListQuery({
+    pageIndex: 0,
+    limit: 999999,
+    sortBy: "name",
+    direction: "asc",
+    search: "",
+  }, {
+    refetchOnMountOrArgChange: true,
+  });
+  const { data: dataContents } = fetchContentsQuery;
+
+  useEffect(() => {
+    if (dataContents) {
+      setListContents(dataContents?.postTypeList?.postTypeList.map((element: any) => {
+        return {
+          value: element.id,
+          label: element.name,
+        };
+      }));
+    };
+
+    if (dataPageTemplates) {
+      setPageTemplates(dataPageTemplates?.pageTemplateList?.templates);
+      setTotal(dataPageTemplates?.pageTemplateList?.total);
+    };
+  }, [dataContents, dataPageTemplates]);
+
+  const handlerSubmit = (formData: any) => {
+    console.log({
+      formData,
+      selected,
+      contentTypeId,
+    });
+  };
+
+  const onLeave = () => {
+    setShowLeaveModal(false);
+    navigate('/page-management');
+  };
+
+  return (
+    <TitleCard title="Create Page Management" border={true}>
+      <ModalConfirm
+        open={showLeaveModal}
+        cancelAction={() => {
+          setShowLeaveModal(false);
+        }}
+        title={titleLeaveModalShow ?? ''}
+        cancelTitle="No"
+        message={messageLeaveModalShow ?? ''}
+        submitAction={onLeave}
+        submitTitle="Yes"
+        icon={CancelIcon}
+        btnSubmitStyle='btn-warning'
+      />
+      <div className="flex flex-col mt-5 gap-5">
+        <div>
+          <button className="w-[160px] !min-h-[45px] h-[45px] btn btn-outline btn-primary flex flex-row justify-center items-center gap-2">
+            <img src={PreviewEye} className="h-[30px] w-[30px]" />
+            Preview
           </button>
         </div>
-      </div>
-    );
-  };
-  const Label = ({ title, value }: any) => {
-    return (
-      <div className="flex flex-row">
-        <Typography type="body" size="m" weight="medium" className="my-2 w-48">
-          {title}
-        </Typography>
-        <Typography type="body" size="s" weight="regular" className="text-body-text-2 my-2 mr-5">
-          {value}
-        </Typography>
-      </div>
-    );
-  };
-  return (
-    <TitleCard title="New Page Management" border={true}>
-      <div className="ml-2 mt-6">
-        <div>
-          <Typography type="heading4" weight="bold" className="mb-5">
-            General Information
-          </Typography>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-            <InputText
-              labelTitle="Page Name"
-              labelStyle="font-semi text-base"
-              labelRequired
-              direction="row"
-              themeColor="lavender"
-              roundStyle="xl"
-              onChange={() => {}}
-            />
-            <InputText
-              labelTitle="Metatilte"
-              labelStyle="font-semi text-base"
-              labelRequired
-              direction="row"
-              themeColor="lavender"
-              roundStyle="xl"
-              onChange={() => {}}
-            />
-            <InputText
-              labelTitle="Slug"
-              labelStyle="font-semi text-base"
-              labelRequired
-              direction="row"
-              themeColor="lavender"
-              roundStyle="xl"
-              onChange={() => {}}
-            />
-            <InputText
-              labelTitle="Meta Description"
-              labelStyle="font-semi text-base"
-              labelRequired
-              direction="row"
-              themeColor="lavender"
-              roundStyle="xl"
-              onChange={() => {}}
-            />
-            <InputText
-              labelTitle="Short Description"
-              labelStyle="font-semi text-base"
-              labelRequired
-              direction="row"
-              themeColor="lavender"
-              roundStyle="xl"
-              onChange={() => {}}
-            />
-            
-          </div>
-
-          <div className="my-10">
-            <Label title="Content" />
-            <CkEditor />
-          </div>
-
-          <div className="btn-group flex mb-10">
-            <button className="btn btn-primary text-xs flex-1">Page List</button>
-            <button className="btn btn-disabled text-xs flex-1">My Task</button>
-          </div>
-
-          <div className="flex flex-row items-center justify-between">
-            <Typography type="heading4" weight="bold" className="mb-2">
-              Choose your template
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit(handlerSubmit)}>
+          {/* FORM SECTION */}
+          <div className="flex flex-col gap-3">
+            <Typography weight="bold" size="l">
+              General Information
             </Typography>
-            <InputSearch onBlur={() => {}} placeholder="Search" />
-          </div>
-          <div className="flex justify-center">
-            <div className="w-7/12 grid grid-cols-1 sm:grid-cols-3">
-              <img src={TemplateHome} className="scale-75" />
-              <img src={TemplateHome} className="scale-75" />
-              <img src={TemplateHome} className="scale-75" />
-              <img src={TemplateHome} className="scale-75" />
-              <img src={TemplateHome} className="scale-75" />
-              <img src={TemplateHome} className="scale-75" />
+            <div className="flex flex-row justify-between">
+              <Controller
+                name="pageName"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <InputText
+                    labelTitle="Page Name"
+                    labelStyle="font-semibold"
+                    labelWidth={150}
+                    labelRequired
+                    direction="row"
+                    roundStyle="xl"
+                    placeholder="Enter new page name"
+                    inputWidth={350}
+                    {...field}
+                  />
+                )}
+              />
+              <Controller
+                name="metaTitle"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <InputText
+                    labelTitle="Metatitle"
+                    labelStyle="font-semibold"
+                    labelWidth={150}
+                    labelRequired
+                    direction="row"
+                    roundStyle="xl"
+                    placeholder="Enter metatitle here"
+                    inputWidth={350}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row justify-between">
+              <Controller
+                name="slug"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <InputText
+                    labelTitle="Slug"
+                    labelStyle="font-semibold"
+                    labelWidth={150}
+                    labelRequired
+                    direction="row"
+                    roundStyle="xl"
+                    placeholder="Enter slug name"
+                    inputWidth={350}
+                    {...field}
+                  />
+                )}
+              />
+              <Controller
+                name="metaDescription"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <InputText
+                    labelTitle="Metadescription"
+                    labelStyle="font-semibold"
+                    labelWidth={150}
+                    labelRequired
+                    direction="row"
+                    roundStyle="xl"
+                    placeholder="Enter metadescription here"
+                    inputWidth={350}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row justify-start">
+              <Controller
+                name="shortDesc"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextArea
+                    labelTitle="Short Description"
+                    labelStyle="font-semibold"
+                    labelWidth={150}
+                    labelRequired
+                    direction="row"
+                    placeholder="Enter description"
+                    inputWidth={350}
+                    {...field}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-col justify-start gap-3">
+              <Typography size="m" weight="semi">
+                Content
+              </Typography>
+              <CkEditor />
             </div>
           </div>
-
-          <div className="flex items-center justify-center">
-            <div className="flex flex-row items-center justify-center">
-              <Typography type="body" size="m" weight="semi" className="w-96 mt-5">
-                Choose Content Type
+          {/* DIVIDER */}
+          <div className="w-full my-4 border-[1px] border-lavender" />
+          {/* PAGE TEMPLATE SECTION */}
+          <div className="flex flex-col gap-3">
+            <div className="flex flex-row justify-between">
+              <Typography size="m" weight="bold">
+                Choose Your Template<span className='text-reddist'>*</span>
               </Typography>
-              <DropDown
-                defaultValue="item1"
-                items={[
-                  {
-                    value: 'item1',
-                    label: 'Items 1',
-                  },
-                  {
-                    value: 'item2',
-                    label: 'Items 2',
-                  },
-                ]}
+              <InputSearch
+                onBlur={(e: any) => {
+                  setSearch(e.target.value);
+                }}
+                placeholder="Search"
+              />
+            </div>
+            <div className="flex flex-wrap">
+              {
+                (pageTemplates.length > 0 && pageTemplates.length < 7) &&
+                  pageTemplates.map((element: any) => (
+                    <div key={element.id} className="px-[5%] py-5 flex flex-col basis-2/6 gap-3">
+                      <img
+                        src={element.imageUrl}
+                        className={`h-[450px] object-cover	cursor-pointer rounded-xl ${
+                          selected === element.id
+                            ? 'border-[#5A4180] border-4'
+                            : 'border-[#828282] border-2'
+                        }`}
+                        onClick={() => {
+                          setSelected(element.id);
+                        }}
+                      />
+                      <Typography size="l" weight="medium" alignment="center">
+                        {element.name}
+                      </Typography>
+                    </div>
+                  ))
+                }
+            </div>
+            <div className='w-full flex justify-center'>
+              <PaginationComponent
+                total={total}
+                page={pageIndex}
+                pageSize={pageLimit}
+                setPageOnly={true}
+                setPage={(page: number) => {
+                  setPageIndex(page);
+                }}
               />
             </div>
           </div>
-        </div>
+          {/* CONTENT TYPE SECTION */}
+          <div className="flex justify-center mt-5">
+            <div className="w-[50%]">
+              <DropDown
+                labelTitle="Choose Content Type"
+                labelStyle="font-bold	"
+                labelWidth={175}
+                direction='row'
+                defaultValue=""
+                labelEmpty=""
+                items={listContents}
+                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                  if (event) {
+                    setContentTypeId(value);
+                  }
+                }}
+              />
+            </div>
+          </div>
+          {/* BUTTONS SECTION */}
+          <div className="mt-[25%] flex justify-end items-end gap-2">
+            <button className="btn btn-outline btn-md" onClick={(event: any) => {
+              event.preventDefault();
+              setLeaveTitleModalShow(t('modal.confirmation'));
+              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setShowLeaveModal(true);          
+            }}>
+              {t('btn.cancel')}
+            </button>
+            <button 
+              className="btn btn-outline btn-warning btn-md"
+              onClick={handleSubmit(handlerSubmit)}
+            >
+              Save as Draft
+            </button>
+            <button type='submit' className="btn btn-success btn-md">Submit</button>
+          </div>
+        </form>
       </div>
-      <Footer />
     </TitleCard>
   );
-}
+};

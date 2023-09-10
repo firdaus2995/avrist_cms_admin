@@ -46,7 +46,7 @@ export default function PageTemplatesList() {
     },
     {
       header: () => <span className="text-[14px]">Uploaded By</span>,
-      accessorKey: 'createdBy.name',
+      accessorKey: 'uploadedBy.name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -64,10 +64,7 @@ export default function PageTemplatesList() {
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
             <button
-              className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-4 text-sm"
-              // onClick={() => {
-              //   onClickPageTemplateEdit(info.getValue(), info?.row?.original?.filenameCode, info?.row?.original?.name, info?.row?.original?.shortDesc);
-              // }}
+              className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs"
             >
               View Detail
             </button>
@@ -90,7 +87,7 @@ export default function PageTemplatesList() {
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(5);
+  const [pageLimit, setPageLimit] = useState(10);
   const [direction, setDirection] = useState('asc');
   const [sortBy, setSortBy] = useState('id');
   // DELETE MODAL STATE

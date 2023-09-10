@@ -78,7 +78,7 @@ export default function ContentManagerDetailData() {
   const [categoryList, setCategoryList] = useState<any>([]);
   const [postTypeId] = useState(1);
   const [pageIndex] = useState(0);
-  const [pageLimit] = useState(5);
+  const [pageLimit] = useState(10);
   const [direction] = useState('asc');
   const [search] = useState('');
   const [sortBy] = useState('id');
