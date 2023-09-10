@@ -32,7 +32,7 @@ const EmailForm = ({
   };
 
   useEffect(() => {
-    setSearchTerm(selectedDefaultValue.label || '');
+    setSearchTerm(selectedDefaultValue?.label || '');
     setIsOpen(false);
   }, [resetValue, selectedDefaultValue]);
 
