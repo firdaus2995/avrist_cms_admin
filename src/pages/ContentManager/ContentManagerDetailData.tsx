@@ -627,7 +627,7 @@ export default function ContentManagerDetailData() {
                     <FormList.EmailForm
                       {...field}
                       key={id}
-                      defaultValue={value}
+                      value={value}
                       disabled={!isEdited}
                       fieldTypeLabel="EMAIL_FORM"
                       placeholder=""

@@ -209,7 +209,6 @@ export default function ContentManagerNew() {
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
-    console.log(payload)
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -892,6 +891,51 @@ export default function ContentManagerNew() {
                             );
                           }}
                         />
+                      );
+                    case 'EMAIL_FORM':
+                      return (
+                        <div className="flex flex-row mt-16">
+                          <div>
+                            <Typography
+                              type="body"
+                              size="m"
+                              weight="bold"
+                              className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
+                              EMAIL_FORM
+                            </Typography>
+                            <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                              {val.name}
+                            </Typography>
+                          </div>
+                          <Controller
+                            key={val.id}
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{ required: `${val.name} is required` }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.value } });
+                                },
+                                [val.id, val.fieldType, handleFormChange],
+                              );
+                              return (
+                                <FormList.EmailForm
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel="EMAIL_FORM"
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  items={categoryList}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        </div>
                       );
                     default:
                       return <p>err</p>;
