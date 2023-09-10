@@ -39,6 +39,8 @@ export default function ContentManagerNew() {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
+    trigger,
   } = useForm();
 
   // LEAVE MODAL STATE
@@ -310,6 +312,43 @@ export default function ContentManagerNew() {
   const onLeave = () => {
     setShowLeaveModal(false);
     goBack();
+  };
+
+  const saveDraft = (e: any) => {
+    e.preventDefault();
+    const value = getValues();
+
+    const convertedData = convertContentData(contentTempData);
+    const stringifyData = convertLoopingToArrays(convertedData);
+    void trigger();
+
+    const payload = {
+      title: value.title,
+      shortDesc: value.shortDesc,
+      isDraft: true,
+      postTypeId: id,
+      categoryName: postTypeDetail?.isUseCategory ? value.category : '',
+      contentData: stringifyData,
+    };
+    createContentData(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success as draft',
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed save as draft',
+          }),
+        );
+      });
   };
 
   const renderFormList = () => {
@@ -977,9 +1016,7 @@ export default function ContentManagerNew() {
             Cancel
           </button>
           <button
-            onClick={e => {
-              e.preventDefault();
-            }}
+            onClick={saveDraft}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             Save as Draft
           </button>
