@@ -24,6 +24,7 @@ const EmailForm = ({
   const [isOpen, setIsOpen] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [filteredItemList, setFilteredItemList] = useState(itemList);
+  const [selectedDefaultValue, setSelectedDefaultValue] = useState<any>('');
 
   const handleOptionClick = (option: string) => {
     setSearchTerm(option);
@@ -31,9 +32,9 @@ const EmailForm = ({
   };
 
   useEffect(() => {
-    setSearchTerm(defaultValue || '');
+    setSearchTerm(selectedDefaultValue.label || '');
     setIsOpen(false);
-  }, [resetValue, defaultValue]);
+  }, [resetValue, selectedDefaultValue]);
 
   // TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
@@ -74,6 +75,14 @@ const EmailForm = ({
     }
   }, [data, searchTerm]);
 
+  useEffect(() => {
+    if (defaultValue && itemList) {
+      // eslint-disable-next-line @typescript-eslint/no-confusing-void-expression
+      const selected = itemList.find(obj => obj.value === Number(defaultValue));
+      setSelectedDefaultValue(selected);
+    }
+  }, [defaultValue, itemList]);
+
   return (
     <div className="relative w-full" style={{ flex: '1' }}>
       <div
@@ -89,7 +98,7 @@ const EmailForm = ({
             focus-within:outline-2 
             focus-within:outline-offset-2 
             focus-within:outline-${themeColor ?? '[#D2D4D7]'} 
-            ${disabled ? 'bg-[#E9EEF4] ' : ''} 
+            ${disabled ? 'pointer-events-none ' : ''} 
             ${error ? 'border-reddist' : ''}
           `}>
         <input
