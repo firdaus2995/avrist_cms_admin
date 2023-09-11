@@ -12,7 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 const schema = yup.object().shape({
-  username: yup.string().required('Username is required'),
+  username: yup.string().required('User ID is required'),
   password: yup.string().required('Password is required'),
 });
 
@@ -37,7 +37,7 @@ const LoginForm = () => {
     }
   }, [dataLoginDescription]);
 
-  const [login] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
 
   const handleLoginSubmit = (formData: { username: any; password: any }) => {
     login({ userId: formData.username, password: formData.password })
@@ -74,8 +74,8 @@ const LoginForm = () => {
           render={({ field }) => (
             <AuthInput
               key="username"
-              label="User Name"
-              placeholder="Enter Username"
+              label="User ID"
+              placeholder="Enter User ID"
               error={errors.username?.message}
               styleClass="mb-5"
               {...field}
@@ -108,7 +108,7 @@ const LoginForm = () => {
             </Typography>
           </Link>
           <button type="submit" className="btn btn-primary btn-wide">
-            Login
+            {isLoading ? 'Loading...' : 'Login'}
           </button>
         </div>
       </form>
