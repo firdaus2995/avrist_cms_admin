@@ -12,6 +12,7 @@ try{
         echo "Build Static HTML in Build Number : ${env.BUILD_NUMBER}"
         sh "cp .env.sit .env"
         sh "yarn"
+        sh "yarn add ./ckeditor5"
         sh "yarn run build"
         echo "Build Successfully"
     }
