@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import AuthInput from '@/components/atoms/Input/AuthInput';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useGetForgotPasswordMutation } from '@/services/User/userApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { useAppDispatch } from '@/store';
@@ -17,6 +17,12 @@ const ResetPasswordForm = () => {
     email: '',
     errors: { email: '' },
   });
+
+  // GO BACK
+  const navigate = useNavigate();
+  const goBack = () => {
+    navigate(-1);
+  };
 
   const handleResetPasswordChange = (e: { target: { value: any } }) => {
     setResetPasswordValue({ ...resetPasswordValue, email: e.target.value });
@@ -115,12 +121,16 @@ const ResetPasswordForm = () => {
           />
         )}
         <div className="flex flex-row justify-between my-10">
-          <Link to="/login">
-            <button type="submit" className="btn btn-ghost font-normal text-body-text-3">
-              <img src={BackArrowLeft} className="mr-2" />
-              Back To Login
-            </button>
-          </Link>
+          <button
+            type="button"
+            onClick={e => {
+              e.preventDefault();
+              goBack();
+            }}
+            className="btn btn-ghost font-normal text-body-text-3">
+            <img src={BackArrowLeft} className="mr-2" />
+            Back To Login
+          </button>
           {!isVerify && (
             <button type="submit" className="btn btn-primary btn-wide">
               {isLoading ? <LoadingCircle className="fill-white" /> : 'Reset'}
