@@ -230,7 +230,7 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Page',
+            title: 'Success Delete Content',
             message: d.pageDelete.message,
           }),
         );
@@ -241,7 +241,7 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Page',
+            title: 'Failed Delete Content',
             message: 'Something went wrong!',
           }),
         );

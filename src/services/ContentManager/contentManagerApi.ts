@@ -396,6 +396,18 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    deleteCategory: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation categoryDelete($id: Int!){
+            categoryDelete(id: $id) {    
+                message
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -416,4 +428,5 @@ export const {
   useUpdateContentDataStatusMutation,
   useRestoreContentDataMutation,
   useHardDeleteContentDataMutation,
+  useDeleteCategoryMutation,
 } = contentManagerApi;
