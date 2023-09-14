@@ -39,6 +39,8 @@ export default function ContentManagerNew() {
     control,
     handleSubmit,
     formState: { errors },
+    getValues,
+    trigger,
   } = useForm();
 
   // LEAVE MODAL STATE
@@ -209,7 +211,6 @@ export default function ContentManagerNew() {
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
-
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -311,6 +312,43 @@ export default function ContentManagerNew() {
   const onLeave = () => {
     setShowLeaveModal(false);
     goBack();
+  };
+
+  const saveDraft = (e: any) => {
+    e.preventDefault();
+    const value = getValues();
+
+    const convertedData = convertContentData(contentTempData);
+    const stringifyData = convertLoopingToArrays(convertedData);
+    void trigger();
+
+    const payload = {
+      title: value.title,
+      shortDesc: value.shortDesc,
+      isDraft: true,
+      postTypeId: id,
+      categoryName: postTypeDetail?.isUseCategory ? value.category : '',
+      contentData: stringifyData,
+    };
+    createContentData(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success as draft',
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed save as draft',
+          }),
+        );
+      });
   };
 
   const renderFormList = () => {
@@ -588,6 +626,51 @@ export default function ContentManagerNew() {
               }}
             />
           );
+        case 'EMAIL_FORM':
+          return (
+            <div className="flex flex-row mt-16">
+              <div>
+                <Typography
+                  type="body"
+                  size="m"
+                  weight="bold"
+                  className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
+                  EMAIL_FORM
+                </Typography>
+                <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                  {name}
+                </Typography>
+              </div>
+              <Controller
+                key={id}
+                name={id.toString()}
+                control={control}
+                defaultValue=""
+                rules={{ required: `${name} is required` }}
+                render={({ field }) => {
+                  const onChange = useCallback(
+                    (e: any) => {
+                      handleFormChange(id, e.value, fieldType);
+                      field.onChange({ target: { value: e.value } });
+                    },
+                    [id, field, handleFormChange],
+                  );
+                  return (
+                    <FormList.EmailForm
+                      {...field}
+                      key={id}
+                      fieldTypeLabel="EMAIL_FORM"
+                      placeholder=""
+                      error={!!errors?.[id]?.message}
+                      helperText={errors?.[id]?.message}
+                      items={categoryList}
+                      onChange={onChange}
+                    />
+                  );
+                }}
+              />
+            </div>
+          );
         case 'LOOPING':
           return (
             <div key={id}>
@@ -848,6 +931,51 @@ export default function ContentManagerNew() {
                           }}
                         />
                       );
+                    case 'EMAIL_FORM':
+                      return (
+                        <div className="flex flex-row mt-16">
+                          <div>
+                            <Typography
+                              type="body"
+                              size="m"
+                              weight="bold"
+                              className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
+                              EMAIL_FORM
+                            </Typography>
+                            <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                              {val.name}
+                            </Typography>
+                          </div>
+                          <Controller
+                            key={val.id}
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{ required: `${val.name} is required` }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.value } });
+                                },
+                                [val.id, val.fieldType, handleFormChange],
+                              );
+                              return (
+                                <FormList.EmailForm
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel="EMAIL_FORM"
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  items={categoryList}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        </div>
+                      );
                     default:
                       return <p>err</p>;
                   }
@@ -888,9 +1016,7 @@ export default function ContentManagerNew() {
             Cancel
           </button>
           <button
-            onClick={e => {
-              e.preventDefault();
-            }}
+            onClick={saveDraft}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             Save as Draft
           </button>

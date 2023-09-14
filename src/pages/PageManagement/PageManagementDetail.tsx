@@ -7,6 +7,7 @@ import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
   useGetPageByIdQuery,
+  useRestorePageMutation,
   useUpdatePageDataMutation,
   useUpdatePageStatusMutation,
 } from '@/services/PageManagement/pageManagementApi';
@@ -69,6 +70,7 @@ export default function PageManagementDetail() {
 
   const [updatePageData] = useUpdatePageDataMutation();
   const [updatePageStatus] = useUpdatePageStatusMutation();
+  const [restorePage] = useRestorePageMutation();
 
   const navigate = useNavigate();
 
@@ -125,6 +127,112 @@ export default function PageManagementDetail() {
     }, 50);
   }, []);
 
+  const submitButton = () => {
+    return (
+      <div className="flex justify-end mt-10">
+        <div className="flex flex-row p-2 gap-2">
+          <button
+            onClick={() => {
+              goBack();
+            }}
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
+            Cancel
+          </button>
+          <button
+            onClick={() => {
+              setShowModalReview(true);
+            }}
+            className="btn btn-success text-xs text-white btn-sm w-28 h-10">
+            Submit
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const onRestoreData = (payload: {id: any}) => {
+    restorePage(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+        setShowArchivedModal(false);
+      });
+  };
+
+  const onUpdateStatus = (payload: { id: any; status: string; comment: string }) => {
+    updatePageStatus(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+        goBack();
+      });
+  };
+
+  const handlerSubmit = (formData: any) => {
+    const payload = {
+      id,
+      title: formData?.pageName,
+      slug: formData?.slug,
+      metatitle: formData?.metaTitle,
+      metaDescription: formData?.metaDescription,
+      shortDesc: formData?.shortDesc,
+      content,
+      imgFilename: pageTemplates.find((template: { id: any; }) => template.id === selected)?.name,
+      isDraft,
+      pageTemplateId: selected,
+      postTypeId: contentTypeId,
+    };
+
+    updatePageData(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+        goBack();
+      });
+  };
+
   const Badge = () => {
     return (
       <div className="ml-5 flex flex-row gap-5">
@@ -141,6 +249,39 @@ export default function PageManagementDetail() {
       </div>
     );
   };
+
+  const Label = ({ title, value }: any) => {
+    return (
+      <div className="flex flex-row">
+        <Typography type="body" size="m" weight="medium" className="my-2 w-48">
+          {title}
+        </Typography>
+        <Typography type="body" size="s" weight="regular" className="text-body-text-2 my-2 mr-5">
+          {value}
+        </Typography>
+      </div>
+    );
+  };
+
+  const Footer = useCallback(() => {
+    return (
+      <div className="flex justify-end mt-10">
+        <div className="flex flex-row p-2 gap-2">
+          <button onClick={() => {goBack()}} className="btn btn-outline text-xs btn-sm w-28 h-10">
+            Cancel
+          </button>
+          <button
+            onClick={() => {setIsDraft(true)}}
+            className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
+            Save as Draft
+          </button>
+          <button onClick={() => {setIsDraft(false)}} type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
+            Submit
+          </button>
+        </div>
+      </div>
+    );
+  }, []);
 
   const rightTopButton = () => {
     switch (pageDetailList?.pageStatus) {
@@ -200,62 +341,6 @@ export default function PageManagementDetail() {
     }
   };
 
-  const Footer = useCallback(() => {
-    return (
-      <div className="flex justify-end mt-10">
-        <div className="flex flex-row p-2 gap-2">
-          <button onClick={() => {goBack()}} className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
-          </button>
-          <button
-            onClick={() => {setIsDraft(true)}}
-            className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
-            Save as Draft
-          </button>
-          <button onClick={() => {setIsDraft(false)}} type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
-          </button>
-        </div>
-      </div>
-    );
-  }, []);
-
-  const submitButton = () => {
-    return (
-      <div className="flex justify-end mt-10">
-        <div className="flex flex-row p-2 gap-2">
-          <button
-            onClick={() => {
-              goBack();
-            }}
-            className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
-          </button>
-          <button
-            onClick={() => {
-              setShowModalReview(true);
-            }}
-            className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
-          </button>
-        </div>
-      </div>
-    );
-  };
-
-  const Label = ({ title, value }: any) => {
-    return (
-      <div className="flex flex-row">
-        <Typography type="body" size="m" weight="medium" className="my-2 w-48">
-          {title}
-        </Typography>
-        <Typography type="body" size="s" weight="regular" className="text-body-text-2 my-2 mr-5">
-          {value}
-        </Typography>
-      </div>
-    );
-  };
-
   const viewContent = () => {
     return (
       <div className="ml-2 mt-6">
@@ -282,43 +367,6 @@ export default function PageManagementDetail() {
         </div>
       </div>
     );
-  };
-
-  const handlerSubmit = (formData: any) => {
-    const payload = {
-      id,
-      title: formData?.pageName,
-      slug: formData?.slug,
-      metatitle: formData?.metaTitle,
-      metaDescription: formData?.metaDescription,
-      shortDesc: formData?.shortDesc,
-      content,
-      imgFilename: pageTemplates.find((template: { id: any; }) => template.id === selected)?.name,
-      isDraft,
-      pageTemplateId: selected,
-      postTypeId: contentTypeId,
-    };
-
-    updatePageData(payload)
-      .unwrap()
-      .then(() => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: 'Success',
-          }),
-        );
-        goBack();
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: 'Failed',
-          }),
-        );
-        goBack();
-      });
   };
 
   const editContent = () => {
@@ -500,29 +548,6 @@ export default function PageManagementDetail() {
     );
   };
 
-  const onUpdateStatus = (payload: { id: any; status: string; comment: string }) => {
-    updatePageStatus(payload)
-      .unwrap()
-      .then(() => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: 'Success',
-          }),
-        );
-        goBack();
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: 'Failed',
-          }),
-        );
-        goBack();
-      });
-  };
-
   return (
     <>
       <ModalLog
@@ -630,11 +655,10 @@ export default function PageManagementDetail() {
           icon={RestoreOrange}
           submitAction={() => {
             setShowArchivedModal(false);
-            // const payload = {
-            //   id: pageDetailList?.id,
-            // };
-
-            // onRestoreData(payload);
+            const payload = {
+              id: pageDetailList?.id,
+            };
+            onRestoreData(payload);
           }}
           btnSubmitStyle="btn bg-secondary-warning border-none"
           cancelAction={() => {

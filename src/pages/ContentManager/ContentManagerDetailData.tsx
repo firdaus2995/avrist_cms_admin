@@ -598,6 +598,53 @@ export default function ContentManagerDetailData() {
               }}
             />
           );
+        case 'EMAIL_FORM':
+          return (
+            <div className="flex flex-row mt-16">
+              <div>
+                <Typography
+                  type="body"
+                  size="m"
+                  weight="bold"
+                  className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
+                  EMAIL_FORM
+                </Typography>
+                <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                  {name}
+                </Typography>
+              </div>
+              <Controller
+                key={id}
+                name={id.toString()}
+                control={control}
+                defaultValue=""
+                rules={{ required: `${name} is required` }}
+                render={({ field }) => {
+                  const onChange = useCallback(
+                    (e: any) => {
+                      handleFormChange(id, e.value, fieldType);
+                      field.onChange({ target: { value: e.value } });
+                    },
+                    [id, field, handleFormChange],
+                  );
+                  return (
+                    <FormList.EmailForm
+                      {...field}
+                      key={id}
+                      value={value}
+                      disabled={!isEdited}
+                      fieldTypeLabel="EMAIL_FORM"
+                      placeholder=""
+                      error={!!errors?.[id]?.message}
+                      helperText={errors?.[id]?.message}
+                      items={categoryList}
+                      onChange={onChange}
+                    />
+                  );
+                }}
+              />
+            </div>
+          );
         case 'LOOPING':
           return (
             <div key={id}>
@@ -980,7 +1027,7 @@ export default function ContentManagerDetailData() {
           setShowModalApprove(false);
           const payload = {
             id: contentDataDetailList?.id,
-            status: contentDataDetailList?. status === 'DELETE_APPROVE' ? 'ARCHIVED' : 'APPROVED',
+            status: contentDataDetailList?.status === 'DELETE_APPROVE' ? 'ARCHIVED' : 'APPROVED',
             comment: 'Already approve',
           };
 
@@ -1028,7 +1075,8 @@ export default function ContentManagerDetailData() {
           setShowModalRejected(false);
           const payload = {
             id: contentDataDetailList?.id,
-            status: contentDataDetailList?. status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
+            status:
+              contentDataDetailList?.status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
             comment: rejectComments,
           };
 
@@ -1136,21 +1184,21 @@ export default function ContentManagerDetailData() {
       )}
       {roles?.includes('CONTENT_MANAGER_REVIEW') ? (
         contentDataDetailList?.status === 'WAITING_REVIEW' ||
-          contentDataDetailList?.status === 'DELETE_REVIEW' ? (
-            <div className="flex flex-row justify-between">
-              <div className="w-[30vh] mt-5">
-                <CheckBox
-                  defaultValue={isAlreadyReview}
-                  updateFormValue={e => {
-                    setIsAlreadyReview(e.value);
-                  }}
-                  labelTitle="I Already Review This Page Content"
-                  updateType={''}
-                />
-              </div>
-              {submitButton()}
+        contentDataDetailList?.status === 'DELETE_REVIEW' ? (
+          <div className="flex flex-row justify-between">
+            <div className="w-[30vh] mt-5">
+              <CheckBox
+                defaultValue={isAlreadyReview}
+                updateFormValue={e => {
+                  setIsAlreadyReview(e.value);
+                }}
+                labelTitle="I Already Review This Page Content"
+                updateType={''}
+              />
             </div>
-          ) : null
+            {submitButton()}
+          </div>
+        ) : null
       ) : null}
     </TitleCard>
   );

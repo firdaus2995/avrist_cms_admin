@@ -185,6 +185,18 @@ export const contentTypeApi = createApi({
         variables: payload,
       }),
     }),
+    deleteContentType: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation postTypeDelete($id: Int!) {
+            postTypeDelete(postTypeGroup: "CONTENT_TYPE", id: $id) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -195,4 +207,5 @@ export const {
   useGetPostTypeDetailQuery,
   usePostTypeUpdateMutation,
   useCreateContentDataMutation,
+  useDeleteContentTypeMutation,
 } = contentTypeApi;

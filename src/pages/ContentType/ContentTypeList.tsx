@@ -1,11 +1,11 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { useDuplicatePageMutation } from '@/services/PageManagement/pageManagementApi';
 import {
-  useDeletePageMutation,
-  useDuplicatePageMutation,
-} from '@/services/PageManagement/pageManagementApi';
-import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeApi';
+  useGetPostTypeListQuery,
+  useDeleteContentTypeMutation,
+} from '../../services/ContentType/contentTypeApi';
 import { useTranslation } from 'react-i18next';
 import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
@@ -89,7 +89,7 @@ export default function ContentTypeList() {
   const { data } = fetchQuery;
 
   // RTK DELETE
-  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+  const [deleteContentType, { isLoading: deletePageLoading }] = useDeleteContentTypeMutation();
   // RTK DUPLICATE
   const [duplicatePage] = useDuplicatePageMutation();
 
@@ -123,15 +123,17 @@ export default function ContentTypeList() {
       enableSorting: true,
       cell: (info: any) => (
         <Link to={`${info?.row?.original?.id}`}>
-          <Typography
-            type="body"
-            size="s"
-            weight="semi"
-            className="truncate cursor-pointer text-primary">
-            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-              ? info.getValue()
-              : '-'}
-          </Typography>
+          <div className="flex justify-center items-center w-96">
+            <Typography
+              type="body"
+              size="s"
+              weight="semi"
+              className="truncate cursor-pointer text-primary">
+              {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+                ? info.getValue()
+                : '-'}
+            </Typography>
+          </div>
         </Link>
       ),
     },
@@ -200,15 +202,15 @@ export default function ContentTypeList() {
 
   // FUNCTION FOR DELETE PAGE
   const submitDeletePage = () => {
-    deletePage({ id: idDelete })
+    deleteContentType({ id: idDelete })
       .unwrap()
       .then(async d => {
         setShowConfirm(false);
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Page',
-            message: d.pageDelete.message,
+            title: 'Success Delete Content Type',
+            message: d.postTypeDelete.message,
           }),
         );
         await fetchQuery.refetch();
@@ -218,7 +220,7 @@ export default function ContentTypeList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Page',
+            title: 'Failed Delete Content Type',
             message: 'Something went wrong!',
           }),
         );
@@ -230,7 +232,7 @@ export default function ContentTypeList() {
     duplicatePage({ id: idDuplicate })
       .unwrap()
       .then(async () => {
-        setShowConfirm(false);
+        setShowConfirmDuplicate(false);
         dispatch(
           openToast({
             type: 'success',
@@ -240,7 +242,6 @@ export default function ContentTypeList() {
         await fetchQuery.refetch();
       })
       .catch(() => {
-        setShowConfirm(false);
         dispatch(
           openToast({
             type: 'error',
