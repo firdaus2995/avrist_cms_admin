@@ -112,6 +112,9 @@ export default function EmailFormBuilderEdit () {
           ...(!!Object.getOwnPropertyDescriptor(config, 'required') && {
             required: config?.required === "true" ?? false,
           }),
+          ...(!!Object.getOwnPropertyDescriptor(config, 'useDecimal') && {
+            useDecimal: config?.required === "true" ?? false,
+          }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'min_length') && {
             minLength: config?.min_length,
           }),
@@ -249,7 +252,7 @@ export default function EmailFormBuilderEdit () {
             fieldType: "NUMBER",
             name: element.name,
             fieldId: "NUMBER",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"useDecimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
           };
         case "DOCUMENT":
           return {
@@ -499,6 +502,7 @@ export default function EmailFormBuilderEdit () {
           type: item,
           name: "Number Name",
           placeholder: "Enter your field",
+          useDecimal: false,
           required: false,
           mandatory: {
             name: false,
@@ -949,10 +953,8 @@ export default function EmailFormBuilderEdit () {
       case "SUBMITTEREMAIL":
         return (
           <EFBConfiguration.SubmitterEmail 
-            name={activeComponent?.data?.name}
-            placeholder={activeComponent?.data?.placeholder}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute.EMAIL}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
