@@ -19,6 +19,7 @@ import Typography from '@/components/atoms/Typography';
 import TableDelete from '@/assets/table-delete.svg';
 import WarningIcon from '@/assets/warning.png';
 import { useTranslation } from 'react-i18next';
+import { getCredential } from '@/utils/Credential';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
@@ -201,19 +202,30 @@ export default function PageManagementArchive() {
             className="btn btn-primary text-xs btn-sm w-28">
             Restore
           </button>
-          <div className="tooltip" data-tip={t('action.delete')}>
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={() => {
-                onClickPageDelete(info.getValue(), info?.row?.original?.title);
-              }}
-            />
-          </div>
+          {canDelete && (
+            <div className="tooltip" data-tip={t('action.delete')}>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                }}
+              />
+            </div>
+          )}
         </div>
       ),
     },
   ];
+
+  const [canDelete] = useState(() => {
+    return !!getCredential().roles.find((element: any) => {
+      if (element === 'CONTENT_MANAGER_DELETE') {
+        return true;
+      }
+      return false;
+    });
+  });
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
