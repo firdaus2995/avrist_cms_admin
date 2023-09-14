@@ -26,6 +26,8 @@ import CkEditor from '@/components/atoms/Ckeditor';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import DropDown from '@/components/molecules/DropDown';
 import { openToast } from '@/components/atoms/Toast/slice';
+import ModalLog from './components/ModalLog';
+import TimelineLog from '@/assets/timeline-log.svg';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -40,6 +42,8 @@ export default function PageManagementDetail() {
   const [contentTypeId, setContentTypeId] = useState<any>(null);
   const [content, setContent] = useState<any>(null);
   const [isDraft, setIsDraft] = useState<any>(false);
+  const [idLog, setIdLog] = useState(null);
+  const [logTitle, setLogTitle] = useState(null);
 
   const [setSearch] = useState<any>('');
   const [isEdited, setIsEdited] = useState(false);
@@ -123,7 +127,16 @@ export default function PageManagementDetail() {
 
   const Badge = () => {
     return (
-      <div className="ml-5">
+      <div className="ml-5 flex flex-row gap-5">
+        <div
+          className="ml-3 cursor-pointer tooltip"
+          data-tip="Log"
+          onClick={() => {
+            setIdLog(id);
+            setLogTitle(pageDetailList?.title);
+          }}>
+          <img src={TimelineLog} className="w-6 h-6" />
+        </div>
         <StatusBadge status={pageDetailList?.pageStatus || ''} />
       </div>
     );
@@ -512,6 +525,14 @@ export default function PageManagementDetail() {
 
   return (
     <>
+      <ModalLog
+        id={idLog}
+        open={!!idLog}
+        toggle={() => {
+          setIdLog(null);
+        }}
+        title={`Log Approval - ${logTitle}`}
+      />
       <ModalConfirm
         open={showApproveModal}
         cancelAction={() => {
@@ -526,7 +547,7 @@ export default function PageManagementDetail() {
         icon={undefined}
       />
       <TitleCard
-        title="Homepage - Page Template"
+        title={`${pageDetailList?.title} - Page Template`}
         titleComponent={<Badge />}
         border={true}
         TopSideButtons={rightTopButton()}>

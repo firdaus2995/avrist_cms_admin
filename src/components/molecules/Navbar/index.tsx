@@ -45,7 +45,7 @@ export const Navbar: React.FC<INavbar> = ({
         viewBox="0 0 24 24"
         strokeWidth={1.5}
         stroke="currentColor"
-        className="w-6 h-6 cursor-pointer  lg:hidden visible">
+        className="w-6 h-6 cursor-pointer lg:hidden visible">
         <path
           strokeLinecap="round"
           strokeLinejoin="round"

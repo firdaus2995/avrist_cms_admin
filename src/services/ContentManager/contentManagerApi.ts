@@ -384,6 +384,18 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    hardDeleteContentData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation contentDataHardDelete($id: Int!){
+            contentDataHardDelete(id: $id) {    
+                message
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -403,4 +415,5 @@ export const {
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
   useRestoreContentDataMutation,
+  useHardDeleteContentDataMutation,
 } = contentManagerApi;
