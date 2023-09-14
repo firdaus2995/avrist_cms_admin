@@ -171,7 +171,7 @@ export default function EmailFormBuilderNew () {
             fieldType: "NUMBER",
             name: element.name,
             fieldId: "NUMBER",
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"useDecimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
           };
         case "DOCUMENT":
           return {
@@ -420,6 +420,7 @@ export default function EmailFormBuilderNew () {
           type: item,
           name: "Number Name",
           placeholder: "Enter your field",
+          useDecimal: false,
           required: false,
           mandatory: {
             name: false,
@@ -869,10 +870,8 @@ export default function EmailFormBuilderNew () {
       case "SUBMITTEREMAIL":
         return (
           <EFBConfiguration.SubmitterEmail 
-            name={activeComponent?.data?.name}
-            placeholder={activeComponent?.data?.placeholder}
-            required={activeComponent?.data?.required}
-            errors={activeComponent?.data?.mandatory}
+            data={activeComponent?.data}
+            configList={objectFormAttribute.EMAIL}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value)
             }}
