@@ -29,6 +29,7 @@ import DropDown from '@/components/molecules/DropDown';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalLog from './components/ModalLog';
 import TimelineLog from '@/assets/timeline-log.svg';
+import dayjs from 'dayjs';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -711,7 +712,9 @@ export default function PageManagementDetail() {
             />
           </div>
         </ModalForm>
-
+        {pageDetailList?.lastEdited && (
+          <div>Last Edited by <span className='font-bold'>{pageDetailList?.lastEdited?.editedBy}</span> at <span className='font-bold'>{dayjs(pageDetailList?.lastEdited?.editedAt).format('DD/MM/YYYY - HH:mm')}</span></div>
+        )}
         {isEdited ? editContent() : viewContent()}
         {roles?.includes('PAGE_REVIEW') ? (
           pageDetailList?.pageStatus === 'WAITING_REVIEW' ||

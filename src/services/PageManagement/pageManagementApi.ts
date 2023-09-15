@@ -246,6 +246,10 @@ export const pageManagementApi = createApi({
               shortDesc
               content
               imgFilename
+              lastEdited {
+                  editedBy
+                  editedAt
+              }
               pageTemplate {
                 id
                 name
