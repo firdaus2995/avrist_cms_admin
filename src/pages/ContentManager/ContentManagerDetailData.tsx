@@ -1108,6 +1108,9 @@ export default function ContentManagerDetailData() {
         <form onSubmit={handleSubmit(onSubmitData)}>
           <div className="ml-2 mt-6">
             <div className="grid grid-cols-1 gap-5">
+              {contentDataDetailList?.lastEdited && (
+                <div>Last Edited by <span className='font-bold'>{contentDataDetailList?.lastEdited?.editedBy}</span> at <span className='font-bold'>{contentDataDetailList?.lastEdited?.editedAt}</span></div>
+              )}
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="mt-5 ml-1 w-48 mr-16">
                   Title
