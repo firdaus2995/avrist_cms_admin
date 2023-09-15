@@ -5,7 +5,10 @@ import { useTranslation } from 'react-i18next';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import TableEdit from '@/assets/table-edit.png';
-import { useDeleteCategoryMutation, useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
+import {
+  useDeleteCategoryMutation,
+  useGetCategoryListQuery,
+} from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
 import { getCredential } from '@/utils/Credential';
 import TableDelete from '@/assets/table-delete.svg';
@@ -46,27 +49,27 @@ export default function CategoryTab(_props: { id: any }) {
       enableSorting: false,
       cell: (_info: any) => (
         <div className="flex gap-3">
-          {
-            canEdit && (
-              <Link to={`category/edit/${_info.getValue()}`}>
-                <div className="tooltip" data-tip={t('action.edit')}>
-                  <img
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableEdit}
-                  />
-                </div>
-              </Link>
-            )
-          }
-          <div className="tooltip" data-tip={t('action.delete')}>
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={() => {
-                onClickPageDelete(_info.getValue(), _info?.row?.original?.name);
-              }}
-            />
-          </div>
+          {canEdit && (
+            <Link to={`category/edit/${_info.getValue()}`}>
+              <div className="tooltip" data-tip={t('action.edit')}>
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                />
+              </div>
+            </Link>
+          )}
+          {canDelete && (
+            <div className="tooltip" data-tip={t('action.delete')}>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageDelete(_info.getValue(), _info?.row?.original?.name);
+                }}
+              />
+            </div>
+          )}
         </div>
       ),
     },
@@ -76,6 +79,7 @@ export default function CategoryTab(_props: { id: any }) {
   const { t } = useTranslation();
   const [listData, setListData] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showIsUsed, setShowIsUsed] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
@@ -90,39 +94,51 @@ export default function CategoryTab(_props: { id: any }) {
   // PERMISSION STATE
   const [canEdit] = useState(() => {
     return !!getCredential().roles.find((element: any) => {
-      if (element === "CONTENT_MANAGER_EDIT") {
+      if (element === 'CONTENT_MANAGER_EDIT') {
         return true;
       }
       return false;
     });
-  })  
+  });
+
+  const [canDelete] = useState(() => {
+    return !!getCredential().roles.find((element: any) => {
+      if (element === 'CONTENT_MANAGER_DELETE') {
+        return true;
+      }
+      return false;
+    });
+  });
 
   // RTK GET DATA
-  const fetchQuery = useGetCategoryListQuery({
-    postTypeId: _props.id,
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-  }, {
-    refetchOnMountOrArgChange: true,
-  })
+  const fetchQuery = useGetCategoryListQuery(
+    {
+      postTypeId: _props.id,
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data, isFetching, isError } = fetchQuery;
 
   useEffect(() => {
     if (data) {
       setListData(data?.categoryList?.categoryList);
       setTotal(data?.categoryList?.total);
-    };
+    }
   }, [data]);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {    
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    };
-  }, []);  
+    }
+  }, []);
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
@@ -131,8 +147,8 @@ export default function CategoryTab(_props: { id: any }) {
     setShowConfirm(true);
   };
 
-   // FUNCTION FOR DELETE PAGE
-   const submitDeleteCategory = () => {
+  // FUNCTION FOR DELETE PAGE
+  const submitDeleteCategory = () => {
     deleteCategory({ id: idDelete })
       .unwrap()
       .then(async d => {
@@ -146,8 +162,11 @@ export default function CategoryTab(_props: { id: any }) {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((err) => {
         setShowConfirm(false);
+        if (err.message.includes('DataIsUsedException')) {
+          setShowIsUsed(true); return;
+        }
         dispatch(
           openToast({
             type: 'error',
@@ -173,6 +192,21 @@ export default function CategoryTab(_props: { id: any }) {
         loading={deleteCategoryLoading}
         icon={WarningIcon}
         btnSubmitStyle={'btn-error'}
+      />
+      <ModalConfirm
+        open={showIsUsed}
+        title={''}
+        message={"You can't delete this category, because this category is been used in an active page"}
+        submitTitle="Ok"
+        icon={WarningIcon}
+        submitAction={() => {
+          setShowIsUsed(false);
+        }}
+        btnSubmitStyle="btn-error"
+        cancelTitle={''}
+        cancelAction={function (): void {
+          throw new Error('Function not implemented.');
+        }}
       />
       <div className="overflow-x-auto w-full mb-5">
         <Table
