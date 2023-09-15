@@ -127,7 +127,6 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           const objectUrl: any = URL.createObjectURL(blob);
           setSidebarAvatar(objectUrl);
         }
-        console.log(sidebarAvatar)
       })
       .catch(err => {
         console.log(err);

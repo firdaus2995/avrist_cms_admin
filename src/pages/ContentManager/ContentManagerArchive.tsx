@@ -9,15 +9,23 @@ import dayjs from 'dayjs';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
-import { useGetArchiveDataQuery, useRestoreDataMutation } from '@/services/ContentManager/contentManagerApi';
+import {
+  useGetArchiveDataQuery,
+  useHardDeleteContentDataMutation,
+  useRestoreDataMutation,
+} from '@/services/ContentManager/contentManagerApi';
 import { useGetRoleQuery } from '@/services/User/userApi';
 import Typography from '@/components/atoms/Typography';
+import TableDelete from '@/assets/table-delete.svg';
+import WarningIcon from '@/assets/warning.png';
+import { useTranslation } from 'react-i18next';
+import { getCredential } from '@/utils/Credential';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
   const [, setRoleData] = useState([]);
-  
+
   // GO BACK
   const navigate = useNavigate();
   const goBack = () => {
@@ -26,6 +34,7 @@ export default function PageManagementArchive() {
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
+  const { t } = useTranslation();
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -41,6 +50,14 @@ export default function PageManagementArchive() {
   const [restoreModalBody, setRestoreModalBody] = useState('');
   const [restoreId, setRestoreId] = useState(0);
 
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setMessageConfirm] = useState('');
+  const [idDelete, setIdDelete] = useState(0);
+
+  const [deleteContentManager, { isLoading: deleteContentManagerLoading }] =
+    useHardDeleteContentDataMutation();
+
   // RTK GET DATA
   const fetchQuery = useGetArchiveDataQuery({
     id,
@@ -54,8 +71,7 @@ export default function PageManagementArchive() {
   const { data } = fetchQuery;
 
   const fetchRoleQuery = useGetRoleQuery({});
-  const { data: fetchedRole } = fetchRoleQuery;  
-
+  const { data: fetchedRole } = fetchRoleQuery;
 
   // RTK RESTORE
   const [restoreData, { isLoading }] = useRestoreDataMutation();
@@ -73,11 +89,11 @@ export default function PageManagementArchive() {
         return {
           value: Number(element.id),
           label: element.name,
-        }
-      })
+        };
+      });
       setRoleData(roleList);
-    };
-  }, [fetchedRole])
+    }
+  }, [fetchedRole]);
 
   useEffect(() => {
     const refetch = async () => {
@@ -186,10 +202,63 @@ export default function PageManagementArchive() {
             className="btn btn-primary text-xs btn-sm w-28">
             Restore
           </button>
+          {canDelete && (
+            <div className="tooltip" data-tip={t('action.delete')}>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                }}
+              />
+            </div>
+          )}
         </div>
       ),
     },
   ];
+
+  const [canDelete] = useState(() => {
+    return !!getCredential().roles.find((element: any) => {
+      if (element === 'CONTENT_MANAGER_DELETE') {
+        return true;
+      }
+      return false;
+    });
+  });
+
+  const onClickPageDelete = (id: number, title: string) => {
+    setIdDelete(id);
+    setTitleConfirm('Are you sure?');
+    setMessageConfirm(`Do you want to delete data ${title}?`);
+    setShowConfirm(true);
+  };
+
+  const submitDeleteContent = () => {
+    deleteContentManager({ id: idDelete })
+      .unwrap()
+      .then(async d => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Delete Content',
+            message: d.pageDelete.message,
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Delete Content',
+            message: 'Something went wrong!',
+          }),
+        );
+      });
+  };
 
   return (
     <>
@@ -206,6 +275,20 @@ export default function PageManagementArchive() {
         loading={isLoading}
         btnSubmitStyle={'btn-primary'}
         icon={undefined}
+      />
+      <ModalConfirm
+        open={showConfirm}
+        cancelAction={() => {
+          setShowConfirm(false);
+        }}
+        title={titleConfirm}
+        cancelTitle="No"
+        message={messageConfirm}
+        submitAction={submitDeleteContent}
+        submitTitle="Yes"
+        loading={deleteContentManagerLoading}
+        icon={WarningIcon}
+        btnSubmitStyle={'btn-error'}
       />
       <TitleCard
         title="Content Manager - Archive List"

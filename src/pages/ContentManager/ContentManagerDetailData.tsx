@@ -28,6 +28,8 @@ import PaperIcon from '../../assets/paper.png';
 import WarningIcon from '@/assets/warning.png';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalForm from '@/components/molecules/ModalForm';
+import ModalLog from './components/ModalLog';
+import TimelineLog from '@/assets/timeline-log.svg';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -48,6 +50,8 @@ export default function ContentManagerDetailData() {
   const [rejectComments, setRejectComments] = useState('');
   const [showArchivedModal, setShowArchivedModal] = useState(false);
   const roles = store.getState().loginSlice.roles;
+  const [idLog, setIdLog] = useState(null);
+  const [logTitle, setLogTitle] = useState(null);
 
   const handleChange = (id: string | number, value: string) => {
     setContentDataDetailList((prevFormValues: any) => ({
@@ -933,12 +937,38 @@ export default function ContentManagerDetailData() {
     }
   };
 
+  const Badge = () => {
+    return (
+      <div className="ml-5 flex flex-row gap-5">
+        <div
+          className="ml-3 cursor-pointer tooltip"
+          data-tip="Log"
+          onClick={() => {
+            setIdLog(id);
+            setLogTitle(contentDataDetailList?.title);
+          }}>
+          <img src={TimelineLog} className="w-6 h-6" />
+        </div>
+        <StatusBadge status={contentDataDetailList?.status} />
+      </div>
+    );
+  };
+
   return (
     <TitleCard
       onBackClick={goBack}
       hasBack={true}
       title={`${contentDataDetail?.contentDataDetail?.title ?? ''}`}
+      titleComponent={<Badge />}
       TopSideButtons={rigthTopButton()}>
+      <ModalLog
+        id={idLog}
+        open={!!idLog}
+        toggle={() => {
+          setIdLog(null);
+        }}
+        title={`Log Approval - ${logTitle}`}
+      />
       <ModalConfirm
         open={showModalReview}
         title={'Review Page Content'}
@@ -1078,9 +1108,6 @@ export default function ContentManagerDetailData() {
         <form onSubmit={handleSubmit(onSubmitData)}>
           <div className="ml-2 mt-6">
             <div className="grid grid-cols-1 gap-5">
-              <div className="absolute left-64 top-20">
-                <StatusBadge status={contentDataDetailList?.status} />
-              </div>
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="mt-5 ml-1 w-48 mr-16">
                   Title

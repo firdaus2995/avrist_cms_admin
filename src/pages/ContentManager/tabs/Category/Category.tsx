@@ -5,9 +5,14 @@ import { useTranslation } from 'react-i18next';
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 import TableEdit from '@/assets/table-edit.png';
-import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
+import { useDeleteCategoryMutation, useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
 import { getCredential } from '@/utils/Credential';
+import TableDelete from '@/assets/table-delete.svg';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import WarningIcon from '@/assets/warning.png';
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function CategoryTab(_props: { id: any }) {
   const COLUMNS = [
@@ -53,13 +58,29 @@ export default function CategoryTab(_props: { id: any }) {
               </Link>
             )
           }
+          <div className="tooltip" data-tip={t('action.delete')}>
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableDelete}
+              onClick={() => {
+                onClickPageDelete(_info.getValue(), _info?.row?.original?.name);
+              }}
+            />
+          </div>
         </div>
       ),
     },
   ];
 
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const [listData, setListData] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setMessageConfirm] = useState('');
+  const [idDelete, setIdDelete] = useState(0);
+  const [deleteCategory, { isLoading: deleteCategoryLoading }] = useDeleteCategoryMutation();
+
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
@@ -103,8 +124,56 @@ export default function CategoryTab(_props: { id: any }) {
     };
   }, []);  
 
+  const onClickPageDelete = (id: number, title: string) => {
+    setIdDelete(id);
+    setTitleConfirm('Are you sure?');
+    setMessageConfirm(`Do you want to delete data ${title}?`);
+    setShowConfirm(true);
+  };
+
+   // FUNCTION FOR DELETE PAGE
+   const submitDeleteCategory = () => {
+    deleteCategory({ id: idDelete })
+      .unwrap()
+      .then(async d => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Delete Category',
+            message: d.pageDelete.message,
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Delete Category',
+            message: 'Something went wrong!',
+          }),
+        );
+      });
+  };
+
   return (
     <>
+      <ModalConfirm
+        open={showConfirm}
+        cancelAction={() => {
+          setShowConfirm(false);
+        }}
+        title={titleConfirm}
+        cancelTitle="No"
+        message={messageConfirm}
+        submitAction={submitDeleteCategory}
+        submitTitle="Yes"
+        loading={deleteCategoryLoading}
+        icon={WarningIcon}
+        btnSubmitStyle={'btn-error'}
+      />
       <div className="overflow-x-auto w-full mb-5">
         <Table
           rows={listData}
