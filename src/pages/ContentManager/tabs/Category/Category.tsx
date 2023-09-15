@@ -79,6 +79,7 @@ export default function CategoryTab(_props: { id: any }) {
   const { t } = useTranslation();
   const [listData, setListData] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [showIsUsed, setShowIsUsed] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
@@ -161,8 +162,11 @@ export default function CategoryTab(_props: { id: any }) {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((err) => {
         setShowConfirm(false);
+        if (err.message.includes('DataIsUsedException')) {
+          setShowIsUsed(true); return;
+        }
         dispatch(
           openToast({
             type: 'error',
@@ -188,6 +192,21 @@ export default function CategoryTab(_props: { id: any }) {
         loading={deleteCategoryLoading}
         icon={WarningIcon}
         btnSubmitStyle={'btn-error'}
+      />
+      <ModalConfirm
+        open={showIsUsed}
+        title={''}
+        message={"You can't delete this category, because this category is been used in an active page"}
+        submitTitle="Ok"
+        icon={WarningIcon}
+        submitAction={() => {
+          setShowIsUsed(false);
+        }}
+        btnSubmitStyle="btn-error"
+        cancelTitle={''}
+        cancelAction={function (): void {
+          throw new Error('Function not implemented.');
+        }}
       />
       <div className="overflow-x-auto w-full mb-5">
         <Table
