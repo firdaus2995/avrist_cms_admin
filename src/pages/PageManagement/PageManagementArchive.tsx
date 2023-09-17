@@ -13,6 +13,10 @@ import dayjs from 'dayjs';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
+import { getCredential } from '@/utils/Credential';
+import TableDelete from '@/assets/table-delete.svg';
+import WarningIcon from '@/assets/warning.png';
+import { useTranslation } from 'react-i18next';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
@@ -23,6 +27,7 @@ export default function PageManagementArchive() {
   const goBack = () => {
     navigate(-1);
   };
+  const { t } = useTranslation();
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -37,6 +42,11 @@ export default function PageManagementArchive() {
   const [restoreModalTitle, setRestoreModalTitle] = useState('');
   const [restoreModalBody, setRestoreModalBody] = useState('');
   const [restoreId, setRestoreId] = useState(0);
+
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setMessageConfirm] = useState('');
+  const [, setIdDelete] = useState(0);
 
   // RTK GET DATA
   const fetchQuery = useGetPageManagementListQuery({
@@ -172,10 +182,37 @@ export default function PageManagementArchive() {
             className="btn btn-primary text-xs btn-sm w-28">
             Restore
           </button>
+          {canDelete && (
+            <div className="tooltip" data-tip={t('action.delete')}>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageDelete(info.getValue());
+                }}
+              />
+            </div>
+          )}
         </div>
       ),
     },
   ];
+
+  const [canDelete] = useState(() => {
+    return !!getCredential().roles.find((element: any) => {
+      if (element === 'PAGE_DELETE') {
+        return true;
+      }
+      return false;
+    });
+  });
+
+  const onClickPageDelete = (id: number) => {
+    setIdDelete(id);
+    setTitleConfirm('Are you sure?');
+    setMessageConfirm("Do you want to permanently delete this page? If you delete this page, you can’t recover it.");
+    setShowConfirm(true);
+  };
 
   return (
     <>
@@ -192,6 +229,20 @@ export default function PageManagementArchive() {
         loading={isLoading}
         btnSubmitStyle={'btn-primary'}
         icon={undefined}
+      />
+      <ModalConfirm
+        open={showConfirm}
+        cancelAction={() => {
+          setShowConfirm(false);
+        }}
+        title={titleConfirm}
+        cancelTitle="Cancel"
+        message={messageConfirm}
+        submitAction={() => { setShowConfirm(false); }}
+        submitTitle="Yes"
+        // loading={deleteContentManagerLoading}
+        icon={WarningIcon}
+        btnSubmitStyle={'btn-error'}
       />
       <TitleCard
         title="Archive List"
