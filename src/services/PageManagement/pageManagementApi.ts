@@ -267,6 +267,60 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    createPageData: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation pageCreate(
+            $title: String!
+            $slug: String!
+            $metatitle: String!
+            $metaDescription: String!
+            $shortDesc: String!
+            $content: String!
+            $imgFilename: String!
+            $isDraft: Boolean!
+            $pageTemplateId: Int!
+            $postTypeId: Int!
+          ) {
+            pageCreate(
+              request: {
+                title: $title
+                slug: $slug
+                metaTitle: $metatitle
+                metaDescription: $metaDescription
+                shortDesc: $shortDesc
+                content: $content
+                imgFilename: $imgFilename
+                isDraft: $isDraft
+                pageTemplateId: $pageTemplateId
+                postTypeId: $postTypeId
+              }
+            ) {
+              id
+              title
+              slug
+              metaTitle
+              metaDescription
+              shortDesc
+              content
+              imgFilename
+              pageTemplate {
+                id
+                name
+                imageUrl
+              }        
+              postType {
+                id
+                name
+              }
+              pageStatus
+              comment
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     updatePageStatus: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
@@ -346,6 +400,7 @@ export const {
   useDuplicatePageMutation,
   useGetPageMyTaskListQuery,
   useGetPageByIdQuery,
+  useCreatePageDataMutation,
   useUpdatePageStatusMutation,
   useUpdatePageDataMutation,
 } = pageManagementApi;

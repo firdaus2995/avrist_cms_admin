@@ -16,6 +16,9 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
+import { useCreatePageDataMutation } from '@/services/PageManagement/pageManagementApi';
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function PageManagementNew() {
   const {
@@ -25,6 +28,7 @@ export default function PageManagementNew() {
     formState: {},
   } = useForm();
   const navigate = useNavigate();
+  const dispatch = useAppDispatch();
 
   // PAGE TEMPLACE SELECTION STATE
   const [pageTemplates, setPageTemplates] = useState<any>([]);
@@ -33,6 +37,8 @@ export default function PageManagementNew() {
   const [total, setTotal] = useState<number>(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit] = useState(6);
+  // FORM DATA
+  const [content, setContent] = useState("");
   // CONTENT SELECTION STATE
   const [listContents, setListContents] = useState<any>([]);
   const [contentTypeId, setContentTypeId] = useState<any>(null);
@@ -52,6 +58,9 @@ export default function PageManagementNew() {
     refetchOnMountOrArgChange: true,
   });
   const { data: dataPageTemplates } = fetchPageTemplatesQuery;
+
+  // RTK CREATE PAGE TEMPLATE
+  const [createPageData] = useCreatePageDataMutation();
 
   // RTK GET CONTENT
   const fetchContentsQuery = useGetPostTypeListQuery({
@@ -81,12 +90,44 @@ export default function PageManagementNew() {
     };
   }, [dataContents, dataPageTemplates]);
 
-  const handlerSubmit = (formData: any) => {
-    console.log({
-      formData,
-      selected,
-      contentTypeId,
-    });
+  const handlerSubmit = (formData: any, type?: string) => {
+    let isDraft: boolean = false;
+    if (type === "draft") {
+      isDraft = true;
+    };
+
+    const payload = {
+      title: formData?.pageName,
+      slug: formData?.slug,
+      metatitle: formData?.metaTitle,
+      metaDescription: formData?.metaDescription,
+      shortDesc: formData?.shortDesc,
+      content,
+      imgFilename: pageTemplates.find((template: { id: any; }) => template.id === selected)?.name,
+      isDraft,
+      pageTemplateId: selected,
+      postTypeId: contentTypeId,
+    };
+
+    createPageData(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+          }),
+        );
+        navigate('/page-management');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+      });
   };
 
   const onLeave = () => {
@@ -116,7 +157,9 @@ export default function PageManagementNew() {
             Preview
           </button>
         </div>
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit(handlerSubmit)}>
+        <form className="flex flex-col gap-5" onSubmit={handleSubmit((data: any) => {
+          handlerSubmit(data);
+        })}>
           {/* FORM SECTION */}
           <div className="flex flex-col gap-3">
             <Typography weight="bold" size="l">
@@ -221,7 +264,11 @@ export default function PageManagementNew() {
               <Typography size="m" weight="semi">
                 Content
               </Typography>
-              <CkEditor />
+              <CkEditor 
+                onChange={(data: string) => {
+                  setContent(data);
+                }}
+              />
             </div>
           </div>
           {/* DIVIDER */}
@@ -305,11 +352,18 @@ export default function PageManagementNew() {
             </button>
             <button 
               className="btn btn-outline btn-warning btn-md"
-              onClick={handleSubmit(handlerSubmit)}
+              onClick={handleSubmit((data: any) => {
+                handlerSubmit(data, "draft")
+              })}
             >
               Save as Draft
             </button>
-            <button type='submit' className="btn btn-success btn-md">Submit</button>
+            <button 
+              type='submit' 
+              className="btn btn-success btn-md"
+            >
+              {t('btn.save')}
+            </button>
           </div>
         </form>
       </div>
