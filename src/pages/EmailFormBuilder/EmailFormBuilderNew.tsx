@@ -65,9 +65,6 @@ export default function EmailFormBuilderNew () {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
       };
 
-      console.log(arrayFormAttribute);
-      console.log(objectFormAttribute);
-
       setFormAttribute(arrayFormAttribute);
       setObjectFormAttribute(objectFormAttribute);
     };
