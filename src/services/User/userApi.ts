@@ -115,6 +115,7 @@ export const userApi: any = createApi({
             $dob: String!
             $gender: Boolean!
             $company: String!
+            $statusActive: Boolean!
             $roleId: Int!
           ) {
             userCreate(
@@ -126,6 +127,7 @@ export const userApi: any = createApi({
                 dob: $dob
                 gender: $gender
                 company: $company
+                statusActive: $statusActive
                 roleId: $roleId
               }
             ) {
@@ -136,6 +138,7 @@ export const userApi: any = createApi({
               dob
               gender
               company
+              statusActive
               isActive
               role {
                 id
@@ -156,6 +159,7 @@ export const userApi: any = createApi({
             $dob: String!
             $gender: Boolean!
             $company: String!
+            $statusActive: Boolean!
             $roleId: Int!
           ) {
             userUpdate(
@@ -166,6 +170,7 @@ export const userApi: any = createApi({
                 dob: $dob
                 gender: $gender
                 company: $company
+                statusActive: $statusActive
                 roleId: $roleId
               }
             ) {
@@ -176,6 +181,7 @@ export const userApi: any = createApi({
               dob
               gender
               company
+              statusActive
               isActive
               role {
                 id
