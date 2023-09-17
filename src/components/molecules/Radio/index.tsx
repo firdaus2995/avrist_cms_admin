@@ -13,6 +13,7 @@ const Radio = ({
   containerStyle,
 }: IRadio) => {
   const [checked, setChecked] = useState<any>(null);
+  const [name] = useState<string>(uuidv4());
 
   useEffect(() => {
     if (defaultSelected) setChecked(defaultSelected);
@@ -46,7 +47,7 @@ const Radio = ({
               <label className="label cursor-pointer flex flex-row gap-2">
                 <input
                   type="radio"
-                  name={uuidv4()}
+                  name={name}
                   className="radio checked:bg-purple"
                   value={element.value}
                   checked={checked === element.value}
