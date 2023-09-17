@@ -276,6 +276,10 @@ export const contentManagerApi = createApi({
                 shortDesc
                 categoryName
                 status
+                lastEdited {
+                    editedBy
+                    editedAt
+                }
                 contentData {
                     id
                     name
