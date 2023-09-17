@@ -8,6 +8,7 @@ import Label from "./Label";
 import Number from "./Number";
 import Document from "./Document";
 import Image from "./Image";
+import Rating from "./Rating";
 import SubmitterEmail from "./SubmitterEmail";
 
 const EFBConfiguration = {
@@ -21,6 +22,7 @@ const EFBConfiguration = {
   Number,
   Document,
   Image,
+  Rating,
   SubmitterEmail,
 };
 

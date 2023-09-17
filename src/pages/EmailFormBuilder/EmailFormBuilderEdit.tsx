@@ -66,6 +66,9 @@ export default function EmailFormBuilderEdit () {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
       };
 
+      console.log(arrayFormAttribute);
+      console.log(objectFormAttribute);
+
       setFormAttribute(arrayFormAttribute);
       setObjectFormAttribute(objectFormAttribute);
     };
@@ -274,6 +277,14 @@ export default function EmailFormBuilderEdit () {
             name: "LINE_BREAK",
             fieldId: "LINE_BREAK",
             config: ``, //eslint-disable-line
+          };
+        case "RATING":
+          return {
+            fieldType: "RATING",
+            name: element.name,
+            fieldId: "RATING",
+            config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
+            value: element.items.join(";"),
           };  
         case "SUBMITTEREMAIL":
           return {
@@ -539,6 +550,15 @@ export default function EmailFormBuilderEdit () {
           type: item,
         };
         break;
+      case "RATING":
+        component = {
+          uuid: uuidv4(),
+          type: item,
+          name: "Rating Name",
+          items: ["Rating 1", "Rating 2", "Rating 3", "Rating 4", "Rating 5"],
+          required: false,
+        };
+        break;  
       case "SUBMITTEREMAIL":
         component = {
           uuid: uuidv4(),
@@ -821,7 +841,27 @@ export default function EmailFormBuilderEdit () {
                 />
               </DragDrop>
             );  
-
+          case "RATING":
+            return (
+              <DragDrop
+                key={element.uuid}
+                index={index}  
+                moveComponent={handlerReorderComponent}
+              >
+                <EFBPreview.Rating
+                  id={element.id}
+                  name={element.name}
+                  items={element.items}
+                  isActive={activeComponent?.index === index}
+                  onClick={() => {
+                    handlerFocusComponent(element, index)
+                  }}
+                  onDelete={() => {
+                    handlerDeleteComponent(index);
+                  }}
+                />
+              </DragDrop>
+            )  
           case "SUBMITTEREMAIL":
             return (
               <DragDrop
@@ -950,6 +990,16 @@ export default function EmailFormBuilderEdit () {
             }}
           />
         )
+      case "RATING":
+        return (
+          <EFBConfiguration.Rating 
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
+            valueChange={(type: string, value: any) => {
+              functionChangeState(type, value)
+            }}
+          />
+        )  
       case "SUBMITTEREMAIL":
         return (
           <EFBConfiguration.SubmitterEmail 
@@ -1021,6 +1071,7 @@ export default function EmailFormBuilderEdit () {
               labelStyle="font-bold	"
               inputStyle="rounded-xl "
               inputWidth={400}
+              direction='row'
               items={pics}
               logicValidation={checkIsEmail}
               errorAddValueMessage="The PIC filling format must be email format"
@@ -1053,9 +1104,9 @@ export default function EmailFormBuilderEdit () {
 
           {/* BOT SECTION */}
           <DndProvider backend={HTML5Backend}>
-            <div className="mt-4 flex flex-row w-100 h-[600px] gap-2">
+            <div className="mt-4 flex flex-row w-100 h-[700px] gap-2">
               {/* DRAG COMPONENT */}
-              <div className="h-full flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
+              <div className="flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
                 <h2 className="font-bold p-3">Component List</h2>
                 <div className="flex flex-col gap-3 overflow-auto p-2 border-[1px] border-transparent">
                   {renderDragComponents()}

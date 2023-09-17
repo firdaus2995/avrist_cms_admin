@@ -9,6 +9,7 @@ import Number from "./Number";
 import Document from "./Document";
 import Image from "./Image";
 import LineBreak from "./LineBreak";
+import Rating from "./Rating";
 import SubmitterEmail from "./SubmitterEmail";
 
 const EFBPreview = {
@@ -23,6 +24,7 @@ const EFBPreview = {
   Document,
   Image,
   LineBreak,
+  Rating,
   SubmitterEmail,
 };
 
