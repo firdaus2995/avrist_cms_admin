@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { v4 as uuidv4 } from "uuid";
+
 import { IItems, IRadio } from './interfaces';
 
 const Radio = ({
@@ -44,7 +46,7 @@ const Radio = ({
               <label className="label cursor-pointer flex flex-row gap-2">
                 <input
                   type="radio"
-                  name="radio-10"
+                  name={uuidv4()}
                   className="radio checked:bg-purple"
                   value={element.value}
                   checked={checked === element.value}
