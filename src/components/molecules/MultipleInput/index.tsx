@@ -9,6 +9,7 @@ interface IMultipleInput {
   labelStyle?: string;
   inputWidth?: number;
   inputStyle?: string;
+  direction?: string;
   placeholder?: string;
   items: string[];
   logicValidation?: any;
@@ -23,6 +24,7 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
   labelStyle,
   inputWidth,
   inputStyle,
+  direction,
   placeholder,
   items,
   logicValidation,
@@ -34,15 +36,22 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
   const [errorAddValue, setErrorAddValue] = useState(false);
 
   return (
-    <div className={`flex flex-row`}>
-      <label style={{
-        width: labelWidth,
-      }} className={`label ${labelStyle}`}>
+    <div className={`w-full flex ${direction === 'row' ? 'flex-row' : 'flex-col'}`}>
+      <label 
+        style={{
+          width: direction === 'row' ? labelWidth : '',
+          minWidth: direction === 'row' ? labelWidth : '',
+        }}
+        className={`label ${labelStyle}`}
+      >
         <span className={`label-text text-base-content`}>{labelTitle}</span>
       </label>
-      <div className="flex flex-col gap-3" style={{
-        width: inputWidth ?? '100%'
-      }}>
+      <div 
+        style={{
+          width: inputWidth ?? '100%'
+        }}      
+        className="flex flex-col gap-3" 
+      >
         {/* THE ADD INPUT */}
         <div className="flex flex-col gap-2">
           <div className={`flex flex-row items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${errorAddValue ? 'border-reddist' : ''} ${inputStyle}`}>
@@ -83,7 +92,13 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
         {
           items.map((item: any, index: number) => {
             return (
-              <div key={index} className="relative flex items-center w-[400px] h-[46px] px-[16px] py-[10px] bg-light-purple-2 rounded-xl">
+              <div 
+                style={{
+                  width: inputWidth ?? "100%",
+                }}
+                key={index} 
+                className="relative flex items-center h-[46px] px-[16px] py-[10px] bg-light-purple-2 rounded-xl"
+              >
                 {item}
                 <img className="absolute top-[-5px] right-[-5px] cursor-pointer" src={CloseSolid} onClick={() => {
                   onDelete(index);
