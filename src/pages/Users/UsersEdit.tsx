@@ -11,6 +11,7 @@ import {
 } from "react-router-dom";
 import dayjs from "dayjs";
 
+import UserOrange from "../../assets/user-orange.svg";
 import ModalConfirm from "../../components/molecules/ModalConfirm";
 import CancelIcon from "../../assets/cancel.png";
 import AddProfilePicture from "../../assets/add-profile-picture.png";
@@ -47,6 +48,7 @@ export default function UsersEdit () {
   const [roleData, setRoleData] = useState([]);
   // FORM STATE
   const [id] = useState<any>(Number(params.id));
+  const [isActive, setIsActive] = useState<any>(true);
   const [userId, setUserId] = useState<string>("");
   const [password] = useState<string>("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
   const [fullName, setFullName] = useState<string>("");
@@ -54,7 +56,9 @@ export default function UsersEdit () {
   const [gender, setGender] = useState<string | number | boolean>("");
   const [email, setEmail] = useState<string>("");
   const [company] = useState<string>("Avrist Life Insurance");
-  const [roleId, setRoleId] = useState<string | number | boolean>(0);  
+  const [roleId, setRoleId] = useState<string | number | boolean>(0);
+  // CHANGE STATUS MODAL
+  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
@@ -91,7 +95,8 @@ export default function UsersEdit () {
       setDob(userDetail.dob);
       setGender(userDetail.gender);
       setEmail(userDetail.email);
-      setRoleId(userDetail.role.id)
+      setRoleId(userDetail.role.id);
+      setIsActive(userDetail.statusActive);
     };
   }, [data])
 
@@ -103,6 +108,7 @@ export default function UsersEdit () {
       gender: gender === "FEMALE" ? false : gender === "MALE" ? true : null,
       email,
       company,
+      statusActive: isActive,
       roleId,
     };    
     editUser(payload)
@@ -128,6 +134,11 @@ export default function UsersEdit () {
       });
   };
 
+  const changeStatusSubmit = () => {
+    setIsActive(false);
+    setShowChangeStatusModal(false);
+  };
+
   const onLeave = () => {
     setShowLeaveModal(false);
     navigate('/user');
@@ -138,6 +149,20 @@ export default function UsersEdit () {
       title={t('user.edit.title')}
       topMargin="mt-2" 
     >
+      <ModalConfirm
+        open={showChangeStatusModal}
+        cancelAction={() => {
+          setShowChangeStatusModal(false);
+          setIsActive(true);
+        }}
+        title="Inactive User"
+        cancelTitle="Cancel"
+        message="Do you want to inactive this user"
+        submitAction={changeStatusSubmit}
+        submitTitle="Yes"
+        icon={UserOrange}
+        btnSubmitStyle='btn-warning'
+      />
       <ModalConfirm
         open={showLeaveModal}
         cancelAction={() => {
@@ -154,7 +179,32 @@ export default function UsersEdit () {
       <form className="flex flex-col w-100" >
         <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130}/>
         <div className="flex flex-col mt-[60px] gap-5">
-          {/*  ROW 1 */}
+          {/* ROW 1 */}
+          <Radio 
+            labelTitle="Status"
+            labelStyle="font-bold	"
+            labelRequired
+            defaultSelected={isActive}
+            items={[
+              {
+                value: true,
+                label: 'Active'
+              },
+              {
+                value: false,
+                label: 'Inactive',
+              },
+            ]}
+            onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
+              if (event) {
+                setIsActive(value);
+                if (value === false) {
+                  setShowChangeStatusModal(true);
+                };
+              };
+            }}
+          />
+          {/* ROW 2 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText  
@@ -178,7 +228,7 @@ export default function UsersEdit () {
               {/* SPACES */}
             </div>
           </div>
-          {/*  ROW 2 */}
+          {/* ROW 3 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText 
@@ -227,7 +277,7 @@ export default function UsersEdit () {
               />
             </div>
           </div>
-          {/* ROW 3 */}
+          {/* ROW 4 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText 

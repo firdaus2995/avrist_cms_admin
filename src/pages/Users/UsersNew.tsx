@@ -10,6 +10,7 @@ import React, {
 } from "react";
 import dayjs from "dayjs";
 
+import UserOrange from "../../assets/user-orange.svg";
 import AddProfilePicture from "../../assets/add-profile-picture.png";
 import ModalConfirm from "../../components/molecules/ModalConfirm";
 import DropDown from "../../components/molecules/DropDown";
@@ -37,12 +38,14 @@ import {
 import { 
   openToast,
 } from "../../components/atoms/Toast/slice";
+import { errorMessageTypeConverter } from "@/utils/logicHelper";
 
 export default function UsersNew () {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const [roleData, setRoleData] = useState([]);
   // FORM STATE
+  const [isActive, setIsActive] = useState<any>(true);
   const [userId, setUserId] = useState<string>("");
   const [password] = useState<string>("Avrist01#");
   const [fullName, setFullName] = useState<string>("");
@@ -51,6 +54,8 @@ export default function UsersNew () {
   const [email, setEmail] = useState<string>("");
   const [company] = useState<string>("Avrist Life Insurance");
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
+  // CHANGE STATUS MODAL
+  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
@@ -85,6 +90,7 @@ export default function UsersNew () {
       gender: gender === "FEMALE" ? false : gender === "MALE" ? true : null,
       email,
       company,
+      statusActive: isActive,
       roleId,
     };
     createUser(payload)
@@ -99,15 +105,20 @@ export default function UsersNew () {
         );
         navigate('/user');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('user.add.failed-msg', { name: payload.fullName }),
+            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
+  };
+
+  const changeStatusSubmit = () => {
+    setIsActive(false);
+    setShowChangeStatusModal(false);
   };
 
   const onLeave = () => {
@@ -120,6 +131,20 @@ export default function UsersNew () {
       title={t('user.add.title')}
       topMargin="mt-2" 
     >
+      <ModalConfirm
+        open={showChangeStatusModal}
+        cancelAction={() => {
+          setShowChangeStatusModal(false);
+          setIsActive(true);
+        }}
+        title="Inactive User"
+        cancelTitle="Cancel"
+        message="Do you want to inactive this user"
+        submitAction={changeStatusSubmit}
+        submitTitle="Yes"
+        icon={UserOrange}
+        btnSubmitStyle='btn-warning'
+      />
       <ModalConfirm
         open={showLeaveModal}
         cancelAction={() => {
@@ -136,7 +161,32 @@ export default function UsersNew () {
       <form className="flex flex-col w-100">
         <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130}/>
         <div className="flex flex-col mt-[60px] gap-5">
-          {/*  ROW 1 */}
+          {/* ROW 1 */}
+          <Radio 
+            labelTitle="Status"
+            labelStyle="font-bold	"
+            labelRequired
+            defaultSelected={isActive}
+            items={[
+              {
+                value: true,
+                label: 'Active'
+              },
+              {
+                value: false,
+                label: 'Inactive',
+              },
+            ]}
+            onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
+              if (event) {
+                setIsActive(value);
+                if (value === false) {
+                  setShowChangeStatusModal(true);
+                };
+              };
+            }}
+          />
+          {/* ROW 2 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText
@@ -163,7 +213,7 @@ export default function UsersNew () {
               {/* SPACES */}
             </div>
           </div>
-          {/*  ROW 2 */}
+          {/* ROW 3 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText 
@@ -211,7 +261,7 @@ export default function UsersNew () {
               />
             </div>
           </div>
-          {/* ROW 3 */}
+          {/* ROW 4 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText 
