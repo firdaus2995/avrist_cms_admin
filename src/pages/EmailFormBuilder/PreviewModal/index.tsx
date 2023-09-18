@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react';
+import { v4 as uuidv4 } from 'uuid';
+
 import Typography from '@/components/atoms/Typography';
+import UploadDocumentIcon from '@/assets/efb/preview-document.svg';
+import DropDown from '@/components/molecules/DropDown';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
-import UploadDocumentIcon from '@/assets/efb/preview-document.svg';
-import DropDown from '@/components/molecules/DropDown';
-import { v4 as uuidv4 } from 'uuid';
+import { copyArray } from '@/utils/logicHelper';
 
 export default function PreviewModal(props: any) {
   const { open, toggle, id } = props;
@@ -20,7 +22,8 @@ export default function PreviewModal(props: any) {
 
   useEffect(() => {
     if (data) {
-      setListData(data?.postTypeDetail?.attributeList);
+      const dataAttribute = copyArray(data?.postTypeDetail?.attributeList);
+      setListData(dataAttribute);
     }
   }, [data]);
 
@@ -32,18 +35,20 @@ export default function PreviewModal(props: any) {
   }, [open]);
 
   const renderFormList = () => {
-    return listData.map(({ name, fieldType, config }) => {
-      const { required, placeholder, position, size, ALLOW_OTHER_VALUE } = JSON.parse(config);
-      const dummy = [
-        {
-          value: 'item1',
-          label: 'Item 1',
-        },
-        {
-          value: 'item2',
-          label: 'Item 2',
-        },
-      ];
+    return listData.map(({ name, fieldType, config, value }: any) => {
+      const dataConfig: any = config ? JSON.parse(config) : {};
+      const { required, placeholder, position, size, ALLOW_OTHER_VALUE } = dataConfig;
+
+      let items = [];
+      if (value) {
+        items = value.split(";").map((element: any) => {
+          return {
+            value: element, 
+            label: element,
+          }
+        });
+      };
+      
       switch (fieldType) {
         case 'EMAIL':
           return (
@@ -166,7 +171,7 @@ export default function PreviewModal(props: any) {
                 </span>
               </label>
               <div className="w-full flex flex-col gap-1">
-                {dummy?.map((element: any, index: number) => (
+                {items?.map((element: any, index: number) => (
                   <label
                     key={index}
                     className="label cursor-pointer justify-start flex h-[34px] gap-2 p-0">
@@ -175,7 +180,7 @@ export default function PreviewModal(props: any) {
                       name={nameId}
                       className="radio radio-primary h-[22px] w-[22px] bg-white"
                     />
-                    <span className="label-text">{element?.value}</span>
+                    <span className="label-text">{element?.label}</span>
                   </label>
                 ))}
                 {ALLOW_OTHER_VALUE && (
@@ -203,14 +208,14 @@ export default function PreviewModal(props: any) {
                 </span>
               </label>
               <div className="w-full flex flex-col gap-1">
-                {dummy.map((element: any, index: number) => (
+                {items.map((element: any, index: number) => (
                   <div key={index} className="form-control">
                     <label className="h-[34px] label cursor-pointer p-0 justify-start gap-2">
                       <input
                         type="checkbox"
                         className="h-[22px] w-[22px] checkbox checkbox-primary bg-white border-[2px] border-dark-grey"
                       />
-                      <span className="label-text">{element?.value}</span>
+                      <span className="label-text">{element?.label}</span>
                     </label>
                   </div>
                 ))}
@@ -249,6 +254,37 @@ export default function PreviewModal(props: any) {
               ]}
             />
           );
+        case 'RATING':
+          return (
+            <div className="w-full h-[120px] flex flex-row items-center rounded-lg bg-white p-2 overflow-auto">
+              {
+                items.map((element: any, keyIndex: number) => {
+                  return (
+                    <div key={keyIndex} className={`min-w-[20%] flex flex-col items-center`}>
+                      <div className={`w-full flex flex-row items-center`}>
+                        {
+                          keyIndex === 0 ? (
+                            <div className="w-full h-[1px] border-[1px] border-white"/>
+                          ) : (
+                            <div className="w-full h-[1px] border-[1px] border-form-disabled-bg"/>
+                          )
+                        }
+                        <input type="radio" name={`radio_${id}`} className="radio radio-primary" />
+                        {
+                          keyIndex === (items.length - 1) ? (
+                            <div className="w-full h-[1px] border-[1px] border-white"/>
+                          ) : (
+                            <div className="w-full h-[1px] border-[1px] border-form-disabled-bg"/>
+                          )
+                        }
+                      </div>
+                      <div className="text-center">{element.label}</div>
+                    </div>
+                  )
+                })
+              }
+            </div>  
+          )
         default:
           return <div>err: {data.fieldType}</div>;
       }
