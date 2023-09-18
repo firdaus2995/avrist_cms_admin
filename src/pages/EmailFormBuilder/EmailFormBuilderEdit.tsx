@@ -552,7 +552,7 @@ export default function EmailFormBuilderEdit () {
           uuid: uuidv4(),
           type: item,
           name: "Rating Name",
-          items: ["Rating 1", "Rating 2", "Rating 3", "Rating 4", "Rating 5"],
+          items: [],
           required: false,
         };
         break;  
