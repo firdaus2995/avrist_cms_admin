@@ -37,7 +37,14 @@ function uploadPlugin(editor: any) {
     return uploadAdapter(loader);
   };
 }
-export default function CkEditor() {
+
+interface ICkEditor {
+  onChange?: (data: string) => void;
+}
+
+export default function CkEditor({
+  onChange,
+}: ICkEditor) {
   return (
     <CKEditor
       disabled={false}
@@ -48,7 +55,9 @@ export default function CkEditor() {
       }}
       onChange={(_event: any, editor: any) => {
         const data = editor.getData();
-        console.log(data);
+        if (onChange) {
+          onChange(data);
+        };
       }}
     />
   );
