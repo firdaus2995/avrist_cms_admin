@@ -13,3 +13,12 @@ export const formatFilename = (filename: string) => {
   const formattedFilename = lowercaseFilename.replace(/\s+/g, '_');
   return formattedFilename;
 };
+
+export const errorMessageTypeConverter = (errorMessage: any) => {
+  const type: string = errorMessage.substring(0, errorMessage.indexOf(":"));
+  if (type[type.length - 1] === " ") {
+    return type.substring(0, (type.length - 1));
+  } else {
+    return type;
+  };
+};

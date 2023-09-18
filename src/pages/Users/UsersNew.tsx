@@ -38,6 +38,7 @@ import {
 import { 
   openToast,
 } from "../../components/atoms/Toast/slice";
+import { errorMessageTypeConverter } from "@/utils/logicHelper";
 
 export default function UsersNew () {
   const navigate = useNavigate();
@@ -104,12 +105,12 @@ export default function UsersNew () {
         );
         navigate('/user');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('user.add.failed-msg', { name: payload.fullName }),
+            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

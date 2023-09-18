@@ -1,4 +1,7 @@
 {
+  "errors": {
+    "UnableToChangeOwnUserStatusException": "Gagal memperbarui data! Anda tidak dapat mengubah data Anda sendiri! Silakan hubungi pengguna lain dengan peran yang memenuhi syarat"
+  },
   "toast-success": "Berhasil",
   "toast-failed": "Gagal",
   "btn": {
