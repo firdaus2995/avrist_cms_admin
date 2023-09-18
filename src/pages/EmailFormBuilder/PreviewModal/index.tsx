@@ -254,6 +254,12 @@ export default function PreviewModal(props: any) {
               ]}
             />
           );
+        case 'LINE_BREAK':
+          return (
+            <div className="flex my-5">
+              <div className="w-full flex justify-center items-center border-[1px] border-[#D6D6D6]" />
+            </div>
+          )
         case 'RATING':
           return (
             <div className="w-full h-[120px] flex flex-row items-center rounded-lg bg-white p-2 overflow-auto">
