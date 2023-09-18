@@ -16,6 +16,7 @@ import TableDelete from '@/assets/table-delete.svg';
 import WarningIcon from '@/assets/warning.png';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
+import { getCredential } from '@/utils/Credential';
 
 const TopRightButton = () => {
   return (
@@ -145,27 +146,58 @@ export default function GlobalConfigDataList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <Link to={`edit/${info.row?.original?.variable}`}>
-            <div className="tooltip" data-tip={t('action.edit')}>
+          {canEdit && (
+            <Link to={`edit/${info.row?.original?.variable}`}>
+              <div className="tooltip" data-tip={t('action.edit')}>
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                />
+              </div>
+            </Link>
+          )}
+          {canDelete && (
+            <div className="tooltip" data-tip={t('action.delete')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableEdit}
+                src={TableDelete}
+                onClick={() => {
+                  onClickDelete(info.getValue(), info?.row?.original?.title);
+                }}
               />
             </div>
-          </Link>
-          <div className="tooltip" data-tip={t('action.delete')}>
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={() => {
-                onClickDelete(info.getValue(), info?.row?.original?.title);
-              }}
-            />
-          </div>
+          )}
         </div>
       ),
     },
   ];
+
+  const [canCreate] = useState(() => {
+    return !!getCredential().roles.find((element: any) => {
+      if (element === 'GLOBAL_CONFIG_CREATE') {
+        return true;
+      }
+      return false;
+    });
+  });
+
+  const [canEdit] = useState(() => {
+    return !!getCredential().roles.find((element: any) => {
+      if (element === 'GLOBAL_CONFIG_EDIT') {
+        return true;
+      }
+      return false;
+    });
+  });
+
+  const [canDelete] = useState(() => {
+    return !!getCredential().roles.find((element: any) => {
+      if (element === 'GLOBAL_CONFIG_DELETE') {
+        return true;
+      }
+      return false;
+    });
+  });
 
   const onClickDelete = (id: number, title: string) => {
     setIdDelete(id);
@@ -227,7 +259,7 @@ export default function GlobalConfigDataList() {
             placeholder="Search"
           />
         }
-        TopSideButtons={<TopRightButton />}>
+        TopSideButtons={canCreate && <TopRightButton />}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
             rows={listData}
