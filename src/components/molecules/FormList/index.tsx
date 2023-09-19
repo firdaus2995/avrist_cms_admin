@@ -11,6 +11,7 @@ import TextInputDropDown from './TextInputDropdown';
 import FieldButton from './FieldButton';
 import DropDown from './DropDown';
 import EmailForm from './EmailForm';
+import FileUploaderV3 from './FileUploaderV3';
 
 const FormList = {
   FileUploader,
@@ -25,6 +26,7 @@ const FormList = {
   FieldButton,
   DropDown,
   EmailForm,
+  FileUploaderV3,
 };
 
 export default FormList;

@@ -11,6 +11,7 @@ import Image from "./Image";
 import LineBreak from "./LineBreak";
 import Rating from "./Rating";
 import SubmitterEmail from "./SubmitterEmail";
+import ImageRadio from "./ImageRadio"
 
 const EFBPreview = {
   TextField,
@@ -26,6 +27,7 @@ const EFBPreview = {
   LineBreak,
   Rating,
   SubmitterEmail,
+  ImageRadio,
 };
 
 export default EFBPreview;
