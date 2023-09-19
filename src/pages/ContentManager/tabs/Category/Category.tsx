@@ -94,7 +94,7 @@ export default function CategoryTab(_props: { id: any }) {
   // PERMISSION STATE
   const [canEdit] = useState(() => {
     return !!getCredential().roles.find((element: any) => {
-      if (element === 'CONTENT_MANAGER_EDIT') {
+      if (element === 'CONTENT_CATEGORY_EDIT') {
         return true;
       }
       return false;
@@ -103,7 +103,7 @@ export default function CategoryTab(_props: { id: any }) {
 
   const [canDelete] = useState(() => {
     return !!getCredential().roles.find((element: any) => {
-      if (element === 'CONTENT_MANAGER_DELETE') {
+      if (element === 'CONTENT_CATEGORY_DELETE') {
         return true;
       }
       return false;
