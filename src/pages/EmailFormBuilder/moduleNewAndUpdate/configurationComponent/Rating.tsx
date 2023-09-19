@@ -2,8 +2,10 @@ import React, { useEffect, useState } from "react";
 
 import Config from "./Config";
 import { InputText } from "@/components/atoms/Input/InputText";
-import { copyArray } from "@/utils/logicHelper";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
+import { openToast } from "@/components/atoms/Toast/slice";
+import { useAppDispatch } from "@/store";
+import { checkIsNotEmpty, copyArray } from "@/utils/logicHelper";
 
 interface IRating {
   data: any;
@@ -16,6 +18,7 @@ const Rating: React.FC<IRating> = ({
   configList,
   valueChange,
 }) => {
+  const dispatch = useAppDispatch();
   const [ratings, setRatings] = useState([]);
 
   useEffect(() => {
@@ -26,9 +29,19 @@ const Rating: React.FC<IRating> = ({
 
   const handlerAddRatingValue = (value: any) => {
     const items: any = copyArray(ratings);
-    items.push(value);
-    setRatings(items);
-    valueChange('items', items);
+    if (items.length > 9) {
+      dispatch(
+        openToast({
+          type: 'error',
+          title: 'Failed',
+          message: 'Cannot add values more than 10',
+        })
+      );
+    } else {
+      items.push(value);
+      setRatings(items);
+      valueChange('items', items);  
+    };
   };
 
   const handlerDeleteRatingValue = (index: any) => {
@@ -58,8 +71,11 @@ const Rating: React.FC<IRating> = ({
         labelStyle="font-bold	"
         inputStyle="rounded-xl "
         items={ratings}
+        isError={data?.mandatory?.items}
         onAdd={handlerAddRatingValue}
         onDelete={handlerDeleteRatingValue}
+        logicValidation={checkIsNotEmpty}
+        errorAddValueMessage="Field cannot be empty"
       />
       <Config
         data={data}

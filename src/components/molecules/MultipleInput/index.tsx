@@ -14,6 +14,7 @@ interface IMultipleInput {
   items: string[];
   logicValidation?: any;
   errorAddValueMessage?: string;
+  isError?: boolean;
   onAdd: (value: string) => void;
   onDelete: (index: number) => void;
 }
@@ -29,6 +30,7 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
   items,
   logicValidation,
   errorAddValueMessage,
+  isError,
   onAdd,
   onDelete,
 }) => {
@@ -54,7 +56,7 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
       >
         {/* THE ADD INPUT */}
         <div className="flex flex-col gap-2">
-          <div className={`flex flex-row items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${errorAddValue ? 'border-reddist' : ''} ${inputStyle}`}>
+          <div className={`flex flex-row items-center input input-bordered focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${inputStyle} ${(errorAddValue || isError) && 'border-reddist'}`}>
             <input
               type="text"
               className="w-full h-full outline-0"
@@ -80,11 +82,18 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
             }}/>
           </div>
           {
-            errorAddValue && (
+            errorAddValue ? (
               <div className="flex flex-row gap-2">
                 <img src={ErrorSmall} />
-                <p className="text-xs text-reddist">{errorAddValueMessage}</p>
+                <p className="text-reddist text-sm">{errorAddValueMessage}</p>
               </div>
+            ) : isError ? (
+              <div className="flex flex-row gap-2">
+                <img src={ErrorSmall} />
+                <p className="text-reddist text-sm">This field is required</p>
+              </div>
+            ) : (
+              <></>
             )
           }
         </div>
