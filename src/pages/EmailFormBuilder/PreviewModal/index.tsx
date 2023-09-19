@@ -116,7 +116,7 @@ export default function PreviewModal(props: any) {
               className={`flex flex-1 ${
                 position[0] === 'left'
                   ? 'justify-start'
-                  : position[0] === 'center'
+                  : position[0] === 'middle'
                   ? 'justify-center'
                   : 'justify-end'
               } font-bold text-lg`}>
