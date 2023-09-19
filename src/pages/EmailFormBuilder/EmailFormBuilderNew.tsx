@@ -472,6 +472,10 @@ export default function EmailFormBuilderNew () {
           name: "Rating Name",
           items: [],
           required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
         };
         break;
       case "SUBMITTEREMAIL":
