@@ -34,6 +34,7 @@ export default function PreviewModal(props: any) {
   const renderFormList = () => {
     return listData.map(({ name, fieldType, config }) => {
       const { required, placeholder, position, size, ALLOW_OTHER_VALUE } = JSON.parse(config);
+      console.log(config);
       const dummy = [
         {
           value: 'item1',
@@ -248,6 +249,32 @@ export default function PreviewModal(props: any) {
                 },
               ]}
             />
+          );
+        case 'IMAGE_RADIO':
+          return (
+            <div className="my-2">
+              <label className={`label font-bold`}>
+                <span className={`label-text text-base-content`}>
+                  {name}
+                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
+                </span>
+              </label>
+              <div className="w-full flex flex-col gap-4">
+                {dummy?.map((_element: any, index: number) => (
+                  <label key={index} className="label cursor-pointer justify-start flex gap-2 p-0">
+                    <input
+                      type="radio"
+                      name={nameId}
+                      className="radio radio-primary h-[22px] w-[22px] bg-white"
+                    />
+                    <div className="w-32 h-32 bg-[#5E217C] bg-cover"></div>
+                    {/* <div
+                      className="w-32 h-32 bg-[#5E217C] bg-cover"
+                      style={{ backgroundImage: `url(${imageUrls[index]})` }}></div> */}
+                  </label>
+                ))}
+              </div>
+            </div>
           );
         default:
           return <div>err: {data.fieldType}</div>;

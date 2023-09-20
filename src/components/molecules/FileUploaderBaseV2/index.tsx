@@ -164,7 +164,7 @@ export default function FileUploaderBaseV2({
         onDragOver={e => {
           e.preventDefault();
         }}
-        className="w-[400px] bg-white border-dashed border-[2px] border-lavender rounded-xl">
+        className="min-w-[150px] bg-white border-dashed border-[2px] border-lavender rounded-xl">
         {(!filesData.length || multiple) && (
           <label htmlFor={id} className="flex flex-col justify-center items-center cursor-pointer">
             <input

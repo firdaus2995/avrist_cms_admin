@@ -59,19 +59,29 @@ export default function EmailFormBuilderNew() {
       const arrayFormAttribute: any = JSON.parse(dataAttribute?.getConfig?.value).attributes;
       const objectFormAttribute: any = {};
 
-      for (const element of arrayFormAttribute) {
-        objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
-      }
-      console.log(arrayFormAttribute)
+      // DUMMY DELETE SOON
       arrayFormAttribute.push({
         code: 'image_radio',
         label: 'Image Radio',
         description: 'Image Radio',
         icon: 'PHN2ZyB3aWR0aD0iMjIiIGhlaWdodD0iMjIiIHZpZXdCb3g9IjAgMCAyMiAyMiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTExIDE2LjVDMTIuNTIxNyAxNi41IDEzLjgxODkgMTUuOTYzNiAxNC44OTE4IDE0Ljg5MDdDMTUuOTY0NyAxMy44MTc4IDE2LjUwMDcgMTIuNTIwOSAxNi41IDExQzE2LjUgOS40NzgzMyAxNS45NjM2IDguMTgxMDcgMTQuODkwNyA3LjEwODJDMTMuODE3OCA2LjAzNTMzIDEyLjUyMDkgNS40OTkyNyAxMSA1LjVDOS40NzgzMyA1LjUgOC4xODEwNyA2LjAzNjQzIDcuMTA4MiA3LjEwOTNDNi4wMzUzMyA4LjE4MjE3IDUuNDk5MjcgOS40NzkwNyA1LjUgMTFDNS41IDEyLjUyMTcgNi4wMzY0MyAxMy44MTg5IDcuMTA5MyAxNC44OTE4QzguMTgyMTcgMTUuOTY0NyA5LjQ3OTA3IDE2LjUwMDcgMTEgMTYuNVpNMTEgMjJDOS40NzgzMyAyMiA4LjA0ODMzIDIxLjcxMTEgNi43MSAyMS4xMzMyQzUuMzcxNjcgMjAuNTU1MyA0LjIwNzUgMTkuNzcxOCAzLjIxNzUgMTguNzgyNUMyLjIyNzUgMTcuNzkyNSAxLjQ0MzkzIDE2LjYyODMgMC44NjY4IDE1LjI5QzAuMjg5NjY3IDEzLjk1MTcgMC4wMDA3MzMzMzMgMTIuNTIxNyAwIDExQzAgOS40NzgzMyAwLjI4ODkzMyA4LjA0ODMzIDAuODY2OCA2LjcxQzEuNDQ0NjcgNS4zNzE2NyAyLjIyODIzIDQuMjA3NSAzLjIxNzUgMy4yMTc1QzQuMjA3NSAyLjIyNzUgNS4zNzE2NyAxLjQ0MzkzIDYuNzEgMC44NjY4QzguMDQ4MzMgMC4yODk2NjcgOS40NzgzMyAwLjAwMDczMzMzMyAxMSAwQzEyLjUyMTcgMCAxMy45NTE3IDAuMjg4OTMzIDE1LjI5IDAuODY2OEMxNi42MjgzIDEuNDQ0NjcgMTcuNzkyNSAyLjIyODIzIDE4Ljc4MjUgMy4yMTc1QzE5Ljc3MjUgNC4yMDc1IDIwLjU1NjQgNS4zNzE2NyAyMS4xMzQzIDYuNzFDMjEuNzEyMiA4LjA0ODMzIDIyLjAwMDcgOS40NzgzMyAyMiAxMUMyMiAxMi41MjE3IDIxLjcxMTEgMTMuOTUxNyAyMS4xMzMyIDE1LjI5QzIwLjU1NTMgMTYuNjI4MyAxOS43NzE4IDE3Ljc5MjUgMTguNzgyNSAxOC43ODI1QzE3Ljc5MjUgMTkuNzcyNSAxNi42MjgzIDIwLjU1NjQgMTUuMjkgMjEuMTM0M0MxMy45NTE3IDIxLjcxMjIgMTIuNTIxNyAyMi4wMDA3IDExIDIyWk0xMSAxOS44QzEzLjQ1NjcgMTkuOCAxNS41Mzc1IDE4Ljk0NzUgMTcuMjQyNSAxNy4yNDI1QzE4Ljk0NzUgMTUuNTM3NSAxOS44IDEzLjQ1NjcgMTkuOCAxMUMxOS44IDguNTQzMzMgMTguOTQ3NSA2LjQ2MjUgMTcuMjQyNSA0Ljc1NzVDMTUuNTM3NSAzLjA1MjUgMTMuNDU2NyAyLjIgMTEgMi4yQzguNTQzMzMgMi4yIDYuNDYyNSAzLjA1MjUgNC43NTc1IDQuNzU3NUMzLjA1MjUgNi40NjI1IDIuMiA4LjU0MzMzIDIuMiAxMUMyLjIgMTMuNDU2NyAzLjA1MjUgMTUuNTM3NSA0Ljc1NzUgMTcuMjQyNUM2LjQ2MjUgMTguOTQ3NSA4LjU0MzMzIDE5LjggMTEgMTkuOFoiIGZpbGw9IiM4MTg0OTQiLz4KPC9zdmc+Cg==',
-        config: [],
+        config: [
+          {
+            code: 'required',
+            label: 'Required Field',
+            isMandatory: true,
+            type: 'checkbox',
+            value: [],
+          },
+        ],
       });
-      // console.log(arrayFormAttribute);
+
+      for (const element of arrayFormAttribute) {
+        objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
+      }
+
       setFormAttribute(arrayFormAttribute);
+      console.log(objectFormAttribute);
       setObjectFormAttribute(objectFormAttribute);
     }
   }, [dataAttribute]);
@@ -246,6 +256,8 @@ export default function EmailFormBuilderNew() {
       name: formName,
       attributeRequests: backendComponents,
     };
+
+    console.log('ini payload ', payload);
 
     createEmailFormBuilder(payload)
       .unwrap()

@@ -1,6 +1,6 @@
 import React from 'react';
 
-// import Config from './Config';
+import Config from './Config';
 import { InputText } from '@/components/atoms/Input/InputText';
 import FormList from '../../../../components/molecules/FormList';
 
@@ -11,6 +11,8 @@ interface IRadio {
 }
 
 const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
+
+  console.log("all in ", configList )
   return (
     <React.Fragment>
       <InputText
@@ -38,11 +40,11 @@ const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
         }}
         border={false}
       />
-      {/* <Config
+      <Config
         data={data}
         configList={configList}
         valueChange={valueChange}
-      /> */}
+      />
     </React.Fragment>
   );
 };
