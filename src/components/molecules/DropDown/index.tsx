@@ -18,6 +18,7 @@ const DropDown = ({
   labelEmpty,
   labelRequired,
   labelWidth = 225,
+  inputWidth,
   direction,
   items,
   defaultValue,
@@ -60,7 +61,7 @@ const DropDown = ({
     if (onSelect) onSelect(event, value);
   };
 
-  if (!items || items.length < 1) {
+  if (!items) {
     return (
       <h2 className="text-red-900">Component Dropdown Error</h2>
     )
@@ -77,15 +78,28 @@ const DropDown = ({
       >
         <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-lg ml-1'}>{labelRequired ? '*' : ''}</span></span>
       </label>
-      <div className="w-full relative" ref={componentRef}>
-        <button onClick={(event: React.SyntheticEvent) => {
-          event.preventDefault();
-          setOpen(!open); 
-        }} tabIndex={0} className="flex flex-row justify-between items-center p-3 w-full h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple">
+      <div
+        style={{
+          width: inputWidth ?? '100%',
+        }}
+        className="relative" 
+        ref={componentRef}
+       >
+        <button 
+          onClick={(event: React.SyntheticEvent) => {
+            event.preventDefault();
+            setOpen(!open); 
+          }} 
+          tabIndex={0} 
+          className={`w-full flex flex-row justify-between items-center p-3 h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple ${!selected ? "text-body-text-1" : ""}`}
+        >
           {selectedLabel}
           <img src={open ? ChevronUp : ChevronDown} className="w-6 h-6" />
         </button>
-        <ul tabIndex={0} className={`absolute p-2 mt-0.5 shadow bg-base-100 rounded-box w-full max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-xl ${!open && `hidden`}`}>
+        <ul
+          tabIndex={0} 
+          className={`w-full absolute p-2 mt-0.5 shadow bg-base-100 rounded-box max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-xl ${!open && `hidden`}`}
+        >
           {
             items.map((element: IItems, keyIndex: number) => {
               return (
@@ -93,14 +107,37 @@ const DropDown = ({
                   <li className="flex flex-row justify-between items-center	cursor-pointer active:bg-purple hover:bg-light-purple p-3 rounded-xl text-purple font-bold text-sm active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
                     handleSelect(event, element.value, element.label)
                   }}>
-                    <a className="">{element.label}</a>
-                    <img src={CheckMark} className="w-6 h-6" />
+                    {
+                      element.labelExtension ? (
+                        <>
+                          <div className="flex flex-col">
+                            <a>{element.label}</a>
+                            <a className="text-xs font-normal text-body-text-1">{element.labelExtension}</a>                        
+                          </div>
+                          <img src={CheckMark} className="w-6 h-6" />    
+                        </>
+                      ) : (
+                        <>
+                          <a className="">{element.label}</a>
+                          <img src={CheckMark} className="w-6 h-6" />    
+                        </>
+                      )
+                    }
                   </li>
                 ) : (
                   <li className="flex flex-row justify-between items-center cursor-pointer active:bg-purple text-sm hover:bg-light-purple p-3 rounded-xl active:text-white" key={keyIndex} onClick={(event: React.SyntheticEvent) => {
                     handleSelect(event, element.value, element.label)
                   }}>
-                    <a>{element.label}</a>
+                    {
+                      element.labelExtension ? (
+                        <div className="flex flex-col">
+                          <a>{element.label}</a>
+                          <a className="text-xs font-normal text-body-text-1">{element.labelExtension}</a>                        
+                        </div>
+                      ) : (
+                        <a>{element.label}</a>
+                      )
+                    }
                   </li>
                 )
               )
