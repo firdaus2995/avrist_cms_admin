@@ -18,7 +18,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import Typography from '@/components/atoms/Typography';
 
 export default function UsersList() {
-  const StatusBadge = (status: boolean) => {
+  const StatusBadge = (status: any) => {
     let style = '';
     let title = '';
     if (status) {
@@ -42,7 +42,7 @@ export default function UsersList() {
   const columns = [
     {
       header: () => <span className="text-[14px]"></span>,
-      accessorKey: 'isActive',
+      accessorKey: 'statusActive',
       enableSorting: false,
       cell: (info: any) => (
         <>
