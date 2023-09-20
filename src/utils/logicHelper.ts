@@ -7,6 +7,10 @@ export const checkIsEmail = (value: any) => {
   return value.match(regex);
 };
 
+export const checkIsNotEmpty = (value: any) => {
+  return !!value;
+};
+
 export const formatFilename = (filename: string) => {
   const sanitizedFilename = filename.replace(/[^\w.-]/g, '');
   const lowercaseFilename = sanitizedFilename.toLowerCase();

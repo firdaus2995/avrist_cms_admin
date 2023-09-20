@@ -20,6 +20,7 @@ import {
   useDeleteEmailFormBuilderMutation,
 } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { openToast } from '@/components/atoms/Toast/slice';
+import { getCredential } from '@/utils/Credential';
 
 export default function EmailFormBuilderList() {
   // TABLE COLUMN
@@ -51,15 +52,19 @@ export default function EmailFormBuilderList() {
               }}
             />
           </button>
-          <button>
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableEdit}
-              onClick={() => {
-                onClickEmailFormBuilderEdit(info.getValue());
-              }}
-            />
-          </button>
+          {
+            canEditEmailFormBuilder && (
+              <button>
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                  onClick={() => {
+                    onClickEmailFormBuilderEdit(info.getValue());
+                  }}
+                />
+              </button>
+            )
+          }
           <img
             className={`cursor-pointer select-none flex items-center justify-center`}
             src={TableDelete}
@@ -76,6 +81,10 @@ export default function EmailFormBuilderList() {
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState([]);
   const [search, setSearch] = useState('');
+
+  // PERMISSION STATE
+  const [canCreateEmailFormBuilder, setCanCreateEmailFormBuilder] = useState(false);
+  const [canEditEmailFormBuilder, setCanEditEmailFormBuilder] = useState(false);
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
@@ -170,7 +179,13 @@ export default function EmailFormBuilderList() {
 
   // DELETE THIS AFTER INTEGRATION
   useEffect(() => {
-    console.log(dispatch, setListData, search, setTotal, direction, sortBy);
+    getCredential().roles.forEach((element: any) => {
+      if (element === "EMAIL_FORM_CREATE") {
+        setCanCreateEmailFormBuilder(true);
+      } else if (element === "EMAIL_FORM_EDIT") {
+        setCanEditEmailFormBuilder(true);
+      };
+    });
   }, []);
 
   return (
@@ -200,10 +215,14 @@ export default function EmailFormBuilderList() {
         title={t('email-form-builder.list.title')}
         topMargin="mt-2"
         TopSideButtons={
-          <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
-            <img src={Plus} className="w-[24px] h-[24px]" />
-            {t('email-form-builder.list.button-add')}
-          </Link>
+          canCreateEmailFormBuilder ? (
+            <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+              <img src={Plus} className="w-[24px] h-[24px]" />
+              {t('email-form-builder.list.button-add')}
+            </Link>
+          ) : (
+            <></>
+          )
         }
         SearchBar={
           <InputSearch
