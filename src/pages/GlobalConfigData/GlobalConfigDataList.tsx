@@ -52,7 +52,14 @@ const CreateButton = () => {
 export default function GlobalConfigDataList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [listData, setListData] = useState<any>([]);
+  const [listData, setListData] = useState<any>([
+    {
+      variable: 'aa',
+      value: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+      description: 'aa',
+      id: 1,
+    }
+  ]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -121,7 +128,7 @@ export default function GlobalConfigDataList() {
       accessorKey: 'value',
       enableSorting: false,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate w-56">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
@@ -145,7 +152,7 @@ export default function GlobalConfigDataList() {
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
-        <div className="flex gap-3">
+        <div className="flex gap-3 w-20">
           {canEdit && (
             <Link to={`edit/${info.row?.original?.variable}`}>
               <div className="tooltip" data-tip={t('action.edit')}>
@@ -260,7 +267,7 @@ export default function GlobalConfigDataList() {
           />
         }
         TopSideButtons={canCreate && <TopRightButton />}>
-        <div className="overflow-x-auto w-full mb-5">
+        <div className="w-full mb-5">
           <Table
             rows={listData}
             columns={COLUMNS}

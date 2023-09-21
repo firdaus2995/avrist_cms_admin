@@ -15,6 +15,7 @@ import EFBList from './moduleNewAndUpdate/listComponent';
 import EFBPreview from './moduleNewAndUpdate/previewComponent';
 import EFBConfiguration from './moduleNewAndUpdate/configurationComponent';
 import DragDrop from './moduleNewAndUpdate/dragAndDropComponent/DragDrop';
+import DropDown from '@/components/molecules/DropDown';
 import { Divider } from '@/components/atoms/Divider';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -26,6 +27,7 @@ import { checkIsEmail, copyArray } from '@/utils/logicHelper';
 import {
   useGetEmailFormBuilderDetailQuery,
   useUpdateEmailFormBuilderMutation,
+  useGetFormTemplateQuery,
 } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { useGetEmailFormAttributeListQuery } from '@/services/Config/configApi';
 
@@ -38,11 +40,14 @@ export default function EmailFormBuilderEdit() {
   const [objectFormAttribute, setObjectFormAttribute] = useState<any>({});
   // FORM STATE
   const [formName, setFormName] = useState<any>('');
+  const [formTemplate, setFormTemplate] = useState<any>(null);
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
   const [checkCaptcha, setCheckCaptcha] = useState<any>(true);
   const [pics, setPics] = useState<any>([]);
   const [components, setComponents] = useState<any>([]);
   const [activeComponent, setActiveComponent] = useState<any>(null);
+  // LIST STATE
+  const [listFormTemplate, setListFormTemplate] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
@@ -53,11 +58,27 @@ export default function EmailFormBuilderEdit() {
   const [messageCaptchaModalShow, setMessageCaptchaModalShow] = useState<string | null>('');
 
   // RTK GET ATTRIBUTE
-  const { data: dataAttribute } = useGetEmailFormAttributeListQuery({});
+  const { data: dataAttribute } = useGetEmailFormAttributeListQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
   // RTK GET DETAIL
   const { data: dataDetail } = useGetEmailFormBuilderDetailQuery(
     { id, pageIndex: 0, limit: 99 },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  // RTK UPDATE EMAIL
+  // const [updateEmailFormBuilder, { isLoading }] = useUpdateEmailFormBuilderMutation();
+
+  // RTK GET FORM TEMPLATE
+  const { data: dataFormTemplate } = useGetFormTemplateQuery(
+    {},
     {
       refetchOnMountOrArgChange: true,
     },
@@ -79,6 +100,19 @@ export default function EmailFormBuilderEdit() {
 
   // RTK UPDATE EMAIL
   const [updateEmailFormBuilder, { isLoading }] = useUpdateEmailFormBuilderMutation();
+  useEffect(() => {
+    if (dataFormTemplate) {
+      setListFormTemplate(
+        dataFormTemplate?.formTemplateList?.templates.map((element: any) => {
+          return {
+            value: element.id,
+            label: element.title,
+            labelExtension: element.shortDesc,
+          };
+        }),
+      );
+    }
+  }, [dataFormTemplate]);
 
   useEffect(() => {
     if (dataDetail) {
@@ -87,6 +121,7 @@ export default function EmailFormBuilderEdit() {
       const name: string = emailFormBuilderDetail?.name;
       const pic: any = emailFormBuilderDetail?.pic?.split(';') ?? [];
       const captcha: any = emailFormBuilderDetail?.enableCaptcha;
+      const formTemplateId: any = emailFormBuilderDetail?.formTemplate?.id;
 
       const attributeList: any = emailFormBuilderDetail?.attributeList.map((element: any) => {
         const config: any = element?.config !== '' ? JSON.parse(element?.config) : {};
@@ -156,6 +191,7 @@ export default function EmailFormBuilderEdit() {
       setPics(pic);
       setCheckCaptcha(captcha);
       setComponents(attributeList);
+      setFormTemplate(formTemplateId);
     }
   }, [dataDetail]);
 
@@ -329,6 +365,7 @@ export default function EmailFormBuilderEdit() {
       id,
       name: formName,
       attributeRequests: backendComponents,
+      formTemplate,
     };
 
     updateEmailFormBuilder(payload)
@@ -1008,6 +1045,21 @@ export default function EmailFormBuilderEdit() {
               value={formName}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setFormName(event.target.value);
+              }}
+            />
+            <DropDown
+              labelTitle="Form Template"
+              labelStyle="font-bold	"
+              direction="row"
+              inputWidth={400}
+              labelEmpty="Choose Form Template"
+              labelRequired={true}
+              defaultValue={formTemplate}
+              items={listFormTemplate}
+              onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                if (event) {
+                  setFormTemplate(value);
+                }
               }}
             />
             <MultipleInput

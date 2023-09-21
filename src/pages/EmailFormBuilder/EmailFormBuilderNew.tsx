@@ -6,25 +6,26 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
 
-import Drag from './moduleNewAndUpdate/dragAndDropComponent/Drag';
-import Drop from './moduleNewAndUpdate/dragAndDropComponent/Drop';
-import CancelIcon from '../../assets/cancel.png';
-import Recaptcha from '../../assets/recaptcha.svg';
-import ModalConfirm from '@/components/molecules/ModalConfirm';
-import EFBList from './moduleNewAndUpdate/listComponent';
-import EFBPreview from './moduleNewAndUpdate/previewComponent';
-import EFBConfiguration from './moduleNewAndUpdate/configurationComponent';
-import DragDrop from './moduleNewAndUpdate/dragAndDropComponent/DragDrop';
-import { Divider } from '@/components/atoms/Divider';
-import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { InputText } from '@/components/atoms/Input/InputText';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { MultipleInput } from '@/components/molecules/MultipleInput';
-import { useAppDispatch } from '@/store';
-import { openToast } from '@/components/atoms/Toast/slice';
-import { checkIsEmail, copyArray } from '@/utils/logicHelper';
-import { useCreateEmailFormBuilderMutation } from '@/services/EmailFormBuilder/emailFormBuilderApi';
-import { useGetEmailFormAttributeListQuery } from '@/services/Config/configApi';
+import Drag from "./moduleNewAndUpdate/dragAndDropComponent/Drag";
+import Drop from "./moduleNewAndUpdate/dragAndDropComponent/Drop";
+import CancelIcon from "../../assets/cancel.png";
+import Recaptcha from "../../assets/recaptcha.svg";
+import ModalConfirm from "@/components/molecules/ModalConfirm";
+import EFBList from "./moduleNewAndUpdate/listComponent";
+import EFBPreview from "./moduleNewAndUpdate/previewComponent";
+import EFBConfiguration from "./moduleNewAndUpdate/configurationComponent";
+import DragDrop from "./moduleNewAndUpdate/dragAndDropComponent/DragDrop";
+import DropDown from '@/components/molecules/DropDown';
+import { Divider } from "@/components/atoms/Divider";
+import { CheckBox } from "@/components/atoms/Input/CheckBox";
+import { InputText } from "@/components/atoms/Input/InputText";
+import { TitleCard } from "@/components/molecules/Cards/TitleCard";
+import { MultipleInput } from "@/components/molecules/MultipleInput";
+import { useAppDispatch } from "@/store";
+import { openToast } from "@/components/atoms/Toast/slice";
+import { checkIsEmail, copyArray } from "@/utils/logicHelper";
+import { useCreateEmailFormBuilderMutation, useGetFormTemplateQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
+import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
 
 export default function EmailFormBuilderNew() {
   const navigate = useNavigate();
@@ -33,12 +34,15 @@ export default function EmailFormBuilderNew() {
   const [formAttribute, setFormAttribute] = useState<any>([]);
   const [objectFormAttribute, setObjectFormAttribute] = useState<any>({});
   // FORM STATE
-  const [formName, setFormName] = useState<any>('');
+  const [formName, setFormName] = useState<any>("");
+  const [formTemplate, setFormTemplate] = useState<any>(null);
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
   const [checkCaptcha, setCheckCaptcha] = useState<any>(true);
   const [pics, setPics] = useState<any>([]);
   const [components, setComponents] = useState<any>([]);
   const [activeComponent, setActiveComponent] = useState<any>(null);
+  // LIST STATE
+  const [listFormTemplate, setListFormTemplate] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
@@ -49,10 +53,19 @@ export default function EmailFormBuilderNew() {
   const [messageCaptchaModalShow, setMessageCaptchaModalShow] = useState<string | null>('');
 
   // RTK GET ATTRIBUTE
-  const { data: dataAttribute } = useGetEmailFormAttributeListQuery({});
+  const { data: dataAttribute } = useGetEmailFormAttributeListQuery({}, {
+    refetchOnMountOrArgChange: true,
+  });
 
   // RTK CREATE EMAIL
-  const [createEmailFormBuilder, { isLoading }] = useCreateEmailFormBuilderMutation();
+  const [ createEmailFormBuilder, {
+    isLoading,
+  }] = useCreateEmailFormBuilderMutation();
+
+  // RTK GET FORM TEMPLATE
+  const { data: dataFormTemplate } = useGetFormTemplateQuery({}, {
+    refetchOnMountOrArgChange: true,
+  });  
 
   useEffect(() => {
     if (dataAttribute?.getConfig) {
@@ -86,6 +99,18 @@ export default function EmailFormBuilderNew() {
     }
   }, [dataAttribute]);
 
+  useEffect(() => {
+    if (dataFormTemplate) {
+      setListFormTemplate(dataFormTemplate?.formTemplateList?.templates.map((element: any) => {
+        return {
+          value: element.id,
+          label: element.title,
+          labelExtension: element.shortDesc,
+        };
+      }));
+    };
+  }, [dataFormTemplate]);
+
   const onSave = () => {
     // ALL COMPONENTS
     let frontendError: boolean = false;
@@ -98,9 +123,9 @@ export default function EmailFormBuilderNew() {
           currentComponents[i].mandatory[key] = true;
         } else {
           currentComponents[i].mandatory[key] = false;
-        }
-      }
-    }
+        };
+      };
+    };
 
     // ACTIVE COMPONENT
     const activeCurrentComponent: any = activeComponent?.data;
@@ -255,6 +280,7 @@ export default function EmailFormBuilderNew() {
     const payload = {
       name: formName,
       attributeRequests: backendComponents,
+      formTemplate,
     };
 
     // console.log('ini payload ', payload);
@@ -975,6 +1001,20 @@ export default function EmailFormBuilderNew() {
               value={formName}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setFormName(event.target.value);
+              }}
+            />
+            <DropDown
+              labelTitle="Form Template"
+              labelStyle="font-bold	"
+              direction='row'
+              inputWidth={400}
+              labelEmpty="Choose Form Template"
+              labelRequired={true}
+              items={listFormTemplate}
+              onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                if (event) {
+                  setFormTemplate(value);
+                }
               }}
             />
             <MultipleInput

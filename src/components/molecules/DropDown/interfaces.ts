@@ -4,10 +4,12 @@ export interface IDropDown {
   labelEmpty?: string;
   labelRequired?: boolean;
   labelWidth? : number;
+  inputWidth?: number;
   direction?: string;
   items?: Array<{
     value: string | number | boolean;
     label: string;
+    labelExtension? : string;
   }>;
   defaultValue?: string | number | boolean;
   onSelect?: (event: React.SyntheticEvent, value: string | number | boolean) => void;
@@ -16,4 +18,5 @@ export interface IDropDown {
 export interface IItems {
   value: string | number | boolean;
   label: string;
+  labelExtension? : string;
 }

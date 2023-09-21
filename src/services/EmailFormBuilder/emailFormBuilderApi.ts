@@ -6,6 +6,27 @@ export const emailFormBuilderApi = createApi({
   reducerPath: 'emailFormBuilder',
   baseQuery: customFetchBase,
   endpoints: builder => ({
+    getFormTemplate: builder.query<any, any>({
+      query: () => ({
+        document: gql`
+          query {
+            formTemplateList(
+              pageableRequest: {
+                pageIndex: 0
+                limit: 9999
+              }
+            ) {
+              total
+              templates {
+                id
+                title
+                shortDesc
+              }
+            }
+          }
+        `,
+      }),
+    }),
     getEmailFormBuilderDetail: builder.query<any, any>({
       query: payload => ({
         document: gql`
@@ -77,12 +98,14 @@ export const emailFormBuilderApi = createApi({
           mutation postTypeCreate(
             $name: String!
             $attributeRequests: [PostMetaTemplateRequest!]!
+            $formTemplate: Int!
           ) {
             postTypeCreate(
               request: {
                 name: $name
                 postTypeGroup: "EMAIL_FORM"
                 attributeRequests: $attributeRequests
+                formTemplate: $formTemplate
               }
             ) {
               id
@@ -102,6 +125,7 @@ export const emailFormBuilderApi = createApi({
             $id: Int!
             $name: String!
             $attributeRequests: [PostMetaTemplateRequest!]!
+            $formTemplate: Int!
           ) {
             postTypeUpdate(
               id: $id,
@@ -109,6 +133,7 @@ export const emailFormBuilderApi = createApi({
                 name: $name
                 postTypeGroup: "EMAIL_FORM"
                 attributeRequests: $attributeRequests
+                formTemplate: $formTemplate
               }
             ) {
               id
@@ -138,6 +163,7 @@ export const emailFormBuilderApi = createApi({
 });
 
 export const {
+  useGetFormTemplateQuery,
   useGetEmailFormBuilderDetailQuery,
   useGetEmailFormBuilderQuery,
   useCreateEmailFormBuilderMutation,
