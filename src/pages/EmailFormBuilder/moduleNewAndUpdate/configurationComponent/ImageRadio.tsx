@@ -12,7 +12,6 @@ interface IRadio {
 
 const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
 
-  console.log("all in ", configList )
   return (
     <React.Fragment>
       <InputText

@@ -41,14 +41,14 @@ export default function PreviewModal(props: any) {
 
       let items = [];
       if (value) {
-        items = value.split(";").map((element: any) => {
+        items = value.split(';').map((element: any) => {
           return {
-            value: element, 
+            value: element,
             label: element,
-          }
+          };
         });
-      };
-      
+      }
+
       switch (fieldType) {
         case 'EMAIL':
           return (
@@ -259,38 +259,57 @@ export default function PreviewModal(props: any) {
             <div className="flex my-5">
               <div className="w-full flex justify-center items-center border-[1px] border-[#D6D6D6]" />
             </div>
-          )
+          );
         case 'RATING':
           return (
             <div className="w-full h-[120px] flex flex-row items-center rounded-lg bg-white p-2 overflow-auto">
-              {
-                items.map((element: any, keyIndex: number) => {
-                  return (
-                    <div key={keyIndex} className={`min-w-[20%] flex flex-col items-center`}>
-                      <div className={`w-full flex flex-row items-center`}>
-                        {
-                          keyIndex === 0 ? (
-                            <div className="w-full h-[1px] border-[1px] border-white"/>
-                          ) : (
-                            <div className="w-full h-[1px] border-[1px] border-form-disabled-bg"/>
-                          )
-                        }
-                        <input type="radio" name={`radio_${id}`} className="radio radio-primary" />
-                        {
-                          keyIndex === (items.length - 1) ? (
-                            <div className="w-full h-[1px] border-[1px] border-white"/>
-                          ) : (
-                            <div className="w-full h-[1px] border-[1px] border-form-disabled-bg"/>
-                          )
-                        }
-                      </div>
-                      <div className="text-center">{element.label}</div>
+              {items.map((element: any, keyIndex: number) => {
+                return (
+                  <div key={keyIndex} className={`min-w-[20%] flex flex-col items-center`}>
+                    <div className={`w-full flex flex-row items-center`}>
+                      {keyIndex === 0 ? (
+                        <div className="w-full h-[1px] border-[1px] border-white" />
+                      ) : (
+                        <div className="w-full h-[1px] border-[1px] border-form-disabled-bg" />
+                      )}
+                      <input type="radio" name={`radio_${id}`} className="radio radio-primary" />
+                      {keyIndex === items.length - 1 ? (
+                        <div className="w-full h-[1px] border-[1px] border-white" />
+                      ) : (
+                        <div className="w-full h-[1px] border-[1px] border-form-disabled-bg" />
+                      )}
                     </div>
-                  )
-                })
-              }
-            </div>  
-          )
+                    <div className="text-center">{element.label}</div>
+                  </div>
+                );
+              })}
+            </div>
+          );
+        case 'IMAGE_RADIO':
+          return (
+            <div className="my-2">
+              <label className={`label font-bold`}>
+                <span className={`label-text text-base-content`}>
+                  {name}
+                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
+                </span>
+              </label>
+              <div className="w-full flex flex-col gap-4">
+                {items?.map((element: any, index: number) => (
+                  <label key={index} className="label cursor-pointer justify-start flex gap-2 p-0">
+                    <input
+                      type="radio"
+                      name={nameId}
+                      className="radio radio-primary h-[22px] w-[22px] bg-white"
+                    />
+                    <div
+                      className="w-32 h-32 bg-[#5E217C] bg-cover" />
+                      {/* style={{ backgroundImage: `url(${imageUrls[index]})` }}></div> */}
+                  </label>
+                ))}
+              </div>
+            </div>
+          );
         default:
           return <div>err: {data.fieldType}</div>;
       }
