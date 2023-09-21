@@ -151,8 +151,8 @@ export default function EmailFormBuilderEdit() {
           ...(!!Object.getOwnPropertyDescriptor(config, 'required') && {
             required: config?.required === 'true' ?? false,
           }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'useDecimal') && {
-            useDecimal: config?.required === 'true' ?? false,
+          ...(!!Object.getOwnPropertyDescriptor(config, 'use_decimal') && {
+            useDecimal: config?.required === "true" ?? false,
           }),
           ...(!!Object.getOwnPropertyDescriptor(config, 'min_length') && {
             minLength: config?.min_length,
@@ -293,8 +293,8 @@ export default function EmailFormBuilderEdit() {
           return {
             fieldType: 'NUMBER',
             name: element.name,
-            fieldId: 'NUMBER',
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"useDecimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
+            fieldId: "NUMBER",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"use_decimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
           };
         case 'DOCUMENT':
           return {

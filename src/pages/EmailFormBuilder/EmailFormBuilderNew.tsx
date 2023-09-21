@@ -209,8 +209,8 @@ export default function EmailFormBuilderNew() {
           return {
             fieldType: 'NUMBER',
             name: element.name,
-            fieldId: 'NUMBER',
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"useDecimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
+            fieldId: "NUMBER",
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"use_decimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
           };
         case 'DOCUMENT':
           return {
