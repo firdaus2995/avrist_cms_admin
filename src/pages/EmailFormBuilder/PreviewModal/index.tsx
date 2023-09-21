@@ -295,7 +295,7 @@ export default function PreviewModal(props: any) {
                 </span>
               </label>
               <div className="w-full flex flex-col gap-4">
-                {items?.map((element: any, index: number) => (
+                {items?.map((_element: any, index: number) => (
                   <label key={index} className="label cursor-pointer justify-start flex gap-2 p-0">
                     <input
                       type="radio"
