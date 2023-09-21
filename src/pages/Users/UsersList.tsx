@@ -20,23 +20,23 @@ import Typography from '@/components/atoms/Typography';
 export default function UsersList() {
   const StatusBadge = (status: any) => {
     function getStyle({ status }: any) {
-      console.log('first ', status);
+      // console.log('first ', status);
       if (status) {
         return 'bg-[#D9E7D6] border-[#8AA97C]';
-      } else if (!status) {
-        return 'bg-[#EBD2CE] border-[#D09191]';
-      } else {
+      } else if (status === undefined) {
         return 'bg-[#E4E4E4] border-[#A9AAB5]';
+      } else {
+        return 'bg-[#EBD2CE] border-[#D09191]';
       }
     }
 
     function getTitle({ status }: any) {
       if (status) {
         return 'Active';
-      } else if (!status) {
-        return 'Inactive';
-      } else {
+      } else if (status === undefined) {
         return '-';
+      } else {
+        return 'Inactive';
       }
     }
 
@@ -58,7 +58,7 @@ export default function UsersList() {
       accessorKey: 'statusActive',
       enableSorting: false,
       cell: (info: any) => {
-        console.log('ini info => ', info.getValue());
+        // console.log('ini info => ', info.getValue());
         return (
           <>
             <StatusBadge status={info.getValue()} />
