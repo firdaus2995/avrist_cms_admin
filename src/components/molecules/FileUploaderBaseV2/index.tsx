@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import UploadDocumentIcon from '@/assets/upload-file-2.svg';
 import Document from '@/assets/modal/document-orange.svg';
 import Close from '@/assets/close.png';
@@ -6,6 +6,8 @@ import { getCredential } from '@/utils/Credential';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
+
+import { getImage } from '../../../services/Images/imageUtils';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
@@ -58,6 +60,7 @@ export default function FileUploaderBaseV2({
   disabled,
   label,
   maxSize,
+  parentData,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
@@ -81,7 +84,7 @@ export default function FileUploaderBaseV2({
   const handleUpload = async (files: File[]) => {
     const token = getCredential().accessToken;
     // const refreshToken = getCredential().refreshToken;
-    
+
     const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
@@ -156,6 +159,36 @@ export default function FileUploaderBaseV2({
       );
     }
   };
+
+  useEffect(() => {
+    if (parentData) {
+      console.log('parent data =>  ', parentData);
+    }
+  }, [parentData]);
+
+  useEffect(() => {
+    console.log('local data ==>> ', filesData);
+  }, [filesData]);
+
+  // IMAGE LIST
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (parentData?.items) {
+      const loadImages = async () => {
+        const urls = await Promise.all(
+          parentData.items.map(async (element: any) => await getImage(element)),
+        );
+        setImageUrls(urls);
+      };
+
+      void loadImages();
+    }
+  }, [parentData?.items]);
+
+  useEffect(()=> {
+    console.log(imageUrls)
+  },[imageUrls])
 
   return (
     <>
