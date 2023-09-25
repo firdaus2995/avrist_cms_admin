@@ -43,6 +43,7 @@ const Radio: React.FC<IRadio> = ({
           if (arrayItem.length === 1 && arrayItem[0] === "") {
             arrayItem = [];
           };
+          console.log(arrayItem)
           valueChange('items', arrayItem);
         }}
       />

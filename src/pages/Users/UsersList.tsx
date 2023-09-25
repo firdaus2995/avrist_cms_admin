@@ -19,21 +19,34 @@ import Typography from '@/components/atoms/Typography';
 
 export default function UsersList() {
   const StatusBadge = (status: any) => {
-    let style = '';
-    let title = '';
-    if (status) {
-      style = 'bg-[#D9E7D6] border-[#8AA97C]';
-      title = 'Active';
-    } else {
-      style = 'bg-[#EBD2CE] border-[#D09191]';
-      title = 'Inactive';
+    function getStyle({ status }: any) {
+      // console.log('first ', status);
+      if (status) {
+        return 'bg-[#D9E7D6] border-[#8AA97C]';
+      } else if (status === undefined) {
+        return 'bg-[#E4E4E4] border-[#A9AAB5]';
+      } else {
+        return 'bg-[#EBD2CE] border-[#D09191]';
+      }
     }
 
-    const badgeClasses = `flex w-28 items-center justify-center text-gray h-7 border-2 ${style}`;
+    function getTitle({ status }: any) {
+      if (status) {
+        return 'Active';
+      } else if (status === undefined) {
+        return '-';
+      } else {
+        return 'Inactive';
+      }
+    }
+
+    const badgeClasses = `flex w-28 items-center justify-center text-gray h-7 border-2 ${getStyle(
+      status,
+    )}`;
     return (
       <span className={badgeClasses}>
         <Typography type="body" size="xs" weight="medium">
-          {title}
+          {getTitle(status)}
         </Typography>
       </span>
     );
@@ -44,17 +57,14 @@ export default function UsersList() {
       header: () => <span className="text-[14px]"></span>,
       accessorKey: 'statusActive',
       enableSorting: false,
-      cell: (info: any) => (
-        <>
-          <StatusBadge
-            status={
-              info.getValue() && info.getValue() !== '' && info.getValue() !== null
-                ? info.getValue()
-                : '-'
-            }
-          />
-        </>
-      ),
+      cell: (info: any) => {
+        // console.log('ini info => ', info.getValue());
+        return (
+          <>
+            <StatusBadge status={info.getValue()} />
+          </>
+        );
+      },
     },
     {
       header: () => <span className="text-[14px]">User ID</span>,
