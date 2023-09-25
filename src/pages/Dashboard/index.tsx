@@ -24,7 +24,7 @@ export default function Dashboard() {
       title: 'Regist Page Template',
       subtitle: 'Regist your new page template for Avrist Website',
       btnText: 'Page Template',
-      path: '/page-template',
+      path: '/page-template/new',
       image: content1,
     },
     {

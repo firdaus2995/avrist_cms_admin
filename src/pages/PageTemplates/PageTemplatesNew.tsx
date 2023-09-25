@@ -304,7 +304,7 @@ export default function PageTemplatesNew() {
 
   const onLeave = () => {
     setShowLeaveModal(false);
-    navigate('/page-template');
+    navigate(-1);
   };
 
   const attributesColumns = [
