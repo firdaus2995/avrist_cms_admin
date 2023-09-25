@@ -52,6 +52,34 @@ const FileItem = (props: any) => {
   );
 };
 
+const PreviewFileItem = (props: any) => {
+  const { item } = props;
+
+  return (
+    <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
+      <img
+        className="object-cover h-12 w-12 rounded-lg mr-3 border"
+        src={URL.createObjectURL(item)}
+        alt={item}
+      />
+
+      <div className="flex flex-1 h-14 justify-center flex-col">
+        <p className="truncate w-52">{name}</p>
+        <p className="text-body-text-3 text-xs">{value ? bytesToSize(value?.size) : ''}</p>
+      </div>
+      <div className="h-11">
+        <div
+          data-tip={'Delete'}
+          className="tooltip cursor-pointer w-6 h-6 rounded-full hover:bg-light-grey justify-center items-center flex"
+          // onClick={onDeletePress}
+          >
+          <img src={Close} className="w-5 h-5" />
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function FileUploaderBaseV2({
   isDocument,
   multiple,
@@ -186,9 +214,9 @@ export default function FileUploaderBaseV2({
     }
   }, [parentData?.items]);
 
-  useEffect(()=> {
-    console.log(imageUrls)
-  },[imageUrls])
+  useEffect(() => {
+    console.log(imageUrls);
+  }, [imageUrls]);
 
   return (
     <>
@@ -239,6 +267,11 @@ export default function FileUploaderBaseV2({
               }}
             />
           );
+        })}
+      </div>
+      <div>
+        {parentData?.items?.map((item, index) => {
+          return <PreviewFileItem item={item} />;
         })}
       </div>
     </>
