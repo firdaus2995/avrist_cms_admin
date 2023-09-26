@@ -182,7 +182,7 @@ export default function MainTab(props: { id: any }) {
    const submitDeletePage = () => {
     deleteContentData({ id: idDelete })
       .unwrap()
-      .then(async d => {
+      .then(async _d => {
         setShowConfirm(false);
         dispatch(
           openToast({
