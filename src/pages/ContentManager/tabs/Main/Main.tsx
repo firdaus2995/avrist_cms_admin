@@ -188,7 +188,7 @@ export default function MainTab(props: { id: any }) {
           openToast({
             type: 'success',
             title: 'Success Delete Page',
-            message: d.pageDelete.message,
+            message: 'Success! Your data has been successfully deleted!',
           }),
         );
         await fetchQuery.refetch();
