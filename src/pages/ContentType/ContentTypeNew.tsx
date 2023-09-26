@@ -181,7 +181,7 @@ export default function ContentTypeNew() {
 
   const onLeave = () => {
     setShowComfirm(false);
-    navigate('/content-type');
+    navigate(-1);
   };
 
   const renderListItems = () => {
