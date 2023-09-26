@@ -162,7 +162,7 @@ export default function ContentManagerDetail() {
                   setActiveTab(val.isActive);
                   navigate(location.pathname, { state: { activeTabParams: val.isActive } }); 
                 }}
-                className={`btn ${activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-500'} text-xs w-40`}>
+                className={`btn ${activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-400'} text-xs w-40 font-bold border-none`}>
                 {val.name}
               </button>
             ))}
