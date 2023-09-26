@@ -45,7 +45,7 @@ export default function CategoryNew() {
             message: t('content-manager.category.add.success-msg', { name: payload.name }),
           }),
         );
-        navigate(`/content-manager/${id}`);
+        navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
       })
       .catch(() => {
         dispatch(
@@ -60,7 +60,7 @@ export default function CategoryNew() {
 
   const onLeave = () => {
     setShowLeaveModal(false);
-    navigate(-1);
+    navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
   };
 
   const renderForm = () => {

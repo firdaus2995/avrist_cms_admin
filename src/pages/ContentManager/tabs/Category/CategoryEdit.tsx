@@ -58,7 +58,7 @@ export default function CategoryEdit() {
             message: t('content-manager.category.edit.success-msg', { name: payload.name }),
           }),
         );
-        navigate(`/content-manager/${id}`);
+        navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
       })
       .catch(() => {
         dispatch(

@@ -24,7 +24,7 @@ export default function Dashboard() {
       title: 'Regist Page Template',
       subtitle: 'Regist your new page template for Avrist Website',
       btnText: 'Page Template',
-      path: '/page-template',
+      path: '/page-template/new',
       image: content1,
     },
     {
@@ -38,7 +38,7 @@ export default function Dashboard() {
       title: 'Build Your Website Structure',
       subtitle: 'Choose any content type to build your website',
       btnText: 'Content Type Builder',
-      path: '/content-type',
+      path: '/content-type/new',
       image: content3,
     }
   ]
