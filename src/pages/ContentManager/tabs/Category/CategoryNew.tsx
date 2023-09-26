@@ -60,7 +60,7 @@ export default function CategoryNew() {
 
   const onLeave = () => {
     setShowLeaveModal(false);
-    navigate(-1);
+    navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
   };
 
   const renderForm = () => {

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate, useParams } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useGetPostTypeDetailQuery } from '../../services/ContentType/contentTypeApi';
 import ArchiveBox from '@/assets/archive-box.svg';
@@ -25,6 +25,7 @@ const ArchiveButton = () => {
 
 export default function ContentManagerDetail() {
   const params = useParams();
+  const state = useLocation();
   const [id] = useState<any>(Number(params.id));
   const [name, setName] = useState<any>('');
   const [activeTab, setActiveTab] = useState(1);
@@ -55,6 +56,12 @@ export default function ContentManagerDetail() {
     limit: pageLimit,
   });
   const { data } = fetchQuery;
+
+  useEffect(() => {
+    if (state?.state?.activeTabParams) {
+      setActiveTab(state.state.activeTabParams);
+    }
+  }, [state])
 
   useEffect(() => {
     if (data) {
@@ -153,6 +160,7 @@ export default function ContentManagerDetail() {
                 key={val.isActive}
                 onClick={() => {
                   setActiveTab(val.isActive);
+                  navigate(location.pathname, { state: { activeTabParams: val.isActive } }); 
                 }}
                 className={`btn ${activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-500'} text-xs w-40`}>
                 {val.name}
