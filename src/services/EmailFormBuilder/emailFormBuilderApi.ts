@@ -151,8 +151,50 @@ export const emailFormBuilderApi = createApi({
         document: gql`
           mutation postTypeDelete($id: Int!) {
             postTypeDelete(postTypeGroup: "EMAIL_FORM", id: $id) {
-              postTypeGroup
-              id
+              message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    getEmailBodyQuery: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query emailBodyList(
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+            $search: String
+          ) {
+            emailBodyList(
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                sortBy: $sortBy
+                direction: $direction
+                search: $search
+              }
+            ) {
+              total
+              emailBodies {
+                id
+                name
+                shortDesc
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    deleteEmailBody: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation emailBodyDelete($id: Int!) {
+            emailBodyDelete(id: $id) {
+              message
             }
           }
         `,
@@ -169,4 +211,6 @@ export const {
   useCreateEmailFormBuilderMutation,
   useUpdateEmailFormBuilderMutation,
   useDeleteEmailFormBuilderMutation,
+  useGetEmailBodyQueryQuery,
+  useDeleteEmailBodyMutation,
 } = emailFormBuilderApi;
