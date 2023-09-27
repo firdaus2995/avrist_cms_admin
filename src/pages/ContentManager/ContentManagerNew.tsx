@@ -436,7 +436,7 @@ export default function ContentManagerNew() {
 
   const renderFormList = () => {
     // DEFAULT VALUE
-    return postTypeDetail?.attributeList.map((props: any, index: number) => {
+    return postTypeDetail?.attributeList.map((props: any, _index: number) => {
       const { id, name, fieldType, attributeList, config, duplicateId } = props;
       const configs = JSON.parse(config);
 
