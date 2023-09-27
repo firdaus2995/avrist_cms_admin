@@ -189,6 +189,31 @@ export const emailFormBuilderApi = createApi({
         variables: payload,
       }),
     }),
+    createEmailBody: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation createEmailBody(
+            $title: String!
+            $shortDesc: String!
+            $value: String!
+          ) {
+            createEmailBody(
+              request: {
+                title: $title
+                shortDesc: $shortDesc
+                value: $value
+              }
+            ) {
+              id
+              title
+              shortDesc
+              value
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     deleteEmailBody: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
@@ -212,5 +237,6 @@ export const {
   useUpdateEmailFormBuilderMutation,
   useDeleteEmailFormBuilderMutation,
   useGetEmailBodyQueryQuery,
+  useCreateEmailBodyMutation,
   useDeleteEmailBodyMutation,
 } = emailFormBuilderApi;
