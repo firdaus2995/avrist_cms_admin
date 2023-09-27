@@ -18,7 +18,8 @@ export const userApi: any = createApi({
               dob
               gender
               company
-              isActive
+              # isActive
+              statusActive
               role {
                 id
                 name
@@ -57,7 +58,8 @@ export const userApi: any = createApi({
                 dob
                 gender
                 company
-                isActive
+                # isActive
+                statusActive
                 role {
                   id
                   name
@@ -139,7 +141,7 @@ export const userApi: any = createApi({
               gender
               company
               statusActive
-              isActive
+              # isActive
               role {
                 id
               }
@@ -182,7 +184,7 @@ export const userApi: any = createApi({
               gender
               company
               statusActive
-              isActive
+              # isActive
               role {
                 id
               }
@@ -205,7 +207,8 @@ export const userApi: any = createApi({
               gender
               company
               profilePicture
-              isActive
+              statusActive
+              # isActive
               role {
                 id
                 name
@@ -236,7 +239,8 @@ export const userApi: any = createApi({
               dob
               gender
               company
-              isActive
+              statusActive
+              # isActive
               role {
                 id
                 name
