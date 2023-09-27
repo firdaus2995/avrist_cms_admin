@@ -24,10 +24,7 @@ import { MultipleInput } from '@/components/molecules/MultipleInput';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { checkIsEmail, copyArray } from '@/utils/logicHelper';
-import {
-  useGetEmailFormBuilderDetailQuery,
-  useUpdateEmailFormBuilderMutation,
-  useGetFormTemplateQuery,
+import { useGetEmailFormBuilderDetailQuery, useUpdateEmailFormBuilderMutation, useGetFormResultQuery,
 } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { useGetEmailFormAttributeListQuery } from '@/services/Config/configApi';
 
@@ -77,7 +74,7 @@ export default function EmailFormBuilderEdit() {
   // const [updateEmailFormBuilder, { isLoading }] = useUpdateEmailFormBuilderMutation();
 
   // RTK GET FORM TEMPLATE
-  const { data: dataFormTemplate } = useGetFormTemplateQuery(
+  const { data: dataFormTemplate } = useGetFormResultQuery(
     {},
     {
       refetchOnMountOrArgChange: true,
@@ -103,7 +100,7 @@ export default function EmailFormBuilderEdit() {
   useEffect(() => {
     if (dataFormTemplate) {
       setListFormTemplate(
-        dataFormTemplate?.formTemplateList?.templates.map((element: any) => {
+        dataFormTemplate?.formResultList?.templates.map((element: any) => {
           return {
             value: element.id,
             label: element.title,
@@ -121,7 +118,7 @@ export default function EmailFormBuilderEdit() {
       const name: string = emailFormBuilderDetail?.name;
       const pic: any = emailFormBuilderDetail?.pic?.split(';') ?? [];
       const captcha: any = emailFormBuilderDetail?.enableCaptcha;
-      const formTemplateId: any = emailFormBuilderDetail?.formTemplate?.id;
+      const formTemplateId: any = emailFormBuilderDetail?.formResult?.id;
 
       const attributeList: any = emailFormBuilderDetail?.attributeList.map((element: any) => {
         const config: any = element?.config !== '' ? JSON.parse(element?.config) : {};
@@ -172,7 +169,8 @@ export default function EmailFormBuilderEdit() {
 
           ...((element?.fieldType === 'CHECKBOX' ||
             element?.fieldType === 'RADIO_BUTTON' ||
-            element?.fieldType === 'DROPDOWN') && {
+            element?.fieldType === 'DROPDOWN' || 
+            element?.fieldType === 'RATING') && {
             items: value ? value.split(';') : [],
           }),
 
@@ -180,7 +178,8 @@ export default function EmailFormBuilderEdit() {
             name: false,
             ...((element?.fieldType === 'CHECKBOX' ||
               element?.fieldType === 'RADIO_BUTTON' ||
-              element?.fieldType === 'DROPDOWN') && {
+              element?.fieldType === 'DROPDOWN' ||
+              element?.fieldType === 'RATING') && {
               items: false,
             }),
           },
@@ -365,7 +364,7 @@ export default function EmailFormBuilderEdit() {
       id,
       name: formName,
       attributeRequests: backendComponents,
-      formTemplate,
+      formResult: formTemplate,
     };
 
     updateEmailFormBuilder(payload)

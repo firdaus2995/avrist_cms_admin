@@ -6,18 +6,18 @@ export const emailFormBuilderApi = createApi({
   reducerPath: 'emailFormBuilder',
   baseQuery: customFetchBase,
   endpoints: builder => ({
-    getFormTemplate: builder.query<any, any>({
+    getFormResult: builder.query<any, any>({
       query: () => ({
         document: gql`
           query {
-            formTemplateList(
+            formResultList(
               pageableRequest: {
                 pageIndex: 0
                 limit: 9999
               }
             ) {
               total
-              templates {
+              resultList {
                 id
                 title
                 shortDesc
@@ -43,6 +43,11 @@ export const emailFormBuilderApi = createApi({
               name
               postTypeGroup
               slug
+              formResult {
+                id
+                title
+                shortDesc
+              }
               pic
               enableCaptcha
               total
@@ -98,14 +103,14 @@ export const emailFormBuilderApi = createApi({
           mutation postTypeCreate(
             $name: String!
             $attributeRequests: [PostMetaTemplateRequest!]!
-            $formTemplate: Int!
+            $formResult: Int!
           ) {
             postTypeCreate(
               request: {
                 name: $name
                 postTypeGroup: "EMAIL_FORM"
                 attributeRequests: $attributeRequests
-                formTemplate: $formTemplate
+                formResult: $formResult
               }
             ) {
               id
@@ -125,7 +130,7 @@ export const emailFormBuilderApi = createApi({
             $id: Int!
             $name: String!
             $attributeRequests: [PostMetaTemplateRequest!]!
-            $formTemplate: Int!
+            $formResult: Int!
           ) {
             postTypeUpdate(
               id: $id,
@@ -133,7 +138,7 @@ export const emailFormBuilderApi = createApi({
                 name: $name
                 postTypeGroup: "EMAIL_FORM"
                 attributeRequests: $attributeRequests
-                formTemplate: $formTemplate
+                formResult: $formResult
               }
             ) {
               id
@@ -205,7 +210,7 @@ export const emailFormBuilderApi = createApi({
 });
 
 export const {
-  useGetFormTemplateQuery,
+  useGetFormResultQuery,
   useGetEmailFormBuilderDetailQuery,
   useGetEmailFormBuilderQuery,
   useCreateEmailFormBuilderMutation,
