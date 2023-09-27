@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import Typography from '@/components/atoms/Typography';
 // import FileUploaderBase from '@/components/molecules/FileUploaderBase';
 import FileUploaderBaseV2 from '../FileUploaderBaseV2';
@@ -18,7 +19,10 @@ export default function FileUploaderV2({
   border = true,
   disabled = false,
   maxSize,
+  maxFile,
+  parentData,
 }: any) {
+  const [isMaxFile, setIsMaxFile] = useState(false);
   function convertToArr(arr: any[], key: string | number | undefined) {
     if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
       return [];
@@ -28,6 +32,14 @@ export default function FileUploaderV2({
 
     return values;
   }
+
+  useEffect(() => {
+    if (maxFile) {
+      if (parentData?.items?.length >= maxFile) {
+        setIsMaxFile(true);
+      }
+    }
+  }, [maxFile, parentData]);
 
   return (
     <div>
@@ -60,8 +72,9 @@ export default function FileUploaderV2({
                 const values = convertToArr(e, 'response');
                 onChange(values);
               }}
-              disabled={disabled}
+              disabled={disabled || isMaxFile}
               maxSize={maxSize}
+              parentData={parentData}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">

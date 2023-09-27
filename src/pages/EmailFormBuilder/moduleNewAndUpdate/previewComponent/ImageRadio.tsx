@@ -2,9 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import DeleteComponentIcon from '../../../../assets/efb/preview-delete.svg';
-import { getCredential } from '@/utils/Credential';
-
-const baseUrl = import.meta.env.VITE_API_URL;
+import { getImage } from '../../../../services/Images/imageUtils';
 
 interface IRadio {
   name: string;
@@ -17,32 +15,8 @@ interface IRadio {
 
 const ImageRadio: React.FC<IRadio> = ({ name, items, other, isActive, onClick, onDelete }) => {
   const nameId: any = uuidv4();
-  const token = getCredential().accessToken;
 
   const [imageUrls, setImageUrls] = useState<string[]>([]);
-
-  const getImage = async (img: any) => {
-    try {
-      const response = await fetch(`${baseUrl}/files/get/${img}`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.ok) {
-        const blob = await response.blob();
-        if (blob.size > 0) {
-          const objectUrl = URL.createObjectURL(blob);
-          return objectUrl;
-        }
-      }
-    } catch (err) {
-      console.error(err);
-    }
-
-    return ''; 
-  };
 
   useEffect(() => {
     const loadImages = async () => {
@@ -63,9 +37,7 @@ const ImageRadio: React.FC<IRadio> = ({ name, items, other, isActive, onClick, o
       <div className="flex flex-row gap-2">
         <div className="w-full flex flex-col gap-4">
           {items?.map((_element: any, index: number) => (
-            <label
-              key={index}
-              className="label cursor-pointer justify-start flex gap-2 p-0">
+            <label key={index} className="label cursor-pointer justify-start flex gap-2 p-0">
               <input
                 type="radio"
                 name={nameId}

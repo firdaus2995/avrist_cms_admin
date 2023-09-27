@@ -15,16 +15,14 @@ import PreviewModal from './PreviewModal';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
-import {
-  useGetEmailFormBuilderQuery,
-  useDeleteEmailFormBuilderMutation,
-} from '@/services/EmailFormBuilder/emailFormBuilderApi';
+import { useGetEmailFormBuilderQuery, useDeleteEmailFormBuilderMutation, useGetEmailBodyQueryQuery, useDeleteEmailBodyMutation } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { getCredential } from '@/utils/Credential';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function EmailFormBuilderList() {
   // TABLE COLUMN
-  const columns = [
+  const columnsEFB = [
     {
       header: () => <span className="text-[14px]">Form Name</span>,
       accessorKey: 'name',
@@ -54,22 +52,75 @@ export default function EmailFormBuilderList() {
           </button>
           {
             canEditEmailFormBuilder && (
-              <button>
-                <img
-                  className={`cursor-pointer select-none flex items-center justify-center`}
-                  src={TableEdit}
-                  onClick={() => {
-                    onClickEmailFormBuilderEdit(info.getValue());
-                  }}
-                />
-              </button>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+                onClick={() => {
+                  onClickEmailFormBuilderEdit(info.getValue());
+                }}
+              />
             )
           }
+          {
+            canDeleteEmailFormBuilder && (
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickEmailFormBuilderDelete(info.getValue());
+                }}
+              />
+            )
+          }
+        </div>
+      ),
+    },
+  ];
+
+  const columnsEB = [
+    {
+      header: () => <span className="text-[14px]">Title</span>,
+      accessorKey: 'title',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Short Description</span>,
+      accessorKey: 'shortDesc',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Action</span>,
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (info: any) => (
+        <div className="flex gap-3">
+          <button 
+            className='btn btn-outline'
+            onClick={() => {
+              onClickEmailBodyView(info.getValue());
+            }}
+          >
+            View Detail
+          </button>
           <img
             className={`cursor-pointer select-none flex items-center justify-center`}
             src={TableDelete}
             onClick={() => {
-              onClickEmailFormBuilderDelete(info.getValue());
+              onClickEmailBodyDelete(info.getValue());
             }}
           />
         </div>
@@ -79,76 +130,140 @@ export default function EmailFormBuilderList() {
 
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const [listData, setListData] = useState([]);
-  const [search, setSearch] = useState('');
+  const [listDataEFB, setListDataEFB] = useState([]);
+  const [listDataEB, setListDataEB] = useState([]);
+  const [searchEFB, setSearchEFB] = useState('');
+  const [searchEB, setSearchEB] = useState('');
 
+  // TAB STATE
+  const [selectedTab, setSelectedTab] = useState(0);
   // PERMISSION STATE
   const [canCreateEmailFormBuilder, setCanCreateEmailFormBuilder] = useState(false);
   const [canEditEmailFormBuilder, setCanEditEmailFormBuilder] = useState(false);
+  const [canDeleteEmailFormBuilder, setCanDeleteEmailFormBuilder] = useState(false);
   // TABLE PAGINATION STATE
-  const [total, setTotal] = useState(0);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(10);
-  const [direction, setDirection] = useState('asc');
-  const [sortBy, setSortBy] = useState('id');
+  const [totalEFB, setTotalEFB] = useState(0);
+  const [pageIndexEFB, setPageIndexEFB] = useState(0);
+  const [pageLimitEFB, setPageLimitEFB] = useState(10);
+  const [directionEFB, setDirectionEFB] = useState('asc');
+  const [sortByEFB, setSortByEFB] = useState('id');
+  const [totalEB, setTotalEB] = useState(0);
+  const [pageIndexEB, setPageIndexEB] = useState(0);
+  const [pageLimitEB, setPageLimitEB] = useState(10);
+  const [directionEB, setDirectionEB] = useState('asc');
+  const [sortByEB, setSortByEB] = useState('id');
   // DELETE MODAL STATE
-  const [openDeleteModal, setOpenDeleteModal] = useState(false);
-  const [deleteModalTitle, setDeleteModalTitle] = useState('');
-  const [deleteModalBody, setDeleteModalBody] = useState('');
-  const [deletedId, setDeletedId] = useState(0);
+  const [openDeleteModalEFB, setOpenDeleteModalEFB] = useState(false);
+  const [deleteModalTitleEFB, setDeleteModalTitleEFB] = useState('');
+  const [deleteModalBodyEFB, setDeleteModalBodyEFB] = useState('');
+  const [deletedIdEFB, setDeletedIdEFB] = useState(0);
+  const [openDeleteModalEB, setOpenDeleteModalEB] = useState(false);
+  const [deleteModalTitleEB, setDeleteModalTitleEB] = useState('');
+  const [deleteModalBodyEB, setDeleteModalBodyEB] = useState('');
+  const [deletedIdEB, setDeletedIdEB] = useState(0);
   // PREVIEW MODAL
-  const [previewId, setPreviewId] = useState(null);
+  const [previewIdEFB, setPreviewIdEFB] = useState(null);
 
-  // RTK GET DATA
-  const fetchQuery = useGetEmailFormBuilderQuery(
+  // RTK GET DATA EFB
+  const fetchQueryEFB = useGetEmailFormBuilderQuery(
     {
-      pageIndex,
-      limit: pageLimit,
-      sortBy,
-      direction,
-      search,
+      pageIndex: pageIndexEFB,
+      limit: pageLimitEFB,
+      sortBy : sortByEFB,
+      direction : directionEFB,
+      search: searchEFB,
     },
     {
       refetchOnMountOrArgChange: true,
     },
   );
-  const { data, isFetching, isError } = fetchQuery;
+  const { data: dataEFB, isFetching: isFetchingEFB, isError: isErrorEFB } = fetchQueryEFB;
+
+  // RTK GET DATA EB
+  const fetchQueryEB = useGetEmailBodyQueryQuery(
+    {
+      pageIndex: pageIndexEB,
+      limit: pageLimitEB,
+      sortBy : sortByEB,
+      direction : directionEB,
+      search: searchEB,
+    },
+    {
+      refetchOnMountOrArgChange: true
+    },
+  );
+  const { data: dataEB, isFetching: isFetchingEB, isError: isErrorEB } = fetchQueryEB;
 
   // RTK DELETE
-  const [deletePostType, { isLoading: deletePostTypeLoading }] = useDeleteEmailFormBuilderMutation();
+  const [deleteEmailFormBuilder, { isLoading: deleteEmailFormBuilderLoading }] = useDeleteEmailFormBuilderMutation();
+  const [deleteEmailBody, { isLoading: deleteEmailBodyLoading }] = useDeleteEmailBodyMutation();
 
   useEffect(() => {
-    if (data) {
-      setListData(data?.postTypeList?.postTypeList);
-      setTotal(data?.postTypeList?.total);
-    }
-  }, [data]);
+    if (selectedTab === 0) {
+      void fetchQueryEFB.refetch();
+    } else if (selectedTab === 1) {
+      void fetchQueryEB.refetch();
+    };
+  }, [selectedTab]);
+
+  useEffect(() => {
+    if (dataEFB) {
+      setListDataEFB(dataEFB?.postTypeList?.postTypeList);
+      setTotalEFB(dataEFB?.postTypeList?.total);
+    };
+  }, [dataEFB]);
+
+  useEffect(() => {
+    if (dataEB) {
+      setListDataEB(dataEB?.emailBodyList?.emailBodies);
+      setTotalEB(dataEB?.emailBodyList?.total);
+    };
+  }, [dataEB]);
+
+  useEffect(() => {
+    getCredential().roles.forEach((element: any) => {
+      if (element === "EMAIL_FORM_CREATE") {
+        setCanCreateEmailFormBuilder(true);
+      } else if (element === "EMAIL_FORM_EDIT") {
+        setCanEditEmailFormBuilder(true);
+      } else if (element === "EMAIL_FORM_DELETE") {
+        setCanDeleteEmailFormBuilder(true);
+      };
+    });
+  }, []);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+  const handleSortModelChangeEFB = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
-      setSortBy(sortModel[0].id);
-      setDirection(sortModel[0].desc ? 'desc' : 'asc');
+      setSortByEFB(sortModel[0].id);
+      setDirectionEFB(sortModel[0].desc ? 'desc' : 'asc');
+    }
+  }, []);
+
+  const handleSortModelChangeEB = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      setSortByEB(sortModel[0].id);
+      setDirectionEB(sortModel[0].desc ? 'desc' : 'asc');
     }
   }, []);
 
   // FUNCTION FOR DELETE PAGE TEMPLATE
   const submitDeleteEmailFormBuilder = () => {
-    deletePostType({ id: deletedId })
+    deleteEmailFormBuilder({ id: deletedIdEFB })
       .unwrap()
       .then(async d => {
-        setOpenDeleteModal(false);
+        setOpenDeleteModalEFB(false);
         dispatch(
           openToast({
             type: 'success',
             title: 'Success Delete Email Form',
-            message: d.pageDelete.message,
+            message: d.postTypeDelete.message,
           }),
         );
-        await fetchQuery.refetch();
+        await fetchQueryEFB.refetch();
       })
       .catch(() => {
-        setOpenDeleteModal(false);
+        setOpenDeleteModalEFB(false);
         dispatch(
           openToast({
             type: 'error',
@@ -159,9 +274,39 @@ export default function EmailFormBuilderList() {
       });
   };
 
+  const submitDeleteEmailBody = () => {
+    deleteEmailBody({ id: deletedIdEB })
+      .unwrap()
+      .then(async d => {
+        setOpenDeleteModalEFB(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success Delete Email Form',
+            message: d.message,
+          }),
+        );
+        await fetchQueryEB.refetch();
+      })
+      .catch((error: any) => {
+        setOpenDeleteModalEFB(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed Delete Email Body',
+            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
+          }),
+        );
+      });
+  };
+
   // TABLE FUNCTION FOR VIEW EMAIL FORM BUILDER
   const onClickEmailFormBuilderView = (id: any) => {
-    setPreviewId(id);
+    setPreviewIdEFB(id);
+  };
+
+  const onClickEmailBodyView = (id: number) => {
+    navigate(`view-body/${id}`);
   };
 
   // TABLE FUNCTION FOR EDIT EMAIL FORM BUILDER
@@ -171,43 +316,78 @@ export default function EmailFormBuilderList() {
 
   // TABLE FUNCTION FOR DELETE EMAIL FORM BUILDER
   const onClickEmailFormBuilderDelete = (id: number) => {
-    setDeletedId(id);
-    setDeleteModalTitle(`Are you sure?`);
-    setDeleteModalBody(`Do you want to delete this form?`);
-    setOpenDeleteModal(true);
+    setDeletedIdEFB(id);
+    setDeleteModalTitleEFB(`Are you sure?`);
+    setDeleteModalBodyEFB(`Do you want to delete this form?`);
+    setOpenDeleteModalEFB(true);
   };
 
-  // DELETE THIS AFTER INTEGRATION
-  useEffect(() => {
-    getCredential().roles.forEach((element: any) => {
-      if (element === "EMAIL_FORM_CREATE") {
-        setCanCreateEmailFormBuilder(true);
-      } else if (element === "EMAIL_FORM_EDIT") {
-        setCanEditEmailFormBuilder(true);
-      };
-    });
-  }, []);
+  const onClickEmailBodyDelete = (id: number) => {
+    setDeletedIdEB(id);
+    setDeleteModalTitleEB(`Are you sure?`);
+    setDeleteModalBodyEB(`Do you want to delete this email body?`);
+    setOpenDeleteModalEB(true);
+  };
+
+  // TAB RENDER
+
+  const renderTabs = () => {
+    return (
+      <div className='btn-group mb-4'>
+        <div 
+          className={`btn bg-[#EEF1F7] text-[#ABB5C4] border-0 ${selectedTab === 0 ? '!bg-lavender !text-white' : ''} hover:!bg-primary hover:text-white`}
+          onClick={() => {
+            setSelectedTab(0);
+          }}
+        >
+          Email Form Builder
+        </div>
+        <div 
+          className={`btn bg-[#EEF1F7] text-[#ABB5C4] border-0 ${selectedTab === 1 ? '!bg-lavender !text-white' : ''} hover:!bg-primary hover:text-white`}
+          onClick={() => {
+            setSelectedTab(1);
+          }}
+        >
+          Email Body
+        </div>
+      </div>
+    )
+  };
 
   return (
     <React.Fragment>
       <PreviewModal
-        id={previewId}
-        open={!!previewId}
+        id={previewIdEFB}
+        open={!!previewIdEFB}
         toggle={() => {
-          setPreviewId(null);
+          setPreviewIdEFB(null);
         }}
       />
       <ModalConfirm
-        open={openDeleteModal}
-        title={deleteModalTitle}
-        message={deleteModalBody}
+        open={openDeleteModalEFB}
+        title={deleteModalTitleEFB}
+        message={deleteModalBodyEFB}
         cancelTitle="Cancel"
         submitTitle="Yes"
         submitAction={submitDeleteEmailFormBuilder}
         cancelAction={() => {
-          setOpenDeleteModal(false);
+          setOpenDeleteModalEFB(false);
         }}
-        loading={deletePostTypeLoading}
+        loading={deleteEmailFormBuilderLoading}
+        icon={WarningIcon}
+        btnSubmitStyle=""
+      />
+      <ModalConfirm
+        open={openDeleteModalEB}
+        title={deleteModalTitleEB}
+        message={deleteModalBodyEB}
+        cancelTitle="Cancel"
+        submitTitle="Yes"
+        submitAction={submitDeleteEmailBody}
+        cancelAction={() => {
+          setOpenDeleteModalEB(false);
+        }}
+        loading={deleteEmailBodyLoading}
         icon={WarningIcon}
         btnSubmitStyle=""
       />
@@ -216,44 +396,90 @@ export default function EmailFormBuilderList() {
         topMargin="mt-2"
         TopSideButtons={
           canCreateEmailFormBuilder ? (
-            <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
-              <img src={Plus} className="w-[24px] h-[24px]" />
-              {t('email-form-builder.list.button-add')}
-            </Link>
+            selectedTab === 0 ? (
+              <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+                <img src={Plus} className="w-[24px] h-[24px]" />
+                <span>Add New Form</span>
+              </Link>
+            ) : (
+              <Link to="new-body" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+                <img src={Plus} className="w-[24px] h-[24px]" />
+                <span>Add New Email Body</span>
+              </Link>
+            )
           ) : (
             <></>
           )
         }
         SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              setSearch(e.target.value);
-            }}
-            placeholder="Search"
-          />
+          selectedTab === 0 ? (
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearchEFB(e.target.value);
+              }}
+              placeholder="Search"
+            />
+          ) : (
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearchEB(e.target.value);
+              }}
+              placeholder="Search"
+            />
+          )
         }>
-        <Table
-          rows={listData}
-          columns={columns}
-          manualPagination={true}
-          manualSorting={true}
-          onSortModelChange={handleSortModelChange}
-          loading={isFetching}
-          error={isError}
-        />
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          // rangePageSize={[10, 20, 30]}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
-          }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
-        />
+        {renderTabs()}
+        {
+          selectedTab === 0 ? (
+            <>
+              <Table
+                rows={listDataEFB}
+                columns={columnsEFB}
+                manualPagination={true}
+                manualSorting={true}
+                onSortModelChange={handleSortModelChangeEFB}
+                loading={isFetchingEFB}
+                error={isErrorEFB}
+              />
+              <PaginationComponent
+                total={totalEFB}
+                page={pageIndexEFB}
+                pageSize={pageLimitEFB}
+                setPageSize={(page: number) => {
+                  setPageLimitEFB(page);
+                  setPageIndexEFB(0);
+                }}
+                setPage={(page: number) => {
+                  setPageIndexEFB(page);
+                }}
+              />
+            </>
+          ) : (
+            <>
+              <Table
+                rows={listDataEB}
+                columns={columnsEB}
+                manualPagination={true}
+                manualSorting={true}
+                onSortModelChange={handleSortModelChangeEB}
+                loading={isFetchingEB}
+                error={isErrorEB}
+              />
+              <PaginationComponent
+                total={totalEB}
+                page={pageIndexEB}
+                pageSize={pageLimitEB}
+                setPageSize={(page: number) => {
+                  setPageLimitEB(page);
+                  setPageIndexEB(0);
+                }}
+                setPage={(page: number) => {
+                  setPageIndexEB(page);
+                }}
+              />
+            </>
+          )
+        }
       </TitleCard>
     </React.Fragment>
   );
