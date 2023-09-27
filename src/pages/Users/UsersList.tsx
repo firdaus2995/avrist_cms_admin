@@ -115,6 +115,18 @@ export default function UsersList() {
       ),
     },
     {
+      header: () => <span className="text-[14px]">Department</span>,
+      accessorKey: 'department',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
       header: () => <span className="text-[14px]">Action</span>,
       accessorKey: 'id',
       enableSorting: false,
@@ -261,15 +273,18 @@ export default function UsersList() {
             placeholder="Search"
           />
         }>
-        <Table
-          rows={listData}
-          columns={columns}
-          manualPagination={true}
-          manualSorting={true}
-          onSortModelChange={handleSortModelChange}
-          loading={isFetching}
-          error={isError}
-        />
+        <div className="overflow-x-auto w-full mb-5">
+          <Table
+            rows={listData}
+            columns={columns}
+            manualPagination={true}
+            manualSorting={true}
+            onSortModelChange={handleSortModelChange}
+            loading={isFetching}
+            error={isError}
+          />
+        </div>
+
         <PaginationComponent
           total={total}
           page={pageIndex}
