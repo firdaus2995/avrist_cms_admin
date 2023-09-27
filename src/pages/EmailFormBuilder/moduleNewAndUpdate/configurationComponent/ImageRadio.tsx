@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import Config from './Config';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -11,7 +11,7 @@ interface IRadio {
 }
 
 const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
-
+  const [inputTextValue, setInputTextValue] = useState(data?.name);
   return (
     <React.Fragment>
       <InputText
@@ -21,9 +21,10 @@ const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
         inputStyle="text-sm"
         placeholder="Enter your radio button name"
         roundStyle="lg"
-        value={data?.name}
+        value={inputTextValue}
         isError={data?.mandatory?.name}
         onChange={(event: any) => {
+          setInputTextValue(event.target.value);
           valueChange('name', event.target.value);
         }}
       />
@@ -38,12 +39,10 @@ const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
           valueChange('items', e);
         }}
         border={false}
+        maxFile={5}
+        parentData={data}
       />
-      <Config
-        data={data}
-        configList={configList}
-        valueChange={valueChange}
-      />
+      <Config data={data} configList={configList} valueChange={valueChange} />
     </React.Fragment>
   );
 };

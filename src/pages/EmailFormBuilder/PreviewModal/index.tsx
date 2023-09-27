@@ -9,6 +9,8 @@ import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/e
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 import { copyArray } from '@/utils/logicHelper';
 
+import { getImage } from '../../../services/Images/imageUtils';
+
 export default function PreviewModal(props: any) {
   const { open, toggle, id } = props;
   const fetchGetEmailFormBuilder = useGetEmailFormBuilderDetailQuery({
@@ -295,18 +297,23 @@ export default function PreviewModal(props: any) {
                 </span>
               </label>
               <div className="w-full flex flex-col gap-4">
-                {items?.map((_element: any, index: number) => (
-                  <label key={index} className="label cursor-pointer justify-start flex gap-2 p-0">
-                    <input
-                      type="radio"
-                      name={nameId}
-                      className="radio radio-primary h-[22px] w-[22px] bg-white"
-                    />
-                    <div
-                      className="w-32 h-32 bg-[#5E217C] bg-cover" />
-                      {/* style={{ backgroundImage: `url(${imageUrls[index]})` }}></div> */}
-                  </label>
-                ))}
+                {items?.map(async (element: any, index: number) => {
+                  const imageUrl = await getImage(element.value);
+                  return (
+                    <label
+                      key={index}
+                      className="label cursor-pointer justify-start flex gap-2 p-0">
+                      <input
+                        type="radio"
+                        name={nameId}
+                        className="radio radio-primary h-[22px] w-[22px] bg-white"
+                      />
+                      <div
+                        className="w-32 h-32 bg-[#5E217C] bg-cover"
+                        style={{ backgroundImage: `url(${imageUrl})})` }}></div>
+                    </label>
+                  );
+                })}
               </div>
             </div>
           );
