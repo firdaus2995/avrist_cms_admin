@@ -31,6 +31,8 @@ import ModalForm from '@/components/molecules/ModalForm';
 import ModalLog from './components/ModalLog';
 import TimelineLog from '@/assets/timeline-log.svg';
 import dayjs from 'dayjs';
+import TableDelete from '@/assets/table-delete.svg';
+import { t } from 'i18next';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -270,6 +272,8 @@ export default function ContentManagerDetailData() {
       });
       setContentTempData(defaultFormData);
     }
+
+    console.log(contentDataDetailList?.contentData)
   }, [contentDataDetailList?.contentData]);
 
   const addNewLoopingField = (loopingId: any) => {
@@ -320,6 +324,24 @@ export default function ContentManagerDetailData() {
       });
 
       setContentTempData(updatedContentTempData);
+    }
+  };
+
+  const deleteLoopingField = (id: any, idx: any) => {
+    const updatedContentDataDetailList = { ...contentDataDetailList };
+
+    const loopingElement = updatedContentDataDetailList.contentData.find(
+      (element: { id: any; }) => element.id === id
+    );
+
+    if (loopingElement) {
+      const targetDetailElement = loopingElement.contentData[idx];
+
+      if (targetDetailElement) {
+        loopingElement.contentData.splice(idx, 1);
+
+        setContentDataDetailList(updatedContentDataDetailList);
+      }
     }
   };
 
@@ -649,12 +671,28 @@ export default function ContentManagerDetailData() {
         case 'LOOPING':
           return (
             <div key={id}>
-              {contentData?.map((value: { details: any[] }, idx: Key | null | undefined) => (
+              {contentData?.map((value: { details: any[] }, idx: Key) => (
                 <>
                   <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
                     {name}
                   </Typography>
                   <div key={idx} className="card w-full shadow-md p-5 mt-5">
+                    <div className="p-2 flex items-end justify-end">
+                      <div className="px-4 py-2 bg-light-purple rounded-xl font-semibold text-bright-purple">
+                        {(idx as number) + 1}
+                      </div>
+                      {(idx as number) > 0 && (
+                        <div className="tooltip ml-2" data-tip={t('action.delete')}>
+                          <img
+                            className={`cursor-pointer select-none flex items-center justify-center`}
+                            src={TableDelete}
+                            onClick={() => {
+                              deleteLoopingField(id, idx);
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
                     {value.details.map(
                       (val: { fieldType: any; id: any; value: any; name: any }) => {
                         switch (val.fieldType) {

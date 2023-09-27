@@ -17,6 +17,7 @@ import FormList from '@/components/molecules/FormList';
 
 import Plus from '@/assets/plus-purple.svg';
 import CancelIcon from '@/assets/cancel.png';
+import TableDelete from '@/assets/table-delete.svg';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -33,6 +34,7 @@ export default function ContentManagerNew() {
     total: null,
     attributeList: [],
   });
+  const [orderList, setOrderList] = useState<any>([]);
 
   // FORM VALIDATION
   const {
@@ -263,7 +265,9 @@ export default function ContentManagerNew() {
 
       setLoopingDupCount(prevCount => ({
         ...prevCount,
-        [loopingId]: (prevCount[loopingId] || 0) + 1,
+        [postTypeDetail.attributeList[existingLoopingIndex].duplicateId || loopingId]:
+          (prevCount[postTypeDetail.attributeList[existingLoopingIndex].duplicateId || loopingId] ||
+            0) + 1,
       }));
 
       setContentTempData(prevContentTempData => [
@@ -307,7 +311,56 @@ export default function ContentManagerNew() {
       });
       setContentTempData(defaultFormData);
     }
+
+    const order = generateOrderData(postTypeDetail?.attributeList);
+    setOrderList(order);
   }, [postTypeDetail?.attributeList]);
+
+  function generateOrderData(inputData: any[]) {
+    // Filter hanya LOOPING yang memiliki duplicateId
+    const loopingDataWithDuplicate = inputData.filter(
+      (item: { fieldType: string; duplicateId: any }) =>
+        item.fieldType === 'LOOPING' && item.duplicateId,
+    );
+
+    // Inisialisasi orderData
+    const orderData: Array<{ id: any; order: any }> = [];
+
+    // Membuat map untuk melacak urutan berdasarkan duplicateId
+    const orderMap = new Map();
+
+    // Mengisi orderMap dengan urutan berdasarkan duplicateId
+    loopingDataWithDuplicate.forEach((loopingItem: { duplicateId: any; id: any }) => {
+      const duplicateId = loopingItem.duplicateId;
+      if (duplicateId !== null) {
+        if (!orderMap.has(duplicateId)) {
+          orderMap.set(duplicateId, 2); // Mengatur urutan awal
+        }
+        const order = orderMap.get(duplicateId);
+        orderData.push({
+          id: loopingItem.id,
+          order,
+        });
+        // Increment urutan untuk duplicateId selanjutnya
+        orderMap.set(duplicateId, (order as number) + 1);
+      }
+    });
+
+    // Menambahkan orderData untuk LOOPING yang tidak memiliki duplicateId (order 1)
+    const loopingDataWithoutDuplicate = inputData.filter(
+      (item: { fieldType: string; duplicateId: any }) =>
+        item.fieldType === 'LOOPING' && !item.duplicateId,
+    );
+    loopingDataWithoutDuplicate.forEach((loopingItem: { id: any }) => {
+      orderData.push({
+        id: loopingItem.id,
+        order: 1, // Urutan 1
+      });
+    });
+
+    // Mengembalikan orderData yang telah diurutkan
+    return orderData.sort((a, b) => a.order - b.order);
+  }
 
   const onLeave = () => {
     setShowLeaveModal(false);
@@ -351,17 +404,47 @@ export default function ContentManagerNew() {
       });
   };
 
+  const deleteLoopingField = (id: any) => {
+    const existingLoopingIndex = postTypeDetail.attributeList.findIndex(
+      (attribute: { id: any }) => attribute.id === id,
+    );
+
+    if (existingLoopingIndex !== -1) {
+      const loopingToDelete = postTypeDetail.attributeList[existingLoopingIndex];
+
+      // Mendapatkan duplicateId dari looping yang akan dihapus
+      const duplicateId = loopingToDelete.duplicateId;
+
+      // Hapus looping dari postTypeDetail.attributeList
+      const updatedAttributeList = [...postTypeDetail.attributeList];
+      updatedAttributeList.splice(existingLoopingIndex, 1);
+
+      // Set state dengan atribut yang telah diperbarui
+      setPostTypeDetail((prevPostTypeDetail: any) => ({
+        ...prevPostTypeDetail,
+        attributeList: updatedAttributeList,
+      }));
+
+      // Hapus hitungan dari loopingDupCount berdasarkan duplicateId
+      if (loopingDupCount[duplicateId]) {
+        const updatedLoopingDupCount = { ...loopingDupCount };
+        updatedLoopingDupCount[duplicateId] -= 1;
+        setLoopingDupCount(updatedLoopingDupCount);
+      }
+    }
+  };
+
   const renderFormList = () => {
     // DEFAULT VALUE
-
     return postTypeDetail?.attributeList.map((props: any, index: number) => {
-      const { id, name, fieldType, attributeList, config } = props;
+      const { id, name, fieldType, attributeList, config, duplicateId } = props;
       const configs = JSON.parse(config);
 
-      const loopingCount = loopingDupCount[id] || 0;
-      const showAddDataButton =
-        loopingCount === 0 ||
-        (loopingCount > 0 && index === postTypeDetail.attributeList.length - 1);
+      const loopingCount = loopingDupCount[id] || loopingDupCount[duplicateId] || 0;
+
+      const aa = postTypeDetail?.attributeList.filter((val: { duplicateId: any; }) => val.duplicateId === duplicateId);
+
+      const showAddDataButton = loopingCount === 0 || loopingCount > 0 && aa.slice(-1).pop().id === id;
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -678,6 +761,22 @@ export default function ContentManagerNew() {
                 {name}
               </Typography>
               <div className="card w-full shadow-md p-5">
+                <div className="p-2 flex items-end justify-end">
+                  <div className="px-4 py-2 bg-light-purple rounded-xl font-semibold text-bright-purple">
+                    {orderList?.find((entry: { id: any }) => entry.id === id)?.order}
+                  </div>
+                  {orderList?.find((entry: { id: any }) => entry.id === id)?.order > 1 && (
+                    <div className="tooltip ml-2" data-tip={t('action.delete')}>
+                      <img
+                        className={`cursor-pointer select-none flex items-center justify-center`}
+                        src={TableDelete}
+                        onClick={() => {
+                          deleteLoopingField(id);
+                        }}
+                      />
+                    </div>
+                  )}
+                </div>
                 {attributeList?.map((val: { name: any; id: any; fieldType: any; config: any }) => {
                   const configs = JSON.parse(val?.config);
 
@@ -980,19 +1079,19 @@ export default function ContentManagerNew() {
                       return <p>err</p>;
                   }
                 })}
-                {showAddDataButton && (
-                  <div className="flex justify-end mt-8">
-                    <button
-                      onClick={() => {
-                        addNewLoopingField(id);
-                      }}
-                      className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                      <img src={Plus} className="mr-3" />
-                      Add Data
-                    </button>
-                  </div>
-                )}
               </div>
+              {showAddDataButton && (
+                <div className="flex justify-end mt-8">
+                  <button
+                    onClick={() => {
+                      addNewLoopingField(id);
+                    }}
+                    className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                    <img src={Plus} className="mr-3" />
+                    Add Data
+                  </button>
+                </div>
+              )}
             </div>
           );
         default:
