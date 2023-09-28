@@ -35,6 +35,15 @@ const EmailFormBuilderNewPage = React.lazy(
 const EmailFormBuilderEditPage = React.lazy(
   async () => await import('../pages/EmailFormBuilder/EmailFormBuilderEdit'),
 );
+const EmailBodyNewPage = React.lazy(
+  async () => await import('../pages/EmailFormBuilder/EmailBodyNew'),
+)
+const EmailBodyPreviewPage = React.lazy(
+  async () => await import('../pages/EmailFormBuilder/EmailBodyPreview'),
+)
+const EmailBodyEditPage = React.lazy(
+  async () => await import('../pages/EmailFormBuilder/EmailBodyEdit'),
+)
 
 const PageManagementPage = React.lazy(async () => await import('../pages/PageManagement'));
 const PageManagementArchivePage = React.lazy(
@@ -121,6 +130,9 @@ export default function RoutesComponent() {
           <Route path="email-form-builder" element={<EmailFormBuilderListPage />} />
           <Route path="email-form-builder/new" element={<EmailFormBuilderNewPage />} />
           <Route path="email-form-builder/edit/:id" element={<EmailFormBuilderEditPage />} />
+          <Route path="email-form-builder/new-body" element={<EmailBodyNewPage />} />
+          <Route path="email-form-builder/view-body/:id" element={<EmailBodyPreviewPage />} />
+          <Route path="email-form-builder/edit-body/:id" element={<EmailBodyEditPage />} />
           {/* PAGE MANAGEMENT */}
           <Route path="page-management" element={<PageManagementPage />} />
           <Route path="page-management/archive" element={<PageManagementArchivePage />} />

@@ -39,16 +39,18 @@ function uploadPlugin(editor: any) {
 }
 
 interface ICkEditor {
+  data?: string;
   onChange?: (data: string) => void;
 }
 
 export default function CkEditor({
+  data,
   onChange,
 }: ICkEditor) {
   return (
     <CKEditor
       disabled={false}
-      data=''
+      data={data ?? ''}
       editor={Editor}
       config={{
         extraPlugins: [uploadPlugin],
