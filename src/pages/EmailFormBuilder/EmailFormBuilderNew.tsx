@@ -24,7 +24,7 @@ import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
-import { useCreateEmailFormBuilderMutation, useGetFormTemplateQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
+import { useCreateEmailFormBuilderMutation, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
 
 export default function EmailFormBuilderNew() {
@@ -63,7 +63,7 @@ export default function EmailFormBuilderNew() {
   }] = useCreateEmailFormBuilderMutation();
 
   // RTK GET FORM TEMPLATE
-  const { data: dataFormTemplate } = useGetFormTemplateQuery({}, {
+  const { data: dataFormTemplate } = useGetFormResultQuery({}, {
     refetchOnMountOrArgChange: true,
   });  
 
@@ -83,7 +83,7 @@ export default function EmailFormBuilderNew() {
 
   useEffect(() => {
     if (dataFormTemplate) {
-      setListFormTemplate(dataFormTemplate?.formTemplateList?.templates.map((element: any) => {
+      setListFormTemplate(dataFormTemplate?.formResultList?.templates.map((element: any) => {
         return {
           value: element.id,
           label: element.title,
@@ -262,7 +262,7 @@ export default function EmailFormBuilderNew() {
     const payload = {
       name: formName,
       attributeRequests: backendComponents,
-      formTemplate,
+      formResult: formTemplate,
     };
 
     // console.log('ini payload ', payload);
