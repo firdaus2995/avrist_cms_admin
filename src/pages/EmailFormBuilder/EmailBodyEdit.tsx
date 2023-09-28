@@ -90,7 +90,7 @@ export default function EmailBodyEdit() {
 
   return (
     <TitleCard
-      title="New Email Body"
+      title="Edit Email Body"
       topMargin="mt-2"
     >
       <ModalConfirm
