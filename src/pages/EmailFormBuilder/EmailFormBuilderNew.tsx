@@ -24,7 +24,7 @@ import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
-import { useCreateEmailFormBuilderMutation, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
+import { useCreateEmailFormBuilderMutation, useGetEmailBodyQuery, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
 
 export default function EmailFormBuilderNew() {
@@ -36,6 +36,7 @@ export default function EmailFormBuilderNew() {
   // FORM STATE
   const [formName, setFormName] = useState<any>("");
   const [formTemplate, setFormTemplate] = useState<any>(null);
+  const [emailBody, setEmailBody] = useState<any>(null);
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
   const [checkCaptcha, setCheckCaptcha] = useState<any>(true);
   const [pics, setPics] = useState<any>([]);
@@ -43,6 +44,7 @@ export default function EmailFormBuilderNew() {
   const [activeComponent, setActiveComponent] = useState<any>(null);
   // LIST STATE
   const [listFormTemplate, setListFormTemplate] = useState<any>([]);
+  const [listEmailBody, setListEmailBody] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
@@ -53,19 +55,40 @@ export default function EmailFormBuilderNew() {
   const [messageCaptchaModalShow, setMessageCaptchaModalShow] = useState<string | null>('');
 
   // RTK GET ATTRIBUTE
-  const { data: dataAttribute } = useGetEmailFormAttributeListQuery({}, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: dataAttribute } = useGetEmailFormAttributeListQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  
+  // RTK GET FORM TEMPLATE
+  const { data: dataFormTemplate } = useGetFormResultQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  // RTK GET DATA EB
+  const fetchQueryEB = useGetEmailBodyQuery(
+    {
+      pageIndex: 0,
+      limit: 9999,
+      sortBy : 'id',
+      direction : 'asc',
+      search: '',
+    },
+    {
+      refetchOnMountOrArgChange: true
+    },
+  );
+  const { data: dataEB } = fetchQueryEB;    
 
   // RTK CREATE EMAIL
   const [ createEmailFormBuilder, {
     isLoading,
   }] = useCreateEmailFormBuilderMutation();
-
-  // RTK GET FORM TEMPLATE
-  const { data: dataFormTemplate } = useGetFormResultQuery({}, {
-    refetchOnMountOrArgChange: true,
-  });  
 
   useEffect(() => {
     if (dataAttribute?.getConfig) {
@@ -75,7 +98,6 @@ export default function EmailFormBuilderNew() {
       for (const element of arrayFormAttribute) {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
       }
-      console.log(arrayFormAttribute);
       setFormAttribute(arrayFormAttribute);
       setObjectFormAttribute(objectFormAttribute);
     }
@@ -92,6 +114,17 @@ export default function EmailFormBuilderNew() {
       }));
     };
   }, [dataFormTemplate]);
+
+  useEffect(() => {
+    if (dataEB) {
+      setListEmailBody(dataEB?.emailBodyList?.emailBodies.map((element: any) => {
+        return {
+          value: element.id,
+          label: element.title,
+        };
+      }));
+    };
+  }, [dataEB]);
 
   const onSave = () => {
     // ALL COMPONENTS
@@ -250,6 +283,15 @@ export default function EmailFormBuilderNew() {
       value: checkCaptcha ? 'true' : 'false',
     });
 
+    if (emailBody) {
+      backendComponents.unshift({
+        fieldType: 'EMAIL_BODY',
+        name: 'EMAIL_BODY',
+        fieldId: 'EMAIL_BODY',
+        value: emailBody.toString(),
+      });
+    };
+
     if (pics.length > 0) {
       backendComponents.unshift({
         fieldType: 'EMAIL_FORM_PIC',
@@ -257,7 +299,7 @@ export default function EmailFormBuilderNew() {
         fieldId: 'EMAIL_FORM_PIC',
         value: pics.join(';'),
       });
-    }
+    };
 
     const payload = {
       name: formName,
@@ -996,7 +1038,21 @@ export default function EmailFormBuilderNew() {
               onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                 if (event) {
                   setFormTemplate(value);
-                }
+                };
+              }}
+            />
+            <DropDown
+              labelTitle="Email Body"
+              labelStyle="font-bold	"
+              direction='row'
+              inputWidth={400}
+              labelEmpty="Choose Email Body"
+              labelRequired={true}
+              items={listEmailBody}
+              onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                if (event) {
+                  setEmailBody(value);
+                };
               }}
             />
             <MultipleInput

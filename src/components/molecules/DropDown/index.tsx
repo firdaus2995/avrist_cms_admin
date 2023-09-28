@@ -98,7 +98,7 @@ const DropDown = ({
         </button>
         <ul
           tabIndex={0} 
-          className={`w-full absolute p-2 mt-0.5 shadow bg-base-100 rounded-box max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-xl ${!open && `hidden`}`}
+          className={`w-full absolute p-2 mt-0.5 shadow bg-base-100 rounded-box max-h-52 overflow-auto border-[1px] border-neutral-300 rounded-xl z-50 ${!open && `hidden`}`}
         >
           {
             items.map((element: IItems, keyIndex: number) => {

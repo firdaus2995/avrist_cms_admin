@@ -24,8 +24,7 @@ import { MultipleInput } from '@/components/molecules/MultipleInput';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { checkIsEmail, copyArray } from '@/utils/logicHelper';
-import { useGetEmailFormBuilderDetailQuery, useUpdateEmailFormBuilderMutation, useGetFormResultQuery,
-} from '@/services/EmailFormBuilder/emailFormBuilderApi';
+import { useGetEmailFormBuilderDetailQuery, useUpdateEmailFormBuilderMutation, useGetEmailBodyQuery, useGetFormResultQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { useGetEmailFormAttributeListQuery } from '@/services/Config/configApi';
 
 export default function EmailFormBuilderEdit() {
@@ -38,6 +37,7 @@ export default function EmailFormBuilderEdit() {
   // FORM STATE
   const [formName, setFormName] = useState<any>('');
   const [formTemplate, setFormTemplate] = useState<any>(null);
+  const [emailBody, setEmailBody] = useState<any>(null);
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
   const [checkCaptcha, setCheckCaptcha] = useState<any>(true);
   const [pics, setPics] = useState<any>([]);
@@ -45,6 +45,7 @@ export default function EmailFormBuilderEdit() {
   const [activeComponent, setActiveComponent] = useState<any>(null);
   // LIST STATE
   const [listFormTemplate, setListFormTemplate] = useState<any>([]);
+  const [listEmailBody, setListEmailBody] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
@@ -61,7 +62,30 @@ export default function EmailFormBuilderEdit() {
       refetchOnMountOrArgChange: true,
     },
   );
+  
+  // RTK GET FORM TEMPLATE
+  const { data: dataFormTemplate } = useGetFormResultQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
+  // RTK GET DATA EB
+  const fetchQueryEB = useGetEmailBodyQuery(
+    {
+      pageIndex: 0,
+      limit: 9999,
+      sortBy : 'id',
+      direction : 'asc',
+      search: '',
+    },
+    {
+      refetchOnMountOrArgChange: true
+    },
+  );
+  const { data: dataEB } = fetchQueryEB;      
+  
   // RTK GET DETAIL
   const { data: dataDetail } = useGetEmailFormBuilderDetailQuery(
     { id, pageIndex: 0, limit: 99 },
@@ -71,15 +95,9 @@ export default function EmailFormBuilderEdit() {
   );
 
   // RTK UPDATE EMAIL
-  // const [updateEmailFormBuilder, { isLoading }] = useUpdateEmailFormBuilderMutation();
-
-  // RTK GET FORM TEMPLATE
-  const { data: dataFormTemplate } = useGetFormResultQuery(
-    {},
-    {
-      refetchOnMountOrArgChange: true,
-    },
-  );
+  const [updateEmailFormBuilder, { 
+    isLoading,
+  }] = useUpdateEmailFormBuilderMutation();
 
   useEffect(() => {
     if (dataAttribute?.getConfig) {
@@ -95,8 +113,6 @@ export default function EmailFormBuilderEdit() {
     }
   }, [dataAttribute]);
 
-  // RTK UPDATE EMAIL
-  const [updateEmailFormBuilder, { isLoading }] = useUpdateEmailFormBuilderMutation();
   useEffect(() => {
     if (dataFormTemplate) {
       setListFormTemplate(
@@ -112,6 +128,17 @@ export default function EmailFormBuilderEdit() {
   }, [dataFormTemplate]);
 
   useEffect(() => {
+    if (dataEB) {
+      setListEmailBody(dataEB?.emailBodyList?.emailBodies.map((element: any) => {
+        return {
+          value: element.id,
+          label: element.title,
+        };
+      }));
+    };
+  }, [dataEB]);
+
+  useEffect(() => {
     if (dataDetail) {
       const emailFormBuilderDetail: any = dataDetail?.postTypeDetail;
 
@@ -119,6 +146,7 @@ export default function EmailFormBuilderEdit() {
       const pic: any = emailFormBuilderDetail?.pic?.split(';') ?? [];
       const captcha: any = emailFormBuilderDetail?.enableCaptcha;
       const formTemplateId: any = emailFormBuilderDetail?.formResult?.id;
+      const emailBodyId: any = emailFormBuilderDetail?.emailBody?.id;
 
       const attributeList: any = emailFormBuilderDetail?.attributeList.map((element: any) => {
         const config: any = element?.config !== '' ? JSON.parse(element?.config) : {};
@@ -191,6 +219,7 @@ export default function EmailFormBuilderEdit() {
       setCheckCaptcha(captcha);
       setComponents(attributeList);
       setFormTemplate(formTemplateId);
+      setEmailBody(emailBodyId);
     }
   }, [dataDetail]);
 
@@ -351,6 +380,15 @@ export default function EmailFormBuilderEdit() {
       value: checkCaptcha ? 'true' : 'false',
     });
 
+    if (emailBody) {
+      backendComponents.unshift({
+        fieldType: 'EMAIL_BODY',
+        name: 'EMAIL_BODY',
+        fieldId: 'EMAIL_BODY',
+        value: emailBody.toString(),
+      });
+    };
+
     if (pics.length > 0) {
       backendComponents.unshift({
         fieldType: 'EMAIL_FORM_PIC',
@@ -358,7 +396,7 @@ export default function EmailFormBuilderEdit() {
         fieldId: 'EMAIL_FORM_PIC',
         value: pics.join(';'),
       });
-    }
+    };
 
     const payload = {
       id,
@@ -1059,6 +1097,21 @@ export default function EmailFormBuilderEdit() {
                 if (event) {
                   setFormTemplate(value);
                 }
+              }}
+            />
+            <DropDown
+              labelTitle="Email Body"
+              labelStyle="font-bold	"
+              direction='row'
+              inputWidth={400}
+              labelEmpty="Choose Email Body"
+              labelRequired={true}
+              defaultValue={emailBody}
+              items={listEmailBody}
+              onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                if (event) {
+                  setEmailBody(value);
+                };
               }}
             />
             <MultipleInput
