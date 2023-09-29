@@ -13,6 +13,7 @@ interface IInputText {
   type?: HTMLInputTypeAttribute;
   containerStyle?: string;
   value?: string | number;
+  maxLength?: number;
   placeholder?: string | null;
   disabled?: boolean;
   direction?: string;
@@ -36,6 +37,7 @@ export const InputText: React.FC<IInputText> = ({
   type,
   containerStyle = '',
   value,
+  maxLength,
   placeholder,
   disabled,
   onChange,
@@ -74,14 +76,13 @@ export const InputText: React.FC<IInputText> = ({
           value={value}
           disabled={disabled}
           placeholder={placeholder ?? ''}
+          maxLength={maxLength ?? undefined}
           onChange={e => {
             if (onChange) {
               onChange(e);
             }
           }}
-          className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
-            disabled ? 'text-[#637488]' : ''
-          }`}
+          className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${disabled ? 'text-[#637488]' : ''}`}
         />
         <div className="relative right-8">{suffix ?? ''}</div>
       </div>

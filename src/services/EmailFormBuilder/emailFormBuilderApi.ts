@@ -13,7 +13,7 @@ export const emailFormBuilderApi = createApi({
             formResultList(
               pageableRequest: {
                 pageIndex: 0
-                limit: 9999
+                limit: 5
               }
             ) {
               total
@@ -39,18 +39,22 @@ export const emailFormBuilderApi = createApi({
                 limit: $limit
               }
             ) {
+              total
               id
               name
               postTypeGroup
               slug
+              pic
+              enableCaptcha
               formResult {
                 id
                 title
                 shortDesc
               }
-              pic
-              enableCaptcha
-              total
+              emailBody {
+                id
+                title
+              }
               attributeList {
                 id
                 name
