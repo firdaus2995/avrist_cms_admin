@@ -17,6 +17,7 @@ import { copyArray } from '@/utils/logicHelper';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
 import { useDeleteNotificationMutation, useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
+import { t } from 'i18next';
 
 const Layout: React.FC<any> = props => {
   const location = useLocation();
@@ -199,7 +200,7 @@ const Layout: React.FC<any> = props => {
         }}
       >
         <img className="w-[18px]" src={NotifCheck} />
-        <span className='text-[16px] font-semibold text-purple'>Mark All as Read</span>
+        <span className='text-[16px] font-semibold text-purple'>{t('user.notification.mark-all-as-read')}</span>
       </div>
     )
   };
@@ -237,7 +238,7 @@ const Layout: React.FC<any> = props => {
                 <div className="flex flex-row">
                   <CheckBox
                     defaultValue={isSelectedAll}
-                    labelTitle="Select All"
+                    labelTitle={t('user.notification.selected-all')}
                     updateFormValue={(event: any) => {
                       handlerSelectAll(event.value);
                     }}
@@ -253,7 +254,7 @@ const Layout: React.FC<any> = props => {
                           void handlerDeleteNotificationSelected();
                         }}
                       >
-                        Delete Selected
+                        {t('user.notification.delete')} {t('user.notification.selected')}
                       </p>
                     </div>
                   )
@@ -304,7 +305,7 @@ const Layout: React.FC<any> = props => {
                                   }}
                                 >
                                   <img className="w-[18px] h-[18px]" src={DeleteSmall} />
-                                  <p className="text-[14px] text-body-text-2">Delete</p>
+                                  <p className="text-[14px] text-body-text-2">{t('user.notification.delete')}</p>
                                 </div>
                               )
                             }

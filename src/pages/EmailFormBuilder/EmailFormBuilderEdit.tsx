@@ -1188,10 +1188,10 @@ export default function EmailFormBuilderEdit() {
             setShowLeaveModal(false);
           }}
           title={titleLeaveModalShow ?? ''}
-          cancelTitle="No"
+          cancelTitle={t('user.email-form-builder-new.email-form-builder.add.modal-confirm.leave.cancel-title')}
           message={messageLeaveModalShow ?? ''}
           submitAction={onLeave}
-          submitTitle="Yes"
+          submitTitle={t('user.email-form-builder-new.email-form-builder.add.modal-confirm.leave.submit-title')}
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
@@ -1229,10 +1229,12 @@ export default function EmailFormBuilderEdit() {
             setCheckCaptcha(true);
           }}
           title={titleCaptchaModalShow ?? ''}
-          cancelTitle="Cancel"
-          message={messageCaptchaModalShow ?? ''}
+          cancelTitle={t('user.email-form-builder-new.email-form-builder.add.cancel-button')}
+          message={
+            messageCaptchaModalShow ?? ''
+          }
           submitAction={onCloseCaptcha}
-          submitTitle="Yes"
+          submitTitle={t('user.email-form-builder-new.email-form-builder.add.modal-confirm.leave.submit-title')}
           icon={Recaptcha}
           btnSubmitStyle="btn-warning"
         />
@@ -1240,12 +1242,12 @@ export default function EmailFormBuilderEdit() {
           {/* TOP SECTION */}
           <div className="flex flex-col gap-3">
             <InputText
-              labelTitle="Form Name"
-              labelStyle="font-bold	"
+              labelTitle={t('user.email-form-builder-new.email-form-builder.add.form-name-label')}
+              labelStyle="font-bold"
               labelRequired
               direction="row"
               roundStyle="xl"
-              placeholder="Enter new form name"
+              placeholder={t('user.email-form-builder-new.email-form-builder.add.form-name-placeholder')}
               inputWidth={400}
               value={formName}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -1253,11 +1255,11 @@ export default function EmailFormBuilderEdit() {
               }}
             />
             <DropDown
-              labelTitle="Form Template"
-              labelStyle="font-bold	"
+              labelTitle={t('user.email-form-builder-new.email-form-builder.add.form-template-label') ?? ''}
+              labelStyle="font-bold"
               direction="row"
               inputWidth={400}
-              labelEmpty="Choose Form Template"
+              labelEmpty={t('user.email-form-builder-new.email-form-builder.add.form-template-empty') ?? ''}
               labelRequired={true}
               defaultValue={formTemplate}
               items={listFormTemplate}
@@ -1295,14 +1297,14 @@ export default function EmailFormBuilderEdit() {
               }
             </div>
             <MultipleInput
-              labelTitle="PIC"
-              labelStyle="font-bold	"
+              labelTitle={t('user.email-form-builder-new.email-form-builder.add.pic-label')}
+              labelStyle="font-bold"
               inputStyle="rounded-xl "
               inputWidth={400}
               direction="row"
               items={pics}
               logicValidation={checkIsEmail}
-              errorAddValueMessage="The PIC filling format must be email format"
+              errorAddValueMessage={t('user.email-form-builder-new.email-form-builder.add.pic-error-message') ?? ''}
               onAdd={handlerAddMultipleInput}
               onDelete={handlerDeleteMultipleInput}
             />
@@ -1312,7 +1314,7 @@ export default function EmailFormBuilderEdit() {
                 updateFormValue={(event: any) => {
                   handlerSubmitterEmail(event.value);
                 }}
-                labelTitle="Also send to submitter email"
+                labelTitle={t('user.email-form-builder-new.email-form-builder.add.also-send-label')}
                 labelContainerStyle="justify-start"
                 containerStyle="ml-[225px] "
               />
@@ -1321,7 +1323,7 @@ export default function EmailFormBuilderEdit() {
                 updateFormValue={(event: any) => {
                   handlerCaptcha(event.value);
                 }}
-                labelTitle="Use Captcha"
+                labelTitle={t('user.email-form-builder-new.email-form-builder.add.use-captcha-label')}
                 labelContainerStyle="justify-start"
               />
             </div>
@@ -1335,14 +1337,14 @@ export default function EmailFormBuilderEdit() {
             <div className="mt-4 flex flex-row w-100 h-[700px] gap-2">
               {/* DRAG COMPONENT */}
               <div className="flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
-                <h2 className="font-bold p-3">Component List</h2>
+                <h2 className="font-bold p-3">{t('user.email-form-builder-new.email-form-builder.add.component-list')}</h2>
                 <div className="flex flex-col gap-3 overflow-auto p-2 border-[1px] border-transparent">
                   {renderDragComponents()}
                 </div>
               </div>
               {/* DROP COMPONENT */}
               <div className="flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
-                <h2 className="font-bold p-3">Form Preview</h2>
+                <h2 className="font-bold p-3">{t('user.email-form-builder-new.email-form-builder.add.form-preview')}</h2>
                 <Drop
                   onDropped={(item: any) => {
                     handlerAddComponent(item.name);
@@ -1352,7 +1354,7 @@ export default function EmailFormBuilderEdit() {
               </div>
               {/* CONFIGURATION */}
               <div className="flex flex-1 flex-col border-[1px] border-light-grey rounded-2xl p-2 gap-6">
-                <h2 className="font-bold p-3">Configuration Bar</h2>
+                <h2 className="font-bold p-3">{t('user.email-form-builder-new.email-form-builder.add.configuration-bar')}</h2>
                 <div className="flex flex-col gap-2 overflow-auto p-2 border-[1px] border-transparent">
                   {renderConfiguration()}
                 </div>

@@ -114,8 +114,8 @@ const Table: React.FC<IDataGrid> = props => {
               colspan={columns.length}
               message={
                 error
-                  ? 'Maaf data tidak tersedia, mohon coba beberapa saat lagi'
-                  : 'Data tidak tersedia'
+                  ? 'Data not found'
+                  : 'No Data'
               }
             />
           )}

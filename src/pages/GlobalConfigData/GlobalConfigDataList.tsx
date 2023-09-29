@@ -17,6 +17,7 @@ import WarningIcon from '@/assets/warning.png';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import { getCredential } from '@/utils/Credential';
+import { t } from 'i18next';
 
 const TopRightButton = () => {
   return (
@@ -41,7 +42,7 @@ const CreateButton = () => {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add New Data
+            {t('user.global-config-data-list.addNewData')}
           </div>
         </button>
       </Link>
@@ -112,7 +113,7 @@ export default function GlobalConfigDataList() {
   // TABLE COLUMN
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Key</span>,
+      header: () => <span className="text-[14px]">{t('user.global-config-data-list.columns.key')}</span>, // Update with i18n
       accessorKey: 'variable',
       enableSorting: true,
       cell: (info: any) => (
@@ -124,7 +125,7 @@ export default function GlobalConfigDataList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Value</span>,
+      header: () => <span className="text-[14px]">{t('user.global-config-data-list.columns.value')}</span>, // Update with i18n
       accessorKey: 'value',
       enableSorting: false,
       cell: (info: any) => (
@@ -136,7 +137,7 @@ export default function GlobalConfigDataList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Description</span>,
+      header: () => <span className="text-[14px]">{t('user.global-config-data-list.columns.description')}</span>, // Update with i18n
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
@@ -148,14 +149,14 @@ export default function GlobalConfigDataList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('action.action')}</span>,
+      header: () => <span className="text-[14px]">{t('user.global-config-data-list.action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3 w-20">
           {canEdit && (
             <Link to={`edit/${info.row?.original?.variable}`}>
-              <div className="tooltip" data-tip={t('action.edit')}>
+              <div className="tooltip" data-tip={t('user.global-config-data-list.action.edit')}>
                 <img
                   className={`cursor-pointer select-none flex items-center justify-center`}
                   src={TableEdit}
@@ -164,7 +165,7 @@ export default function GlobalConfigDataList() {
             </Link>
           )}
           {canDelete && (
-            <div className="tooltip" data-tip={t('action.delete')}>
+            <div className="tooltip" data-tip={t('user.global-config-data-list.action.delete')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
                 src={TableDelete}
@@ -208,8 +209,8 @@ export default function GlobalConfigDataList() {
 
   const onClickDelete = (id: number, title: string) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete ${title}?`);
+    setTitleConfirm(t('user.global-config-data-list.modalConfirm.title') ?? '');
+    setMessageConfirm(t('user.global-config-data-list.modalConfirm.message', { title }) ?? '');
     setShowConfirm(true);
   };
 
@@ -222,7 +223,7 @@ export default function GlobalConfigDataList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Page',
+            title: t('user.global-config-data-list.toast.successDeletePage'),
             message: d.pageDelete.message,
           }),
         );
@@ -233,12 +234,13 @@ export default function GlobalConfigDataList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Page',
-            message: 'Something went wrong!',
+            title: t('user.global-config-data-list.toast.failedDeletePage'),
+            message: t('user.global-config-data-list.toast.somethingWentWrong'),
           }),
         );
       });
   };
+
   return (
     <>
       <ModalConfirm
@@ -247,26 +249,27 @@ export default function GlobalConfigDataList() {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.global-config-data-list.modalConfirm.cancelTitle')}
         message={messageConfirm}
         submitAction={submitDeleteData}
-        submitTitle="Yes"
+        submitTitle={t('user.global-config-data-list.modalConfirm.submitTitle')}
         loading={deleteDataLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
       />
       <TitleCard
-        title="Global Config Data"
+        title={t('user.global-config-data-list.title')}
         topMargin="mt-2"
         SearchBar={
           <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.global-config-data-list.searchPlaceholder') ?? ''}
           />
         }
-        TopSideButtons={canCreate && <TopRightButton />}>
+        TopSideButtons={canCreate && <TopRightButton />}
+      >
         <div className="w-full mb-5">
           <Table
             rows={listData}

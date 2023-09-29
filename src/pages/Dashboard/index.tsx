@@ -6,6 +6,7 @@ import content3 from "../../assets/home/content-3.png";
 import { Link, To } from 'react-router-dom';
 import { useGetUserGuideQuery } from '@/services/Config/configApi';
 import { store } from '@/store';
+import { t } from 'i18next';
 
 export default function Dashboard() {
   const [url, setUrl] = useState("");
@@ -21,23 +22,23 @@ export default function Dashboard() {
 
   const data = [
     {
-      title: 'Regist Page Template',
-      subtitle: 'Regist your new page template for Avrist Website',
-      btnText: 'Page Template',
+      title: t('dashboard.shortcut.regist-template-page.title'),
+      subtitle: t('dashboard.shortcut.regist-template-page.subtitle'),
+      btnText: t('dashboard.shortcut.regist-template-page.button'),
       path: '/page-template/new',
       image: content1,
     },
     {
-      title: 'Add Content',
-      subtitle: 'Dive into the editor and start creating content',
-      btnText: 'Content Manager',
+      title: t('dashboard.shortcut.add-content.title'),
+      subtitle: t('dashboard.shortcut.add-content.subtitle'),
+      btnText: t('dashboard.shortcut.add-content.button'),
       path: '/content-manager',
       image: content2,
     },
     {
-      title: 'Build Your Website Structure',
-      subtitle: 'Choose any content type to build your website',
-      btnText: 'Content Type Builder',
+      title: t('dashboard.shortcut.build-your-component-structure.title'),
+      subtitle: t('dashboard.shortcut.build-your-component-structure.subtitle'),
+      btnText: t('dashboard.shortcut.build-your-component-structure.button'),
       path: '/content-type/new',
       image: content3,
     }
@@ -82,15 +83,15 @@ export default function Dashboard() {
             <div className='flex w-1/2 p-10 bg-white rounded-l-xl'>
               <div className='w-full py-4 flex flex-col'>
                 <p className='text-3xl font-bold text-dark-purple'>
-                  Welcome to
+                  {t('dashboard.welcome-to')}
                 </p>
                 <p className='text-2xl font-medium text-dark-purple'>
-                  Avrist Content Management System
+                {t('dashboard.title',{name:'Avrist'})}
                 </p>
                 <Link to={url} target='_blank'>
                   <button
                     className="btn btn-md bg-dark-purple xl:w-[40%] lg:w-[50%] items-center justify-center flex gap-2 mt-10">
-                    Download User Guide
+                      {t('dashboard.download-user-guide')}
                   </button>
                 </Link>
               </div>
@@ -102,7 +103,7 @@ export default function Dashboard() {
           </div>
 
           <div className='p-5 text-2xl font-bold border-b-2 mt-10'>
-            Start Creating Content
+            {t('dashboard.start-creating-content')}
           </div>
           <div className="grid grid-cols-2 gap-4 p-7">
             {data.map((val, idx) => (

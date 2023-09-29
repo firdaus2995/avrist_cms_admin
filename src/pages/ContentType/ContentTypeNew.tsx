@@ -249,7 +249,7 @@ export default function ContentTypeNew() {
       <div className="flex flex-col border-b-2 pb-8">
         <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-10 text-lg font-bold">
           <span className={`label-text text-base-content`}>
-            Content Type Name<span className={'text-reddist text-lg'}>*</span>
+            {t('user.content-type-edit.contentTypeColumnName')}<span className={'text-reddist text-lg'}>*</span>
           </span>
           <InputText
             labelTitle=""
@@ -265,11 +265,11 @@ export default function ContentTypeNew() {
         <div className="flex flex-row items-center">
           <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-24 text-lg font-bold">
             <span className={`label-text text-base-content`}>
-              Slug Name<span className={'text-reddist text-lg'}>*</span>
+              {t('user.content-type-edit.slugName')}<span className={'text-reddist text-lg'}>*</span>
             </span>
             <InputText
               labelTitle=""
-              placeholder={'Enter slug name'}
+              placeholder={t('user.content-type-edit.slugName-placeholder')}
               value={slug}
               inputStyle="rounded-3xl"
               onChange={e => {
@@ -283,7 +283,7 @@ export default function ContentTypeNew() {
               updateFormValue={e => {
                 setIsUseCategory(e.value);
               }}
-              labelTitle="Use Category"
+              labelTitle={t('user.content-type-edit.use-category')}
               updateType={''}
             />
           </div>
@@ -426,7 +426,7 @@ export default function ContentTypeNew() {
   const renderListLoopingAttribute = () => {
     return (
       <div className="flex flex-col overflow-hidden">
-        <div className="p-4 font-bold">List Attribute</div>
+        <div className="p-4 font-bold">{t('user.content-type-edit.list-attribute')}</div>
         <div className="flex flex-col overflow-auto">
           {listAttributes
             ?.filter((val: { code: string }) => val.code !== 'looping')
@@ -528,11 +528,11 @@ export default function ContentTypeNew() {
           </div>
           <div className="flex flex-col mx-10 mt-16">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              Add New {getType(openedAttribute?.code)}
+            {t('user.content-type-edit.add-new')} {getType(openedAttribute?.code)}
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
-                labelTitle="Name"
+                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
                 labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.label}
@@ -545,7 +545,7 @@ export default function ContentTypeNew() {
                 }}
               />
               <InputText
-                labelTitle="Field ID"
+                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
                 labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
@@ -561,7 +561,7 @@ export default function ContentTypeNew() {
             {openedAttribute?.code === 'text_field' || openedAttribute?.code === 'text_area' ? (
               <div className="flex flex-row gap-4 my-5">
                 <InputText
-                  labelTitle={`Minimum Length (Optional)`}
+                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
                   labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.min_length || ''}
@@ -576,7 +576,7 @@ export default function ContentTypeNew() {
                   }}
                 />
                 <InputText
-                  labelTitle={`Maximum Length (Optional)`}
+                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
                   labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.max_length || ''}
@@ -674,7 +674,7 @@ export default function ContentTypeNew() {
                             </div>
                             <div className="flex flex-col w-1/2">
                               <InputText
-                                labelTitle="Name"
+                                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
@@ -699,7 +699,7 @@ export default function ContentTypeNew() {
                                 }}
                               />
                               <InputText
-                                labelTitle="Field ID"
+                                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
@@ -727,7 +727,7 @@ export default function ContentTypeNew() {
                             {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
-                                  labelTitle={`Minimum Length (Optional)`}
+                                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).min_length}
@@ -753,7 +753,7 @@ export default function ContentTypeNew() {
                                   }}
                                 />
                                 <InputText
-                                  labelTitle={`Maximum Length (Optional)`}
+                                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).max_length}
@@ -849,7 +849,7 @@ export default function ContentTypeNew() {
                     className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                  Add More Attributes
+                {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
                 </button>
               </div>
             ) : null}
@@ -866,7 +866,7 @@ export default function ContentTypeNew() {
                 onClick={() => {
                   onAddList();
                 }}>
-                {t('btn.save')}
+                {t('btn.create')}
               </button>
             </div>
           </div>
@@ -906,7 +906,7 @@ export default function ContentTypeNew() {
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
-                labelTitle="Name"
+                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
                 labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.name}
@@ -919,7 +919,7 @@ export default function ContentTypeNew() {
                 }}
               />
               <InputText
-                labelTitle="Field ID"
+                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
                 labelStyle="font-bold"
                 labelRequired
                 value={openedAttribute?.fieldId || getFieldId(openedAttribute?.label)}
@@ -936,7 +936,7 @@ export default function ContentTypeNew() {
             openedAttribute?.fieldType === 'TEXT_AREA' ? (
               <div className="flex flex-row gap-4 my-5">
                 <InputText
-                  labelTitle={`Minimum Length (Optional)`}
+                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
                   labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.min_length || ''}
@@ -951,7 +951,7 @@ export default function ContentTypeNew() {
                   }}
                 />
                 <InputText
-                  labelTitle={`Maximum Length (Optional)`}
+                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
                   labelStyle="font-bold"
                   type="number"
                   value={JSON.parse(openedAttribute?.config)?.max_length || ''}
@@ -1052,7 +1052,7 @@ export default function ContentTypeNew() {
                             </div>
                             <div className="flex flex-col w-1/2">
                               <InputText
-                                labelTitle="Name"
+                                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
@@ -1077,7 +1077,7 @@ export default function ContentTypeNew() {
                                 }}
                               />
                               <InputText
-                                labelTitle="Field ID"
+                                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
@@ -1105,7 +1105,7 @@ export default function ContentTypeNew() {
                             {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
-                                  labelTitle={`Minimum Length (Optional)`}
+                                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).min_length}
@@ -1131,7 +1131,7 @@ export default function ContentTypeNew() {
                                   }}
                                 />
                                 <InputText
-                                  labelTitle={`Maximum Length (Optional)`}
+                                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).max_length}
@@ -1228,7 +1228,7 @@ export default function ContentTypeNew() {
                     className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                  Add More Attributes
+                {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
                 </button>
               </div>
             ) : null}
@@ -1245,7 +1245,7 @@ export default function ContentTypeNew() {
                 onClick={() => {
                   onEditList();
                 }}>
-                Edit
+                {t('user.content-type-edit.edit')}
               </button>
             </div>
           </div>
@@ -1259,17 +1259,17 @@ export default function ContentTypeNew() {
       {modalListAttribute()}
       {modalAddAttribute()}
       {modalEditAttribute()}
-      <TitleCard title={'New Content Type'} topMargin="mt-2">
+      <TitleCard title={t('user.content-type-edit.edit-content-type')} topMargin="mt-2">
         <ModalConfirm
           open={showComfirm}
           cancelAction={() => {
             setShowComfirm(false);
           }}
           title={titleConfirm}
-          cancelTitle="No"
+          cancelTitle={t('user.content-type-edit.modal.confirm.cancelButton')}
           message={messageConfirm}
           submitAction={onLeave}
-          submitTitle="Yes"
+          submitTitle={t('user.content-type-edit.modal.confirm.confirmButton')}
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
@@ -1279,8 +1279,8 @@ export default function ContentTypeNew() {
           <button
             className="btn btn-outline btn-md"
             onClick={() => {
-              setTitleConfirm('Are you sure?');
-              setmessageConfirm(`Do you want to cancel all the process?`);
+              setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
+              setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
               setShowComfirm(true);
             }}>
             {t('btn.cancel')}

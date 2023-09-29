@@ -20,6 +20,7 @@ import CancelIcon from '@/assets/cancel.png';
 import { openToast } from '@/components/atoms/Toast/slice';
 
 export default function GlobalConfigDataNew() {
+
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
@@ -111,7 +112,7 @@ export default function GlobalConfigDataNew() {
           openToast({
             type: 'success',
             title: t('toast-success'),
-            message: `Success edit Global Config ${d.configCreate.value}`,
+            message: `${t('user.global-config-data-new.toast-success-edit')} ${d.configCreate.value}`,
           }),
         );
         navigate('/global-config-data');
@@ -121,7 +122,7 @@ export default function GlobalConfigDataNew() {
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: `Failed edit Global Config ${payload.value}`,
+            message: `${t('user.global-config-data-new.toast-failed-edit')} ${payload.value}`,
           }),
         );
       });
@@ -140,7 +141,7 @@ export default function GlobalConfigDataNew() {
           openToast({
             type: 'success',
             title: t('toast-success'),
-            message: `Success register Global Config ${d.configCreate.value}`,
+            message: `${t('user.global-config-data-new.toast-success-add')} ${d.configCreate.value}`,
           }),
         );
         navigate('/global-config-data');
@@ -150,7 +151,7 @@ export default function GlobalConfigDataNew() {
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: `Failed add Global Config ${payload.value}`,
+            message: `${t('user.global-config-data-new.toast-failed-add')} ${payload.value}`,
           }),
         );
       });
@@ -158,7 +159,7 @@ export default function GlobalConfigDataNew() {
 
   return (
     <TitleCard
-      title={`${mode === 'new' ? 'New' : 'Edit'}${' Global Config Data'}`}
+      title={`${mode === 'new' ? 'New' : 'Edit'}${' ' + t('user.global-config-data-new.title.global-config-data')}`} // Use t() to translate titles
       topMargin="mt-2">
       {/* ON CANCEL */}
       <ModalConfirm
@@ -166,11 +167,11 @@ export default function GlobalConfigDataNew() {
         cancelAction={() => {
           setShowLeaveModal(false);
         }}
-        title={titleLeaveModalShow ?? ''}
-        cancelTitle="No"
-        message={messageLeaveModalShow ?? ''}
+        title={titleLeaveModalShow ?? t('user.global-config-data-new.modal.confirmation')} // Translate modal title
+        cancelTitle={t('user.global-config-data-new.btn.no')} // Translate cancel button text
+        message={messageLeaveModalShow ?? ''} // Translate modal message
         submitAction={onLeave}
-        submitTitle="Yes"
+        submitTitle={t('user.global-config-data-new.btn.yes')} // Translate submit button text
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
@@ -182,15 +183,15 @@ export default function GlobalConfigDataNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: `Key is required` },
+              required: { value: true, message: t('user.global-config-data-new.form.key.required') }, // Translate form field messages
             }}
             render={({ field }) => (
               <FormList.TextField
                 {...field}
                 key="key"
-                labelTitle="Key"
+                labelTitle={t('user.global-config-data-new.form.key.label')} // Translate form field label
                 labelRequired
-                placeholder="Enter key"
+                placeholder={t('user.global-config-data-new.form.key.placeholder')} // Translate placeholder
                 error={!!errors?.key?.message}
                 helperText={errors?.key?.message}
                 border={false}
@@ -203,15 +204,15 @@ export default function GlobalConfigDataNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: `Value is required` },
+              required: { value: true, message: t('user.global-config-data-new.form.value.required') }, // Translate form field messages
             }}
             render={({ field }) => (
               <FormList.TextAreaField
                 {...field}
                 key="value"
-                labelTitle="Value"
+                labelTitle={t('user.global-config-data-new.form.value.label')} // Translate form field label
                 labelRequired
-                placeholder="Enter value"
+                placeholder={t('user.global-config-data-new.form.value.placeholder')} // Translate placeholder
                 error={!!errors?.value?.message}
                 helperText={errors?.value?.message}
                 border={false}
@@ -224,14 +225,14 @@ export default function GlobalConfigDataNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: false, message: `Description is required` },
+              required: { value: false, message: t('user.global-config-data-new.form.description.required') }, // Translate form field messages
             }}
             render={({ field }) => (
               <FormList.TextAreaField
                 {...field}
                 key="description"
-                labelTitle="Description"
-                placeholder="Enter description"
+                labelTitle={t('user.global-config-data-new.form.description.label')} // Translate form field label
+                placeholder={t('user.global-config-data-new.form.description.placeholder')} // Translate placeholder
                 error={!!errors?.description?.message}
                 helperText={errors?.description?.message}
                 border={false}
@@ -243,16 +244,16 @@ export default function GlobalConfigDataNew() {
         <div className="flex justify-end items-end gap-2 mt-16">
           <button
             className="btn btn-outline btn-md"
-            onClick={e => {
+            onClick={(e) => {
               e.preventDefault();
-              setLeaveTitleModalShow(t('modal.confirmation'));
-              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setLeaveTitleModalShow(t('user.global-config-data-new.modal.confirmation'));
+              setMessageLeaveModalShow(t('user.global-config-data-new.modal.leave-confirmation'));
               setShowLeaveModal(true);
             }}>
-            {isLoading || isLoadingEdit ? 'Loading...' : t('btn.cancel')}
+            {isLoading || isLoadingEdit ? t('user.global-config-data-new.btn.loading') : t('user.global-config-data-new.btn.cancel')} {/* Translate button text */}
           </button>
           <button type="submit" className="btn btn-success btn-md text-white">
-            {isLoading || isLoadingEdit ? 'Loading...' : t('btn.save')}
+            {isLoading || isLoadingEdit ? t('user.global-config-data-new.btn.loading') : t('user.global-config-data-new.btn.save')} {/* Translate button text */}
           </button>
         </div>
       </form>
