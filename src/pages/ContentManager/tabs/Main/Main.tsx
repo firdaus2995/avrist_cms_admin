@@ -14,9 +14,9 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { Link } from 'react-router-dom';
 import StatusBadge from '../../components/StatusBadge';
 
-export default function MainTab(props: { id: any }) {
+export default function MainTab(props: { id: any, isUseCategory: any }) {
   const dispatch = useAppDispatch();
-  const { id } = props;
+  const { id, isUseCategory } = props;
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -170,6 +170,13 @@ export default function MainTab(props: { id: any }) {
       ),
     },
   ];
+
+  if (!isUseCategory) {
+    const categoryColumnIndex = COLUMNS.findIndex(column => column.accessorKey === 'categoryName');
+    if (categoryColumnIndex !== -1) {
+      COLUMNS.splice(categoryColumnIndex, 1);
+    }
+  }
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
