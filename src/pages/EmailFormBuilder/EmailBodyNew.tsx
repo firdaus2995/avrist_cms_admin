@@ -103,6 +103,7 @@ export default function EmailBodyNew() {
               roundStyle="xl"
               placeholder="Enter your title"
               inputWidth={400}
+              maxLength={30}
               {...field}
             />
           )}

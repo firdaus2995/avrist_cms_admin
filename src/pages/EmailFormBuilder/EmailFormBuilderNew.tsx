@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Drag from "./moduleNewAndUpdate/dragAndDropComponent/Drag";
 import Drop from "./moduleNewAndUpdate/dragAndDropComponent/Drop";
 import CancelIcon from "../../assets/cancel.png";
+import EyeIcon from "@/assets/eye-purple.svg";
 import Recaptcha from "../../assets/recaptcha.svg";
 import ModalConfirm from "@/components/molecules/ModalConfirm";
 import EFBList from "./moduleNewAndUpdate/listComponent";
@@ -24,8 +25,10 @@ import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
-import { useCreateEmailFormBuilderMutation, useGetEmailBodyQuery, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
+import { useCreateEmailFormBuilderMutation, useGetEmailBodyDetailQuery, useGetEmailBodyQuery, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
+import ModalDisplay from '@/components/molecules/ModalDisplay';
+import { LabelText } from '@/components/atoms/Label/Text';
 
 export default function EmailFormBuilderNew() {
   const navigate = useNavigate();
@@ -49,6 +52,11 @@ export default function EmailFormBuilderNew() {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+  // PREVIEW EMAIL BODY MODAL
+  const [titlePreviewEmailBodyModal, setTitlePreviewEmailBodyModal] = useState<any>("");
+  const [shortDescPreviewEmailBodyModal, setShortDescPreviewEmailBodyModal] = useState<any>("");
+  const [valuePreviewEmailBodyModal, setValuePreviewEmailBodyModal] = useState<any>("");
+  const [showPreviewEmailBodyModal, setShowPreviewEmailBodyModal] = useState<boolean>(false);
   // CAPTCHA MODAL
   const [showCaptchaModal, setShowCaptchaModal] = useState<boolean>(false);
   const [titleCaptchaModalShow, setTitleCaptchaModalShow] = useState<string | null>('');
@@ -83,7 +91,18 @@ export default function EmailFormBuilderNew() {
       refetchOnMountOrArgChange: true
     },
   );
-  const { data: dataEB } = fetchQueryEB;    
+  const { data: dataEB } = fetchQueryEB;
+
+  // RTK GET EMAIL BODY DETAIL
+  const fetchEmailBodyDetail = useGetEmailBodyDetailQuery(
+    {
+      id: emailBody
+    }, 
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataEBDetail } = fetchEmailBodyDetail;  
 
   // RTK CREATE EMAIL
   const [ createEmailFormBuilder, {
@@ -125,6 +144,14 @@ export default function EmailFormBuilderNew() {
       }));
     };
   }, [dataEB]);
+
+  useEffect(() => {
+    if (dataEBDetail) {
+      setTitlePreviewEmailBodyModal(dataEBDetail?.getDetail?.title);
+      setShortDescPreviewEmailBodyModal(dataEBDetail?.getDetail?.shortDesc);
+      setValuePreviewEmailBodyModal(dataEBDetail?.getDetail?.value);
+    };
+  }, [dataEBDetail]);
 
   const onSave = () => {
     // ALL COMPONENTS
@@ -349,6 +376,12 @@ export default function EmailFormBuilderNew() {
       ...prevComponent,
       data: currentComponents[activeComponent?.index],
     }));
+  };
+
+  const handlerPreviewEmailBody = () => {
+    if (emailBody) {
+      setShowPreviewEmailBodyModal(true);
+    };
   };
 
   const handlerAddMultipleInput = (value: any) => {
@@ -997,6 +1030,33 @@ export default function EmailFormBuilderNew() {
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
+        <ModalDisplay
+          open={showPreviewEmailBodyModal}
+          cancelAction={() => {
+            setShowPreviewEmailBodyModal(false)
+          }}
+          title={titlePreviewEmailBodyModal}
+        >
+          <hr className='p-3' />
+          <LabelText 
+            labelTitle="Title"
+            labelWidth={200}
+            labelRequired
+            value={titlePreviewEmailBodyModal}
+          />
+          <LabelText 
+            labelTitle="Short Description"
+            labelWidth={200}
+            labelRequired
+            value={shortDescPreviewEmailBodyModal}
+          />
+          <LabelText 
+            labelTitle="Value"
+            labelWidth={200}
+            labelRequired
+            value={valuePreviewEmailBodyModal}
+          />
+        </ModalDisplay>
         <ModalConfirm
           open={showCaptchaModal}
           cancelAction={() => {
@@ -1041,20 +1101,33 @@ export default function EmailFormBuilderNew() {
                 };
               }}
             />
-            <DropDown
-              labelTitle="Email Body"
-              labelStyle="font-bold	"
-              direction='row'
-              inputWidth={400}
-              labelEmpty="Choose Email Body"
-              labelRequired={true}
-              items={listEmailBody}
-              onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                if (event) {
-                  setEmailBody(value);
-                };
-              }}
-            />
+            <div className='flex flex-row gap-5'>
+              <DropDown
+                labelTitle="Email Body"
+                labelStyle="font-bold	"
+                direction='row'
+                inputWidth={400}
+                labelEmpty="Choose Email Body"
+                labelRequired={true}
+                items={listEmailBody}
+                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                  if (event) {
+                    setEmailBody(value);
+                  };
+                }}
+              />
+              {
+                emailBody && (
+                  <button 
+                    type='button' 
+                    className='w-[48px] flex items-center justify-center border-[1px] border-[#9B86BA] rounded-xl'
+                    onClick={handlerPreviewEmailBody}
+                  >
+                    <img src={EyeIcon} />
+                  </button>
+                )
+              }
+            </div>
             <MultipleInput
               labelTitle="PIC"
               labelStyle="font-bold	"

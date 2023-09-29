@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Drag from './moduleNewAndUpdate/dragAndDropComponent/Drag';
 import Drop from './moduleNewAndUpdate/dragAndDropComponent/Drop';
 import CancelIcon from '../../assets/cancel.png';
+import EyeIcon from "@/assets/eye-purple.svg";
 import Recaptcha from '../../assets/recaptcha.svg';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import EFBList from './moduleNewAndUpdate/listComponent';
@@ -16,6 +17,7 @@ import EFBPreview from './moduleNewAndUpdate/previewComponent';
 import EFBConfiguration from './moduleNewAndUpdate/configurationComponent';
 import DragDrop from './moduleNewAndUpdate/dragAndDropComponent/DragDrop';
 import DropDown from '@/components/molecules/DropDown';
+import ModalDisplay from '@/components/molecules/ModalDisplay';
 import { Divider } from '@/components/atoms/Divider';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -24,8 +26,9 @@ import { MultipleInput } from '@/components/molecules/MultipleInput';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { checkIsEmail, copyArray } from '@/utils/logicHelper';
-import { useGetEmailFormBuilderDetailQuery, useUpdateEmailFormBuilderMutation, useGetEmailBodyQuery, useGetFormResultQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
+import { useGetEmailFormBuilderDetailQuery, useGetEmailBodyDetailQuery, useUpdateEmailFormBuilderMutation, useGetEmailBodyQuery, useGetFormResultQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { useGetEmailFormAttributeListQuery } from '@/services/Config/configApi';
+import { LabelText } from '@/components/atoms/Label/Text';
 
 export default function EmailFormBuilderEdit() {
   const navigate = useNavigate();
@@ -50,6 +53,11 @@ export default function EmailFormBuilderEdit() {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+  // PREVIEW EMAIL BODY MODAL
+  const [titlePreviewEmailBodyModal, setTitlePreviewEmailBodyModal] = useState<any>("");
+  const [shortDescPreviewEmailBodyModal, setShortDescPreviewEmailBodyModal] = useState<any>("");
+  const [valuePreviewEmailBodyModal, setValuePreviewEmailBodyModal] = useState<any>("");
+  const [showPreviewEmailBodyModal, setShowPreviewEmailBodyModal] = useState<boolean>(false);  
   // CAPTCHA MODAL
   const [showCaptchaModal, setShowCaptchaModal] = useState<boolean>(false);
   const [titleCaptchaModalShow, setTitleCaptchaModalShow] = useState<string | null>('');
@@ -85,10 +93,25 @@ export default function EmailFormBuilderEdit() {
     },
   );
   const { data: dataEB } = fetchQueryEB;      
+
+  // RTK GET EMAIL BODY DETAIL
+  const fetchEmailBodyDetail = useGetEmailBodyDetailQuery(
+    {
+      id: emailBody
+    }, 
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataEBDetail } = fetchEmailBodyDetail;  
   
   // RTK GET DETAIL
   const { data: dataDetail } = useGetEmailFormBuilderDetailQuery(
-    { id, pageIndex: 0, limit: 99 },
+    { 
+      id, 
+      pageIndex: 0, 
+      limit: 99
+    },
     {
       refetchOnMountOrArgChange: true,
     },
@@ -220,8 +243,16 @@ export default function EmailFormBuilderEdit() {
       setComponents(attributeList);
       setFormTemplate(formTemplateId);
       setEmailBody(emailBodyId);
-    }
+    };
   }, [dataDetail]);
+
+  useEffect(() => {
+    if (dataEBDetail) {
+      setTitlePreviewEmailBodyModal(dataEBDetail?.getDetail?.title);
+      setShortDescPreviewEmailBodyModal(dataEBDetail?.getDetail?.shortDesc);
+      setValuePreviewEmailBodyModal(dataEBDetail?.getDetail?.value);
+    };
+  }, [dataEBDetail]);
 
   const onSave = () => {
     // ALL COMPONENTS
@@ -445,6 +476,12 @@ export default function EmailFormBuilderEdit() {
       ...prevComponent,
       data: currentComponents[activeComponent?.index],
     }));
+  };
+  
+  const handlerPreviewEmailBody = () => {
+    if (emailBody) {
+      setShowPreviewEmailBodyModal(true);
+    };
   };
 
   const handlerAddMultipleInput = (value: any) => {
@@ -1054,6 +1091,33 @@ export default function EmailFormBuilderEdit() {
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
+        <ModalDisplay
+          open={showPreviewEmailBodyModal}
+          cancelAction={() => {
+            setShowPreviewEmailBodyModal(false)
+          }}
+          title={titlePreviewEmailBodyModal}
+        >
+          <hr className='p-3' />
+          <LabelText 
+            labelTitle="Title"
+            labelWidth={200}
+            labelRequired
+            value={titlePreviewEmailBodyModal}
+          />
+          <LabelText 
+            labelTitle="Short Description"
+            labelWidth={200}
+            labelRequired
+            value={shortDescPreviewEmailBodyModal}
+          />
+          <LabelText 
+            labelTitle="Value"
+            labelWidth={200}
+            labelRequired
+            value={valuePreviewEmailBodyModal}
+          />
+        </ModalDisplay>
         <ModalConfirm
           open={showCaptchaModal}
           cancelAction={() => {
@@ -1099,21 +1163,33 @@ export default function EmailFormBuilderEdit() {
                 }
               }}
             />
-            <DropDown
-              labelTitle="Email Body"
-              labelStyle="font-bold	"
-              direction='row'
-              inputWidth={400}
-              labelEmpty="Choose Email Body"
-              labelRequired={true}
-              defaultValue={emailBody}
-              items={listEmailBody}
-              onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                if (event) {
-                  setEmailBody(value);
-                };
-              }}
-            />
+            <div className='flex flex-row gap-5'>
+              <DropDown
+                labelTitle="Email Body"
+                labelStyle="font-bold	"
+                direction='row'
+                inputWidth={400}
+                labelEmpty="Choose Email Body"
+                labelRequired={true}
+                items={listEmailBody}
+                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                  if (event) {
+                    setEmailBody(value);
+                  };
+                }}
+              />
+              {
+                emailBody && (
+                  <button 
+                    type='button' 
+                    className='w-[48px] flex items-center justify-center border-[1px] border-[#9B86BA] rounded-xl'
+                    onClick={handlerPreviewEmailBody}
+                  >
+                    <img src={EyeIcon} />
+                  </button>
+                )
+              }
+            </div>
             <MultipleInput
               labelTitle="PIC"
               labelStyle="font-bold	"

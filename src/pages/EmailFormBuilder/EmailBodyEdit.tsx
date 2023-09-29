@@ -124,6 +124,7 @@ export default function EmailBodyEdit() {
               roundStyle="xl"
               placeholder="Enter your title"
               inputWidth={400}
+              maxLength={30}
               {...field}
             />
           )}
