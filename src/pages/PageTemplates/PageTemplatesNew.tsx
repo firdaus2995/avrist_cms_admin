@@ -179,6 +179,7 @@ export default function PageTemplatesNew() {
       shortDesc: e.pageDescription,
       attributes: updatedAttributesData,
       configs: configData,
+      imageUrl: e.imagePreview,
     };
     editedPageTemplate(payload)
       .unwrap()
@@ -214,6 +215,7 @@ export default function PageTemplatesNew() {
       shortDesc: e.pageDescription,
       attributes: updatedAttributesData,
       configs: configData,
+      imageUrl: e.imagePreview,
     };
     createPageTemplate(payload)
       .unwrap()

@@ -35,6 +35,7 @@ export const pageTemplateApi: any = createApi({
                   id
                   name
                 }
+                createdBy
               }
             }
           }
@@ -64,6 +65,7 @@ export const pageTemplateApi: any = createApi({
             $shortDesc: String!
             $attributes: [PageTemplateAttributeRequest]
             $configs: [PageTemplateConfigRequest]
+            $imageUrl: String!
           ) {
             pageTemplateUpdate(
               id: $id
@@ -73,6 +75,7 @@ export const pageTemplateApi: any = createApi({
                 shortDesc: $shortDesc
                 attributes: $attributes
                 configs: $configs
+                imageUrl: $imageUrl
               }
             ) {
               id
@@ -107,6 +110,7 @@ export const pageTemplateApi: any = createApi({
             $shortDesc: String!
             $attributes: [PageTemplateAttributeRequest]
             $configs: [PageTemplateConfigRequest]
+            $imageUrl: String!
           ) {
             pageTemplateCreate(
               request: {
@@ -115,6 +119,7 @@ export const pageTemplateApi: any = createApi({
                 shortDesc: $shortDesc
                 attributes: $attributes
                 configs: $configs
+                imageUrl: $imageUrl
               }
             ) {
               id
