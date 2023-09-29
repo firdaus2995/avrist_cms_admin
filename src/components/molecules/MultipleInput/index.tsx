@@ -38,7 +38,7 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
   const [errorAddValue, setErrorAddValue] = useState(false);
 
   return (
-    <div className={`w-full flex ${direction === 'row' ? 'flex-row' : 'flex-col'}`}>
+    <div className={`flex ${direction === 'row' ? 'flex-row' : 'flex-col w-full'}`}>
       <label 
         style={{
           width: direction === 'row' ? labelWidth : '',

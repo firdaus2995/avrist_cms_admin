@@ -15,7 +15,7 @@ import PreviewModal from './PreviewModal';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
-import { useGetEmailFormBuilderQuery, useDeleteEmailFormBuilderMutation, useGetEmailBodyQueryQuery, useDeleteEmailBodyMutation } from '@/services/EmailFormBuilder/emailFormBuilderApi';
+import { useGetEmailFormBuilderQuery, useDeleteEmailFormBuilderMutation, useGetEmailBodyQuery, useDeleteEmailBodyMutation } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { getCredential } from '@/utils/Credential';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
@@ -180,7 +180,7 @@ export default function EmailFormBuilderList() {
   const { data: dataEFB, isFetching: isFetchingEFB, isError: isErrorEFB } = fetchQueryEFB;
 
   // RTK GET DATA EB
-  const fetchQueryEB = useGetEmailBodyQueryQuery(
+  const fetchQueryEB = useGetEmailBodyQuery(
     {
       pageIndex: pageIndexEB,
       limit: pageLimitEB,

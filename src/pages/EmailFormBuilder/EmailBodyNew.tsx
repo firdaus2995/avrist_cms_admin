@@ -24,14 +24,14 @@ export default function EmailBodyNew() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // PAGE TEMPLACE SELECTION STATE
+  // FORM STATE
   const [value, setValue] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");  
 
-  // RTK CREATE PAGE TEMPLATE
+  // RTK CREATE EMAIL BODY
   const [createEmailBody] = useCreateEmailBodyMutation();
 
   const handlerSubmit = (formData: any) => {
@@ -103,6 +103,7 @@ export default function EmailBodyNew() {
               roundStyle="xl"
               placeholder="Enter your title"
               inputWidth={400}
+              maxLength={30}
               {...field}
             />
           )}
