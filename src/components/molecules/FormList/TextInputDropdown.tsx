@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import ChevronUp from '@/assets/chevronup.png';
 import ChevronDown from '@/assets/chevrondown.png';
 import ErrorSmallIcon from '@/assets/error-small.svg';
+import { t } from 'i18next';
 
 // const items = [
 //   { value: 'apple', label: 'Apple' },
@@ -108,7 +109,7 @@ const TextInputDropDown = ({
               ))}
             </ul>
           ) : (
-            false && <p className="px-4 py-2 text-gray-500">No matching options</p>
+            false && <p className="px-4 py-2 text-gray-500">{t('components.molecules.no-matching-option')}</p>
           )}
         </div>
       )}

@@ -528,7 +528,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           }}
         />
         <InputPassword
-          labelTitle="New Password"
+          labelTitle={t('components.molecules.new-password')}
           labelStyle="font-bold	"
           labelWidth={175}
           value={newPassword}

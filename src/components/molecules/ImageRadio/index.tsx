@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from "uuid";
 
 import { IItems, IRadio } from './interfaces';
+import { t } from 'i18next';
 
 const ImageRadio = ({
   labelTitle,
@@ -28,7 +29,7 @@ const ImageRadio = ({
   };
 
   if (!items || items.length < 1) {
-    return <h2 className="text-red-900">Component Radio Error</h2>;
+    return <h2 className="text-red-900">{t('components.molecules.component-radio-error')}</h2>;
   }
 
   return (

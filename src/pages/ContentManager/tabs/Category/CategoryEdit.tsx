@@ -81,26 +81,26 @@ export default function CategoryEdit() {
       <form className="flex flex-col w-100 mt-[35px]">
         <div className="flex flex-col gap-[30px]">
           <InputText
-            labelTitle="Category Name"
+            labelTitle={t('user.tabs-category-edit.content-manager.category.edit.title')}
             labelStyle="font-bold	"
             value={name}
             direction="row"
             roundStyle="xl"
             inputWidth={300}
-            placeholder="Enter category name"
+            placeholder={t('user.tabs-category-edit.content-manager.category.edit.title')}
             onChange={(event: any) => {
               setName(event.target.value);
             }}
           />
           <TextArea
-            labelTitle="Category Name"
+            labelTitle={t('user.tabs-category-edit.content-manager.category.edit.title')}
             labelStyle="font-bold	"
             value={description}
             direction="row"
             textAreaStyle='rounded-xl'
             inputWidth={300}
             rows={4}
-            placeholder="Enter description"
+            placeholder={t('user.tabs-category-edit.content-manager.category.edit.title') ?? ''}
             onChange={(event: any) => {
               setDescription(event.target.value);
             }}
@@ -115,9 +115,9 @@ export default function CategoryEdit() {
       <ModalConfirm
         open={showLeaveModal}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.tabs-category-edit.btn.cancel')}
         message={messageLeaveModalShow ?? ''}
-        submitTitle="Yes"
+        submitTitle={t('user.tabs-category-edit.btn.save')}
         icon={WarningIcon}
         submitAction={onLeave}
         cancelAction={() => {

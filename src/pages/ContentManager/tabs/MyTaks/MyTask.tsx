@@ -50,7 +50,7 @@ export default function MyTaskTab(props: { id: any }) {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]"></span>,
+      header: () => <span className="text-[14px]">{t('user.tabs-mytask.myTaskTab.tableHeaders.status')}</span>,
       accessorKey: 'status',
       enableSorting: false,
       cell: (info: any) => (
@@ -66,7 +66,7 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">ID</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.id')}</span>,
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -78,7 +78,7 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">Title</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.title')}</span>,
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -90,7 +90,7 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">Short Description</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.shortDescription')}</span>,
       accessorKey: 'shortDesc',
       enableSorting: false,
       cell: (info: any) => (
@@ -102,15 +102,15 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('action.action')}</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.actions')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
-            <div className="tooltip" data-tip={'View Detail'}>
+            <div className="tooltip" data-tip={t('user.tabs-mytask.myTaskTab.buttons.viewDetail')}>
               <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
-                View Detail
+                {t('user.tabs-mytask.myTaskTab.buttons.viewDetail')}
               </button>
             </div>
           </Link>

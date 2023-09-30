@@ -14,7 +14,7 @@ export default function PermissionForm(props: IPermissionForm) {
     <div className="w-[500px] mb-16">
       <InputText
         labelTitle={t('roles.role-name')}
-        placeholder='Content'
+        placeholder={t('components.organism.content') ?? ''}
         onChange={e => dispatch(setName(e.target.value))}
         containerStyle="mb-[22px] flex flex-row"
         labelStyle="font-bold w-[200px]"
@@ -24,7 +24,7 @@ export default function PermissionForm(props: IPermissionForm) {
 
       <TextArea
         labelTitle={t('roles.role-description')}
-        placeholder='Content'
+        placeholder={t('components.organism.content') ?? ''}
         onChange={e => dispatch(setDescription(e.target.value))}
         containerStyle=" flex flex-row"
         labelStyle="font-bold w-[200px]"

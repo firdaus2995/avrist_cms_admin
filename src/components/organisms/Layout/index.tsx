@@ -229,9 +229,9 @@ const Layout: React.FC<any> = props => {
           activatedNotificationPage ? (
             <TitleCard
               hasBack={true}
-              backTitle="Back"
+              backTitle={t('components.organism.back') ?? ''}
               onBackClick={goBack}
-              title="Notification"
+              title={t('components.organism.notification')}
               TopSideButtons={<ReadAllButton />}
             >
               <div className="flex flex-row justify-between">

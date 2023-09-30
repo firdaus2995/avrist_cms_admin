@@ -1023,7 +1023,137 @@
         "no": "No",
         "yes": "Yes"
       }
+    },
+
+
+    "tabs-category":{
+      "categoryName": "Category Name",
+      "categoryDescription": "Category Description",
+      "action": {
+        "action": "Action",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "confirm": {
+        "title": "Are you sure?",
+        "message": "Do you want to delete data {title}?",
+        "no": "No",
+        "yes": "Yes"
+      },
+      "toast": {
+        "successDelete": "Success Delete Category",
+        "failedDelete": "Failed Delete Category",
+        "somethingWrong": "Something went wrong!"
+      },
+      "modal": {
+        "cantDelete": "You can't delete this category, because this category is been used in an active page",
+        "ok": "Ok"
+      }
+    },
+
+    "tabs-category-edit":{
+      "toast-success": "Success",
+      "toast-failed": "Failed",
+      "content-manager": {
+        "category": {
+          "edit": {
+            "success-msg": "Category successfully edited",
+            "failed-msg": "Failed to edit category",
+            "title": "Edit Category"
+          }
+        }
+      },
+      "modal": {
+        "confirmation": "Confirmation",
+        "leave-confirmation": "Are you sure you want to leave?"
+      },
+      "btn": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    },
+
+
+    "tabs-category-new":{
+      "content-manager": {
+        "category": {
+          "add": {
+            "title": "Add New Category",
+            "success-msg": "Category '{{name}}' added successfully.",
+            "failed-msg": "Failed to add category '{{name}}'."
+          },
+          "name-label": "Category Name",
+          "description-label": "Category Description",
+          "name-placeholder": "Enter category name",
+          "description-placeholder": "Enter description"
+        }
+      },
+      "modal": {
+        "confirmation": "Confirmation",
+        "leave-confirmation": "Are you sure you want to leave this page?",
+        "cancel": "Cancel",
+        "yes": "Yes"
+      },
+      "btn": {
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "toast": {
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "loading": "Loading..."
+    },
+
+
+    "tabs-mytask":{
+      "myTaskTab": {
+        "tableHeaders": {
+          "status": "",
+          "id": "ID",
+          "title": "Title",
+          "shortDescription": "Short Description",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "viewDetail": "View Detail"
+        }
+      }
+    },
+
+
+    "tabs-main":{
+      "common": {
+        "yes": "Yes",
+        "no": "No",
+        "successDeletePage": "Success Delete Page",
+        "failedDeletePage": "Failed Delete Page",
+        "somethingWentWrong": "Something went wrong!",
+        "viewDetail": "View Detail",
+        "action": {
+          "action": "Action",
+          "log": "Log",
+          "delete": "Delete",
+          "viewDetail": "View Detail"
+        },
+        "id": "ID",
+        "title": "Title",
+        "shortDescription": "Short Description",
+        "categoryName": "Category Name"
+      },
+      "mainTab": {
+        "titleConfirm": "Are you sure?",
+        "deleteDataMessage": "Do you want to delete data {{title}}?",
+        "successfullyDeletedMessage": "Success! Your data has been successfully deleted!"
+      },
+      "modalLog": {
+        "logApprovalTitle": "Log Approval - {{logTitle}}"
+      }
     }
+    
+    
+    
+    
 
 
 
@@ -1074,5 +1204,66 @@
     "signin-failed": "Sign-in Failed"
   },
   "no": "No",
-  "yes": "Yes"
+  "yes": "Yes",
+
+
+
+
+
+  "components":{
+    "atoms":{
+      "roles": "Roles",
+      "create": "Create",
+      "required": "This field is required",
+      "close-modal": "Close Modal"
+    },
+    "molecules":{
+      "response":"Response",
+      "approve": "Approve",
+      "reject": "Reject",
+      "component-dropdown-error":"Component Dropdown Error",
+      "component-radio-error": "Component Radio Error",
+      "file":{
+        "too-large": "File Size Too Large",
+        "max": "Please upload a file that is no larger than 5MB.",
+        "duplicated": "Duplicate File",
+        "already-uploded": "File already uploaded",
+        "failed": "Failed Upload",
+        "error": "Upload Error",
+        "dragAndDrop": "Drag and Drop {{type}} or click to",
+        "browse": "Browse",
+        "drag": "Drag and Drop Files or upload image",
+        "support": "Only Support format .jpg, .jpeg, .png"
+      },
+      "filter-button":{
+        "filterButton": {
+          "filter": "Filter",
+          "resetFilter": "Reset Filter"
+        },
+        "radioItems": {
+          "createdAt": "Created Date",
+          "updatedAt": "Updated Date"
+        },
+        "dateLabels": {
+          "startDate": "Start Date:",
+          "endDate": "End Date:"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "submit": "Submit"
+        }
+      },
+      "no-matching-option": "No matching options",
+      "text-editor": "Text Editor",
+      "new-password": "New Password",
+      "not-found": "Data not found",
+      "no-data": "No data"
+    },
+    "organism":{
+      "back": "Back",
+      "notification": "Notification",
+      "content": "Content",
+      "permission": "Permission"
+    }
+  }
 }
