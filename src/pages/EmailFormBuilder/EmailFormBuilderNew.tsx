@@ -114,21 +114,21 @@ export default function EmailFormBuilderNew() {
       const arrayFormAttribute: any = JSON.parse(dataAttribute?.getConfig?.value).attributes;
       const objectFormAttribute: any = {};
 
-      arrayFormAttribute.push({
-        code: "tnc",
-        label: "Term and Condition",
-        description: "Term and Condition",
-        icon: "",
-        config: [
-          {
-            code: "required",
-            label: "Required Field",
-            isMandatory: true,
-            type: "checkbox",
-            value: [],
-          },
-        ],
-      })
+      // arrayFormAttribute.push({
+      //   code: "tnc",
+      //   label: "Term and Condition",
+      //   description: "Term and Condition",
+      //   icon: "",
+      //   config: [
+      //     {
+      //       code: "required",
+      //       label: "Required Field",
+      //       isMandatory: true,
+      //       type: "checkbox",
+      //       value: [],
+      //     },
+      //   ],
+      // })
 
       for (const element of arrayFormAttribute) {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
