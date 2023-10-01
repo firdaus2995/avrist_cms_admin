@@ -51,10 +51,10 @@ export const emailFormBuilderApi = createApi({
                 title
                 shortDesc
               }
-              emailBody {
-                id
-                title
-              }
+              # emailBody {
+              #   id
+              #   title
+              # }
               attributeList {
                 id
                 name
