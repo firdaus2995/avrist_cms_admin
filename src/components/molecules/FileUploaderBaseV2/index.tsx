@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import UploadDocumentIcon from '@/assets/upload-file-2.svg';
-import Document from '@/assets/modal/document-orange.svg';
+import AdobePdf from '@/assets/adobe-pdf.svg';
 import Close from '@/assets/close.png';
 import { getCredential } from '@/utils/Credential';
 import { useAppDispatch } from '@/store';
@@ -33,7 +33,7 @@ const FileItem = (props: any) => {
         />
       ) : (
         <div className="h-12 w-12 flex justify-center items-center bg-light-purple rounded-lg mr-3">
-          <img className="h-9 w-9" src={Document} alt="document" />
+          <img className="h-9 w-9" src={AdobePdf} alt="document" />
         </div>
       )}
       <div className="flex flex-1 h-14 justify-center flex-col">

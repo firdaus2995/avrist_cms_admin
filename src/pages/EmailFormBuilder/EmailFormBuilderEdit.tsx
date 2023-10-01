@@ -221,7 +221,8 @@ export default function EmailFormBuilderEdit() {
           ...((element?.fieldType === 'CHECKBOX' ||
             element?.fieldType === 'RADIO_BUTTON' ||
             element?.fieldType === 'DROPDOWN' || 
-            element?.fieldType === 'RATING') && {
+            element?.fieldType === 'RATING' ||
+            element?.fieldType === 'IMAGE_RADIO') && {
             items: value ? value.split(';') : [],
           }),
 
@@ -230,7 +231,8 @@ export default function EmailFormBuilderEdit() {
             ...((element?.fieldType === 'CHECKBOX' ||
               element?.fieldType === 'RADIO_BUTTON' ||
               element?.fieldType === 'DROPDOWN' ||
-              element?.fieldType === 'RATING') && {
+              element?.fieldType === 'RATING' ||
+              element?.fieldType === 'IMAGE_RADIO') && {
               items: false,
             }),
           },
@@ -341,6 +343,13 @@ export default function EmailFormBuilderEdit() {
             fieldId: 'EMAIL',
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
           };
+        case 'SUBMITTEREMAIL':
+          return {
+            fieldType: 'EMAIL',
+            name: element.name,
+            fieldId: 'EMAIL',
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
+          };  
         case 'LABEL':
           return {
             fieldType: 'LABEL',
@@ -384,13 +393,6 @@ export default function EmailFormBuilderEdit() {
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
-        case 'SUBMITTEREMAIL':
-          return {
-            fieldType: 'EMAIL',
-            name: element.name,
-            fieldId: 'EMAIL',
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
-          };
         case 'IMAGERADIO':
           return {
             fieldType: 'IMAGE_RADIO',
@@ -399,6 +401,14 @@ export default function EmailFormBuilderEdit() {
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
+        case 'TNC':
+          return {
+            fieldType: 'TNC',
+            name: element.name,
+            fieldId: 'TNC',
+            config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
+            value: element.items.join(';'),
+          };  
         default:
           return false;
       }
@@ -531,6 +541,7 @@ export default function EmailFormBuilderEdit() {
 
   const handlerAddComponent = (item: any) => {
     let component: any = {};
+
     switch (item) {
       case 'TEXTFIELD':
         component = {
@@ -615,6 +626,19 @@ export default function EmailFormBuilderEdit() {
           },
         };
         break;
+      case 'SUBMITTEREMAIL':
+        component = {
+          uuid: uuidv4(),
+          type: item,
+          name: 'Submitter Email Name',
+          placeholder: 'Enter your email',
+          required: true,
+          submitter: true,
+          mandatory: {
+            name: false,
+          },
+        };
+        break;  
       case 'LABEL':
         component = {
           uuid: uuidv4(),
@@ -683,25 +707,56 @@ export default function EmailFormBuilderEdit() {
           },
         };
         break;
-      case 'SUBMITTEREMAIL':
+      case 'IMAGERADIO':
         component = {
           uuid: uuidv4(),
           type: item,
-          name: 'Submitter Email Name',
-          placeholder: 'Enter your email',
-          required: true,
-          submitter: true,
+          name: 'Image Radio Name',
+          items: [],
+          required: false,
           mandatory: {
             name: false,
+            items: false,
           },
         };
         break;
+      case 'TNC':
+        component = {
+          uuid: uuidv4(),
+          type: item,
+          name: 'TnC Name',
+          items: [],
+          required: false,
+          mandatory: {
+            name: false,
+            items: false,
+          },
+        };
+        break;    
       default:
         component = false;
     }
     if (component) {
-      setComponents((prevItem: any) => [...prevItem, component]);
-    }
+      setComponents((prevItem: any) => {
+        const currentComponents: any = copyArray(prevItem);
+
+        const foundTNC: any = currentComponents.find((element: any) => {
+          if (element.type === 'TNC') {
+            return true;
+          };
+          return false;
+        });
+
+        if (foundTNC && component.type !== "TNC") {
+          currentComponents.splice(currentComponents.length - 1, 0, component);
+          return currentComponents;
+        } else if (foundTNC && component.type === "TNC") {
+          return prevItem;
+        } else {
+          return [...prevItem, component];
+        };
+      });
+    };
   };
 
   const handlerReorderComponent = (dragIndex: number, hoverIndex: number) => {
@@ -836,6 +891,19 @@ export default function EmailFormBuilderEdit() {
               />
             </DragDrop>
           );
+        case 'SUBMITTEREMAIL':
+          return (
+            <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
+              <EFBPreview.SubmitterEmail
+                name={element.name}
+                placeholder={element.placeholder}
+                isActive={activeComponent?.index === index}
+                onClick={() => {
+                  handlerFocusComponent(element, index);
+                }}
+              />
+            </DragDrop>
+          );
         case 'LABEL':
           return (
             <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
@@ -929,19 +997,35 @@ export default function EmailFormBuilderEdit() {
               />
             </DragDrop>
           );
-        case 'SUBMITTEREMAIL':
+        case 'IMAGERADIO':
           return (
             <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
-              <EFBPreview.SubmitterEmail
+              <EFBPreview.ImageRadio
                 name={element.name}
-                placeholder={element.placeholder}
+                items={element.items}
                 isActive={activeComponent?.index === index}
                 onClick={() => {
                   handlerFocusComponent(element, index);
                 }}
+                onDelete={() => {
+                  handlerDeleteComponent(index);
+                }}
               />
             </DragDrop>
-          );
+          );  
+        case 'TNC':
+          return (
+            <EFBPreview.TNC
+              key={element.uuid}
+              isActive={activeComponent?.index === index}
+              onClick={() => {
+                handlerFocusComponent(element, index);
+              }}
+              onDelete={() => {
+                handlerDeleteComponent(index);
+              }}
+            />
+          );  
         default:
           return <div>ERROR</div>;
       }
@@ -1010,6 +1094,16 @@ export default function EmailFormBuilderEdit() {
             }}
           />
         );
+      case 'SUBMITTEREMAIL':
+        return (
+          <EFBConfiguration.SubmitterEmail
+            data={activeComponent?.data}
+            configList={objectFormAttribute.EMAIL}
+            valueChange={(type: string, value: any) => {
+              functionChangeState(type, value);
+            }}
+          />
+        );
       case 'LABEL':
         return (
           <EFBConfiguration.Label
@@ -1060,11 +1154,21 @@ export default function EmailFormBuilderEdit() {
             }}
           />
         );
-      case 'SUBMITTEREMAIL':
+      case 'IMAGERADIO':
         return (
-          <EFBConfiguration.SubmitterEmail
+          <EFBConfiguration.ImageRadio
             data={activeComponent?.data}
-            configList={objectFormAttribute.EMAIL}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
+            valueChange={(type: string, value: any) => {
+              functionChangeState(type, value);
+            }}
+          />
+        );
+      case 'TNC':
+        return (
+          <EFBConfiguration.TNC
+            data={activeComponent?.data}
+            configList={objectFormAttribute[activeComponent?.data?.type]}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value);
             }}
