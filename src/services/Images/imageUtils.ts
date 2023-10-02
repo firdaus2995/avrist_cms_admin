@@ -1,4 +1,5 @@
 import { getCredential } from '@/utils/Credential';
+import axios from 'axios';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 
@@ -24,4 +25,30 @@ export const getImage = async (img: any) => {
   }
 
   return '';
+};
+
+export const getImageAxios = async (img: any) => {
+  try {
+    const token = getCredential().refreshToken;
+    const imageUrl = `${baseUrl}/files/get/${img}`;
+
+    const response: any = await axios.get(imageUrl, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const fileSize = response?.headers?.['content-length'];
+    const imageName: string = img.replace('images/', '').replace('.jpg', '').replace('.jpeg', '').replace('.png', '').replace('.pdf', '');
+
+    return {
+      url: imageUrl,
+      fileSize,
+      imageName,
+    };
+  } catch (err) {
+    console.error(err);
+  }
+
+  return false;
 };
