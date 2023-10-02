@@ -83,7 +83,7 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
 
   return (
     <label
-      htmlFor={id || "upload_avatar"}
+      htmlFor={id ?? "upload_avatar"}
     >
       <div className="w-[115px] h-[115px] relative border-1 border-[#DBDBDB] rounded-full flex justify-center items-center bg-lavender">
         <img 
@@ -97,7 +97,7 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
         </div>
       </div>
       <input
-        id={id || "upload_avatar"}
+        id={id ?? "upload_avatar"}
         type="file"
         className="hidden"
         onChange={handleUpload}

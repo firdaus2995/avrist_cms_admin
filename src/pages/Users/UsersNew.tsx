@@ -34,8 +34,14 @@ export default function UsersNew() {
   const [email, setEmail] = useState<string>('');
   const [company] = useState<string>('Avrist Life Insurance');
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
-
   const [avatar, setAvatar] = useState('');
+  // CHANGE STATUS MODAL
+  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
+  // LEAVE MODAL
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');  
+  // LIST STATE
   const [listAttributes] = useState<any>([
     { value: '1', label: 'CMC' },
     { value: '2', label: 'DPLK/Pension' },
@@ -43,16 +49,10 @@ export default function UsersNew() {
     { value: '4', label: 'HR' },
   ]);
 
-  // CHANGE STATUS MODAL
-  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
-  // LEAVE MODAL
-  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
-  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
-
   // RTK GET ROLE
   const fetchRoleQuery = useGetRoleQuery({});
   const { data } = fetchRoleQuery;
+
   // RTK CREATE USER
   const [createUser, { isLoading }] = useCreateUserMutation();
 

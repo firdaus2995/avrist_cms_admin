@@ -57,21 +57,25 @@ export default function UsersEdit () {
   const [email, setEmail] = useState<string>("");
   const [company] = useState<string>("Avrist Life Insurance");
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
+  const [avatar, setAvatar] = useState('');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
-  
-  const [avatar, setAvatar] = useState('');
+
   // RTK GET ROLE
   const fetchUserDetailQuery = useGetUserDetailQuery({id}, {
     refetchOnMountOrArgChange: true,
   });
   const fetchRoleQuery = useGetRoleQuery({});
+
+  // RTK USER DETAIL
   const { data } = fetchUserDetailQuery;
   const { data: fetchedRole } = fetchRoleQuery;  
+
+  // RTK EDIT USER
   const [ editUser, {
     isLoading,
   }] = useEditUserMutation();
