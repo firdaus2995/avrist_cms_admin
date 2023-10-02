@@ -11,6 +11,7 @@ import Image from './Image';
 import Rating from './Rating';
 import SubmitterEmail from './SubmitterEmail';
 import ImageRadio from './ImageRadio';
+import TNC from './TNC';
 
 const EFBConfiguration = {
   TextField,
@@ -26,6 +27,7 @@ const EFBConfiguration = {
   Rating,
   SubmitterEmail,
   ImageRadio,
+  TNC,
 };
 
 export default EFBConfiguration;

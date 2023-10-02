@@ -8,8 +8,8 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 import { copyArray } from '@/utils/logicHelper';
-
 import { getImage } from '../../../services/Images/imageUtils';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
 
 export default function PreviewModal(props: any) {
   const { open, toggle, id } = props;
@@ -317,6 +317,17 @@ export default function PreviewModal(props: any) {
               </div>
             </div>
           );
+        case 'TNC':
+          return (
+            <CheckBox
+              containerStyle="w-full flex flex-row flex-start"
+              labelTitle={(
+                <>Ya. Saya telah membaca dan menyetujui <span className="text-[#2C89F5] font-bold">Syarat dan Ketentuan</span></>
+              )}
+              labelStyle="max-w-[220px] font-normal"
+              inputStyle="w-[20px] h-[20px]"
+            />
+          );  
         default:
           return <div>err: {data.fieldType}</div>;
       }
