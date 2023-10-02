@@ -30,7 +30,6 @@ const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
         }}
       />
       <FormList.FileUploaderV3
-        key={data?.name}
         id={data?.name}
         fieldTypeLabel="Image Option"
         isDocument={false}
@@ -40,7 +39,7 @@ const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
         }}
         border={false}
         maxFile={5}
-        parentData={data}
+        items={data?.items}
       />
       <Config data={data} configList={configList} valueChange={valueChange} />
     </React.Fragment>

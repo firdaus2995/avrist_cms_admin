@@ -21,45 +21,6 @@ function bytesToSize(bytes: number): string {
   return (bytes / Math.pow(1024, i)).toFixed(2).toString() + ' ' + sizes[i];
 };
 
-const PreviewFileItem = ({
-  isDocument,
-  item, 
-  imageUrls, 
-  onDeletePress, 
-  index,
-}: any) => {
-  const [imageInfo, setImageInfo] = useState<any>({});
-
-  useEffect(() => {
-    if (imageUrls) {
-      setImageInfo(imageUrls[index]);
-    };
-  }, [imageUrls]);
-
-  return (
-    <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
-      <img
-        className="object-cover h-12 w-12 rounded-lg mr-3 border"
-        src={isDocument ? AdobePdfIcon : imageInfo?.url ?? ''}
-        alt={item}
-      />
-      <div className="flex flex-1 h-14 justify-center flex-col">
-        <p className="truncate w-52">{imageInfo?.imageName ?? ''}</p>
-        <p className="text-body-text-3 text-xs">{imageInfo?.fileSize ? bytesToSize(imageInfo?.fileSize) : ''}</p>
-      </div>
-      <div className="h-11">
-        <div
-          data-tip={'Delete'}
-          className="tooltip cursor-pointer w-6 h-6 rounded-full hover:bg-light-grey justify-center items-center flex"
-          onClick={onDeletePress}
-        >
-          <img src={Close} className="w-5 h-5" />
-        </div>
-      </div>
-    </div>
-  );
-};
-
 export default function FileUploaderBaseV2({
   isDocument,
   multiple,
@@ -68,21 +29,19 @@ export default function FileUploaderBaseV2({
   disabled,
   label,
   maxSize,
-  parentData,
+  items,
 }: any) {
   const dispatch = useAppDispatch();
   const inputRef = useRef<any>(null);
 
   const [isLoading, setIsLoading] = useState(false);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageUrls, setImageUrls] = useState<any>([]);
 
   useEffect(() => {
-    if (parentData?.items) {
+    if (items) {
       const loadImages = async () => {
         const urls = await Promise.all(
-          parentData.items.map(async (element: any) => {
-            console.log(element);
-            
+          items.map(async (element: any) => {
             return await getImageAxios(element);
           }),
         );
@@ -90,8 +49,8 @@ export default function FileUploaderBaseV2({
       };
 
       void loadImages();
-    }
-  }, [parentData?.items]);
+    };
+  }, [JSON.stringify(items)]);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -128,7 +87,7 @@ export default function FileUploaderBaseV2({
       return;
     }
 
-    if (parentData?.items?.some((item: any) => item.name === fileName)) {
+    if (items?.some((item: any) => item.name === fileName)) {
       dispatch(
         openToast({
           type: 'error',
@@ -157,7 +116,7 @@ export default function FileUploaderBaseV2({
         const responseData = await response.json();
         const newFile = { name: fileName, value: files[0], response: responseData.data };
         if (multiple) {
-          const newData: any = copyArray(parentData?.items);
+          const newData: any = copyArray(items);
           newData.push(newFile.response);
           onFilesChange(newData);
         } else {
@@ -186,6 +145,37 @@ export default function FileUploaderBaseV2({
     setIsLoading(false);
   };
 
+  const renderPreviewItem = ({
+    item, 
+    index,
+  }: any) => {
+    return (
+      <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
+        <img
+          className="object-cover h-12 w-12 rounded-lg mr-3 border"
+          src={isDocument ? AdobePdfIcon : `${baseUrl}/files/get/${item}` ?? ''}
+        />
+        <div className="flex flex-1 h-14 justify-center flex-col">
+          <p className="truncate w-52">{imageUrls[index]?.imageName ?? ''}</p>
+          <p className="text-body-text-3 text-xs">{imageUrls[index]?.fileSize ? bytesToSize(imageUrls[index]?.fileSize) : ''}</p>
+        </div>
+        <div className="h-11">
+          <div
+            data-tip={'Delete'}
+            className="tooltip cursor-pointer w-6 h-6 rounded-full hover:bg-light-grey justify-center items-center flex"
+            onClick={() => {
+              const newData: any = copyArray(items);
+              newData.splice(index, 1);
+              onFilesChange(newData);
+            }}
+          >
+            <img src={Close} className="w-5 h-5" />
+          </div>
+        </div>
+      </div>
+    );
+  };
+  
   return (
     <>
       <div
@@ -193,8 +183,9 @@ export default function FileUploaderBaseV2({
         onDragOver={e => {
           e.preventDefault();
         }}
-        className={`min-w-[150px] bg-white border-dashed border-[2px] border-lavender rounded-xl`}>
-        {(!parentData?.items?.length || multiple) && (
+        className={`min-w-[150px] bg-white border-dashed border-[2px] border-lavender rounded-xl`}
+      >
+        {(!items?.length || multiple) && (
           <label
             htmlFor={id}
             className={`flex flex-col justify-center items-center cursor-pointer ${
@@ -227,13 +218,16 @@ export default function FileUploaderBaseV2({
         isDocument ? '.pdf' : '.jpg, .jpeg, .png'
       }`}</p>
       <div>
-        {parentData?.items?.map((item: any, index: any) => {
-          return <PreviewFileItem isDocument={isDocument} key={index} item={item} imageUrls={imageUrls} index={index} onDeletePress={() => {
-            const newData: any = copyArray(parentData?.items);
-            newData.splice(index, 1);
-            onFilesChange(newData);
-          }} />;
-        })}
+        {
+          items?.map((item: any, index: any) => {
+            return (
+              renderPreviewItem({
+                item, 
+                index,
+              })
+            );
+          })
+        }
       </div>
       <div>
         {isLoading && (
