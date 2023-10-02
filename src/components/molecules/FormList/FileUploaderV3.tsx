@@ -23,15 +23,6 @@ export default function FileUploaderV2({
   parentData,
 }: any) {
   const [isMaxFile, setIsMaxFile] = useState(false);
-  function convertToArr(arr: any[], key: string | number | undefined) {
-    if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
-      return [];
-    }
-
-    const values = arr.map(obj => obj[key]);
-
-    return values;
-  }
 
   useEffect(() => {
     if (maxFile) {
@@ -68,10 +59,7 @@ export default function FileUploaderV2({
               isDocument={isDocument}
               multiple={multiple}
               label={labelText}
-              onFilesChange={(e: any) => {
-                const values = convertToArr(e, 'response');
-                onChange(values);
-              }}
+              onFilesChange={onChange}
               disabled={disabled || isMaxFile}
               maxSize={maxSize}
               parentData={parentData}

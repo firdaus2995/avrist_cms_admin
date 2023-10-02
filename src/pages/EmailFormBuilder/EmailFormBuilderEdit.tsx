@@ -139,7 +139,7 @@ export default function EmailFormBuilderEdit() {
   useEffect(() => {
     if (dataFormTemplate) {
       setListFormTemplate(
-        dataFormTemplate?.formResultList?.templates.map((element: any) => {
+        dataFormTemplate?.formResultList?.resultList.map((element: any) => {
           return {
             value: element.id,
             label: element.title,
@@ -147,7 +147,7 @@ export default function EmailFormBuilderEdit() {
           };
         }),
       );
-    }
+    };
   }, [dataFormTemplate]);
 
   useEffect(() => {

@@ -29,6 +29,7 @@
     "ckeditor5-custom-build": "file:./ckeditor5",
     "daisyui": "^2.51.6",
     "dayjs": "^1.11.8",
+    "fs": "^0.0.1-security",
     "graphql": "^16.6.0",
     "graphql-request": "^5.0.0",
     "i18next": "^22.4.15",

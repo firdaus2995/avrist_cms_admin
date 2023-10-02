@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
 import Config from './Config';
-import { InputText } from '@/components/atoms/Input/InputText';
 import FormList from '../../../../components/molecules/FormList';
+import { InputText } from '@/components/atoms/Input/InputText';
 
 interface IRadio {
   data: any;
@@ -12,6 +12,7 @@ interface IRadio {
 
 const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
   const [inputTextValue, setInputTextValue] = useState(data?.name);
+
   return (
     <React.Fragment>
       <InputText
