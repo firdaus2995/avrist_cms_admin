@@ -9,8 +9,8 @@ export const globalConfigDataApi = createApi({
     getGlobalConfigById: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query getConfig($variable: String) {
-            getConfig(variable: $variable) {
+          query getDetail($id: Int!) {
+            getDetail(id: $id) {
               id
               variable
               value
