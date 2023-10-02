@@ -13,7 +13,7 @@ export const emailFormBuilderApi = createApi({
             formResultList(
               pageableRequest: {
                 pageIndex: 0
-                limit: 9999
+                limit: 5
               }
             ) {
               total
@@ -39,18 +39,22 @@ export const emailFormBuilderApi = createApi({
                 limit: $limit
               }
             ) {
+              total
               id
               name
               postTypeGroup
               slug
+              pic
+              enableCaptcha
               formResult {
                 id
                 title
                 shortDesc
               }
-              pic
-              enableCaptcha
-              total
+              emailBody {
+                id
+                title
+              }
               attributeList {
                 id
                 name
@@ -163,7 +167,22 @@ export const emailFormBuilderApi = createApi({
         variables: payload,
       }),
     }),
-    getEmailBodyQuery: builder.query<any, any>({
+    getEmailBodyDetail: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query getDetail($id: Int!) {
+            getDetail(id: $id) {
+              id
+              title
+              shortDesc
+              value
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    getEmailBody: builder.query<any, any>({
       query: payload => ({
         document: gql`
           query emailBodyList(
@@ -219,6 +238,33 @@ export const emailFormBuilderApi = createApi({
         variables: payload,
       }),
     }),
+    updateEmailBody: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation updateEmailBody(
+            $id: Int!
+            $title: String!
+            $shortDesc: String!
+            $value: String!
+          ) {
+            updateEmailBody(
+              id: $id
+              request: {
+                title: $title
+                shortDesc: $shortDesc
+                value: $value
+              }
+            ) {
+              id
+              title
+              shortDesc
+              value
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     deleteEmailBody: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
@@ -241,7 +287,9 @@ export const {
   useCreateEmailFormBuilderMutation,
   useUpdateEmailFormBuilderMutation,
   useDeleteEmailFormBuilderMutation,
-  useGetEmailBodyQueryQuery,
+  useGetEmailBodyDetailQuery,
+  useGetEmailBodyQuery,
   useCreateEmailBodyMutation,
+  useUpdateEmailBodyMutation,
   useDeleteEmailBodyMutation,
 } = emailFormBuilderApi;

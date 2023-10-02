@@ -9,6 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Drag from "./moduleNewAndUpdate/dragAndDropComponent/Drag";
 import Drop from "./moduleNewAndUpdate/dragAndDropComponent/Drop";
 import CancelIcon from "../../assets/cancel.png";
+import EyeIcon from "@/assets/eye-purple.svg";
 import Recaptcha from "../../assets/recaptcha.svg";
 import ModalConfirm from "@/components/molecules/ModalConfirm";
 import EFBList from "./moduleNewAndUpdate/listComponent";
@@ -24,8 +25,10 @@ import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
-import { useCreateEmailFormBuilderMutation, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
+import { useCreateEmailFormBuilderMutation, useGetEmailBodyDetailQuery, useGetEmailBodyQuery, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
+import ModalDisplay from '@/components/molecules/ModalDisplay';
+import { LabelText } from '@/components/atoms/Label/Text';
 
 export default function EmailFormBuilderNew() {
   const navigate = useNavigate();
@@ -36,6 +39,7 @@ export default function EmailFormBuilderNew() {
   // FORM STATE
   const [formName, setFormName] = useState<any>("");
   const [formTemplate, setFormTemplate] = useState<any>(null);
+  const [emailBody, setEmailBody] = useState<any>(null);
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
   const [checkCaptcha, setCheckCaptcha] = useState<any>(true);
   const [pics, setPics] = useState<any>([]);
@@ -43,29 +47,67 @@ export default function EmailFormBuilderNew() {
   const [activeComponent, setActiveComponent] = useState<any>(null);
   // LIST STATE
   const [listFormTemplate, setListFormTemplate] = useState<any>([]);
+  const [listEmailBody, setListEmailBody] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+  // PREVIEW EMAIL BODY MODAL
+  const [titlePreviewEmailBodyModal, setTitlePreviewEmailBodyModal] = useState<any>("");
+  const [shortDescPreviewEmailBodyModal, setShortDescPreviewEmailBodyModal] = useState<any>("");
+  const [valuePreviewEmailBodyModal, setValuePreviewEmailBodyModal] = useState<any>("");
+  const [showPreviewEmailBodyModal, setShowPreviewEmailBodyModal] = useState<boolean>(false);
   // CAPTCHA MODAL
   const [showCaptchaModal, setShowCaptchaModal] = useState<boolean>(false);
   const [titleCaptchaModalShow, setTitleCaptchaModalShow] = useState<string | null>('');
   const [messageCaptchaModalShow, setMessageCaptchaModalShow] = useState<string | null>('');
 
   // RTK GET ATTRIBUTE
-  const { data: dataAttribute } = useGetEmailFormAttributeListQuery({}, {
-    refetchOnMountOrArgChange: true,
-  });
+  const { data: dataAttribute } = useGetEmailFormAttributeListQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  
+  // RTK GET FORM TEMPLATE
+  const { data: dataFormTemplate } = useGetFormResultQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
+  // RTK GET DATA EB
+  const fetchQueryEB = useGetEmailBodyQuery(
+    {
+      pageIndex: 0,
+      limit: 9999,
+      sortBy : 'id',
+      direction : 'asc',
+      search: '',
+    },
+    {
+      refetchOnMountOrArgChange: true
+    },
+  );
+  const { data: dataEB } = fetchQueryEB;
+
+  // RTK GET EMAIL BODY DETAIL
+  const fetchEmailBodyDetail = useGetEmailBodyDetailQuery(
+    {
+      id: emailBody
+    }, 
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataEBDetail } = fetchEmailBodyDetail;  
 
   // RTK CREATE EMAIL
   const [ createEmailFormBuilder, {
     isLoading,
   }] = useCreateEmailFormBuilderMutation();
-
-  // RTK GET FORM TEMPLATE
-  const { data: dataFormTemplate } = useGetFormResultQuery({}, {
-    refetchOnMountOrArgChange: true,
-  });  
 
   useEffect(() => {
     if (dataAttribute?.getConfig) {
@@ -75,7 +117,6 @@ export default function EmailFormBuilderNew() {
       for (const element of arrayFormAttribute) {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
       }
-      console.log(arrayFormAttribute);
       setFormAttribute(arrayFormAttribute);
       setObjectFormAttribute(objectFormAttribute);
     }
@@ -92,6 +133,25 @@ export default function EmailFormBuilderNew() {
       }));
     };
   }, [dataFormTemplate]);
+
+  useEffect(() => {
+    if (dataEB) {
+      setListEmailBody(dataEB?.emailBodyList?.emailBodies.map((element: any) => {
+        return {
+          value: element.id,
+          label: element.title,
+        };
+      }));
+    };
+  }, [dataEB]);
+
+  useEffect(() => {
+    if (dataEBDetail) {
+      setTitlePreviewEmailBodyModal(dataEBDetail?.getDetail?.title);
+      setShortDescPreviewEmailBodyModal(dataEBDetail?.getDetail?.shortDesc);
+      setValuePreviewEmailBodyModal(dataEBDetail?.getDetail?.value);
+    };
+  }, [dataEBDetail]);
 
   const onSave = () => {
     // ALL COMPONENTS
@@ -250,6 +310,15 @@ export default function EmailFormBuilderNew() {
       value: checkCaptcha ? 'true' : 'false',
     });
 
+    if (emailBody) {
+      backendComponents.unshift({
+        fieldType: 'EMAIL_BODY',
+        name: 'EMAIL_BODY',
+        fieldId: 'EMAIL_BODY',
+        value: emailBody.toString(),
+      });
+    };
+
     if (pics.length > 0) {
       backendComponents.unshift({
         fieldType: 'EMAIL_FORM_PIC',
@@ -257,7 +326,7 @@ export default function EmailFormBuilderNew() {
         fieldId: 'EMAIL_FORM_PIC',
         value: pics.join(';'),
       });
-    }
+    };
 
     const payload = {
       name: formName,
@@ -307,6 +376,12 @@ export default function EmailFormBuilderNew() {
       ...prevComponent,
       data: currentComponents[activeComponent?.index],
     }));
+  };
+
+  const handlerPreviewEmailBody = () => {
+    if (emailBody) {
+      setShowPreviewEmailBodyModal(true);
+    };
   };
 
   const handlerAddMultipleInput = (value: any) => {
@@ -955,6 +1030,33 @@ export default function EmailFormBuilderNew() {
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
+        <ModalDisplay
+          open={showPreviewEmailBodyModal}
+          cancelAction={() => {
+            setShowPreviewEmailBodyModal(false)
+          }}
+          title={titlePreviewEmailBodyModal}
+        >
+          <hr className='p-3' />
+          <LabelText 
+            labelTitle="Title"
+            labelWidth={200}
+            labelRequired
+            value={titlePreviewEmailBodyModal}
+          />
+          <LabelText 
+            labelTitle="Short Description"
+            labelWidth={200}
+            labelRequired
+            value={shortDescPreviewEmailBodyModal}
+          />
+          <LabelText 
+            labelTitle="Value"
+            labelWidth={200}
+            labelRequired
+            value={valuePreviewEmailBodyModal}
+          />
+        </ModalDisplay>
         <ModalConfirm
           open={showCaptchaModal}
           cancelAction={() => {
@@ -996,9 +1098,36 @@ export default function EmailFormBuilderNew() {
               onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                 if (event) {
                   setFormTemplate(value);
-                }
+                };
               }}
             />
+            <div className='flex flex-row gap-5'>
+              <DropDown
+                labelTitle="Email Body"
+                labelStyle="font-bold	"
+                direction='row'
+                inputWidth={400}
+                labelEmpty="Choose Email Body"
+                labelRequired={true}
+                items={listEmailBody}
+                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                  if (event) {
+                    setEmailBody(value);
+                  };
+                }}
+              />
+              {
+                emailBody && (
+                  <button 
+                    type='button' 
+                    className='w-[48px] flex items-center justify-center border-[1px] border-[#9B86BA] rounded-xl'
+                    onClick={handlerPreviewEmailBody}
+                  >
+                    <img src={EyeIcon} />
+                  </button>
+                )
+              }
+            </div>
             <MultipleInput
               labelTitle="PIC"
               labelStyle="font-bold	"
