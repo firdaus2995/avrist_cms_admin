@@ -849,7 +849,17 @@ export default function ContentManagerDetailData() {
           </button>
           <button
             onClick={() => {
-              setShowModalReview(true);
+              const payload = {
+                id: contentDataDetailList?.id,
+                status: 'WAITING_APPROVE',
+                comment: 'Already review',
+              };
+
+              if (isAlreadyReview) {
+                onUpdateStatus(payload);
+              } else {
+                setShowModalWarning(true);
+              }
             }}
             className="btn btn-success text-xs text-white btn-sm w-28 h-10">
             Submit
@@ -1017,21 +1027,11 @@ export default function ContentManagerDetailData() {
         icon={PaperIcon}
         submitAction={() => {
           setShowModalReview(false);
-          const payload = {
-            id: contentDataDetailList?.id,
-            status: 'WAITING_APPROVE',
-            comment: 'Already review',
-          };
-
-          if (isAlreadyReview) {
-            onUpdateStatus(payload);
-          } else {
-            setShowModalWarning(true);
-          }
         }}
         btnSubmitStyle="btn bg-secondary-warning border-none"
         cancelAction={() => {
           setShowModalReview(false);
+          setIsAlreadyReview(false);
         }}
       />
 
@@ -1233,6 +1233,9 @@ export default function ContentManagerDetailData() {
                 defaultValue={isAlreadyReview}
                 updateFormValue={e => {
                   setIsAlreadyReview(e.value);
+                  if (e.value) {
+                    setShowModalReview(true);
+                  }
                 }}
                 labelTitle="I Already Review This Page Content"
                 updateType={''}
