@@ -250,9 +250,9 @@ export default function EmailFormBuilderEdit() {
 
   useEffect(() => {
     if (dataEBDetail) {
-      setTitlePreviewEmailBodyModal(dataEBDetail?.getDetail?.title);
-      setShortDescPreviewEmailBodyModal(dataEBDetail?.getDetail?.shortDesc);
-      setValuePreviewEmailBodyModal(dataEBDetail?.getDetail?.value);
+      setTitlePreviewEmailBodyModal(dataEBDetail?.emailBodyDetail?.title);
+      setShortDescPreviewEmailBodyModal(dataEBDetail?.emailBodyDetail?.shortDesc);
+      setValuePreviewEmailBodyModal(dataEBDetail?.emailBodyDetail?.value);
     };
   }, [dataEBDetail]);
 
