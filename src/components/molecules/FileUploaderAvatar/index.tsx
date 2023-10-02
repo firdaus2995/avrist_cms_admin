@@ -8,11 +8,13 @@ import { openToast } from "@/components/atoms/Toast/slice";
 import { formatFilename } from "@/utils/logicHelper";
 
 interface IFileUploaderAvatar {
+  id?: any,
   image: any,
   imageChanged: any,
 };
 
 const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
+  id,
   image,
   imageChanged,
 }) => {
@@ -81,7 +83,7 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
 
   return (
     <label
-      htmlFor="upload_avatar"
+      htmlFor={id || "upload_avatar"}
     >
       <div className="w-[115px] h-[115px] relative border-1 border-[#DBDBDB] rounded-full flex justify-center items-center bg-lavender">
         <img 
@@ -95,7 +97,7 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
         </div>
       </div>
       <input
-        id="upload_avatar"
+        id={id || "upload_avatar"}
         type="file"
         className="hidden"
         onChange={handleUpload}

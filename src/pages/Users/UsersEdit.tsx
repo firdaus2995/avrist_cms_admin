@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 import UserOrange from "../../assets/user-orange.svg";
 import ModalConfirm from "../../components/molecules/ModalConfirm";
 import CancelIcon from "../../assets/cancel.png";
-import AddProfilePicture from "../../assets/add-profile-picture.png";
 import Radio from "../../components/molecules/Radio";
 import DropDown from "../../components/molecules/DropDown";
 import { 
@@ -40,6 +39,7 @@ import {
 import { 
   openToast,
 } from "../../components/atoms/Toast/slice";
+import FileUploaderAvatar from "@/components/molecules/FileUploaderAvatar";
 
 export default function UsersEdit () {
   const navigate = useNavigate();
@@ -64,6 +64,7 @@ export default function UsersEdit () {
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
   
+  const [avatar, setAvatar] = useState('');
   // RTK GET ROLE
   const fetchUserDetailQuery = useGetUserDetailQuery({id}, {
     refetchOnMountOrArgChange: true,
@@ -108,6 +109,7 @@ export default function UsersEdit () {
       gender: gender === "FEMALE" ? false : gender === "MALE" ? true : null,
       email,
       company,
+      profilePicture: avatar,
       statusActive: isActive,
       roleId,
     };    
@@ -177,7 +179,15 @@ export default function UsersEdit () {
         btnSubmitStyle='btn-warning'
       />
       <form className="flex flex-col w-100" >
-        <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130}/>
+        <div className='flex items-center justify-center'>
+          <FileUploaderAvatar
+            id={"edit_profile_picture"}
+            image={avatar}
+            imageChanged={(image: any) => {
+              setAvatar(image);
+            }}
+          />
+        </div>
         <div className="flex flex-col mt-[60px] gap-5">
           {/* ROW 1 */}
           <Radio 

@@ -117,6 +117,7 @@ export const userApi: any = createApi({
             $dob: String!
             $gender: Boolean!
             $company: String!
+            $profilePicture: String!
             $statusActive: Boolean!
             $roleId: Int!
           ) {
@@ -129,6 +130,7 @@ export const userApi: any = createApi({
                 dob: $dob
                 gender: $gender
                 company: $company
+                profilePicture: $profilePicture
                 statusActive: $statusActive
                 roleId: $roleId
               }
@@ -140,6 +142,7 @@ export const userApi: any = createApi({
               dob
               gender
               company
+              profilePicture
               statusActive
               # isActive
               role {
@@ -161,6 +164,7 @@ export const userApi: any = createApi({
             $dob: String!
             $gender: Boolean!
             $company: String!
+            $profilePicture: String!
             $statusActive: Boolean!
             $roleId: Int!
           ) {
@@ -172,6 +176,7 @@ export const userApi: any = createApi({
                 dob: $dob
                 gender: $gender
                 company: $company
+                profilePicture: $profilePicture
                 statusActive: $statusActive
                 roleId: $roleId
               }
@@ -183,6 +188,7 @@ export const userApi: any = createApi({
               dob
               gender
               company
+              profilePicture
               statusActive
               # isActive
               role {
