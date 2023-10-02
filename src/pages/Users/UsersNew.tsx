@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 
 import UserOrange from '../../assets/user-orange.svg';
-import AddProfilePicture from '../../assets/add-profile-picture.png';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import DropDown from '../../components/molecules/DropDown';
 import Radio from '../../components/molecules/Radio';
@@ -19,6 +18,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 import FormList from '../../components/molecules/FormList';
 import Typography from '../../components/atoms/Typography';
+import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
 
 export default function UsersNew() {
   const navigate = useNavigate();
@@ -34,7 +34,14 @@ export default function UsersNew() {
   const [email, setEmail] = useState<string>('');
   const [company] = useState<string>('Avrist Life Insurance');
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
-
+  const [avatar, setAvatar] = useState('');
+  // CHANGE STATUS MODAL
+  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
+  // LEAVE MODAL
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');  
+  // LIST STATE
   const [listAttributes] = useState<any>([
     { value: '1', label: 'CMC' },
     { value: '2', label: 'DPLK/Pension' },
@@ -42,16 +49,10 @@ export default function UsersNew() {
     { value: '4', label: 'HR' },
   ]);
 
-  // CHANGE STATUS MODAL
-  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
-  // LEAVE MODAL
-  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
-  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
-
   // RTK GET ROLE
   const fetchRoleQuery = useGetRoleQuery({});
   const { data } = fetchRoleQuery;
+
   // RTK CREATE USER
   const [createUser, { isLoading }] = useCreateUserMutation();
 
@@ -76,6 +77,7 @@ export default function UsersNew() {
       gender: gender === 'FEMALE' ? false : gender === 'MALE' ? true : null,
       email,
       company,
+      profilePicture: avatar,
       statusActive: isActive,
       roleId,
     };
@@ -142,7 +144,15 @@ export default function UsersNew() {
         btnSubmitStyle="btn-warning"
       />
       <form className="flex flex-col w-100">
-        <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130} />
+        <div className='flex items-center justify-center'>
+          <FileUploaderAvatar
+            id={"add_profile_picture"}
+            image={avatar}
+            imageChanged={(image: any) => {
+              setAvatar(image);
+            }}
+          />
+        </div>
         <div className="flex flex-col mt-[60px] gap-5">
           {/* ROW 1 */}
           <Radio
