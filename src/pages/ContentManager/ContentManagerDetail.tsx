@@ -42,12 +42,12 @@ export default function ContentManagerDetail() {
   // PERMISSION STATE
   const [canAddContentCategory] = useState(() => {
     return !!getCredential().roles.find((element: any) => {
-      if (element === "CONTENT_MANAGER_REGISTRATION") {
+      if (element === 'CONTENT_MANAGER_REGISTRATION') {
         return true;
       }
       return false;
     });
-  })    
+  });
 
   // RTK GET DATA
   const fetchQuery = useGetPostTypeDetailQuery({
@@ -61,7 +61,7 @@ export default function ContentManagerDetail() {
     if (state?.state?.activeTabParams) {
       setActiveTab(state.state.activeTabParams);
     }
-  }, [state])
+  }, [state]);
 
   useEffect(() => {
     if (data) {
@@ -98,49 +98,47 @@ export default function ContentManagerDetail() {
       </div>
     );
   };
-  
+
   const CreateButton = () => {
     return (
       <div className="inline-block float-right">
-        {
-          activeTab === 1 ? (
-            <Link to="data/new">
-              <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
-                <div className="flex flex-row gap-2 items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                  Add New Data
-                </div>
-              </button>
-            </Link>
-          ) : (activeTab === 3 && canAddContentCategory) ? (
-            <Link to="category/new">
-              <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
-                <div className="flex flex-row gap-2 items-center justify-center">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    strokeWidth={1.5}
-                    stroke="currentColor"
-                    className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                  </svg>
-                  Add New Category
-                </div>
-              </button>
-            </Link>
-          ) : (
-            <></>
-          )
-        }
+        {activeTab === 1 ? (
+          <Link to="data/new">
+            <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
+              <div className="flex flex-row gap-2 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add New Data
+              </div>
+            </button>
+          </Link>
+        ) : activeTab === 3 && canAddContentCategory ? (
+          <Link to="category/new">
+            <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
+              <div className="flex flex-row gap-2 items-center justify-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  strokeWidth={1.5}
+                  stroke="currentColor"
+                  className="w-6 h-6">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+                Add New Category
+              </div>
+            </button>
+          </Link>
+        ) : (
+          <></>
+        )}
       </div>
     );
   };
@@ -155,21 +153,25 @@ export default function ContentManagerDetail() {
         TopSideButtons={activeTab !== 2 && <TopRightButton />}>
         <div className="flex flex-row justify-between mb-5">
           <div className="btn-group">
-            {listTabs.map(val => (
-              <button
-                key={val.isActive}
-                onClick={() => {
-                  setActiveTab(val.isActive);
-                  navigate(location.pathname, { state: { activeTabParams: val.isActive } }); 
-                }}
-                className={`btn ${activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-400'} text-xs w-40 font-bold border-none`}>
-                {val.name}
-              </button>
-            ))}
+            {listTabs.map(val =>
+              val.name === 'Category' && data?.postTypeDetail?.isUseCategory === false ? null : (
+                <button
+                  key={val.isActive}
+                  onClick={() => {
+                    setActiveTab(val.isActive);
+                    navigate(location.pathname, { state: { activeTabParams: val.isActive } });
+                  }}
+                  className={`btn ${
+                    activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-400'
+                  } text-xs w-40 font-bold border-none`}>
+                  {val.name}
+                </button>
+              ),
+            )}
           </div>
-          {activeTab === 1 && <ArchiveButton /> }
+          {activeTab === 1 && <ArchiveButton />}
         </div>
-        {activeTab === 1 && <MainTab id={id} />}
+        {activeTab === 1 && <MainTab id={id} isUseCategory={data?.postTypeDetail?.isUseCategory} />}
         {activeTab === 2 && <MyTaskTab id={id} />}
         {activeTab === 3 && <CategoryTab id={id} />}
       </TitleCard>
