@@ -46,10 +46,10 @@ export default function EmailBodyEdit() {
   useEffect(() => {
     if (data) {
       setEmailBodyDetail({
-        title: data?.getDetail?.title,
-        shortDesc: data?.getDetail?.shortDesc,
+        title: data?.emailBodyDetail?.title,
+        shortDesc: data?.emailBodyDetail?.shortDesc,
       })
-      setValue(data?.getDetail?.value);
+      setValue(data?.emailBodyDetail?.value);
     };
   }, [data]);  
 

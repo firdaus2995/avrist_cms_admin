@@ -170,8 +170,8 @@ export const emailFormBuilderApi = createApi({
     getEmailBodyDetail: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query getDetail($id: Int!) {
-            getDetail(id: $id) {
+          query emailBodyDetail($id: Int!) {
+            emailBodyDetail(id: $id) {
               id
               title
               shortDesc

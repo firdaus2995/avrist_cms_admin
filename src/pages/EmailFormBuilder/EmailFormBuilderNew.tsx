@@ -17,6 +17,7 @@ import EFBPreview from "./moduleNewAndUpdate/previewComponent";
 import EFBConfiguration from "./moduleNewAndUpdate/configurationComponent";
 import DragDrop from "./moduleNewAndUpdate/dragAndDropComponent/DragDrop";
 import DropDown from '@/components/molecules/DropDown';
+import ModalDisplay from '@/components/molecules/ModalDisplay';
 import { Divider } from "@/components/atoms/Divider";
 import { CheckBox } from "@/components/atoms/Input/CheckBox";
 import { InputText } from "@/components/atoms/Input/InputText";
@@ -27,7 +28,6 @@ import { openToast } from "@/components/atoms/Toast/slice";
 import { checkIsEmail, copyArray } from "@/utils/logicHelper";
 import { useCreateEmailFormBuilderMutation, useGetEmailBodyDetailQuery, useGetEmailBodyQuery, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
-import ModalDisplay from '@/components/molecules/ModalDisplay';
 import { LabelText } from '@/components/atoms/Label/Text';
 
 export default function EmailFormBuilderNew() {
@@ -114,33 +114,33 @@ export default function EmailFormBuilderNew() {
       const arrayFormAttribute: any = JSON.parse(dataAttribute?.getConfig?.value).attributes;
       const objectFormAttribute: any = {};
 
-      arrayFormAttribute.push({
-        code: "tnc",
-        label: "Term and Condition",
-        description: "Term and Condition",
-        icon: "",
-        config: [
-          {
-            code: "required",
-            label: "Required Field",
-            isMandatory: true,
-            type: "checkbox",
-            value: [],
-          },
-        ],
-      })
+      // arrayFormAttribute.push({
+      //   code: "tnc",
+      //   label: "Term and Condition",
+      //   description: "Term and Condition",
+      //   icon: "",
+      //   config: [
+      //     {
+      //       code: "required",
+      //       label: "Required Field",
+      //       isMandatory: true,
+      //       type: "checkbox",
+      //       value: [],
+      //     },
+      //   ],
+      // })
 
       for (const element of arrayFormAttribute) {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
       }
       setFormAttribute(arrayFormAttribute);
       setObjectFormAttribute(objectFormAttribute);
-    }
+    };
   }, [dataAttribute]);
 
   useEffect(() => {
     if (dataFormTemplate) {
-      setListFormTemplate(dataFormTemplate?.formResultList?.templates.map((element: any) => {
+      setListFormTemplate(dataFormTemplate?.formResultList?.resultList.map((element: any) => {
         return {
           value: element.id,
           label: element.title,
@@ -163,9 +163,9 @@ export default function EmailFormBuilderNew() {
 
   useEffect(() => {
     if (dataEBDetail) {
-      setTitlePreviewEmailBodyModal(dataEBDetail?.getDetail?.title);
-      setShortDescPreviewEmailBodyModal(dataEBDetail?.getDetail?.shortDesc);
-      setValuePreviewEmailBodyModal(dataEBDetail?.getDetail?.value);
+      setTitlePreviewEmailBodyModal(dataEBDetail?.emailBodyDetail?.title);
+      setShortDescPreviewEmailBodyModal(dataEBDetail?.emailBodyDetail?.shortDesc);
+      setValuePreviewEmailBodyModal(dataEBDetail?.emailBodyDetail?.value);
     };
   }, [dataEBDetail]);
 
