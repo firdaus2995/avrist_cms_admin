@@ -31,11 +31,10 @@ export const pageTemplateApi: any = createApi({
                 id
                 name
                 imageUrl
-                uploadedBy {
+                createdBy {
                   id
                   name
                 }
-                createdBy
               }
             }
           }
