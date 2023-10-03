@@ -12,4 +12,5 @@ export interface IModalForm {
   children?: any;
   submitDisabled?: boolean;
   additionalButton?: any;
+  submitPosition?: any;
 }

@@ -4,6 +4,7 @@ import Typography from '@/components/atoms/Typography';
 import {
   useGetCategoryListQuery,
   useGetContentDataDetailQuery,
+  useGetEligibleAutoApproveQuery,
   useRestoreContentDataMutation,
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
@@ -33,6 +34,7 @@ import TimelineLog from '@/assets/timeline-log.svg';
 import dayjs from 'dayjs';
 import TableDelete from '@/assets/table-delete.svg';
 import { t } from 'i18next';
+import PaperSubmit from '../../assets/paper-submit.png';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -93,6 +95,13 @@ export default function ContentManagerDetailData() {
   // RTK GET DATA
   const fetchGetContentDataDetail = useGetContentDataDetailQuery({ id });
   const { data: contentDataDetail } = fetchGetContentDataDetail;
+
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
+
+  // AUTO APPROVE MODAL STATE
+  const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
+  const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   useEffect(() => {
     if (contentDataDetail) {
@@ -211,10 +220,19 @@ export default function ContentManagerDetailData() {
   };
 
   function onSubmitData() {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+      setShowModalAutoApprove(true);
+    } else {
+      saveData();
+    }
+  }
+
+  const saveData = () => {
     const payload = {
       title: contentDataDetailList?.title,
       shortDesc: contentDataDetailList?.shortDesc,
       isDraft: false,
+      isAutoApprove,
       postTypeId: id,
       categoryName: contentDataDetailList?.isUseCategory ? mainForm.categoryName : '',
       contentData: convertContentData(contentTempData),
@@ -240,7 +258,7 @@ export default function ContentManagerDetailData() {
         );
         goBack();
       });
-  }
+  };
 
   useEffect(() => {
     const attributeList = contentDataDetailList?.contentData || [];
@@ -272,8 +290,6 @@ export default function ContentManagerDetailData() {
       });
       setContentTempData(defaultFormData);
     }
-
-    console.log(contentDataDetailList?.contentData)
   }, [contentDataDetailList?.contentData]);
 
   const addNewLoopingField = (loopingId: any) => {
@@ -331,7 +347,7 @@ export default function ContentManagerDetailData() {
     const updatedContentDataDetailList = { ...contentDataDetailList };
 
     const loopingElement = updatedContentDataDetailList.contentData.find(
-      (element: { id: any; }) => element.id === id
+      (element: { id: any }) => element.id === id,
     );
 
     if (loopingElement) {
@@ -1139,6 +1155,41 @@ export default function ContentManagerDetailData() {
             onChange={e => {
               setRejectComments(e.target.value);
             }}
+          />
+        </div>
+      </ModalForm>
+
+      <ModalForm
+        open={showModalAutoApprove}
+        formTitle=""
+        height={640}
+        width={540}
+        submitTitle={'Yes'}
+        submitType="bg-secondary-warning border-none"
+        cancelTitle={'No'}
+        cancelAction={() => {
+          setShowModalAutoApprove(false);
+          setIsAutoApprove(false);
+        }}
+        submitPosition={'justify-center'}
+        submitAction={() => {
+          setShowModalAutoApprove(false);
+          saveData();
+        }}>
+        <div className="flex flex-col justify-center items-center">
+          <img src={PaperSubmit} className="w-10" />
+          <p className="font-bold mt-3 text-xl">Submit Content</p>
+          <p className="font-base mt-2 text-xl text-center">
+            Do you want to submit Homepage Avrist Life content data? Please recheck your content
+            data before submit content.
+          </p>
+          <CheckBox
+            defaultValue={isAutoApprove}
+            updateFormValue={e => {
+              setIsAutoApprove(e.value);
+            }}
+            labelTitle="I want to auto approve this content data"
+            labelStyle="text-xl mt-2"
           />
         </div>
       </ModalForm>
