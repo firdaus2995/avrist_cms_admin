@@ -10,10 +10,11 @@ import { useGetCmsEntityLoginDescriptionQuery } from '@/services/Config/configAp
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { t } from 'i18next';
 
 const schema = yup.object().shape({
-  username: yup.string().required('User ID is required'),
-  password: yup.string().required('Password is required'),
+  username: yup.string().required(t('form.login.userid-required') ?? 'User ID is required'),
+  password: yup.string().required(t('form.login.password-required') ?? 'Password is required'),
 });
 
 const LoginForm = () => {
@@ -53,8 +54,8 @@ const LoginForm = () => {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Sign-in Failed',
-            message: 'Sign-in failed',
+            title: t('auth.signin-failed'),
+            message: t('auth.signin-failed'),
           }),
         );
       });
@@ -62,7 +63,7 @@ const LoginForm = () => {
 
   return (
     <>
-      <h1 className="font-bold text-2xl my-5 text-dark-purple">Login</h1>
+      <h1 className="font-bold text-2xl my-5 text-dark-purple">{t('auth.login')}</h1>
       <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
         {loginDescription}
       </Typography>
@@ -74,8 +75,8 @@ const LoginForm = () => {
           render={({ field }) => (
             <AuthInput
               key="username"
-              label="User ID"
-              placeholder="Enter User ID"
+              label={t('auth.login')}
+              placeholder={t('auth.enter-userId')}
               error={errors.username?.message}
               styleClass="mb-5"
               {...field}
@@ -89,8 +90,8 @@ const LoginForm = () => {
           render={({ field }) => (
             <AuthInput
               key="password"
-              label="Password"
-              placeholder="Enter Password"
+              label={t('auth.password')}
+              placeholder={t('auth.enter-password')}
               error={errors.password?.message}
               {...field}
               passwordMode={true}
@@ -104,11 +105,11 @@ const LoginForm = () => {
               size="s"
               weight="regular"
               className="text-primary cursor-pointer mb-8">
-              Forgot Password ?
+              {t('auth.forgot-password')} ?
             </Typography>
           </Link>
           <button type="submit" className="btn btn-primary btn-wide">
-            {isLoading ? 'Loading...' : 'Login'}
+            {isLoading ? t('loading') + '...' : t('auth.login')}
           </button>
         </div>
       </form>

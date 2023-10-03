@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { t } from 'i18next';
-import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
+import {
+  useGetCategoryListQuery,
+  useGetEligibleAutoApproveQuery,
+} from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
   useCreateContentDataMutation,
@@ -18,6 +21,9 @@ import FormList from '@/components/molecules/FormList';
 import Plus from '@/assets/plus-purple.svg';
 import CancelIcon from '@/assets/cancel.png';
 import TableDelete from '@/assets/table-delete.svg';
+import ModalForm from '@/components/molecules/ModalForm';
+import PaperSubmit from '../../assets/paper-submit.png';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -49,6 +55,10 @@ export default function ContentManagerNew() {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+
+  // AUTO APPROVE MODAL STATE
+  const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
+  const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   const [contentTempData, setContentTempData] = useState<any[]>([]);
 
@@ -107,6 +117,9 @@ export default function ContentManagerNew() {
     limit: 100,
   });
   const { data: postTypeDetailData } = fetchGetPostTypeDetail;
+
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
     if (postTypeDetailData) {
@@ -202,17 +215,28 @@ export default function ContentManagerNew() {
     });
   }
 
-  function onSubmitData(value: any) {
+  function onSubmitData() {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+      setShowModalAutoApprove(true);
+    } else {
+      saveData();
+    }
+  }
+
+  const saveData = () => {
+    const value = getValues();
     const convertedData = convertContentData(contentTempData);
     const stringifyData = convertLoopingToArrays(convertedData);
     const payload = {
       title: value.title,
       shortDesc: value.shortDesc,
       isDraft: false,
+      isAutoApprove,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
+
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -232,7 +256,7 @@ export default function ContentManagerNew() {
           }),
         );
       });
-  }
+  };
 
   const addNewLoopingField = (loopingId: any) => {
     const existingLoopingIndex: number = postTypeDetail.attributeList.findIndex(
@@ -389,7 +413,7 @@ export default function ContentManagerNew() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success as draft',
+            title: t('user.content-manager-new.draft-success'),
           }),
         );
         goBack();
@@ -398,7 +422,7 @@ export default function ContentManagerNew() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed save as draft',
+            title: t('user.content-manager-new.draft-failed'),
           }),
         );
       });
@@ -442,9 +466,12 @@ export default function ContentManagerNew() {
 
       const loopingCount = loopingDupCount[id] || loopingDupCount[duplicateId] || 0;
 
-      const aa = postTypeDetail?.attributeList.filter((val: { duplicateId: any; }) => val.duplicateId === duplicateId);
+      const aa = postTypeDetail?.attributeList.filter(
+        (val: { duplicateId: any }) => val.duplicateId === duplicateId,
+      );
 
-      const showAddDataButton = loopingCount === 0 || loopingCount > 0 && aa.slice(-1).pop().id === id;
+      const showAddDataButton =
+        loopingCount === 0 || (loopingCount > 0 && aa.slice(-1).pop().id === id);
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -645,7 +672,7 @@ export default function ContentManagerNew() {
                 required: `${name} is required`,
                 pattern: {
                   value: /^[0-9\- ]{8,14}$/,
-                  message: 'Invalid number',
+                  message: t('user.content-manager-new.invalid-number'),
                 },
               }}
               render={({ field }) => {
@@ -683,7 +710,7 @@ export default function ContentManagerNew() {
                 pattern: {
                   value:
                     /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                  message: 'Invalid URL',
+                  message: t('user.content-manager-new.invalid-url'),
                 },
               }}
               render={({ field }) => {
@@ -718,7 +745,7 @@ export default function ContentManagerNew() {
                   size="m"
                   weight="bold"
                   className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                  EMAIL_FORM
+                  {t('user.content-manager-new.email-form')}
                 </Typography>
                 <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
                   {name}
@@ -967,7 +994,7 @@ export default function ContentManagerNew() {
                             required: `${val.name} is required`,
                             pattern: {
                               value: /^[0-9\- ]{8,14}$/,
-                              message: 'Invalid number',
+                              message: t('user.content-manager-new.invalid-number'),
                             },
                           }}
                           render={({ field }) => {
@@ -1004,7 +1031,7 @@ export default function ContentManagerNew() {
                             pattern: {
                               value:
                                 /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                              message: 'Invalid URL',
+                              message: t('user.content-manager-new.invalid-url'),
                             },
                           }}
                           render={({ field }) => {
@@ -1039,7 +1066,7 @@ export default function ContentManagerNew() {
                               size="m"
                               weight="bold"
                               className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                              EMAIL_FORM
+                              {t('user.content-manager-new.email-form')}
                             </Typography>
                             <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
                               {val.name}
@@ -1088,7 +1115,7 @@ export default function ContentManagerNew() {
                     }}
                     className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                     <img src={Plus} className="mr-3" />
-                    Add Data
+                    {t('user.content-manager-new.add-data')}
                   </button>
                 </div>
               )}
@@ -1112,15 +1139,15 @@ export default function ContentManagerNew() {
               setShowLeaveModal(true);
             }}
             className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
+            {t('user.content-manager-new.cancel')}
           </button>
           <button
             onClick={saveDraft}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
-            Save as Draft
+            {t('user.content-manager-new.save-as-draft')}
           </button>
           <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
+            {t('user.content-manager-new.submit')}
           </button>
         </div>
       </div>
@@ -1136,13 +1163,47 @@ export default function ContentManagerNew() {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="No"
+        cancelTitle={t('no')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle="Yes"
+        submitTitle={t('yes')}
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
+      <ModalForm
+        open={showModalAutoApprove}
+        formTitle=""
+        height={640}
+        width={540}
+        submitTitle={'Yes'}
+        submitType="bg-secondary-warning border-none"
+        cancelTitle={'No'}
+        cancelAction={() => {
+          setShowModalAutoApprove(false);
+          setIsAutoApprove(false);
+        }}
+        submitPosition={'justify-center'}
+        submitAction={() => {
+          setShowModalAutoApprove(false);
+          saveData();
+        }}>
+        <div className="flex flex-col justify-center items-center">
+          <img src={PaperSubmit} className="w-10" />
+          <p className="font-bold mt-3 text-xl">Submit Content</p>
+          <p className="font-base mt-2 text-xl text-center">
+            Do you want to submit Homepage Avrist Life content data? Please recheck your content
+            data before submit content.
+          </p>
+          <CheckBox
+            defaultValue={isAutoApprove}
+            updateFormValue={e => {
+              setIsAutoApprove(e.value);
+            }}
+            labelTitle="I want to auto approve this content data"
+            labelStyle="text-xl mt-2"
+          />
+        </div>
+      </ModalForm>
       <form onSubmit={handleSubmit(onSubmitData)}>
         <div className="ml-2 mt-6">
           {/* DEFAULT FORM */}
@@ -1151,13 +1212,13 @@ export default function ContentManagerNew() {
               name="title"
               control={control}
               defaultValue=""
-              rules={{ required: 'Title is required' }}
+              rules={{ required: t('user.content-manager-new.title-required') ?? '' }}
               render={({ field }) => (
                 <FormList.TextField
                   {...field}
                   key="title"
-                  labelTitle="Title"
-                  placeholder="Title"
+                  labelTitle={t('user.content-manager-new.title')}
+                  placeholder={t('user.content-manager-new.title')}
                   error={!!errors?.title?.message}
                   helperText={errors?.title?.message}
                   border={false}
@@ -1167,13 +1228,13 @@ export default function ContentManagerNew() {
             {postTypeDetail?.isUseCategory && (
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-                  Category
+                  {t('user.content-manager-new.category')}
                 </Typography>
                 <Controller
                   name="category"
                   control={control}
                   defaultValue=""
-                  rules={{ required: 'Category is required' }}
+                  rules={{ required: t('user.content-manager-new.category-required') ?? '' }}
                   render={({ field }) => {
                     const onChange = useCallback(
                       (e: any) => {
@@ -1186,8 +1247,8 @@ export default function ContentManagerNew() {
                       <FormList.TextInputDropDown
                         {...field}
                         key="category"
-                        labelTitle="Category"
-                        placeholder="Title"
+                        labelTitle={t('user.content-manager-new.category')}
+                        placeholder={t('user.content-manager-new.title')}
                         error={!!errors?.category?.message}
                         helperText={errors?.category?.message}
                         items={categoryList}
@@ -1202,13 +1263,13 @@ export default function ContentManagerNew() {
               name="shortDesc"
               control={control}
               defaultValue=""
-              rules={{ required: 'Field is required' }}
+              rules={{ required: t('user.content-manager-new.field-required') ?? '' }}
               render={({ field }) => (
                 <FormList.TextAreaField
                   {...field}
                   key="shortDesc"
-                  labelTitle="Short Description"
-                  placeholder="Enter Short Description"
+                  labelTitle={t('user.content-manager-new.short-description') ?? ''}
+                  placeholder={t('user.content-manager-new.short-placeholder')}
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
                   border={false}

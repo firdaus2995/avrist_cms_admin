@@ -1,6 +1,7 @@
 import React, { HTMLInputTypeAttribute } from 'react';
 
 import ErrorSmallIcon from "../../../assets/error-small.svg";
+import { t } from 'i18next';
 
 interface IInputText {
   labelTitle: string;
@@ -90,7 +91,7 @@ export const InputText: React.FC<IInputText> = ({
         isError && (
           <div className='flex flex-row px-1 py-2'>
             <img src={ErrorSmallIcon} className='mr-3' />
-            <p className='text-reddist text-sm'>This field is required</p>
+            <p className='text-reddist text-sm'>{t('components.atoms.required')}</p>
           </div>
         )
       }

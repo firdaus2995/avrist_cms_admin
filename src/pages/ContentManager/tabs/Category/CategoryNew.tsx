@@ -68,26 +68,26 @@ export default function CategoryNew() {
       <form className="flex flex-col w-100 mt-[35px]">
         <div className="flex flex-col gap-[30px]">
           <InputText
-            labelTitle="Category Name"
-            labelStyle="font-bold	"
+            labelTitle={t('user.tabs-category-new.content-manager.category.name-label')}
+            labelStyle="font-bold"
             value={name}
             direction="row"
             roundStyle="xl"
             inputWidth={300}
-            placeholder="Enter category name"
+            placeholder={t('user.tabs-category-new.content-manager.category.name-placeholder')}
             onChange={(event: any) => {
               setName(event.target.value);
             }}
           />
           <TextArea
-            labelTitle="Category Name"
-            labelStyle="font-bold	"
+            labelTitle={t('user.tabs-category-new.content-manager.category.description-label')}
+            labelStyle="font-bold"
             value={description}
             direction="row"
             textAreaStyle='rounded-xl'
             inputWidth={300}
             rows={4}
-            placeholder="Enter description"
+            placeholder={t('user.tabs-category-new.content-manager.category.description-placeholder') ?? ''}
             onChange={(event: any) => {
               setDescription(event.target.value);
             }}
@@ -102,9 +102,9 @@ export default function CategoryNew() {
       <ModalConfirm
         open={showLeaveModal}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.tabs-category-new.modal.cancel')}
         message={messageLeaveModalShow ?? ''}
-        submitTitle="Yes"
+        submitTitle={t('user.tabs-category-new.modal.yes')}
         icon={WarningIcon}
         submitAction={onLeave}
         cancelAction={() => {
@@ -120,13 +120,13 @@ export default function CategoryNew() {
             setMessageLeaveModalShow(t('modal.leave-confirmation'));
             setShowLeaveModal(true);          
           }}>
-            {isLoading ? 'Loading...' : t('btn.cancel')}
+            {isLoading ? t('loading') + '...' : t('btn.cancel')}
           </button>
           <button className="btn btn-success btn-md text-white" onClick={(event: any) => {
             event.preventDefault();
             onSave();
           }}>
-            {isLoading ? 'Loading...' : t('btn.save')}
+            {isLoading ? t('loading') + '...' : t('btn.save')}
           </button>
         </div>
       </TitleCard>

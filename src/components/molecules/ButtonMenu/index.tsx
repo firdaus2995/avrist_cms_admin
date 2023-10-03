@@ -1,6 +1,7 @@
 import React from 'react';
 import CheckCircle from '@/assets/CheckCircle.svg';
 import RejectUser from '@/assets/RejectUser.svg';
+import { t } from 'i18next';
 
 interface IButtonMenu {
   title: string;
@@ -11,7 +12,7 @@ export const ButtonMenu: React.FC<IButtonMenu> = ({onClickApprove, onClickReject
   return (
     <div className="dropdown dropdown-end">
       <label tabIndex={0} className="btn btn-outline btn-primary m-1 w-44">
-        Response
+      {t('components.molecules.response')}
       </label>
       <ul
         tabIndex={0}
@@ -19,13 +20,13 @@ export const ButtonMenu: React.FC<IButtonMenu> = ({onClickApprove, onClickReject
         <li role='button' onClick={onClickApprove}>
           <label tabIndex={0} className="btn btn-outline btn-primary m-1 w-44">
             <img src={CheckCircle} />
-            Approve
+          {t('components.molecules.approve')}
           </label>
         </li>
         <li role='button' onClick={onClickReject}>
           <label tabIndex={0} className="btn btn-outline btn-primary m-1 w-44">
             <img src={RejectUser} />
-            Reject
+          {t('components.molecules.reject')}
           </label>
         </li>
       </ul>

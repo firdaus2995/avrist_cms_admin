@@ -5,6 +5,7 @@ import CloseWhite from "../../../assets/closewhite.png";
 import ChevronDown from "../../../assets/chevrondown.png";
 import { IDropDownList } from "./interfaces";
 import { IItems } from "../DropDown/interfaces";
+import { t } from "i18next";
 
 const DropDownList = ({
   items,
@@ -57,7 +58,7 @@ const DropDownList = ({
 
   if (!items || items.length < 1) {
     return (
-      <h2 className="text-red-700">Component Dropdown List Error</h2>
+      <h2 className="text-red-700">{t('components.molecules.component-dropdown-error')}</h2>
     )
   }
   

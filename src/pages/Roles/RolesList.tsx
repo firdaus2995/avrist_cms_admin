@@ -12,6 +12,7 @@ import WarningIcon from "../../assets/warning.png";
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import PaginationComponent from '../../components/molecules/Pagination';
 import { SortingState } from '@tanstack/react-table';
+import { t } from 'i18next';
 
 const CreateButton = () => {
   return (
@@ -28,7 +29,7 @@ const CreateButton = () => {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add New Role
+            {t('user.roles-list.common.addNewRole')}
           </div>
         </button>
       </Link>
@@ -65,8 +66,8 @@ export default function RolesList() {
 
   const onConfirm = (id: number, name: string) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setmessageConfirm(`Do you want to delete role ${name}? \n Once you delete this role, this role won't be recovered`);
+    setTitleConfirm(t('user.roles-list.common.areYouSure') ?? '');
+    setmessageConfirm(t('user.roles-list.common.deleteRoleConfirmation', { name }) ?? '');
     setShowComfirm(true);
   };
 
@@ -78,7 +79,7 @@ export default function RolesList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success delete',
+            title: t('user.roles-list.common.successDelete'),
             message: d.roleDelete.message,
           }),
         );
@@ -91,7 +92,7 @@ export default function RolesList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Gagal delete',
+            title: t('user.roles-list.common.failedDelete'),
             message: 'Oops gagal delete',
           }),
         );
@@ -111,7 +112,7 @@ export default function RolesList() {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Role ID</span>,
+      header: () => <span className="text-[14px]">{t('user.roles-list.common.roleID')}</span>,
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -123,7 +124,7 @@ export default function RolesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Role Name</span>,
+      header: () => <span className="text-[14px]">{t('user.roles-list.common.roleName')}</span>,
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -135,7 +136,7 @@ export default function RolesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Description</span>,
+      header: () => <span className="text-[14px]">{t('user.roles-list.common.description')}</span>,
       accessorKey: 'description',
       enableSorting: true,
       cell: (info: any) => (
@@ -147,7 +148,7 @@ export default function RolesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.roles-list.common.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -179,25 +180,27 @@ export default function RolesList() {
         open={showComfirm}
         cancelAction={() => {
           setShowComfirm(false);
-        } }
+        }}
         title={titleConfirm}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.roles-list.common.cancel')}
         message={messageConfirm}
         submitAction={onDelete}
-        submitTitle="Yes"
+        submitTitle={t('user.roles-list.common.yes')}
         loading={hapusLoading}
-        icon={WarningIcon} btnSubmitStyle={''}      />
-      <TitleCard 
-        title="Role List" 
-        topMargin="mt-2" 
+        icon={WarningIcon}
+        btnSubmitStyle={''}
+      />
+      <TitleCard
+        title={t('user.roles-list.common.roleList')}
+        topMargin="mt-2"
         SearchBar={
-          <InputSearch 
+          <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.roles-list.common.searchPlaceholder') ?? ''}
           />
-        } 
+        }
         TopSideButtons={<CreateButton />}>
         <div className="overflow-x-auto w-full mb-5">
           <Table

@@ -14,9 +14,9 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { Link } from 'react-router-dom';
 import StatusBadge from '../../components/StatusBadge';
 
-export default function MainTab(props: { id: any }) {
+export default function MainTab(props: { id: any, isUseCategory: any }) {
   const dispatch = useAppDispatch();
-  const { id } = props;
+  const { id, isUseCategory } = props;
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -83,7 +83,7 @@ export default function MainTab(props: { id: any }) {
           />
           <div
             className="ml-3 cursor-pointer tooltip"
-            data-tip="Log"
+            data-tip={t('user.tabs-main.common.action.log')}
             onClick={() => {
               setIdLog(info?.row?.original?.id);
               setLogTitle(info?.row?.original?.title);
@@ -95,7 +95,7 @@ export default function MainTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">ID</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.id')}</span>,
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -107,7 +107,7 @@ export default function MainTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">Title</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.title')}</span>,
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -119,7 +119,7 @@ export default function MainTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">Short Description</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.shortDescription')}</span>,
       accessorKey: 'shortDesc',
       enableSorting: false,
       cell: (info: any) => (
@@ -131,7 +131,7 @@ export default function MainTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">Category Name</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.categoryName')}</span>,
       accessorKey: 'categoryName',
       enableSorting: false,
       cell: (info: any) => (
@@ -143,21 +143,21 @@ export default function MainTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('action.action')}</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.action.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
-            <div className="tooltip" data-tip={'View Detail'}>
+            <div className="tooltip" data-tip={t('user.tabs-main.common.action.viewDetail')}>
               <div
                 role="button"
                 className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary text-xs">
-                View Detail
+                {t('user.tabs-main.common.action.viewDetail')}
               </div>
             </div>
           </Link>
-          <div className="tooltip" data-tip={t('action.delete')}>
+          <div className="tooltip" data-tip={t('user.tabs-main.common.action.delete')}>
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
@@ -171,10 +171,17 @@ export default function MainTab(props: { id: any }) {
     },
   ];
 
+  if (!isUseCategory) {
+    const categoryColumnIndex = COLUMNS.findIndex(column => column.accessorKey === 'categoryName');
+    if (categoryColumnIndex !== -1) {
+      COLUMNS.splice(categoryColumnIndex, 1);
+    }
+  }
+
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete data ${title}?`);
+    setTitleConfirm(t('user.tabs-main.mainTab.titleConfirm') ?? '');
+    setMessageConfirm(t('user.tabs-main.mainTab.deleteDataMessage', { title }) ?? '');
     setShowConfirm(true);
   };
 
@@ -187,7 +194,7 @@ export default function MainTab(props: { id: any }) {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Page',
+            title: t('user.tabs-main.common.successDeletePage'),
             message: 'Success! Your data has been successfully deleted!',
           }),
         );
@@ -198,8 +205,8 @@ export default function MainTab(props: { id: any }) {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Page',
-            message: 'Something went wrong!',
+            title: t('user.tabs-main.common.failedDeletePage'),
+            message: t('user.tabs-main.common.somethingWentWrong'),
           }),
         );
       });
@@ -213,10 +220,10 @@ export default function MainTab(props: { id: any }) {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="No"
+        cancelTitle={t('user.tabs-main.common.no')}
         message={messageConfirm}
         submitAction={submitDeletePage}
-        submitTitle="Yes"
+        submitTitle={t('user.tabs-main.common.yes')}
         loading={deleteContentDataLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
@@ -227,7 +234,7 @@ export default function MainTab(props: { id: any }) {
         toggle={() => {
           setIdLog(null);
         }}
-        title={`Log Approval - ${logTitle}`}
+        title={t('user.tabs-main.modalLog.logApprovalTitle', { logTitle })}
       />
       <div className="overflow-x-auto w-full mb-5">
         <Table

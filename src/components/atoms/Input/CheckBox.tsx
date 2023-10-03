@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 
 interface ICheckBox {
-  labelTitle: string;
+  labelTitle: any;
   labelStyle?: string;
   type?: string;
   containerStyle?: string;
@@ -58,7 +58,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
 };
 
 CheckBox.propTypes = {
-  labelTitle: PropTypes.string.isRequired,
+  labelTitle: PropTypes.any.isRequired,
   labelStyle: PropTypes.string,
   type: PropTypes.string,
   containerStyle: PropTypes.string,

@@ -7,6 +7,7 @@ import type { SortingState } from '@tanstack/react-table';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import Typography from '@/components/atoms/Typography';
+import { t } from 'i18next';
 
 export default function ContentManagerList() {
   const [listData, setListData] = useState<any>([]);
@@ -54,7 +55,9 @@ export default function ContentManagerList() {
   // TABLE COLUMN
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Content Type Name</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.content-manager.contentTypeColumnName')}</span>
+      ),
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -76,14 +79,14 @@ export default function ContentManagerList() {
   return (
     <>
       <TitleCard
-        title="Content Manager"
+        title={t('user.content-manager.title')}
         topMargin="mt-2"
         SearchBar={
           <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.content-manager.searchPlaceholder') ?? ''}
           />
         }>
         <div className="overflow-x-auto w-full mb-5">

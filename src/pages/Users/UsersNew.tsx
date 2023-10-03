@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import dayjs from 'dayjs';
 
 import UserOrange from '../../assets/user-orange.svg';
-import AddProfilePicture from '../../assets/add-profile-picture.png';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import DropDown from '../../components/molecules/DropDown';
 import Radio from '../../components/molecules/Radio';
@@ -19,6 +18,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 import FormList from '../../components/molecules/FormList';
 import Typography from '../../components/atoms/Typography';
+import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
 
 export default function UsersNew() {
   const navigate = useNavigate();
@@ -34,7 +34,14 @@ export default function UsersNew() {
   const [email, setEmail] = useState<string>('');
   const [company] = useState<string>('Avrist Life Insurance');
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
-
+  const [avatar, setAvatar] = useState('');
+  // CHANGE STATUS MODAL
+  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
+  // LEAVE MODAL
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');  
+  // LIST STATE
   const [listAttributes] = useState<any>([
     { value: '1', label: 'CMC' },
     { value: '2', label: 'DPLK/Pension' },
@@ -42,16 +49,10 @@ export default function UsersNew() {
     { value: '4', label: 'HR' },
   ]);
 
-  // CHANGE STATUS MODAL
-  const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
-  // LEAVE MODAL
-  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
-  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
-
   // RTK GET ROLE
   const fetchRoleQuery = useGetRoleQuery({});
   const { data } = fetchRoleQuery;
+
   // RTK CREATE USER
   const [createUser, { isLoading }] = useCreateUserMutation();
 
@@ -76,6 +77,7 @@ export default function UsersNew() {
       gender: gender === 'FEMALE' ? false : gender === 'MALE' ? true : null,
       email,
       company,
+      profilePicture: avatar,
       statusActive: isActive,
       roleId,
     };
@@ -120,11 +122,11 @@ export default function UsersNew() {
           setShowChangeStatusModal(false);
           setIsActive(true);
         }}
-        title="Inactive User"
-        cancelTitle="Cancel"
-        message="Do you want to inactive this user"
+        title={t('user.users-new.user.modal.inactive-user')}
+        cancelTitle={t('user.users-new.user.btn.cancel')}
+        message={t('user.users-new.user.modal.inactive-user-message') ?? ''}
         submitAction={changeStatusSubmit}
-        submitTitle="Yes"
+        submitTitle={t('user.users-new.user.btn.yes')}
         icon={UserOrange}
         btnSubmitStyle="btn-warning"
       />
@@ -134,30 +136,38 @@ export default function UsersNew() {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="No"
+        cancelTitle={t('user.users-new.user.btn.no')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle="Yes"
+        submitTitle={t('user.users-new.user.btn.yes')}
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
       <form className="flex flex-col w-100">
-        <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130} />
+        <div className='flex items-center justify-center'>
+          <FileUploaderAvatar
+            id={"add_profile_picture"}
+            image={avatar}
+            imageChanged={(image: any) => {
+              setAvatar(image);
+            }}
+          />
+        </div>
         <div className="flex flex-col mt-[60px] gap-5">
           {/* ROW 1 */}
           <Radio
-            labelTitle="Status"
+            labelTitle={t('user.users-new.user.add.status') ?? ''}
             labelStyle="font-bold	"
             labelRequired
             defaultSelected={isActive}
             items={[
               {
                 value: true,
-                label: 'Active',
+                label: t('user.users-new.user.add.active'),
               },
               {
                 value: false,
-                label: 'Inactive',
+                label: t('user.users-new.user.add.inactive'),
               },
             ]}
             onSelect={(
@@ -176,8 +186,8 @@ export default function UsersNew() {
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText
-                labelTitle="User ID"
-                labelStyle="font-bold	"
+                labelTitle={t('user.users-new.user.add.user-id')}
+                labelStyle="font-bold"
                 labelRequired
                 value={userId}
                 placeholder={t('user.add.placeholder-user-id')}
@@ -188,8 +198,8 @@ export default function UsersNew() {
             </div>
             <div className="flex flex-1">
               <InputPassword
-                labelTitle="Password"
-                labelStyle="font-bold	"
+                labelTitle={t('user.users-new.user.add.password')}
+                labelStyle="font-bold"
                 value={password}
                 placeholder={t('user.add.placeholder-user-password')}
                 disabled
@@ -201,8 +211,8 @@ export default function UsersNew() {
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText
-                labelTitle="Fullname"
-                labelStyle="font-bold	"
+                labelTitle={t('user.users-new.user.add.fullname')}
+                labelStyle="font-bold"
                 labelRequired
                 value={fullName}
                 placeholder={t('user.add.placeholder-user-fullname')}
@@ -213,8 +223,8 @@ export default function UsersNew() {
             </div>
             <div className="flex flex-1">
               <InputDate
-                labelTitle="Date of Birth"
-                labelStyle="font-bold	"
+                labelTitle={t('user.users-new.user.add.date-of-birth')}
+                labelStyle="font-bold"
                 labelRequired
                 value={dob}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
@@ -224,17 +234,17 @@ export default function UsersNew() {
             </div>
             <div className="flex flex-1">
               <Radio
-                labelTitle="Gender"
-                labelStyle="font-bold	"
+                labelTitle={t('user.users-new.user.add.gender') ?? ''}
+                labelStyle="font-bold"
                 labelRequired
                 items={[
                   {
                     value: 'MALE',
-                    label: 'Male',
+                    label: t('user.users-new.user.add.male'),
                   },
                   {
                     value: 'FEMALE',
-                    label: 'Female',
+                    label: t('user.users-new.user.add.female'),
                   },
                 ]}
                 onSelect={(
@@ -252,8 +262,8 @@ export default function UsersNew() {
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText
-                labelTitle="User Email"
-                labelStyle="font-bold	"
+                labelTitle={t('user.users-new.user.add.user-email')}
+                labelStyle="font-bold"
                 labelRequired
                 type="email"
                 value={email}
@@ -264,15 +274,20 @@ export default function UsersNew() {
               />
             </div>
             <div className="flex flex-1">
-              <InputText labelTitle="Company" labelStyle="font-bold	" value={company} disabled />
+              <InputText
+                labelTitle={t('user.users-new.user.add.company')}
+                labelStyle="font-bold"
+                value={company}
+                disabled
+              />
             </div>
             <div className="flex flex-1">
               <DropDown
-                labelTitle="Role"
-                labelStyle="font-bold	"
+                labelTitle={t('user.users-new.user.add.role') ?? ''}
+                labelStyle="font-bold"
                 labelRequired
                 defaultValue=""
-                labelEmpty="Choose Your Role"
+                labelEmpty={t('user.users-new.user.add.choose-role') ?? ''}
                 items={roleData}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                   if (event) {
@@ -308,11 +323,11 @@ export default function UsersNew() {
             className="btn btn-outline btn-md"
             onClick={(event: any) => {
               event.preventDefault();
-              setLeaveTitleModalShow(t('modal.confirmation'));
-              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setLeaveTitleModalShow(t('user.users-new.user.modal.confirmation'));
+              setMessageLeaveModalShow(t('user.users-new.user.modal.leave-confirmation'));
               setShowLeaveModal(true);
             }}>
-            {isLoading ? 'Loading...' : t('btn.cancel')}
+            {isLoading ? t('loading') : t('btn.cancel')}
           </button>
           <button
             className="btn btn-success btn-md text-white"
@@ -320,7 +335,7 @@ export default function UsersNew() {
               event.preventDefault();
               onSave();
             }}>
-            {isLoading ? 'Loading...' : t('btn.save')}
+            {isLoading ? t('loading') : t('btn.save')}
           </button>
         </div>
       </form>

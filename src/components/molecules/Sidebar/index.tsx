@@ -62,7 +62,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   const footerList = [
     {
       id: 98,
-      title: 'Edit Profile',
+      title: t('user.edit-profile.title'),
       icon: EditIcon,
       bordered: true,
     },
@@ -463,15 +463,15 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
         width={600}
         open={openEditProfileModal}
         loading={isLoadingEditProfileModal}
-        formTitle="Edit Profile"
-        submitTitle="Save"
-        cancelTitle="Cancel"
+        formTitle={t('user.edit-profile.title')}
+        submitTitle={t('user.edit-profile.save')}
+        cancelTitle={t('user.edit-profile.cancel')}
         cancelAction={handlerCancel}
         submitAction={submitEditProfile}
         submitType=""
         additionalButton={
           <button className="btn btn-outline btn-primary" onClick={handlerActionLink}>
-            Change Password
+          {t('user.edit-profile.change-password')}
           </button>
         }>
         <FileUploaderAvatar
@@ -481,7 +481,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           }}
         />
         <InputText
-          labelTitle="Fullname"
+          labelTitle={t('user.edit-profile.fullname')}
           labelStyle="font-bold	"
           labelWidth={125}
           value={fullName}
@@ -493,7 +493,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           }}
         />
         <InputText
-          labelTitle="Email"
+          labelTitle={t('user.edit-profile.email')}
           labelStyle="font-bold	"
           labelWidth={125}
           value={email}
@@ -510,13 +510,13 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
         width={600}
         open={openChangePasswordModal}
         loading={isLoadingChangePasswordProfileModal}
-        formTitle="Change Password"
-        submitTitle="Save"
-        cancelTitle="Cancel"
+        formTitle={t('user.change-password.title')}
+        submitTitle={t('user.change-password.save')}
+        cancelTitle={t('user.change-password.cancel')}
         cancelAction={handlerCancel}
         submitAction={submitChangePassword}>
         <InputPassword
-          labelTitle="Recent Password"
+          labelTitle={t('user.change-password.recent-password')}
           labelStyle="font-bold	"
           labelWidth={175}
           value={recentPassword}
@@ -528,7 +528,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           }}
         />
         <InputPassword
-          labelTitle="New Password"
+          labelTitle={t('components.molecules.new-password')}
           labelStyle="font-bold	"
           labelWidth={175}
           value={newPassword}
@@ -540,7 +540,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           }}
         />
         <InputPassword
-          labelTitle="Confirm New Password"
+          labelTitle={t('user.change-password.confirm-password')}
           labelStyle="font-bold	"
           labelWidth={175}
           value={confirmNewPassword}
@@ -548,7 +548,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           themeColor="lavender"
           roundStyle="xl"
           isError={confirmNewPasswordError}
-          errorMessage="Confirm password doesn’t match. Please try again!"
+          errorMessage={t('form.user.change-password.confirm-password-not-match') ?? ''}
           onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
             setConfirmNewPassword(event.target.value);
           }}

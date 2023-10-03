@@ -3,6 +3,7 @@ import CloseIcon from "../../../assets/close.png";
 import {
   IModalForm,
 } from "./types";
+import { t } from "i18next";
 
 export default function ModalForm ({
   open,
@@ -18,6 +19,7 @@ export default function ModalForm ({
   cancelAction,
   children,
   additionalButton,
+  submitPosition,
 }: IModalForm ) {
   return (
     <Modal
@@ -45,12 +47,12 @@ export default function ModalForm ({
               </div>
             )
           }
-          <div className="w-full flex justify-end gap-3">
+          <div className={`w-full flex gap-3 ${submitPosition || 'justify-end'}`}>
             <button className="btn btn-outline w-[105px]" onClick={cancelAction}>
               {cancelTitle}
             </button>
             <button disabled={submitDisabled} className={`btn ${submitType !== '' ? submitType : 'btn-success'} w-[105px]`} onClick={submitAction}>
-              {loading ? 'Loading...' : submitTitle}
+              {loading ? t('loading') + '...' : submitTitle}
             </button>
           </div>
         </div>

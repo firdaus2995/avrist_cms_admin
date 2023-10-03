@@ -13,6 +13,7 @@ import {
   useGetNotificationQuery,
   useSeeNotificationMutation,
 } from '@/services/Notification/notificationApi';
+import { t } from 'i18next';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
@@ -27,8 +28,9 @@ const NotificationBell: React.FC = () => {
   const [limit, setLimit] = useState<number>(5);
   const [total, setTotal] = useState<any>(0);
   const [isShow, setIsShow] = useState(false);
-
+  const [isFetching, setIsFetching] = useState(false);
   const getCount = async () => {
+    setIsFetching(true);
     await fetch(`${baseUrl}/notifications/count`, {
       method: 'GET',
       headers: {
@@ -38,8 +40,10 @@ const NotificationBell: React.FC = () => {
       .then(async response => await response.json())
       .then(data => {
         setCount(data?.data?.result);
+        setIsFetching(false);
       })
       .catch(err => {
+        setIsFetching(false);
         console.log(err);
       });
   };
@@ -70,7 +74,9 @@ const NotificationBell: React.FC = () => {
           !store.getState().notificationSlice.activatedNotificationPage
         ) {
           if (token) {
-            void getCount();
+            if (!isFetching) {
+              void getCount();
+            }
           }
         }
       }, intervalTime);
@@ -159,12 +165,14 @@ const NotificationBell: React.FC = () => {
             }}>
             <Menu.Items className="fixed right-1 mt-3 w-96 translate-x-0 shadow-lg bg-white">
               <div className="p-[14px] border-b-[1px] border-[#D6D6D6] flex justify-between">
-                <h1 className="text-[14px] font-bold">Notifications</h1>
+                <h1 className="text-[14px] font-bold"> {t('user.notification.title')}</h1>
                 <div
                   className="flex justify-between gap-[12px] cursor-pointer"
                   onClick={handlerReadAll}>
                   <img src={NotifCheck} />
-                  <span className="text-[14px] font-bold text-purple">Mark All as Read</span>
+                  <span className="text-[14px] font-bold text-purple">
+                    {t('user.notification.mark-all-as-read')}
+                  </span>
                 </div>
               </div>
               <InfiniteScroll
@@ -210,7 +218,7 @@ const NotificationBell: React.FC = () => {
                     dispatch(setActivatedNotificationPage(true));
                     close();
                   }}>
-                  View All Notification
+                  {t('user.notification.view-all-notification')}
                 </h2>
               </div>
             </Menu.Items>

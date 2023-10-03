@@ -7,6 +7,7 @@ import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
+import { t } from 'i18next';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
@@ -105,8 +106,8 @@ export default function FileUploaderBase({
       dispatch(
         openToast({
           type: 'error',
-          title: 'File Size Too Large',
-          message: 'Please upload a file that is no larger than 5MB.',
+          title: t('components.molecules.file.too-large'),
+          message: t('components.molecules.file.max'),
         }),
       );
       return;
@@ -116,8 +117,8 @@ export default function FileUploaderBase({
       dispatch(
         openToast({
           type: 'error',
-          title: 'Duplicate File',
-          message: 'File already uploaded',
+          title: t('components.molecules.file.duplicated'),
+          message: t('components.molecules.file.already-uploaded'),
         }),
       );
       return;
@@ -153,7 +154,7 @@ export default function FileUploaderBase({
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Upload',
+            title: t('components.molecules.file.failed'),
           }),
         );
       }
@@ -164,7 +165,7 @@ export default function FileUploaderBase({
       dispatch(
         openToast({
           type: 'error',
-          title: 'Upload Error',
+          title: t('components.molecules.file.error'),
         }),
       );
     }

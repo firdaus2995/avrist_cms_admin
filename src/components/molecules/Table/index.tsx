@@ -12,6 +12,7 @@ import TableChevron from '../../../assets/table-chevron.png';
 import NoResultIcon from '../../../assets/no-result.svg';
 import './style.css';
 import Skeleton from './skeleton';
+import { t } from 'i18next';
 
 interface IDataGrid {
   columns: Array<ColumnDef<any>>;
@@ -114,8 +115,8 @@ const Table: React.FC<IDataGrid> = props => {
               colspan={columns.length}
               message={
                 error
-                  ? 'Maaf data tidak tersedia, mohon coba beberapa saat lagi'
-                  : 'Data tidak tersedia'
+                  ? t('components.molecules.not-found')
+                  : t('components.molecules.no-data')
               }
             />
           )}

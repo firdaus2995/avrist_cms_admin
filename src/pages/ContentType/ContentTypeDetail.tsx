@@ -2,10 +2,12 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useGetPostTypeDetailQuery } from '../../services/ContentType/contentTypeApi';
+import { useTranslation } from 'react-i18next'; // Import the i18n library
 import Table from '@/components/molecules/Table';
 import PaginationComponent from '@/components/molecules/Pagination';
 
 export default function ContentTypeDetail() {
+  const { t } = useTranslation(); // Initialize the i18n library
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
   const [name, setName] = useState<any>('');
@@ -47,26 +49,26 @@ export default function ContentTypeDetail() {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Attribute Name</span>,
+      header: () => <span className="text-[14px]">{t('user.content-type-detail.content_type_detail.attribute_name')}</span>,
       accessorKey: 'name',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
-            : '-'}
+            : t('user.content-type-detail.table.empty_data')} {/* Translate this */}
         </p>
       ),
     },
     {
-      header: () => <span className="text-[14px]">Attribute Type</span>,
+      header: () => <span className="text-[14px]">{t('user.content-type-detail.content_type_detail.attribute_type')}</span>,
       accessorKey: 'fieldType',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
-            : '-'}
+            : t('user.content-type-detail.table.empty_data')} {/* Translate this */}
         </p>
       ),
     },

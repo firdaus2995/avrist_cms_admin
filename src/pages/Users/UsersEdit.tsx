@@ -14,7 +14,6 @@ import dayjs from "dayjs";
 import UserOrange from "../../assets/user-orange.svg";
 import ModalConfirm from "../../components/molecules/ModalConfirm";
 import CancelIcon from "../../assets/cancel.png";
-import AddProfilePicture from "../../assets/add-profile-picture.png";
 import Radio from "../../components/molecules/Radio";
 import DropDown from "../../components/molecules/DropDown";
 import { 
@@ -40,6 +39,7 @@ import {
 import { 
   openToast,
 } from "../../components/atoms/Toast/slice";
+import FileUploaderAvatar from "@/components/molecules/FileUploaderAvatar";
 
 export default function UsersEdit () {
   const navigate = useNavigate();
@@ -57,20 +57,25 @@ export default function UsersEdit () {
   const [email, setEmail] = useState<string>("");
   const [company] = useState<string>("Avrist Life Insurance");
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
+  const [avatar, setAvatar] = useState('');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
-  
+
   // RTK GET ROLE
   const fetchUserDetailQuery = useGetUserDetailQuery({id}, {
     refetchOnMountOrArgChange: true,
   });
   const fetchRoleQuery = useGetRoleQuery({});
+
+  // RTK USER DETAIL
   const { data } = fetchUserDetailQuery;
   const { data: fetchedRole } = fetchRoleQuery;  
+
+  // RTK EDIT USER
   const [ editUser, {
     isLoading,
   }] = useEditUserMutation();
@@ -108,6 +113,7 @@ export default function UsersEdit () {
       gender: gender === "FEMALE" ? false : gender === "MALE" ? true : null,
       email,
       company,
+      profilePicture: avatar,
       statusActive: isActive,
       roleId,
     };    
@@ -117,8 +123,8 @@ export default function UsersEdit () {
         dispatch(
           openToast({
             type: 'success',
-            title: t('toast-success'),
-            message: t('user.edit.success-msg', { name: d.userUpdate.fullName }),
+            title: t('user.users-edit.users.toast-success'),
+            message: t('user.users-edit.user.edit.edit.success-msg', { name: d.userUpdate.fullName }),
           }),
         );
         navigate('/user');
@@ -127,7 +133,7 @@ export default function UsersEdit () {
         dispatch(
           openToast({
             type: 'error',
-            title: t('toast-failed'),
+            title: t('user.users-edit.users.toast-failed'),
             message: t('roles.edit.failed-msg', { name: payload.fullName }),
           }),
         );
@@ -145,9 +151,9 @@ export default function UsersEdit () {
   };
 
   return (
-    <TitleCard 
-      title={t('user.edit.title')}
-      topMargin="mt-2" 
+    <TitleCard
+      title={t('user.users-edit.user.edit.edit.title')}
+      topMargin="mt-2"
     >
       <ModalConfirm
         open={showChangeStatusModal}
@@ -155,11 +161,11 @@ export default function UsersEdit () {
           setShowChangeStatusModal(false);
           setIsActive(true);
         }}
-        title="Inactive User"
-        cancelTitle="Cancel"
-        message="Do you want to inactive this user"
+        title={t('user.users-edit.user.edit.edit.modal.inactive-user')}
+        cancelTitle={t('user.users-edit.user.edit.edit.btn.cancel')}
+        message={t('user.users-edit.user.edit.edit.modal.leave-message') ?? ''}
         submitAction={changeStatusSubmit}
-        submitTitle="Yes"
+        submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
         icon={UserOrange}
         btnSubmitStyle='btn-warning'
       />
@@ -169,30 +175,38 @@ export default function UsersEdit () {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="No"
+        cancelTitle={t('user.users-edit.user.edit.edit.btn.cancel')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle="Yes"
+        submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
         icon={CancelIcon}
         btnSubmitStyle='btn-warning'
       />
       <form className="flex flex-col w-100" >
-        <img src={AddProfilePicture} className="mt-[35px] flex self-center" width={130}/>
+        <div className='flex items-center justify-center'>
+          <FileUploaderAvatar
+            id={"edit_profile_picture"}
+            image={avatar}
+            imageChanged={(image: any) => {
+              setAvatar(image);
+            }}
+          />
+        </div>
         <div className="flex flex-col mt-[60px] gap-5">
           {/* ROW 1 */}
-          <Radio 
-            labelTitle="Status"
+          <Radio
+            labelTitle={t('user.users-edit.user.edit.status') ?? ''}
             labelStyle="font-bold	"
             labelRequired
             defaultSelected={isActive}
             items={[
               {
                 value: true,
-                label: 'Active'
+                label: t('user.users-edit.user.edit.active'),
               },
               {
                 value: false,
-                label: 'Inactive',
+                label: t('user.users-edit.user.edit.inactive'),
               },
             ]}
             onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
@@ -200,27 +214,27 @@ export default function UsersEdit () {
                 setIsActive(value);
                 if (value === false) {
                   setShowChangeStatusModal(true);
-                };
-              };
+                }
+              }
             }}
           />
           {/* ROW 2 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
-              <InputText  
-                labelTitle="User ID"
+              <InputText
+                labelTitle={t('user.users-edit.user.edit.userId')}
                 labelStyle="font-bold	"
                 value={userId}
-                placeholder={t('user.edit.placeholder-user-id')}
+                placeholder={t('user.users-edit.user.edit.placeholder-user-id')}
                 disabled
               />
             </div>
             <div className="flex flex-1">
-              <InputPassword 
-                labelTitle="Password"
+              <InputPassword
+                labelTitle={t('user.users-edit.user.edit.password')}
                 labelStyle="font-bold	"
                 value={password}
-                placeholder={t('user.edit.placeholder-user-password')}
+                placeholder={t('user.users-edit.user.edit.placeholder-user-password')}
                 disabled
               />
             </div>
@@ -231,12 +245,12 @@ export default function UsersEdit () {
           {/* ROW 3 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
-              <InputText 
-                labelTitle="Fullname"
+              <InputText
+                labelTitle={t('user.users-edit.user.edit.fullName')}
                 labelStyle="font-bold	"
                 labelRequired
                 value={fullName}
-                placeholder={t('user.edit.placeholder-user-fullname')}
+                placeholder={t('user.users-edit.user.edit.placeholder-user-fullname')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setFullName(event.target.value);
                 }}
@@ -244,7 +258,7 @@ export default function UsersEdit () {
             </div>
             <div className="flex flex-1">
               <InputDate
-                labelTitle="Date of Birth"
+                labelTitle={t('user.users-edit.user.edit.dateOfBirth')}
                 labelStyle="font-bold	"
                 labelRequired
                 value={dob}
@@ -254,18 +268,18 @@ export default function UsersEdit () {
               />
             </div>
             <div className="flex flex-1">
-              <Radio 
-                labelTitle="Gender"
+              <Radio
+                labelTitle={t('user.users-edit.user.edit.gender') ?? ''}
                 labelStyle="font-bold	"
                 labelRequired
                 items={[
                   {
                     value: "MALE",
-                    label: 'Male'
+                    label: t('user.users-edit.user.edit.male'),
                   },
                   {
                     value: "FEMALE",
-                    label: 'Female',
+                    label: t('user.users-edit.user.edit.female'),
                   },
                 ]}
                 onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
@@ -280,21 +294,21 @@ export default function UsersEdit () {
           {/* ROW 4 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
-              <InputText 
-                labelTitle="User Email"
+              <InputText
+                labelTitle={t('user.users-edit.user.edit.email')}
                 labelStyle="font-bold	"
                 labelRequired
                 type="email"
                 value={email}
-                placeholder={t('user.edit.placeholder-user-email')}
+                placeholder={t('user.users-edit.user.edit.placeholder-user-email')}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setEmail(event.target.value);
                 }}
               />
             </div>
             <div className="flex flex-1">
-              <InputText 
-                labelTitle="Company"
+              <InputText
+                labelTitle={t('user.users-edit.user.edit.company')}
                 labelStyle="font-bold	"
                 value={company}
                 disabled
@@ -302,15 +316,15 @@ export default function UsersEdit () {
             </div>
             <div className="flex flex-1">
               <DropDown
-                labelTitle="Role"
-                labelStyle="font-bold	"       
-                labelRequired       
+                labelTitle={t('user.users-edit.user.edit.role') ?? ''}
+                labelStyle="font-bold	"
+                labelRequired
                 defaultValue={roleId}
                 items={roleData}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                   if (event) {
                     setRoleId(value);
-                  };
+                  }
                 }}
               />
             </div>
@@ -319,20 +333,20 @@ export default function UsersEdit () {
         <div className="mt-[200px] flex justify-end items-end gap-2">
           <button className="btn btn-outline btn-md" onClick={(event: any) => {
             event.preventDefault();
-            setLeaveTitleModalShow(t('modal.confirmation'));
-            setMessageLeaveModalShow(t('modal.leave-confirmation'));
-            setShowLeaveModal(true);          
+            setLeaveTitleModalShow(t('user.users-edit.user.edit.edit.modal.confirmation'));
+            setMessageLeaveModalShow(t('user.users-edit.user.edit.edit.modal.leave-confirmation'));
+            setShowLeaveModal(true);
           }}>
-            {isLoading ? 'Loading...' : t('btn.cancel')}
+            {isLoading ? t('user.users-edit.user.edit.edit.btn.loading') : t('user.users-edit.user.edit.edit.btn.cancel')}
           </button>
           <button className="btn btn-success btn-md text-white" onClick={(event: any) => {
             event.preventDefault();
             onSave();
           }}>
-            {isLoading ? 'Loading...' : t('btn.save')}
+            {isLoading ? t('user.users-edit.user.edit.edit.btn.loading') : t('user.users-edit.user.edit.edit.btn.save')}
           </button>
         </div>
       </form>
     </TitleCard>
   );
-};
+}

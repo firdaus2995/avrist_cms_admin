@@ -23,6 +23,7 @@ import StatusBadge from './components/StatusBadge';
 import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
 import { FilterButton } from '@/components/molecules/FilterButton/index.';
+import { t } from 'i18next';
 
 const ArchiveButton = () => {
   return (
@@ -31,7 +32,7 @@ const ArchiveButton = () => {
         <button className=" border-secondary-warning border-[1px] rounded-xl w-36 py-3">
           <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-secondary-warning">
             <img src={ArchiveBox} className="w-6 h-6 mr-1" />
-            Archive
+          {t('user.page-management.list.page-list.archive')}
           </div>
         </button>
       </Link>
@@ -54,7 +55,7 @@ const CreateButton = () => {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Create New Page
+            {t('user.page-management.list.page-list.button-add')}
           </div>
         </button>
       </Link>
@@ -65,11 +66,11 @@ const CreateButton = () => {
 export default function PageManagementList() {
   const listTabs = [
     {
-      name: 'Page List',
+      name: t('user.page-management.list.page-list.title'),
       isActive: 1,
     },
     {
-      name: 'My Task',
+      name: t('user.page-management.list.my-task.title'),
       isActive: 2,
     },
   ];
@@ -206,7 +207,7 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Page Name</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.page-name')}</span>,
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -218,7 +219,7 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Created by</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.created-by')}</span>,
       accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -228,7 +229,7 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Created Date</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.created-date')}</span>,
       accessorKey: 'createdAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -240,7 +241,7 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Updated Date</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.updated-date')}</span>,
       accessorKey: 'updatedAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -252,7 +253,7 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -260,7 +261,7 @@ export default function PageManagementList() {
           <Link to={`detail/${info.getValue()}`}>
             <div className="tooltip" data-tip={'View Detail'}>
               <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
-                View Detail
+              {t('user.page-management.list.page-list.row.view-detail')}
               </button>
             </div>
           </Link>
@@ -280,8 +281,8 @@ export default function PageManagementList() {
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete ${title} from the list?`);
+    setTitleConfirm(t('user.page-management.list.delete-confirm.title') ?? '');
+    setMessageConfirm(t('user.page-management.list.delete-confirm.message',{title})??'');
     setShowConfirm(true);
   };
 
@@ -294,7 +295,7 @@ export default function PageManagementList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Page',
+            title: t('user.page-management.list.delete.success'),
             message: d.pageDelete.message,
           }),
         );
@@ -305,8 +306,8 @@ export default function PageManagementList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Page',
-            message: 'Something went wrong!',
+            title: t('user.page-management.list.delete.failed'),
+            message: t('user.page-management.list.delete.failed-message'),
           }),
         );
       });
@@ -356,7 +357,7 @@ export default function PageManagementList() {
         toggle={() => {
           setIdLog(null);
         }}
-        title={`Log Approval - ${logTitle}`}
+        title={`${t('user.page-management.list.log-approval') ?? ''} - ${logTitle}`}
       />
       <ModalConfirm
         open={showConfirm}
@@ -364,16 +365,16 @@ export default function PageManagementList() {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.page-management.list.cancel')}
         message={messageConfirm}
         submitAction={submitDeletePage}
-        submitTitle="Yes"
+        submitTitle={t('user.page-management.list.submit-title')}
         loading={deletePageLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
       />
       <TitleCard
-        title="Page List"
+        title={t('user.page-management.list.page-list.button-add') ?? ''}
         topMargin="mt-2"
         SearchBar={
           <InputSearch
@@ -384,7 +385,7 @@ export default function PageManagementList() {
                 setSearchMyTask(e.target.value);
               }
             }}
-            placeholder="Search"
+            placeholder={t('user.page-management.list.page-list.search-placeholder') ?? ''}
           />
         }
         TopSideButtons={<TopRightButton />}>
