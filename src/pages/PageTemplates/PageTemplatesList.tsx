@@ -47,7 +47,7 @@ export default function PageTemplatesList() {
     },
     {
       header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.uploaded-by')}</span>,
-      accessorKey: 'uploadedBy.name',
+      accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
