@@ -23,14 +23,24 @@ function bytesToSize(bytes: number): string {
 const FileItem = (props: any) => {
   const { name, value, onDeletePress } = props;
 
+  const [altText, setAltText] = useState('');
+
   return (
     <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
       {value?.type?.startsWith('image/') ? (
-        <img
-          className="object-cover h-12 w-12 rounded-lg mr-3 border"
-          src={URL.createObjectURL(value)}
-          alt={name}
-        />
+        <div>
+          <img
+            className="object-cover h-12 w-12 rounded-lg mr-3 border"
+            src={URL.createObjectURL(value)}
+            alt={name}
+          />
+          <input
+            type="text"
+            placeholder="Alt Text"
+            value={altText}
+            onChange={e => { setAltText(e.target.value); }}
+          />
+        </div>
       ) : (
         <div className="h-12 w-12 flex justify-center items-center bg-light-purple rounded-lg mr-3">
           <img className="h-9 w-9" src={Document} alt="document" />
@@ -245,7 +255,7 @@ export default function FileUploaderBaseV2({
               disabled={disabled || isLoading}
             />
             <div className="flex flex-col justify-center items-center h-[150px]">
-              <img className="w-12" src={UploadDocumentIcon} />
+              <img className="w-12" src={UploadDocumentIcon} alt='upload' />
               <span className="text-xs text-center mt-5">
                 {label || (
                   <span>
