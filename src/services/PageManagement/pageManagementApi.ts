@@ -279,6 +279,7 @@ export const pageManagementApi = createApi({
             $content: String!
             $imgFilename: String!
             $isDraft: Boolean!
+            $isAutoApprove: Boolean!
             $pageTemplateId: Int!
             $postTypeId: Int!
           ) {
@@ -292,6 +293,7 @@ export const pageManagementApi = createApi({
                 content: $content
                 imgFilename: $imgFilename
                 isDraft: $isDraft
+                isAutoApprove: $isAutoApprove
                 pageTemplateId: $pageTemplateId
                 postTypeId: $postTypeId
               }
@@ -346,6 +348,7 @@ export const pageManagementApi = createApi({
             $content: String!
             $imgFilename: String!
             $isDraft: Boolean!
+            $isAutoApprove: Boolean!
             $pageTemplateId: Boolean!
             $postTypeId: Boolean!
           ) {
@@ -359,6 +362,7 @@ export const pageManagementApi = createApi({
                 content: $content
                 imgFilename: $imgFilename
                 isDraft: $isDraft
+                isAutoApprove: $isAutoApprove
                 pageTemplateId: $pageTemplateId
                 postTypeId: $postTypeId
               }
