@@ -1,6 +1,9 @@
 import { useEffect, useState, useCallback } from 'react';
 import { t } from 'i18next';
-import { useGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
+import {
+  useGetCategoryListQuery,
+  useGetEligibleAutoApproveQuery,
+} from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
   useCreateContentDataMutation,
@@ -18,6 +21,9 @@ import FormList from '@/components/molecules/FormList';
 import Plus from '@/assets/plus-purple.svg';
 import CancelIcon from '@/assets/cancel.png';
 import TableDelete from '@/assets/table-delete.svg';
+import ModalForm from '@/components/molecules/ModalForm';
+import PaperSubmit from '../../assets/paper-submit.png';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -49,6 +55,10 @@ export default function ContentManagerNew() {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+
+  // AUTO APPROVE MODAL STATE
+  const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
+  const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   const [contentTempData, setContentTempData] = useState<any[]>([]);
 
@@ -107,6 +117,9 @@ export default function ContentManagerNew() {
     limit: 100,
   });
   const { data: postTypeDetailData } = fetchGetPostTypeDetail;
+
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
     if (postTypeDetailData) {
@@ -202,17 +215,28 @@ export default function ContentManagerNew() {
     });
   }
 
-  function onSubmitData(value: any) {
+  function onSubmitData() {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+      setShowModalAutoApprove(true);
+    } else {
+      saveData();
+    }
+  }
+
+  const saveData = () => {
+    const value = getValues();
     const convertedData = convertContentData(contentTempData);
     const stringifyData = convertLoopingToArrays(convertedData);
     const payload = {
       title: value.title,
       shortDesc: value.shortDesc,
       isDraft: false,
+      isAutoApprove,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
+
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -232,7 +256,7 @@ export default function ContentManagerNew() {
           }),
         );
       });
-  }
+  };
 
   const addNewLoopingField = (loopingId: any) => {
     const existingLoopingIndex: number = postTypeDetail.attributeList.findIndex(
@@ -442,9 +466,12 @@ export default function ContentManagerNew() {
 
       const loopingCount = loopingDupCount[id] || loopingDupCount[duplicateId] || 0;
 
-      const aa = postTypeDetail?.attributeList.filter((val: { duplicateId: any; }) => val.duplicateId === duplicateId);
+      const aa = postTypeDetail?.attributeList.filter(
+        (val: { duplicateId: any }) => val.duplicateId === duplicateId,
+      );
 
-      const showAddDataButton = loopingCount === 0 || loopingCount > 0 && aa.slice(-1).pop().id === id;
+      const showAddDataButton =
+        loopingCount === 0 || (loopingCount > 0 && aa.slice(-1).pop().id === id);
       switch (fieldType) {
         case 'TEXT_FIELD':
           return (
@@ -1143,6 +1170,40 @@ export default function ContentManagerNew() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
+      <ModalForm
+        open={showModalAutoApprove}
+        formTitle=""
+        height={640}
+        width={540}
+        submitTitle={'Yes'}
+        submitType="bg-secondary-warning border-none"
+        cancelTitle={'No'}
+        cancelAction={() => {
+          setShowModalAutoApprove(false);
+          setIsAutoApprove(false);
+        }}
+        submitPosition={'justify-center'}
+        submitAction={() => {
+          setShowModalAutoApprove(false);
+          saveData();
+        }}>
+        <div className="flex flex-col justify-center items-center">
+          <img src={PaperSubmit} className="w-10" />
+          <p className="font-bold mt-3 text-xl">Submit Content</p>
+          <p className="font-base mt-2 text-xl text-center">
+            Do you want to submit Homepage Avrist Life content data? Please recheck your content
+            data before submit content.
+          </p>
+          <CheckBox
+            defaultValue={isAutoApprove}
+            updateFormValue={e => {
+              setIsAutoApprove(e.value);
+            }}
+            labelTitle="I want to auto approve this content data"
+            labelStyle="text-xl mt-2"
+          />
+        </div>
+      </ModalForm>
       <form onSubmit={handleSubmit(onSubmitData)}>
         <div className="ml-2 mt-6">
           {/* DEFAULT FORM */}

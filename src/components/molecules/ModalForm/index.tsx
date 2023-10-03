@@ -18,6 +18,7 @@ export default function ModalForm ({
   cancelAction,
   children,
   additionalButton,
+  submitPosition,
 }: IModalForm ) {
   return (
     <Modal
@@ -45,7 +46,7 @@ export default function ModalForm ({
               </div>
             )
           }
-          <div className="w-full flex justify-end gap-3">
+          <div className={`w-full flex gap-3 ${submitPosition || 'justify-end'}`}>
             <button className="btn btn-outline w-[105px]" onClick={cancelAction}>
               {cancelTitle}
             </button>

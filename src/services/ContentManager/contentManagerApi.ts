@@ -169,6 +169,7 @@ export const contentManagerApi = createApi({
             $title: String!
             $shortDesc: String!
             $isDraft: Boolean!
+            $isAutoApprove: Boolean!
             $postTypeId: Int!
             $categoryName: String!
             $contentData: [PostMetaTemplateRequest]!
@@ -178,6 +179,7 @@ export const contentManagerApi = createApi({
                 title: $title
                 shortDesc: $shortDesc
                 isDraft: $isDraft
+                isAutoApprove: $isAutoApprove
                 postTypeId: $postTypeId
                 categoryName: $categoryName
                 contentData: $contentData
@@ -331,6 +333,7 @@ export const contentManagerApi = createApi({
             $title: String!
             $shortDesc: String!
             $isDraft: Boolean!
+            $isAutoApprove: Boolean!
             $postTypeId: Int!
             $categoryName: String!
             $contentData: [ContentDataAttributeRequest]!
@@ -341,6 +344,7 @@ export const contentManagerApi = createApi({
                     title: $title
                     shortDesc: $shortDesc
                     isDraft: $isDraft
+                    isAutoApprove: $isAutoApprove
                     categoryName: $categoryName
                     contentData: $contentData
             }) {    
@@ -412,6 +416,18 @@ export const contentManagerApi = createApi({
         variables: payload,
       }),
     }),
+    getEligibleAutoApprove: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query isUserEligibleAutoApprove{
+            isUserEligibleAutoApprove {    
+                isUserEligible
+            }
+        }
+        `,
+        variables: payload,
+      }),
+    }),
   })
 })
 
@@ -433,4 +449,5 @@ export const {
   useRestoreContentDataMutation,
   useHardDeleteContentDataMutation,
   useDeleteCategoryMutation,
+  useGetEligibleAutoApproveQuery,
 } = contentManagerApi;
