@@ -3,6 +3,7 @@ import Typography from '@/components/atoms/Typography';
 import UploadDocumentIcon from '@/assets/upload-file.svg';
 import Document from '@/assets/modal/document-orange.svg';
 import Close from '@/assets/close.png';
+import { t } from 'i18next';
 
 interface FileData {
   name: string;
@@ -110,7 +111,7 @@ const FileUploader: React.FC<DragAndDropProps> = ({
               onClick={handleCardClick}
               className="flex flex-col items-center justify-center h-[100px] cursor-pointer">
               <img src={UploadDocumentIcon} />
-              <span className="text-xs text-center mt-5">Drag and Drop Files or upload image</span>
+              <span className="text-xs text-center mt-5">{t('components.molecules.file.drag')}</span>
             </div>
 
             {fileData.map(file => (
@@ -149,7 +150,7 @@ const FileUploader: React.FC<DragAndDropProps> = ({
               </div>
             ))}
           </div>
-          <p className="text-body-text-3 text-xs mt-2">Only Support format .jpg, .jpeg, .png</p>
+          <p className="text-body-text-3 text-xs mt-2">{t('components.molecules.file.support')}</p>
         </div>
       </div>
       <div className="border my-10" />

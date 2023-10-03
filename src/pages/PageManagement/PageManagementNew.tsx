@@ -136,17 +136,17 @@ export default function PageManagementNew() {
   };
 
   return (
-    <TitleCard title="Create Page Management" border={true}>
+    <TitleCard title={t('user.page-management-new.title')} border={true}>
       <ModalConfirm
         open={showLeaveModal}
         cancelAction={() => {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="No"
+        cancelTitle={t('user.page-management-new.cancelButton')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle="Yes"
+        submitTitle={t('user.page-management-new.saveButton')}
         icon={CancelIcon}
         btnSubmitStyle='btn-warning'
       />
@@ -154,7 +154,7 @@ export default function PageManagementNew() {
         <div>
           <button className="w-[160px] !min-h-[45px] h-[45px] btn btn-outline btn-primary flex flex-row justify-center items-center gap-2">
             <img src={PreviewEye} className="h-[30px] w-[30px]" />
-            Preview
+          {t('user.page-management-new.previewButton')}
           </button>
         </div>
         <form className="flex flex-col gap-5" onSubmit={handleSubmit((data: any) => {
@@ -163,7 +163,7 @@ export default function PageManagementNew() {
           {/* FORM SECTION */}
           <div className="flex flex-col gap-3">
             <Typography weight="bold" size="l">
-              General Information
+            {t('user.page-management-new.generalInformation')}
             </Typography>
             <div className="flex flex-row justify-between">
               <Controller
@@ -172,13 +172,13 @@ export default function PageManagementNew() {
                 defaultValue=""
                 render={({ field }) => (
                   <InputText
-                    labelTitle="Page Name"
+                    labelTitle={t('user.page-management-new.pageNameLabel')}
                     labelStyle="font-semibold"
                     labelWidth={150}
                     labelRequired
                     direction="row"
                     roundStyle="xl"
-                    placeholder="Enter new page name"
+                    placeholder={t('user.page-management-new.pageNamePlaceholder')}
                     inputWidth={350}
                     {...field}
                   />
@@ -190,13 +190,13 @@ export default function PageManagementNew() {
                 defaultValue=""
                 render={({ field }) => (
                   <InputText
-                    labelTitle="Metatitle"
+                    labelTitle={t('user.page-management-new.metaTitleLabel')}
                     labelStyle="font-semibold"
                     labelWidth={150}
                     labelRequired
                     direction="row"
                     roundStyle="xl"
-                    placeholder="Enter metatitle here"
+                    placeholder={t('user.page-management-new.metaTitlePlaceholder')}
                     inputWidth={350}
                     {...field}
                   />
@@ -210,13 +210,13 @@ export default function PageManagementNew() {
                 defaultValue=""
                 render={({ field }) => (
                   <InputText
-                    labelTitle="Slug"
+                    labelTitle={t('user.page-management-new.slugLabel')}
                     labelStyle="font-semibold"
                     labelWidth={150}
                     labelRequired
                     direction="row"
                     roundStyle="xl"
-                    placeholder="Enter slug name"
+                    placeholder={t('user.page-management-new.slugPlaceholder')}
                     inputWidth={350}
                     {...field}
                   />
@@ -228,13 +228,13 @@ export default function PageManagementNew() {
                 defaultValue=""
                 render={({ field }) => (
                   <InputText
-                    labelTitle="Metadescription"
+                    labelTitle={t('user.page-management-new.metaDescriptionLabel')}
                     labelStyle="font-semibold"
                     labelWidth={150}
                     labelRequired
                     direction="row"
                     roundStyle="xl"
-                    placeholder="Enter metadescription here"
+                    placeholder={t('user.page-management-new.metaDescriptionPlaceholder')}
                     inputWidth={350}
                     {...field}
                   />
@@ -248,12 +248,12 @@ export default function PageManagementNew() {
                 defaultValue=""
                 render={({ field }) => (
                   <TextArea
-                    labelTitle="Short Description"
+                    labelTitle={t('user.page-management-new.shortDescriptionLabel')}
                     labelStyle="font-semibold"
                     labelWidth={150}
                     labelRequired
                     direction="row"
-                    placeholder="Enter description"
+                    placeholder={t('user.page-management-new.shortDescriptionPlaceholder') ?? ''}
                     inputWidth={350}
                     {...field}
                   />
@@ -262,7 +262,7 @@ export default function PageManagementNew() {
             </div>
             <div className="flex flex-col justify-start gap-3">
               <Typography size="m" weight="semi">
-                Content
+              {t('user.page-management-new.contentLabel')}
               </Typography>
               <CkEditor 
                 onChange={(data: string) => {
@@ -277,13 +277,13 @@ export default function PageManagementNew() {
           <div className="flex flex-col gap-3">
             <div className="flex flex-row justify-between">
               <Typography size="m" weight="bold">
-                Choose Your Template<span className='text-reddist'>*</span>
+                {t('user.page-management-new.templateLabel')}<span className='text-reddist'>*</span>
               </Typography>
               <InputSearch
                 onBlur={(e: any) => {
                   setSearch(e.target.value);
                 }}
-                placeholder="Search"
+                placeholder={t('user.page-management-new.searchPlaceholder') ?? ''}
               />
             </div>
             <div className="flex flex-wrap">
@@ -325,7 +325,7 @@ export default function PageManagementNew() {
           <div className="flex justify-center mt-5">
             <div className="w-[50%]">
               <DropDown
-                labelTitle="Choose Content Type"
+                labelTitle={t('user.page-management-new.contentTypeLabel') ?? ''}
                 labelStyle="font-bold	"
                 labelWidth={175}
                 direction='row'
@@ -356,7 +356,7 @@ export default function PageManagementNew() {
                 handlerSubmit(data, "draft")
               })}
             >
-              Save as Draft
+            {t('user.page-management-new.saveDraftButton')}
             </button>
             <button 
               type='submit' 

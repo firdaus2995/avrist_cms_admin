@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 import { getCredential } from '@/utils/Credential';
 
 export default function PageManagementArchive() {
+  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
   const [, setRoleData] = useState([]);
@@ -34,7 +35,6 @@ export default function PageManagementArchive() {
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
-  const { t } = useTranslation();
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -112,8 +112,10 @@ export default function PageManagementArchive() {
 
   const onClickPageRestore = (id: number, title: string) => {
     setRestoreId(id);
-    setRestoreModalTitle('Are you sure?');
-    setRestoreModalBody(`Do you want to restore ${title} content data?`);
+    setRestoreModalTitle(t('user.content-manager-archive.pageManagementArchive.restoreModal.title') ?? '');
+    setRestoreModalBody(
+      t('user.content-manager-archive.pageManagementArchive.restoreModal.message', { title }) ?? ''
+    );
     setOpenRestoreModal(true);
   };
 
@@ -128,8 +130,8 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Restore Data',
-            message: result.pageRestore.message,
+            title: t('user.content-manager-archive.toasts.successRestore.title'),
+            message: t('user.content-manager-archive.toasts.successRestore.message', { title: result.pageRestore.message }),
           }),
         );
         await fetchQuery.refetch();
@@ -139,8 +141,8 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Restore Data',
-            message: 'Something went wrong!',
+            title: t('user.content-manager-archive.toasts.errorRestore.title'),
+            message: t('user.content-manager-archive.toasts.errorRestore.message'),
           }),
         );
       });
@@ -148,7 +150,7 @@ export default function PageManagementArchive() {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Title</span>,
+      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.title')}</span>,
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -166,7 +168,7 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Short Description</span>,
+      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.shortDescription')}</span>,
       accessorKey: 'shortDesc',
       enableSorting: true,
       cell: (info: any) => (
@@ -178,19 +180,19 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Category Name</span>,
+      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.categoryName')}</span>,
       accessorKey: 'categoryName',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? dayjs(info.getValue()).format('DD/MM/YYYY')
+            ? dayjs(info.getValue()).format('user.content-manager-archive.DD/MM/YYYY')
             : '-'}
         </p>
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -200,10 +202,10 @@ export default function PageManagementArchive() {
               onClickPageRestore(info.getValue(), info?.row?.original?.title);
             }}
             className="btn btn-primary text-xs btn-sm w-28">
-            Restore
+            {t('user.content-manager-archive.pageManagementArchive.tableHeaders.restore')}
           </button>
           {canDelete && (
-            <div className="tooltip" data-tip={t('action.delete')}>
+            <div className="tooltip" data-tip={t('user.content-manager-archive.action.delete')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
                 src={TableDelete}
@@ -229,8 +231,8 @@ export default function PageManagementArchive() {
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete data ${title}?`);
+    setTitleConfirm(t('user.content-manager-archive.pageManagementArchive.confirmModal.title') ?? '');
+    setMessageConfirm(t('user.content-manager-archive.pageManagementArchive.confirmModal.message', { title }) ?? '');
     setShowConfirm(true);
   };
 
@@ -242,8 +244,8 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Content',
-            message: d.pageDelete.message,
+            title: t('user.content-manager-archive.toasts.successDeleteContent.title'),
+            message: t('user.content-manager-archive.toasts.successDeleteContent.message', { title: d.pageDelete.message }),
           }),
         );
         await fetchQuery.refetch();
@@ -253,8 +255,8 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Content',
-            message: 'Something went wrong!',
+            title: t('user.content-manager-archive.toasts.errorDeleteContent.title'),
+            message: t('user.content-manager-archive.toasts.errorDeleteContent.message'),
           }),
         );
       });
@@ -268,10 +270,10 @@ export default function PageManagementArchive() {
           setOpenRestoreModal(false);
         }}
         title={restoreModalTitle}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.content-manager-archive.buttons.cancel')}
         message={restoreModalBody}
         submitAction={submitRestorePage}
-        submitTitle="Yes"
+        submitTitle={t('user.content-manager-archive.buttons.yes')}
         loading={isLoading}
         btnSubmitStyle={'btn-primary'}
         icon={undefined}
@@ -282,23 +284,23 @@ export default function PageManagementArchive() {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="No"
+        cancelTitle={t('user.content-manager-archive.buttons.cancel')}
         message={messageConfirm}
         submitAction={submitDeleteContent}
-        submitTitle="Yes"
+        submitTitle={t('user.content-manager-archive.buttons.yes')}
         loading={deleteContentManagerLoading}
         icon={WarningIcon}
         btnSubmitStyle={'btn-error'}
       />
       <TitleCard
-        title="Content Manager - Archive List"
+        title={t('user.content-manager-archive.pageManagementArchive.title')}
         topMargin="mt-2"
         SearchBar={
           <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.content-manager-archive.pageManagementArchive.searchPlaceholder') ?? ''}
           />
         }
         onBackClick={goBack}

@@ -7,6 +7,7 @@ import MyTaskTab from './tabs/MyTaks/MyTask';
 import MainTab from './tabs/Main/Main';
 import CategoryTab from './tabs/Category/Category';
 import { getCredential } from '@/utils/Credential';
+import { t } from 'i18next';
 
 const ArchiveButton = () => {
   return (
@@ -15,7 +16,7 @@ const ArchiveButton = () => {
         <button className=" border-secondary-warning border-[1px] rounded-xl w-36 py-3">
           <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-secondary-warning">
             <img src={ArchiveBox} className="w-6 h-6 mr-1" />
-            Archive
+            {t('user.contentManagerDetail.archiveButton.text')}
           </div>
         </button>
       </Link>
@@ -82,11 +83,11 @@ export default function ContentManagerDetail() {
       isActive: 1,
     },
     {
-      name: 'My Task',
+      name: t('user.contentManagerDetail.tabs.myTaskTab'),
       isActive: 2,
     },
     {
-      name: 'Category',
+      name: t('user.contentManagerDetail.tabs.categoryTab'),
       isActive: 3,
     },
   ];
@@ -115,7 +116,7 @@ export default function ContentManagerDetail() {
                   className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Add New Data
+                {t('user.contentManagerDetail.createButton.addNewData')}
               </div>
             </button>
           </Link>
@@ -132,7 +133,7 @@ export default function ContentManagerDetail() {
                   className="w-6 h-6">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                 </svg>
-                Add New Category
+                {t('user.contentManagerDetail.createButton.addNewCategory')}
               </div>
             </button>
           </Link>

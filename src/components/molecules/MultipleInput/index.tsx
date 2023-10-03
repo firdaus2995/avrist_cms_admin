@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import PlusIcon from "../../../assets/plus-dark.svg";
 import CloseSolid from "../../../assets/close-solid.svg";
 import ErrorSmall from "../../../assets/error-small.svg";
+import { t } from "i18next";
 
 interface IMultipleInput {
   labelTitle: string;
@@ -90,7 +91,7 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
             ) : isError ? (
               <div className="flex flex-row gap-2">
                 <img src={ErrorSmall} />
-                <p className="text-reddist text-sm">This field is required</p>
+                <p className="text-reddist text-sm">{t('components.atoms.required')}</p>
               </div>
             ) : (
               <></>

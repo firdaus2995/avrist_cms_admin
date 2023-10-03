@@ -67,7 +67,9 @@ export default function UsersList() {
       },
     },
     {
-      header: () => <span className="text-[14px]">User ID</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.users-list.user.list.table.header.userId')}</span>
+      ),
       accessorKey: 'userId',
       enableSorting: true,
       cell: (info: any) => (
@@ -79,7 +81,9 @@ export default function UsersList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">User Name</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.users-list.user.list.table.header.userName')}</span>
+      ),
       accessorKey: 'fullName',
       enableSorting: true,
       cell: (info: any) => (
@@ -91,7 +95,9 @@ export default function UsersList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Email</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.users-list.user.list.table.header.email')}</span>
+      ),
       accessorKey: 'email',
       enableSorting: true,
       cell: (info: any) => (
@@ -103,7 +109,9 @@ export default function UsersList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Role</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.users-list.user.list.table.header.role')}</span>
+      ),
       accessorKey: 'role.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -127,7 +135,7 @@ export default function UsersList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.users-list.user.list.table.header.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -212,7 +220,7 @@ export default function UsersList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete User',
+            title: t('user.users-list.user.list.toast.success-delete'),
             message: result.userDelete.message,
           }),
         );
@@ -224,8 +232,8 @@ export default function UsersList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete User',
-            message: 'Something went wrong!',
+            title: t('user.users-list.user.list.toast.failed-delete'),
+            message: t('user.users-list.user.list.toast.failed-delete-message'),
           }),
         );
       });
@@ -233,9 +241,9 @@ export default function UsersList() {
 
   const onClickUserDelete = (id: number, name: string) => {
     setDeletedId(id);
-    setDeleteModalTitle(`Are you sure?`);
+    setDeleteModalTitle(t('user.users-list.user.list.modal.delete-title') ?? '');
     setDeleteModayBody(
-      `Do you want to delete user ${name}? \n Once you delete this user, this user won't be recovered`,
+      t('user.users-list.user.list.modal.delete-body', { name }) ?? '', // Pass the deleted user's name to the translation
     );
     setOpenDeleteModal(true);
   };
@@ -249,20 +257,20 @@ export default function UsersList() {
         }}
         title={deleteModalTitle}
         message={deleteModalBody}
-        cancelTitle="Cancel"
-        submitTitle="Yes"
+        cancelTitle={t('user.users-list.user.list.modal.cancel')}
+        submitTitle={t('user.users-list.user.list.modal.yes')}
         submitAction={submitDeleteUser}
         loading={isLoading}
         icon={WarningIcon}
         btnSubmitStyle=""
       />
       <TitleCard
-        title={t('user.list.title')}
+        title={t('user.users-list.user.list.title')}
         topMargin="mt-2"
         TopSideButtons={
           <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
             <img src={Plus} className="w-[24px] h-[24px]" />
-            {t('user.list.button-add')}
+            {t('user.users-list.user.list.button-add')}
           </Link>
         }
         SearchBar={
@@ -270,7 +278,7 @@ export default function UsersList() {
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.users-list.user.list.search-placeholder') ?? ''}
           />
         }>
         <div className="overflow-x-auto w-full mb-5">

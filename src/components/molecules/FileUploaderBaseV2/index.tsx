@@ -9,6 +9,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { copyArray, formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { getImageAxios } from '../../../services/Images/imageUtils';
+import { t } from 'i18next';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
@@ -80,8 +81,8 @@ export default function FileUploaderBaseV2({
       dispatch(
         openToast({
           type: 'error',
-          title: 'File Size Too Large',
-          message: 'Please upload a file that is no larger than 5MB.',
+          title: t('components.molecules.file.too-large'),
+          message: t('components.molecules.file.max'),
         }),
       );
       return;
@@ -91,8 +92,8 @@ export default function FileUploaderBaseV2({
       dispatch(
         openToast({
           type: 'error',
-          title: 'Duplicate File',
-          message: 'File already uploaded',
+          title: t('components.molecules.file.duplicated'),
+          message: t('components.molecules.file.already-uploaded'),
         }),
       );
       return;
@@ -127,7 +128,7 @@ export default function FileUploaderBaseV2({
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Upload',
+            title: t('components.molecules.file.failed'),
           }),
         );
       }
@@ -138,7 +139,7 @@ export default function FileUploaderBaseV2({
       dispatch(
         openToast({
           type: 'error',
-          title: 'Upload Error',
+          title: t('components.molecules.file.error'),
         }),
       );
     }
@@ -205,8 +206,7 @@ export default function FileUploaderBaseV2({
               <span className="text-xs text-center mt-5">
                 {label || (
                   <span>
-                    Drag and Drop {isDocument ? 'Files' : 'Image'} or click to{' '}
-                    <span className="text-primary">Browse</span>
+                    {t('components.molecules.file.dragAndDrop', { type:isDocument ? 'Files' : 'Image' })} <span className="text-primary">{t('components.molecules.file.browse')}</span>
                   </span>
                 )}
               </span>

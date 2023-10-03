@@ -8,6 +8,8 @@ import Typography from '@/components/atoms/Typography';
 import BackArrowLeft from '@/assets/back-arrow-left.svg';
 import WarningRed from '@/assets/warning-red.svg';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
+import { t } from 'i18next';
+import { Trans } from 'react-i18next';
 
 const ResetPasswordForm = () => {
   const dispatch = useAppDispatch();
@@ -33,7 +35,7 @@ const ResetPasswordForm = () => {
 
     if (!resetPasswordValue.email) {
       const updatedErrors = {
-        email: !resetPasswordValue.email ? 'This field is required' : '',
+        email: !resetPasswordValue.email ? t('form.forgot-password.required') : '',
       };
       setResetPasswordValue(prevState => ({
         ...prevState,
@@ -49,8 +51,8 @@ const ResetPasswordForm = () => {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Reset Password',
-            message: 'Reset password email sent successfully',
+            title: t('auth.reset-password'),
+            message: t('auth.reset-success'),
           }),
         );
       })
@@ -58,8 +60,8 @@ const ResetPasswordForm = () => {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed to send reset email',
-            message: 'Failed to send reset email',
+            title: t('auth.failed-reset'),
+            message: t('auth.failed-reset'),
           }),
         );
       });
@@ -70,39 +72,35 @@ const ResetPasswordForm = () => {
   return (
     <>
       <h1 className="font-bold text-2xl my-5 text-dark-purple">
-        {!isVerify ? `Forgot Password` : `Verify Email`}
+        {!isVerify ? t('auth.forgot-password') : t('auth.verify-email')}
       </h1>
       {pageState?.resetFailed && (
         <div className="flex flex-row p-2 bg-toast-error border-2 border-toast-error-border min-h-min-content mb-5">
           <img src={WarningRed} className="mr-4" />
           <Typography type="body" size="s" weight="regular" className="text-body-text-2">
-            Sorry, your request password link is no longer valid. Please request another reset
-            password to receive a new link.
+            {t('auth.link-not-valid')}
           </Typography>
         </div>
       )}
 
       <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
         {!isVerify ? (
-          'Enter your email address to reset your password.'
+          t('auth.enter-email-to-reset-password')
         ) : (
-          <>
-            An Email has been sent to your email address <strong>{resetPasswordValue.email}</strong>
-            . Please click on that link to verify your email address.
-          </>
+          <Trans i18nKey="auth.success-send-email" values={{ email: resetPasswordValue.email }} />
         )}
       </Typography>
       {isVerify && (
         <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
           <div className="flex flex-row">
-            Didn’t receive the email?
+            {t('auth.not-receive-email')}
             {isLoading ? (
               <LoadingCircle className="ml-2" />
             ) : (
               <strong
                 onClick={handleForgotPasswordSubmit}
                 className="ml-2 text-primary cursor-pointer">
-                Resend
+                {t('auth.resend')}
               </strong>
             )}
           </div>
@@ -112,8 +110,8 @@ const ResetPasswordForm = () => {
         {!isVerify && (
           <AuthInput
             key="email"
-            label="Email Address"
-            placeholder="Enter your email"
+            label={t('auth.email-address')}
+            placeholder={t('auth.enter-email')}
             error={resetPasswordValue.errors.email}
             styleClass="mb-5"
             onChange={handleResetPasswordChange}
@@ -129,11 +127,11 @@ const ResetPasswordForm = () => {
             }}
             className="btn btn-ghost font-normal text-body-text-3">
             <img src={BackArrowLeft} className="mr-2" />
-            Back To Login
+            {t('auth.back-to-login')}
           </button>
           {!isVerify && (
             <button type="submit" className="btn btn-primary btn-wide">
-              {isLoading ? <LoadingCircle className="fill-white" /> : 'Reset'}
+              {isLoading ? <LoadingCircle className="fill-white" /> : t('auth.reset')}
             </button>
           )}
         </div>

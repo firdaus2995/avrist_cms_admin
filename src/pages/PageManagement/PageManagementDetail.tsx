@@ -30,6 +30,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import ModalLog from './components/ModalLog';
 import TimelineLog from '@/assets/timeline-log.svg';
 import dayjs from 'dayjs';
+import { t } from 'i18next';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -80,10 +81,7 @@ export default function PageManagementDetail() {
   };
 
   // FORM VALIDATION
-  const {
-    control,
-    handleSubmit,
-  } = useForm();
+  const { control, handleSubmit } = useForm();
 
   useEffect(() => {
     setTimeout(() => {
@@ -137,7 +135,7 @@ export default function PageManagementDetail() {
               goBack();
             }}
             className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
+            {t('user.page-management.detail.labels.cancel')}
           </button>
           <button
             onClick={() => {
@@ -154,21 +152,21 @@ export default function PageManagementDetail() {
               }
             }}
             className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
+            {t('user.page-management.detail.labels.submit')}
           </button>
         </div>
       </div>
     );
   };
 
-  const onRestoreData = (payload: {id: any}) => {
+  const onRestoreData = (payload: { id: any }) => {
     restorePage(payload)
       .unwrap()
       .then(() => {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: t('user.page-management.detail.messages.success'),
           }),
         );
         goBack();
@@ -177,7 +175,7 @@ export default function PageManagementDetail() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            title: t('user.page-management.detail.messages.failed'),
           }),
         );
         setShowArchivedModal(false);
@@ -191,7 +189,7 @@ export default function PageManagementDetail() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: t('user.page-management.detail.messages.success'),
           }),
         );
         goBack();
@@ -200,7 +198,7 @@ export default function PageManagementDetail() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            title: t('user.page-management.detail.messages.failed'),
           }),
         );
         goBack();
@@ -216,7 +214,7 @@ export default function PageManagementDetail() {
       metaDescription: formData?.metaDescription,
       shortDesc: formData?.shortDesc,
       content,
-      imgFilename: pageTemplates.find((template: { id: any; }) => template.id === selected)?.name,
+      imgFilename: pageTemplates.find((template: { id: any }) => template.id === selected)?.name,
       isDraft,
       pageTemplateId: selected,
       postTypeId: contentTypeId,
@@ -228,7 +226,7 @@ export default function PageManagementDetail() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: t('user.page-management.detail.messages.success'),
           }),
         );
         goBack();
@@ -237,7 +235,7 @@ export default function PageManagementDetail() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            title: t('user.page-management.detail.messages.failed'),
           }),
         );
         goBack();
@@ -278,16 +276,27 @@ export default function PageManagementDetail() {
     return (
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
-          <button onClick={() => {goBack()}} className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
+          <button
+            onClick={() => {
+              goBack();
+            }}
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
+            {t('user.page-management.detail.labels.cancel')}
           </button>
           <button
-            onClick={() => {setIsDraft(true)}}
+            onClick={() => {
+              setIsDraft(true);
+            }}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
-            Save as Draft
+            {t('user.page-management.detail.labels.saveAsDraft')}
           </button>
-          <button onClick={() => {setIsDraft(false)}} type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
+          <button
+            onClick={() => {
+              setIsDraft(false);
+            }}
+            type="submit"
+            className="btn btn-success text-xs text-white btn-sm w-28 h-10">
+            {t('user.page-management.detail.labels.submit')}
           </button>
         </div>
       </div>
@@ -330,7 +339,7 @@ export default function PageManagementDetail() {
                     }}
                     className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                     <img src={Edit} className="mr-3" />
-                    Edit Content
+                    {t('user.page-management.detail.labels.editContent')}
                   </button>
                 )
               : null}
@@ -344,7 +353,7 @@ export default function PageManagementDetail() {
             }}
             className="btn bg-secondary-warning border-none text-xs btn-sm w-48 h-10">
             <img src={Restore} className="mr-3" />
-            Restore
+            {t('user.page-management.detail.labels.restore')}
           </button>
         );
       default:
@@ -357,24 +366,45 @@ export default function PageManagementDetail() {
       <div className="ml-2 mt-6">
         <div>
           <Typography type="heading4" weight="bold" className="mb-2">
-            General Information
+            {t('user.page-management.detail.labels.generalInformation')}
           </Typography>
           <div className="grid grid-cols-1 sm:grid-cols-2">
-            <Label title="Page Name" value={pageDetailList?.title} />
-            <Label title="Metatitle" value={pageDetailList?.metaTitle} />
-            <Label title="Slug" value={pageDetailList?.slug} />
-            <Label title="Metadescription" value={pageDetailList?.metaDescription} />
             <Label
-              title="Short Description"
+              title={t('user.page-management.detail.labels.pageName')}
+              value={pageDetailList?.title}
+            />
+            <Label
+              title={t('user.page-management.detail.labels.metaTitle')}
+              value={pageDetailList?.metaTitle}
+            />
+            <Label
+              title={t('user.page-management.detail.labels.slug')}
+              value={pageDetailList?.slug}
+            />
+            <Label
+              title={t('user.page-management.detail.labels.metaDescription')}
+              value={pageDetailList?.metaDescription}
+            />
+            <Label
+              title={t('user.page-management.detail.labels.shortDesc')}
               value={pageDetailList?.shortDesc}
             />
           </div>
-          <Label title="Content" value={pageDetailList?.content} />
-          <Label title="Chosen Template" value={pageDetailList?.imgFilename} />
+          <Label
+            title={t('user.page-management.detail.labels.content')}
+            value={pageDetailList?.content}
+          />
+          <Label
+            title={t('user.page-management.detail.labels.chooseTemplate')}
+            value={pageDetailList?.imgFilename}
+          />
           <div className="flex justify-center my-5">
             <img src={pageDetailList?.pageTemplate?.imageUrl} />
           </div>
-          <Label title="Content Type" value={pageDetailList?.postType?.name} />
+          <Label
+            title={t('user.page-management.detail.labels.contentType')}
+            value={pageDetailList?.postType?.name}
+          />
         </div>
       </div>
     );
@@ -385,7 +415,7 @@ export default function PageManagementDetail() {
       <form className="flex flex-col gap-3" onSubmit={handleSubmit(handlerSubmit)}>
         <div className="flex flex-col gap-3">
           <Typography weight="bold" size="l">
-            General Information
+            {t('user.page-management.detail.labels.generalInformation')}
           </Typography>
           <div className="flex flex-row justify-between">
             <Controller
@@ -394,13 +424,13 @@ export default function PageManagementDetail() {
               defaultValue={pageDetailList?.title}
               render={({ field }) => (
                 <InputText
-                  labelTitle="Page Name"
+                  labelTitle={t('user.page-management.detail.labels.pageName')}
                   labelStyle="font-semibold"
                   labelWidth={150}
                   labelRequired
                   direction="row"
                   roundStyle="xl"
-                  placeholder="Enter new page name"
+                  placeholder={t('user.page-management.detail.labels.enterNewPageName')}
                   inputWidth={350}
                   {...field}
                 />
@@ -412,13 +442,13 @@ export default function PageManagementDetail() {
               defaultValue={pageDetailList?.metaTitle}
               render={({ field }) => (
                 <InputText
-                  labelTitle="Metatitle"
+                  labelTitle={t('user.page-management.detail.labels.metaTitle')}
                   labelStyle="font-semibold"
                   labelWidth={150}
                   labelRequired
                   direction="row"
                   roundStyle="xl"
-                  placeholder="Enter metatitle here"
+                  placeholder={t('user.page-management.detail.labels.enterMetaTitle')}
                   inputWidth={350}
                   {...field}
                 />
@@ -432,13 +462,13 @@ export default function PageManagementDetail() {
               defaultValue={pageDetailList?.slug}
               render={({ field }) => (
                 <InputText
-                  labelTitle="Slug"
+                  labelTitle={t('user.page-management.detail.labels.slug')}
                   labelStyle="font-semibold"
                   labelWidth={150}
                   labelRequired
                   direction="row"
                   roundStyle="xl"
-                  placeholder="Enter slug name"
+                  placeholder={t('user.page-management.detail.labels.enterSlugName')}
                   inputWidth={350}
                   {...field}
                 />
@@ -450,13 +480,13 @@ export default function PageManagementDetail() {
               defaultValue={pageDetailList?.metaDescription}
               render={({ field }) => (
                 <InputText
-                  labelTitle="Metadescription"
+                  labelTitle={t('user.page-management.detail.labels.metaDescription')}
                   labelStyle="font-semibold"
                   labelWidth={150}
                   labelRequired
                   direction="row"
                   roundStyle="xl"
-                  placeholder="Enter metadescription here"
+                  placeholder={t('user.page-management.detail.labels.enterMetaDescription')}
                   inputWidth={350}
                   {...field}
                 />
@@ -470,12 +500,12 @@ export default function PageManagementDetail() {
               defaultValue={pageDetailList?.shortDesc}
               render={({ field }) => (
                 <TextArea
-                  labelTitle="Short Description"
+                  labelTitle={t('user.page-management.detail.labels.shortDesc')}
                   labelStyle="font-semibold"
                   labelWidth={150}
                   labelRequired
                   direction="row"
-                  placeholder="Enter description"
+                  placeholder={t('user.page-management.detail.labels.enterDescription') ?? ''}
                   inputWidth={350}
                   {...field}
                 />
@@ -484,7 +514,7 @@ export default function PageManagementDetail() {
           </div>
           <div className="flex flex-col justify-start gap-3">
             <Typography size="m" weight="semi">
-              Content
+              {t('user.page-management.detail.labels.content')}
             </Typography>
             <CkEditor />
           </div>
@@ -495,13 +525,13 @@ export default function PageManagementDetail() {
         <div className="flex flex-col gap-3">
           <div className="flex flex-row justify-between">
             <Typography size="m" weight="bold">
-              Choose Your Template
+              {t('user.page-management.detail.labels.chooseTemplate')}
             </Typography>
             <InputSearch
               onBlur={(e: any) => {
                 setSearch(e.target.value);
               }}
-              placeholder="Search"
+              placeholder={t('user.page-management.detail.labels.search') ?? ''}
             />
           </div>
           <div className="flex flex-wrap">
@@ -531,7 +561,7 @@ export default function PageManagementDetail() {
         <div className="flex justify-center">
           <div className="w-[35%]">
             <DropDown
-              labelTitle="Choose Content Type"
+              labelTitle={t('user.page-management.detail.labels.chooseContentType') ?? ''}
               labelStyle="font-bold	"
               labelRequired
               defaultValue={pageDetailList?.postType?.name}
@@ -567,32 +597,32 @@ export default function PageManagementDetail() {
         toggle={() => {
           setIdLog(null);
         }}
-        title={`Log Approval - ${logTitle}`}
+        title={`${t('user.page-management.detail.labels.log-approval') ?? ''} - ${logTitle}`}
       />
       <ModalConfirm
         open={showApproveModal}
         cancelAction={() => {
           setShowApproveModal(false);
         }}
-        title={'Approve'}
-        cancelTitle="No"
+        title={t('user.page-management.detail.labels.approve')}
+        cancelTitle={t('user.page-management.detail.labels.restoreNo')}
         message={'Test'}
         submitAction={() => {}}
-        submitTitle="Yes"
+        submitTitle={t('user.page-management.detail.labels.restoreYes')}
         // icon={WarningIcon}
         icon={undefined}
       />
       <TitleCard
-        title={`${pageDetailList?.title} - Page Template`}
+        title={`${pageDetailList?.title} - ${t('page-template.list.title') ?? ''}`}
         titleComponent={<Badge />}
         border={true}
         TopSideButtons={rightTopButton()}>
         <ModalConfirm
           open={showModalReview}
-          title={'Review Page Content'}
-          cancelTitle="No"
-          message={'Are you sure you already review this page content?'}
-          submitTitle="Yes"
+          title={t('user.page-management.detail.labels.reviewPageContent')}
+          cancelTitle={t('user.page-management.detail.labels.restoreNo')}
+          message={t('user.page-management.detail.labels.restoreConfirmation') ?? ''}
+          submitTitle={t('user.page-management.detail.labels.restoreYes')}
           icon={PaperIcon}
           submitAction={() => {
             setShowModalReview(false);
@@ -607,8 +637,8 @@ export default function PageManagementDetail() {
         <ModalConfirm
           open={showModalWarning}
           title={''}
-          message={'Please check the checkbox below the page detail before you submit this form'}
-          submitTitle="Yes"
+          message={t('user.page-management.detail.messages.alreadyReviewWarning') ?? ''}
+          submitTitle={t('user.page-management.detail.labels.restoreYes')}
           icon={WarningIcon}
           submitAction={() => {
             setShowModalWarning(false);
@@ -622,14 +652,14 @@ export default function PageManagementDetail() {
 
         <ModalConfirm
           open={showModalApprove}
-          title={'Approve'}
-          cancelTitle="No"
+          title={t('user.page-management.detail.labels.approve')}
+          cancelTitle={t('user.page-management.detail.labels.restoreNo')}
           message={
             pageDetailList?.pageStatus === 'WAITING_APPROVE'
-              ? 'Do you want to approve this page content?'
-              : 'Do you want to approve delete this page content?'
+              ? t('user.page-management.detail.labels.approveConfirmation') ?? ''
+              : t('user.page-management.detail.labels.approveDeleteConfirmation') ?? ''
           }
-          submitTitle="Yes"
+          submitTitle={t('user.page-management.detail.labels.restoreYes')}
           icon={CheckOrange}
           submitAction={() => {
             setShowModalApprove(false);
@@ -649,10 +679,10 @@ export default function PageManagementDetail() {
 
         <ModalConfirm
           open={showArchivedModal}
-          title={'Restore Content Data'}
-          cancelTitle="Cancel"
-          message={'Are you sure you restore this content data?'}
-          submitTitle="Yes"
+          title={t('user.page-management.detail.labels.restoreContentData')}
+          cancelTitle={t('user.page-management.detail.labels.cancel')}
+          message={t('user.page-management.detail.labels.restoreConfirmation') ?? ''}
+          submitTitle={t('user.page-management.detail.labels.restoreYes')}
           icon={RestoreOrange}
           submitAction={() => {
             setShowArchivedModal(false);
@@ -671,10 +701,10 @@ export default function PageManagementDetail() {
           open={showModalRejected}
           formTitle=""
           height={640}
-          submitTitle={'Yes'}
+          submitTitle={t('user.page-management.detail.labels.restoreYes')}
           submitType="bg-secondary-warning border-none"
           submitDisabled={rejectComments === ''}
-          cancelTitle={'No'}
+          cancelTitle={t('user.page-management.detail.labels.restoreNo')}
           cancelAction={() => {
             setShowModalRejected(false);
           }}
@@ -692,19 +722,21 @@ export default function PageManagementDetail() {
           <div className="flex flex-col justify-center items-center">
             <img src={PaperIcon} className="w-10" />
             {pageDetailList?.pageStatus === 'WAITING_APPROVE' ? (
-              <p className="font-semibold my-3 text-xl">Do you want to reject this content data?</p>
+              <p className="font-semibold my-3 text-xl">
+                {t('user.page-management.detail.labels.rejectConfirmation')}
+              </p>
             ) : (
               <p className="font-semibold my-3 text-xl">
-                Do you want to reject this delete request?
+                {t('user.page-management.detail.labels.deleteRejectConfirmation')}
               </p>
             )}
             <TextArea
               name="shortDesc"
-              labelTitle="Reject Comment"
+              labelTitle={t('user.page-management.detail.labels.rejectComments')}
               labelStyle="font-bold"
               value={rejectComments}
               labelRequired
-              placeholder={'Enter reject comments'}
+              placeholder={t('user.page-management.detail.labels.enterRejectComments') ?? ''}
               containerStyle="rounded-3xl"
               onChange={e => {
                 setRejectComments(e.target.value);
@@ -713,7 +745,14 @@ export default function PageManagementDetail() {
           </div>
         </ModalForm>
         {pageDetailList?.lastEdited && (
-          <div>Last Edited by <span className='font-bold'>{pageDetailList?.lastEdited?.editedBy}</span> at <span className='font-bold'>{dayjs(pageDetailList?.lastEdited?.editedAt).format('DD/MM/YYYY - HH:mm')}</span></div>
+          <div>
+            {t('user.page-management.detail.labels.lastEditedBy')}{' '}
+            <span className="font-bold">{pageDetailList?.lastEdited?.editedBy}</span>{' '}
+            {t('user.page-management.detail.labels.at')}{' '}
+            <span className="font-bold">
+              {dayjs(pageDetailList?.lastEdited?.editedAt).format('DD/MM/YYYY - HH:mm')}
+            </span>
+          </div>
         )}
         {isEdited ? editContent() : viewContent()}
         {roles?.includes('PAGE_REVIEW') ? (
@@ -729,7 +768,7 @@ export default function PageManagementDetail() {
                       setShowModalReview(true);
                     }
                   }}
-                  labelTitle="I Already Review This Page Content"
+                  labelTitle={t('user.page-management.detail.labels.alreadyReview')}
                   updateType={''}
                 />
               </div>

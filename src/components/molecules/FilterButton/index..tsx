@@ -4,6 +4,7 @@ import Typography from '@/components/atoms/Typography';
 import Radio from '@/components/molecules/Radio';
 import { InputDate } from '@/components/atoms/Input/InputDate';
 import dayjs from 'dayjs';
+import { t } from 'i18next';
 
 export const FilterButton: React.FC<any> = ({
   open,
@@ -52,7 +53,7 @@ export const FilterButton: React.FC<any> = ({
           }}
           className=" border-grey border-[1px] rounded-xl p-3">
           <div className="flex flex-row gap-2 items-center justify-center">
-            <img src={FilterIcon} className="w-6 h-6" />
+            <img src={FilterIcon} className="w-6 h-6" alt="Filter" />
           </div>
         </button>
       </label>
@@ -61,11 +62,11 @@ export const FilterButton: React.FC<any> = ({
         <div className="dropdown-content border-[1px] menu p-5 shadow bg-base-100 rounded-md mt-2 w-96">
           <div className="flex flex-row justify-between items-center">
             <Typography type="body" size="s" weight="semi" className="text-body-text-2">
-              Filter
+              {t('components.molecules.filter-button.filterButton.filter')}
             </Typography>
             <div className="cursor-pointer w-20 h-7" onClick={onResetPress}>
               <Typography type="body" size="s" weight="regular" className="text-body-text-2">
-                Reset Filter
+                {t('components.molecules.filter-button.filterButton.resetFilter')}
               </Typography>
             </div>
           </div>
@@ -74,11 +75,11 @@ export const FilterButton: React.FC<any> = ({
             items={[
               {
                 value: 'CREATED_AT',
-                label: 'Created Date',
+                label: t('components.molecules.filter-button.radioItems.createdAt'),
               },
               {
                 value: 'UPDATED_AT',
-                label: 'Updated Date',
+                label: t('components.molecules.filter-button.radioItems.updatedAt'),
               },
             ]}
             onSelect={(
@@ -94,7 +95,7 @@ export const FilterButton: React.FC<any> = ({
           <div className="flex flex-row gap-2">
             <InputDate
               max={endDate}
-              labelTitle="Start Date:"
+              labelTitle={t('components.molecules.filter-button.dateLabels.startDate')}
               value={startDate}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setStartDate(dayjs(event.target.value).format('YYYY-MM-DD'));
@@ -102,7 +103,7 @@ export const FilterButton: React.FC<any> = ({
             />
             <InputDate
               max={now}
-              labelTitle="End Date:"
+              labelTitle={t('components.molecules.filter-button.dateLabels.endDate')}
               value={endDate}
               onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                 setEndDate(dayjs(event.target.value).format('YYYY-MM-DD'));
@@ -117,12 +118,12 @@ export const FilterButton: React.FC<any> = ({
                 onResetPress();
               }}
               className="btn flex flex-1 btn-outline btn-primary text-xs btn-sm h-10">
-              Cancel
+              {t('components.molecules.filter-button.buttons.cancel')}
             </button>
             <button
               onClick={onSubmitPress}
               className="btn flex flex-1 btn-primary text-xs btn-sm h-10">
-              Submit
+              {t('components.molecules.filter-button.buttons.submit')}
             </button>
           </div>
         </div>

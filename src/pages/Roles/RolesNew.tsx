@@ -68,10 +68,10 @@ export default function RolesNew() {
             setShowComfirm(false);
           }}
           title={titleConfirm}
-          cancelTitle="No"
+          cancelTitle={t('user.roles-new.modal-confirm.no')}
           message={messageConfirm}
           submitAction={onLeave}
-          submitTitle="Yes"
+          submitTitle={t('user.roles-new.modal-confirm.yes')}
           icon={CancelIcon}
           btnSubmitStyle='btn-warning'
         />
@@ -84,8 +84,8 @@ export default function RolesNew() {
           <button
             className="btn btn-outline btn-md"
             onClick={() => {
-              setTitleConfirm('Are you sure?');
-              setmessageConfirm(`Do you want to cancel all the process?`);
+              setTitleConfirm(t('user.roles-new.modal-confirm.are-you-sure') ?? '');
+              setmessageConfirm(t('user.roles-new.modal-confirm.cancel-all-process') ?? '');
               setShowComfirm(true);
             }}>
             {t('btn.cancel')}
@@ -94,8 +94,9 @@ export default function RolesNew() {
             className="btn btn-success btn-md text-white"
             onClick={() => {
               onSave();
-            }}>
-            {onSaveLoading ? 'Loading...' : t('btn.save')}
+            }}
+          >
+            {onSaveLoading ? t('loading') + '...' : t('btn.save')}
           </button>
         </div>
       </TitleCard>

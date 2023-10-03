@@ -6,6 +6,7 @@ import { getCredential } from "@/utils/Credential";
 import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
 import { formatFilename } from "@/utils/logicHelper";
+import { t } from "i18next";
 
 interface IFileUploaderAvatar {
   id?: any,
@@ -40,8 +41,8 @@ const FileUploaderAvatar: React.FC<IFileUploaderAvatar> = ({
       dispatch(
         openToast({
           type: 'error',
-          title: 'File Size Too Large',
-          message: 'Please upload a file that is no larger than 5MB.',
+          title: t('components.molecules.file.too-large'),
+          message: t('components.molecules.file.max'),
         }),
       );
       return;

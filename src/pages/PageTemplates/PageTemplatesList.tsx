@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { t } from 'i18next';
+import { useTranslation } from 'react-i18next'; // Import the useTranslation hook
 import { Link } from 'react-router-dom';
 import { SortingState } from '@tanstack/table-core';
 
@@ -18,10 +18,11 @@ import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 
 export default function PageTemplatesList() {
-  // TABLE COLUMN
+  const { t } = useTranslation(); // Initialize the useTranslation hook
+
   const columns = [
     {
-      header: () => <span className="text-[14px]">Page ID</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.page-id')}</span>,
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -33,7 +34,7 @@ export default function PageTemplatesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Page Name</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.page-name')}</span>,
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -45,7 +46,7 @@ export default function PageTemplatesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Uploaded By</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.uploaded-by')}</span>,
       accessorKey: 'uploadedBy.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -57,7 +58,7 @@ export default function PageTemplatesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -66,7 +67,7 @@ export default function PageTemplatesList() {
             <button
               className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs"
             >
-              View Detail
+              {t('user.page-template-list.page-template.table.view-detail')}
             </button>
           </Link>
           <img
@@ -93,9 +94,9 @@ export default function PageTemplatesList() {
   // DELETE MODAL STATE
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
-  const [deleteModalBody, setDeleteModayBody] = useState('');
+  const [deleteModalBody, setDeleteModalBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
-  // RTK GET DATA
+
   const fetchQuery = useGetPageTemplateQuery(
     {
       pageIndex,
@@ -109,7 +110,7 @@ export default function PageTemplatesList() {
     },
   );
   const { data, isFetching, isError } = fetchQuery;
-  // RTK DELETE
+
   const [deletedPageTemplate, { isLoading: isLoadingDelete }] = useDeletePageTemplateMutation();
 
   useEffect(() => {
@@ -138,7 +139,7 @@ export default function PageTemplatesList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Page Template',
+            title: t('user.page-template-list.toasts.success-delete'),
             message: result.pageTemplateDelete.message,
           }),
         );
@@ -150,8 +151,8 @@ export default function PageTemplatesList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Page Template',
-            message: 'Something went wrong!',
+            title: t('user.page-template-list.toasts.error-delete'),
+            message: t('user.page-template-list.toasts.error-message'),
           }),
         );
       });
@@ -159,8 +160,8 @@ export default function PageTemplatesList() {
 
   const onClickPageTemplateDelete = (id: number) => {
     setDeletedId(id);
-    setDeleteModalTitle(`Are you sure?`);
-    setDeleteModayBody(`Do you want to delete this Page Template?`);
+    setDeleteModalTitle(t('user.page-template-list.page-template.table.delete-confirm-title') ?? '');
+    setDeleteModalBody(t('user.page-template-list.page-template.table.delete-confirm-body') ?? '');
     setOpenDeleteModal(true);
   };
 
@@ -170,8 +171,8 @@ export default function PageTemplatesList() {
         open={openDeleteModal}
         title={deleteModalTitle}
         message={deleteModalBody}
-        cancelTitle="Cancel"
-        submitTitle="Yes"
+        cancelTitle={t('user.page-template-list.buttons.cancel')}
+        submitTitle={t('user.page-template-list.buttons.yes')}
         submitAction={submitDeleteUser}
         cancelAction={() => {
           setOpenDeleteModal(false);
@@ -184,8 +185,8 @@ export default function PageTemplatesList() {
         open={openEditModal}
         loading={isLoadingEdit}
         formTitle="Page Template"
-        submitTitle={t('btn.save-alternate')}
-        cancelTitle={t('btn.cancel')}
+        submitTitle={t('user.page-template-list.btn.save-alternate')}
+        cancelTitle={t('user.page-template-list.btn.cancel')}
         cancelAction={() => {
           setOpenEditModal(false);
         }}
@@ -227,11 +228,11 @@ export default function PageTemplatesList() {
         />
       </ModalForm> */}
       <TitleCard
-        title={t('page-template.list.title')}
+        title={t('user.page-template-list.page-template.list.title')}
         topMargin="mt-2"
         TopSideButtons={
           <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
-            {t('page-template.list.button-add')}
+            {t('user.page-template-list.page-template.list.button-add')}
           </Link>
         }
         SearchBar={
@@ -239,7 +240,7 @@ export default function PageTemplatesList() {
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.page-template-list.page-template.search-placeholder') ?? ''}
           />
         }>
         <Table

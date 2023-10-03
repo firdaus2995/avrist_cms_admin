@@ -16,7 +16,28 @@
     "role": "Role"
   },
   "dashboard": {
-    "sample": "This is GraphQL Sample"
+    "welcome-to": "Welcome to",
+    "title": "{{name}} Content Management System",
+    "download-user-guide": "Download User Guide",
+    "start-creating-content": "Start Creating Content",
+    "sample": "This is GraphQL Sample",
+    "shortcut": {
+      "regist-template-page": {
+        "title": "Regist Page Template",
+        "subtitle": "Regist your new page template for Avrist Website",
+        "button": "Page Template"
+      },
+      "add-content": {
+        "title": "Add Content",
+        "subtitle": "Dive into the editor and start creating content",
+        "button": "Content Manager"
+      },
+      "build-your-component-structure": {
+        "title": "Build your component structure",
+        "subtitle": "Design your component to build your website",
+        "button": "Content Type Builder"
+      }
+    }
   },
   "modal": {
     "confirmation": "Are you sure?",
@@ -73,13 +94,13 @@
     "role-description": "Role Description",
     "add": {
       "title": "Add New Role",
-      "success-msg": "Peran {{name}} berhasil disimpan",
-      "failed-msg": "Peran {{name}} gagal disimpan"
+      "success-msg": "Role {{name}} has been successfully added!",
+      "failed-msg": "Role {{name}} failed to save"
     },
     "edit": {
       "title": "Edit Role",
-      "success-msg": "Peran {{name}} berhasil diperbarui",
-      "failed-msg": "Peran {{name}} gagal diperbarui"
+      "success-msg": "Role {{name}} has been successfully added!",
+      "failed-msg": "Role {{name}} failed to save"
     }
   },
   "user": {
@@ -106,18 +127,1143 @@
       "placeholder-user-email": "Enter Email"
     },
     "edit-profile": {
+      "title": "Edit Profile",
+      "fullname": "Fullname",
+      "email": "Email",
+      "change-password": "Change Password",
+      "cancel": "Cancel",
+      "save": "Save",
       "success-msg": "Success edit Profile {{name}}",
       "failed-msg": "Failed edit Profile {{name}}"
     },
     "change-password": {
+      "title": "Change Password",
+      "recent-password": "Recent Password",
+      "new-password": "New Password",
+      "confirm-password": "Confirm New Password",
+      "cancel": "Cancel",
+      "save": "Save",
       "success-msg": "Success change password Profile {{name}}",
       "failed-msg": "Failed change password Profile {{name}}"
+    },
+    "notification": {
+      "mark-all-as-read": "Mark all as read",
+      "title": "Notifications",
+      "view-all-notification": "View All Notification",
+      "selected": "Selected",
+      "delete": "Delete",
+      "selected-all": "Selected All"
+    },
+    "page-management": {
+      "list": {
+        "page-list": {
+          "title": "Page List",
+          "button-add": "Create New Page",
+          "archive": "Archive",
+          "row": {
+            "page-name": "Page Name",
+            "created-by": "Created By",
+            "created-date": "Created Date",
+            "updated-date": "Updated Date",
+            "action": "Action",
+            "view-detail": "View Detail"
+          },
+          "search-placeholder": "Search"
+        },
+        "my-task": {
+          "title": "My Task"
+        },
+        "log-approval": "Log Approval",
+        "cancel": "Cancel",
+        "submit-title": "Yes",
+        "delete-confirm": {
+          "title": "Are you sure?",
+          "message": "Do you want to delete {{title}} from the list?"
+        },
+        "delete": {
+          "success": "Success Delete Page",
+          "failed": "Failed Delete Page",
+          "failed-message": "Something went wrong!"
+        }
+      },
+      "add": {
+        "title": "Page Template Registration",
+        "success-msg": "Success register Page Template {{name}}",
+        "failed-msg": "Failed add register Page Template {{name}}"
+      },
+      "edit": {
+        "title": "Edit Page Template Profile",
+        "success-msg": "Success edit Page Template {{name}}",
+        "failed-msg": "Failed edit Page Template {{name}}"
+      },
+      "archive": {
+        "row": {
+          "page-name": "Page Name",
+          "created-by": "Created By",
+          "created-date": "Created Date",
+          "updated-date": "Updated Date",
+          "action": "Action",
+          "view-detail": "View Detail",
+          "restore": "Restore"
+        },
+
+        "search-placeholder": "Search",
+
+        "cancel": "Cancel",
+        "submit-title": "Yes",
+        "restore-confirm": {
+          "title": "Are you sure?",
+          "message": "Do you want to restore {{title}} page?"
+        },
+        "delete-confirm": {
+          "title": "Are you sure?",
+          "message": "Do you want to permanently delete this page? If you delete this page, you can’t recover it."
+        },
+        "restore": {
+          "success": "Success Restore Page",
+          "failed": "Failed Restore Page",
+          "message": "Something went wrong!"
+        },
+        "title-card": "Archive List"
+      },
+      "detail": {
+        "labels": {
+          "pageName": "Page Name",
+          "metaTitle": "Meta Title",
+          "slug": "Slug",
+          "metaDescription": "Meta Description",
+          "shortDesc": "Short Description",
+          "content": "Content",
+          "chooseTemplate": "Choose Your Template",
+          "chooseContentType": "Choose Content Type",
+          "contentType": "Content Type",
+          "reviewPageContent": "Review Page Content",
+          "rejectComments": "Reject Comments",
+          "approve": "Approve",
+          "cancel": "Cancel",
+          "submit": "Submit",
+          "editContent": "Edit Content",
+          "approveConfirmation": "Do you want to approve this page content?",
+          "approveDeleteConfirmation": "Do you want to approve delete this page content?",
+          "restore": "Restore",
+          "restoreContentData": "Restore Content Data",
+          "restoreConfirmation": "Are you sure you want to restore this content data?",
+          "restoreYes": "Yes",
+          "restoreNo": "No",
+          "rejectContentData": "Reject Content Data",
+          "rejectConfirmation": "Do you want to reject this content data?",
+          "deleteRejectConfirmation": "Do you want to reject this delete request?",
+          "alreadyReview": "I Already Review This Page Content",
+          "lastEditedBy": "Last Edited by",
+          "at": "at",
+          "search": "Search",
+          "enterNewPageName": "Enter new page name",
+          "enterMetaTitle": "Enter meta title here",
+          "enterSlugName": "Enter slug name",
+          "enterMetaDescription": "Enter meta description here",
+          "enterDescription": "Enter description",
+          "enterRejectComments": "Enter reject comments",
+          "saveAsDraft": "Save as Draft",
+          "log": "Log",
+          "generalInformation": "General Information",
+          "log-approval": "Log Approval"
+        },
+        "statuses": {
+          "waitingReview": "Waiting Review",
+          "waitingApprove": "Waiting Approve",
+          "deleteApprove": "Delete Approve",
+          "draft": "Draft",
+          "approved": "Approved",
+          "rejected": "Rejected",
+          "deleteRejected": "Delete Rejected",
+          "archived": "Archived"
+        },
+        "messages": {
+          "alreadyReviewWarning": "Please check the checkbox below the page detail before you submit this form",
+          "success": "Success",
+          "failed": "Failed",
+          "alreadyReviewComment": "Already review",
+          "restoreSuccess": "Restore Successful",
+          "restoreFailed": "Restore Failed"
+        }
+      }
+    },
+
+    "page-management-new": {
+      "title": "Create Page Management",
+      "generalInformation": "General Information",
+      "pageNameLabel": "Page Name",
+      "pageNamePlaceholder": "Enter new page name",
+      "metaTitleLabel": "Metatitle",
+      "metaTitlePlaceholder": "Enter metatitle here",
+      "slugLabel": "Slug",
+      "slugPlaceholder": "Enter slug name",
+      "metaDescriptionLabel": "Metadescription",
+      "metaDescriptionPlaceholder": "Enter metadescription here",
+      "shortDescriptionLabel": "Short Description",
+      "shortDescriptionPlaceholder": "Enter description",
+      "contentLabel": "Content",
+      "previewButton": "Preview",
+      "templateLabel": "Choose Your Template",
+      "searchPlaceholder": "Search",
+      "contentTypeLabel": "Choose Content Type",
+      "cancelButton": "No",
+      "saveDraftButton": "Save as Draft",
+      "saveButton": "Yes",
+      "leaveConfirmationTitle": "Confirmation",
+      "leaveConfirmationMessage": "Are you sure you want to leave without saving?",
+      "successToastTitle": "Success",
+      "errorToastTitle": "Failed"
+    },
+
+    "content-manager": {
+      "title": "Content Manager",
+      "searchPlaceholder": "Search",
+      "contentTypeColumnName": "Content Type Name"
+    },
+
+    "content-manager-new": {
+      "confirmation": "Confirmation",
+      "leave-confirmation": "Are you sure you want to leave?",
+      "title": "Title",
+      "category": "Category",
+      "short-description": "Short Description",
+      "short-placeholder": "Enter Short Description",
+      "email-form": "EMAIL_FORM",
+      "add-data": "Add Data",
+      "cancel": "Cancel",
+      "save-as-draft": "Save as Draft",
+      "submit": "Submit",
+      "invalid-number": "Invalid number",
+      "invalid-url": "Invalid URL",
+      "draft-success": "Success as draft",
+      "draft-failed": "Failed save as draft",
+      "title-required": "Title is required",
+      "category-required": "Category is required",
+      "field-required": "Field is required"
+    },
+
+    "content-manager-detail-data": {
+      "cancel": "Cancel",
+      "saveAsDraft": "Save as Draft",
+      "submit": "Submit",
+      "editContent": "Edit Content",
+      "restore": "Restore",
+      "addData": "Add Data",
+      "reviewPageContent": "Review Page Content",
+      "approve": "Approve",
+      "reject": "Reject",
+      "restoreContentData": "Restore Content Data",
+      "rejectComment": "Reject Comment",
+      "lastEditedBy": "Last Edited by",
+      "at": "at",
+      "title": "Title",
+      "category": "Category",
+      "shortDescription": "Short Description",
+      "description": "Enter description",
+      "iAlreadyReview": "I Already Review This Page Content",
+      "success": "Success",
+      "failed": "Failed",
+      "success-review": "You successfully reviewed the content data!",
+      "success-approved": "You successfully approved the content data!",
+      "success-rejected": "You successfully rejected the content data!",
+      "log-approval": "Log Approval",
+      "no": "No",
+      "yes": "Yes",
+      "deleteRejectConfirmation": "Do you want to reject this delete request?",
+      "reject-comments-placeholder": "Enter reject comments",
+      "is-required": "is Required",
+      "modalMessages": {
+        "reviewPageContent": "Are you sure you want to review this page content?",
+        "warning": "Please check the checkbox below the page detail before you submit this form",
+        "approveContent": "Do you want to approve this page content?",
+        "approveDelete": "Do you want to approve delete this page content?",
+        "restoreContentData": "Are you sure you want to restore this content data?",
+        "rejectContent": "Do you want to reject this content data?",
+        "rejectComment": "Please check the checkbox below the page detail before you submit this form"
+      }
+    },
+
+    "contentManagerDetail": {
+      "archiveButton": {
+        "text": "Archive"
+      },
+      "createButton": {
+        "addNewData": "Add New Data",
+        "addNewCategory": "Add New Category"
+      },
+      "tabs": {
+        "nameTab": "Name",
+        "myTaskTab": "My Task",
+        "categoryTab": "Category"
+      },
+      "topRightButton": "CreateButton",
+      "placeholders": "Placeholder for Name",
+      "tooltips": {
+        "archiveButton": "Archive this content"
+      }
+    },
+
+    "content-manager-archive": {
+      "pageManagementArchive": {
+        "title": "Content Manager - Archive List",
+        "searchPlaceholder": "Search",
+        "restoreModal": {
+          "title": "Are you sure?",
+          "message": "Do you want to restore {{title}} content data?"
+        },
+        "confirmModal": {
+          "title": "Are you sure?",
+          "message": "Do you want to delete data {{title}}?"
+        },
+        "tableHeaders": {
+          "title": "Title",
+          "shortDescription": "Short Description",
+          "categoryName": "Category Name",
+          "action": "Action",
+          "restore": "Restore"
+        }
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "yes": "Yes"
+      },
+      "toasts": {
+        "successRestore": {
+          "title": "Success Restore Data",
+          "message": "Content data has been successfully restored."
+        },
+        "errorRestore": {
+          "title": "Failed Restore Data",
+          "message": "Something went wrong while restoring data."
+        },
+        "successDeleteContent": {
+          "title": "Success Delete Content",
+          "message": "Content data has been successfully deleted."
+        },
+        "errorDeleteContent": {
+          "title": "Failed Delete Content",
+          "message": "Something went wrong while deleting content data."
+        }
+      }
+    },
+
+    "content-type-edit": {
+      "btn": {
+        "cancel": "Cancel",
+        "create": "Create",
+        "edit": "Edit"
+      },
+      "modal": {
+        "addAttribute": {
+          "title": "Add New {attributeType}",
+          "nameLabel": "Name",
+          "fieldIdLabel": "Field ID",
+          "minLengthLabel": "Minimum Length (Optional)",
+          "maxLengthLabel": "Maximum Length (Optional)",
+          "mediaTypeLabel": "Media Type",
+          "singleMediaOption": "Single Media",
+          "multipleMediaOption": "Multiple Media",
+          "addAttributeButton": "Add More Attributes"
+        },
+        "editAttribute": {
+          "title": "Edit {fieldType}",
+          "nameLabel": "Name",
+          "fieldIdLabel": "Field ID",
+          "minLengthLabel": "Minimum Length (Optional)",
+          "maxLengthLabel": "Maximum Length (Optional)",
+          "mediaTypeLabel": "Media Type",
+          "singleMediaOption": "Single Media",
+          "multipleMediaOption": "Multiple Media",
+          "addAttributeButton": "Add More Attributes"
+        },
+        "confirm": {
+          "title": "Are you sure?",
+          "cancelButton": "No",
+          "message": "Do you want to cancel all the process?",
+          "confirmButton": "Yes"
+        }
+      },
+      "titles": {
+        "editContentType": "Edit Content Type"
+      },
+      "edit": "Edit",
+      "edit-content-type": "Edit Content Type",
+      "contentTypeColumnName": "Content Type Name",
+      "slugName": "Slug Name",
+      "slugName-placeholder": "Enter Slug Name",
+      "use-category": "Use Category",
+      "list-attribute": "List Attribute",
+      "add-new": "Add New"
+    },
+
+    "content-type-detail": {
+      "content_type_detail": {
+        "attribute_name": "Attribute Name",
+        "attribute_type": "Attribute Type"
+      },
+      "table": {
+        "empty_data": "-",
+        "loading": "Loading...",
+        "error": "An error occurred while fetching data."
+      },
+      "pagination": {
+        "items_per_page": "Items per page:",
+        "page": "Page"
+      },
+      "titles": {
+        "go_back": "Go Back"
+      }
+    },
+
+    "content-type-list": {
+      "content-type-list": "Content Type List",
+      "add-new-content-type": "Add New Content Type",
+      "content-type-name": "Content Type Name",
+      "category": "Category",
+      "action": "Action",
+      "edit": "Edit",
+      "delete": "Delete",
+      "are-you-sure": "Are you sure?",
+      "do-you-want-to-delete": "Do you want to delete {{title}}?",
+      "do-you-want-to-duplicate": "Do you want to duplicate {{title}}?",
+      "success-delete-content-type": "Success Delete Content Type",
+      "failed-delete-content-type": "Failed Delete Content Type",
+      "something-went-wrong": "Something went wrong!",
+      "success-duplicate-page": "Success Duplicate Page",
+      "failed-duplicate-page": "Failed Duplicate Page",
+      "search": "Search"
+    },
+
+    "email-form-builder-new": {
+      "email-form-builder": {
+        "add": {
+          "title": "Form Builder",
+          "modal-confirm": {
+            "leave": {
+              "title": "Confirmation",
+              "message": "Are you sure you want to leave without saving?",
+              "cancel-title": "No",
+              "submit-title": "Yes"
+            },
+            "captcha": {
+              "title": "Confirmation",
+              "message": "Are you sure you want to close the captcha?"
+            }
+          },
+          "form-name-label": "Form Name",
+          "form-name-placeholder": "Enter new form name",
+          "form-template-label": "Form Template",
+          "form-template-empty": "Choose Form Template",
+          "pic-label": "PIC",
+          "pic-error-message": "The PIC filling format must be in email format",
+          "also-send-label": "Also send to submitter email",
+          "use-captcha-label": "Use Captcha",
+          "component-list": "Component List",
+          "form-preview": "Form Preview",
+          "configuration-bar": "Configuration Bar",
+          "cancel-button": "Cancel",
+          "save-button": "Save"
+        }
+      }
+    },
+
+    "email-form-builder-list": {
+      "email-form-builder": {
+        "list": {
+          "form-name": "Form Name",
+          "action": "Action",
+          "title": "Title",
+          "short-description": "Short Description",
+          "cancel-title": "Cancel",
+          "submit-title": "Yes",
+          "email-form-builder": "Email Form Builder",
+          "email-body": "Email Body",
+          "search": "Search",
+          "add-new-form": "Add New Form",
+          "add-new-email-body": "Add New Email Body",
+          "success-delete-email-form": "Success Delete Email Form",
+          "failed-delete-email-form": "Failed Delete Email Form",
+          "success-delete-email-body": "Success Delete Email Body",
+          "failed-delete-email-body": "Failed Delete Email Body"
+        }
+      }
+    },
+
+    "page-template-new": {
+      "page-template": {
+        "add": {
+          "title": "Add Page Template",
+          "success-msg": "Page template {{name}} added successfully."
+        },
+        "edit": {
+          "title": "Edit Page Template",
+          "success-msg": "Page template {{name}} edited successfully.",
+          "failed-msg": "Failed to edit page template {{name}}."
+        },
+        "detail": {
+          "title": "Page Template Details"
+        }
+      },
+      "toast-success": "Success",
+      "toast-failed": "Failed",
+      "modal": {
+        "confirmation": "Confirmation",
+        "leave-confirmation": "Are you sure you want to leave this page?"
+      },
+      "btn": {
+        "save": "Save",
+        "cancel": "Cancel"
+      },
+      "form": {
+        "pageName": {
+          "label": "Page Name",
+          "required-message": "Page name is required",
+          "placeholder": "Enter Page Name"
+        },
+        "pageDescription": {
+          "label": "Page Description",
+          "required-message": "Page description is required",
+          "placeholder": "Enter page description"
+        },
+        "pageFileName": {
+          "label": "Page File Name",
+          "required-message": "Page file name is required",
+          "pattern-message": "Entered value can't contain spaces or dash",
+          "placeholder": "Enter page file name"
+        },
+        "imagePreview": {
+          "label": "Image Preview",
+          "required-message": "Image preview is required",
+          "preview": "Drag and Drop Image Template Preview or click to",
+          "browse": "Browse"
+        },
+        "attribute": {
+          "label": "Attribute",
+          "add": "Add Attribute",
+
+          "type": {
+            "label": "Attribute Type",
+            "required-message": "Field Type is required"
+          },
+          "fieldId": {
+            "label": "Field ID",
+            "required-message": "Field ID is required",
+            "placeholder": "Enter field ID"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enter description"
+          }
+        },
+        "config": {
+          "label": "Config",
+          "add": "Add Config",
+          "key": {
+            "label": "Key",
+            "required-message": "Key is required",
+            "placeholder": "Enter key"
+          },
+          "description": {
+            "label": "Description",
+            "placeholder": "Enter description"
+          }
+        }
+      },
+      "action": "Action",
+      "table": {
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "add-config": "Add Config",
+      "category": "Category",
+      "edit-content": "Edit Content"
+    },
+
+    "page-template-list": {
+      "page-template": {
+        "list": {
+          "title": "Page Templates",
+          "button-add": "Add New Page Template"
+        },
+        "table": {
+          "page-id": "Page ID",
+          "page-name": "Page Name",
+          "uploaded-by": "Uploaded By",
+          "action": "Action",
+          "view-detail": "View Detail",
+          "delete-confirm-title": "Are you sure?",
+          "delete-confirm-body": "Do you want to delete this Page Template?"
+        },
+        "search-placeholder": "Search"
+      },
+      "buttons": {
+        "cancel": "Cancel",
+        "yes": "Yes"
+      },
+      "toasts": {
+        "success-delete": "Success Delete Page Template",
+        "error-delete": "Failed Delete Page Template",
+        "error-message": "Something went wrong!"
+      }
+    },
+
+    "menu-list": {
+      "menuList": {
+        "avristLifeInsurance": "Avrist Life Insurance",
+        "menuStructure": "Menu Structure",
+        "successDelete": "Success delete",
+        "failedDelete": "Failed delete",
+        "toastSuccess": "Success",
+        "toastFailed": "Oops failed delete",
+        "cancel": "Cancel",
+        "submit": "Submit",
+        "no": "No",
+        "yes": "Yes",
+        "confirmDeleteMessage": "Do you want to delete menu {{id}}? \n Once you delete this menu, this menu won't be recovered",
+        "confirmCancelTitle": "Are you sure?",
+        "confirmCancelMessage": "Do you want to cancel all of the process?",
+        "pageTitle": "Page Title",
+        "type": "Type",
+        "page": "Page",
+        "urlLink": "URL Link",
+        "openInNewTab": "Open in New Tab",
+        "save": "Save",
+        "addPages": "Add Pages"
+      }
+    },
+
+    "login-portal": {
+      "headerTitle": "Avrist Content Management System",
+      "cardTitles": [
+        "Avrist Life Insurance",
+        "Avrist General Insurance",
+        "Avrist Asset Management"
+      ],
+      "cancelTitle": "Cancel",
+      "altText": "Avrist Logo"
+    },
+
+    "new-password-form": {
+      "createNewPasswordTitle": "Create New Password",
+      "createNewPasswordDescription": "Enter your new password for Avrist Content Management System.",
+      "newPasswordLabel": "New Password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "newPasswordPlaceholder": "Enter New Password",
+      "confirmNewPasswordPlaceholder": "Confirm New Password",
+      "newPasswordRequiredError": "This field is required",
+      "passwordMismatchError": "Passwords do not match. Please try again.",
+      "createNewPasswordButton": "Create New Password",
+      "successToastTitle": "Success!",
+      "successToastMessage": "Your new password has been successfully saved!",
+      "errorToastTitle": "Error",
+      "errorToastMessage": "An error occurred. Please try again later."
+    },
+
+    "users-edit": {
+      "user": {
+        "edit": {
+          "title": "Edit User",
+          "status": "Status",
+          "active": "Active",
+          "inactive": "Inactive",
+          "userId": "User ID",
+          "password": "Password",
+          "fullName": "Full Name",
+          "dateOfBirth": "Date of Birth",
+          "gender": "Gender",
+          "male": "Male",
+          "female": "Female",
+          "email": "Email",
+          "company": "Company",
+          "role": "Role",
+          "modal": {
+            "inactive-user": "Inactive User",
+            "leave-message": "Do you want to leave this page?",
+            "confirmation": "Confirmation"
+          },
+          "btn": {
+            "cancel": "Cancel",
+            "save": "Save",
+            "loading": "Loading..."
+          },
+          "placeholder-user-id": "User ID",
+          "placeholder-user-password": "Password",
+          "placeholder-user-fullname": "Full Name",
+          "placeholder-user-email": "Email",
+          "leave-confirmation": "Are you sure you want to leave this page?",
+          "success-msg": "User {{name}} updated successfully!"
+        }
+      },
+      "toast-success": "Success",
+      "toast-failed": "Failed",
+      "roles": {
+        "edit": {
+          "failed-msg": "Failed to edit role for {name}"
+        }
+      }
+    },
+
+    "users-list": {
+      "user": {
+        "list": {
+          "title": "User List",
+          "button-add": "Add User",
+          "search-placeholder": "Search",
+          "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "undefined": "-"
+          },
+          "table": {
+            "header": {
+              "status": "Status",
+              "userId": "User ID",
+              "userName": "User Name",
+              "email": "Email",
+              "role": "Role",
+              "action": "Action"
+            }
+          },
+          "modal": {
+            "delete-title": "Are you sure?",
+            "cancel": "Cancel",
+            "yes": "Yes",
+            "delete-body": "Do you want to delete user {{name}}?\nOnce you delete this user, this user won't be recovered."
+          },
+          "toast": {
+            "success-delete": "Success Delete User",
+            "failed-delete": "Failed Delete User",
+            "failed-delete-message": "Something went wrong!"
+          }
+        }
+      }
+    },
+
+    "users-new": {
+      "user": {
+        "add": {
+          "title": "Add User",
+          "status": "Status",
+          "active": "Active",
+          "inactive": "Inactive",
+          "user-id": "User ID",
+          "password": "Password",
+          "fullname": "Full Name",
+          "date-of-birth": "Date of Birth",
+          "gender": "Gender",
+          "male": "Male",
+          "female": "Female",
+          "user-email": "Email",
+          "company": "Company",
+          "role": "Role",
+          "choose-role": "Choose Your Role",
+          "success-msg": "User {{name}} has been added successfully"
+        },
+        "modal": {
+          "inactive-user": "Inactive User",
+          "inactive-user-message": "Do you want to make this user inactive?",
+          "confirmation": "Confirmation",
+          "leave-confirmation": "Are you sure you want to leave this page?"
+        },
+        "btn": {
+          "cancel": "Cancel",
+          "save": "Save",
+          "no": "No",
+          "yes": "Yes"
+        },
+        "errors": {
+          "default": "An error occurred."
+        }
+      },
+      "toast": {
+        "success": "Success",
+        "failed": "Failed"
+      }
+    },
+
+    "global-config-data-list": {
+      "title": "Global Config Data",
+      "searchPlaceholder": "Search",
+      "addNewData": "Add New Data",
+      "action": {
+        "action": "Action",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "modalConfirm": {
+        "title": "Are you sure?",
+        "message": "Do you want to delete {{title}}?",
+        "cancelTitle": "Cancel",
+        "submitTitle": "Yes"
+      },
+      "toast": {
+        "successDeletePage": "Success Delete Page",
+        "failedDeletePage": "Failed Delete Page",
+        "somethingWentWrong": "Something went wrong!"
+      },
+      "columns": {
+        "key": "Key",
+        "value": "Value",
+        "description": "Description"
+      }
+    },
+
+    "global-config-data-new": {
+      "title": {
+        "new": "New Global Config Data",
+        "edit": "Edit Global Config Data",
+        "global-config-data": "Global Config Data"
+      },
+      "toast-success": "Success",
+      "toast-failed": "Failed",
+      "modal": {
+        "confirmation": "Confirmation",
+        "leave-confirmation": "Are you sure you want to leave without saving?"
+      },
+      "btn": {
+        "no": "No",
+        "yes": "Yes",
+        "cancel": "Cancel",
+        "save": "Save",
+        "loading": "Loading..."
+      },
+      "form": {
+        "key": {
+          "label": "Key",
+          "placeholder": "Enter key",
+          "required": "Key is required"
+        },
+        "value": {
+          "label": "Value",
+          "placeholder": "Enter value",
+          "required": "Value is required"
+        },
+        "description": {
+          "label": "Description",
+          "placeholder": "Enter description",
+          "required": "Description is required"
+        }
+      },
+      "toast-success-edit": "Success edit Global Config",
+      "toast-failed-edit": "Failed edit Global Config",
+      "toast-success-add": "Success register Global Config",
+      "toast-failed-add": "Failed add Global Config"
+    },
+
+
+    "roles-list":{
+      "common": {
+        "addNewRole": "Add New Role",
+        "areYouSure": "Are you sure?",
+        "deleteRoleConfirmation": "Do you want to delete role {{name}}? \n Once you delete this role, this role won't be recovered",
+        "successDelete": "Success delete",
+        "failedDelete": "Failed delete",
+        "roleList": "Role List",
+        "searchPlaceholder": "Search",
+        "cancel": "Cancel",
+        "yes": "Yes",
+        "roleID": "Role ID",
+        "roleName": "Role Name",
+        "description": "Description",
+        "action": "Action"
+      }
+    },
+
+    "roles-edit": {
+      "roles": {
+        "edit": {
+          "title": "Edit Role",
+          "success-msg": "Role '{{name}}' updated successfully.",
+          "failed-msg": "Failed to update role '{{name}}'.",
+          "btn": {
+            "cancel": "Cancel",
+            "save": "Save"
+          }
+        }
+      },
+      "modal": {
+        "confirm": {
+          "title": "Confirmation",
+          "cancelTitle": "No",
+          "message": "Are you sure you want to cancel all the process?",
+          "submitTitle": "Yes"
+        }
+      },
+      "btn": {
+        "cancel": "Cancel",
+        "cancelconfirm": "Are you sure?",
+        "cancelconfirmMessage": "Do you want to cancel all the process?",
+        "saveloading": "Loading...",
+        "editRoles": "Edit Roles"
+      },
+      "loading": "Loading...",
+      "toast-success": "Success!",
+      "toast-failed": "Failed!"
+    },
+
+
+    "roles-new":{
+      "roles": {
+        "add": {
+          "title": "Add Role",
+          "success-msg": "Role '{{name}}' added successfully.",
+          "failed-msg": "Failed to add role '{{name}}'."
+        }
+      },
+      "toast-success": "Success",
+      "toast-failed": "Failed",
+      "btn": {
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "modal-confirm": {
+        "are-you-sure": "Are you sure?",
+        "cancel-all-process": "Do you want to cancel all the process?",
+        "no": "No",
+        "yes": "Yes"
+      }
+    },
+
+
+    "tabs-category":{
+      "categoryName": "Category Name",
+      "categoryDescription": "Category Description",
+      "action": {
+        "action": "Action",
+        "edit": "Edit",
+        "delete": "Delete"
+      },
+      "confirm": {
+        "title": "Are you sure?",
+        "message": "Do you want to delete data {title}?",
+        "no": "No",
+        "yes": "Yes"
+      },
+      "toast": {
+        "successDelete": "Success Delete Category",
+        "failedDelete": "Failed Delete Category",
+        "somethingWrong": "Something went wrong!"
+      },
+      "modal": {
+        "cantDelete": "You can't delete this category, because this category is been used in an active page",
+        "ok": "Ok"
+      }
+    },
+
+    "tabs-category-edit":{
+      "toast-success": "Success",
+      "toast-failed": "Failed",
+      "content-manager": {
+        "category": {
+          "edit": {
+            "success-msg": "Category successfully edited",
+            "failed-msg": "Failed to edit category",
+            "title": "Edit Category"
+          }
+        }
+      },
+      "modal": {
+        "confirmation": "Confirmation",
+        "leave-confirmation": "Are you sure you want to leave?"
+      },
+      "btn": {
+        "cancel": "Cancel",
+        "save": "Save"
+      }
+    },
+
+
+    "tabs-category-new":{
+      "content-manager": {
+        "category": {
+          "add": {
+            "title": "Add New Category",
+            "success-msg": "Category '{{name}}' added successfully.",
+            "failed-msg": "Failed to add category '{{name}}'."
+          },
+          "name-label": "Category Name",
+          "description-label": "Category Description",
+          "name-placeholder": "Enter category name",
+          "description-placeholder": "Enter description"
+        }
+      },
+      "modal": {
+        "confirmation": "Confirmation",
+        "leave-confirmation": "Are you sure you want to leave this page?",
+        "cancel": "Cancel",
+        "yes": "Yes"
+      },
+      "btn": {
+        "cancel": "Cancel",
+        "save": "Save"
+      },
+      "toast": {
+        "success": "Success",
+        "failed": "Failed"
+      },
+      "loading": "Loading..."
+    },
+
+
+    "tabs-mytask":{
+      "myTaskTab": {
+        "tableHeaders": {
+          "status": "",
+          "id": "ID",
+          "title": "Title",
+          "shortDescription": "Short Description",
+          "actions": "Actions"
+        },
+        "buttons": {
+          "viewDetail": "View Detail"
+        }
+      }
+    },
+
+
+    "tabs-main":{
+      "common": {
+        "yes": "Yes",
+        "no": "No",
+        "successDeletePage": "Success Delete Page",
+        "failedDeletePage": "Failed Delete Page",
+        "somethingWentWrong": "Something went wrong!",
+        "viewDetail": "View Detail",
+        "action": {
+          "action": "Action",
+          "log": "Log",
+          "delete": "Delete",
+          "viewDetail": "View Detail"
+        },
+        "id": "ID",
+        "title": "Title",
+        "shortDescription": "Short Description",
+        "categoryName": "Category Name"
+      },
+      "mainTab": {
+        "titleConfirm": "Are you sure?",
+        "deleteDataMessage": "Do you want to delete data {{title}}?",
+        "successfullyDeletedMessage": "Success! Your data has been successfully deleted!"
+      },
+      "modalLog": {
+        "logApprovalTitle": "Log Approval - {{logTitle}}"
+      }
     }
+    
+    
+    
+    
+
+
+
+
   },
+
   "action": {
     "action": "Action",
     "view": "View",
     "edit": "Edit",
     "delete": "Delete"
+  },
+  "loading": "Loading",
+  "form": {
+    "login": {
+      "userid-required": "User ID is required",
+      "password-required": "Password is required"
+    },
+    "forgot-password": {
+      "required": "This field is required!"
+    },
+    "user": {
+      "change-password": {
+        "confirm-password-not-match": "Confirm password doesn’t match. Please try again!"
+      }
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "userId": "User ID",
+    "password": "Password",
+    "enter-userId": "Enter User ID",
+    "enter-password": "Enter Password",
+    "forgot-password": "Forgot Password",
+    "enter-email-to-reset-password": "Enter your email address to reset your password",
+    "verify-email": "Verify Email",
+    "email-address": "Email Address",
+    "enter-email": "Enter your email",
+    "link-not-valid": "Sorry, your request password link is no longer valid. Please request another reset password to receive a new link.",
+    "success-send-email": "An Email has been sent to your email address <strong>{{email}}</strong>. Please click on that link to verify your email address.",
+    "not-receive-email": "Didn’t receive the email?",
+    "resend": "Resend",
+    "back-to-login": "Back To Login",
+    "reset": "Reset",
+    "reset-password": "Reset Password",
+    "reset-success": "Reset password email sent successfully",
+    "failed-reset": "Failed to send reset email",
+    "signin-failed": "Sign-in Failed"
+  },
+  "no": "No",
+  "yes": "Yes",
+
+
+
+
+
+  "components":{
+    "atoms":{
+      "roles": "Roles",
+      "create": "Create",
+      "required": "This field is required",
+      "close-modal": "Close Modal"
+    },
+    "molecules":{
+      "response":"Response",
+      "approve": "Approve",
+      "reject": "Reject",
+      "component-dropdown-error":"Component Dropdown Error",
+      "component-radio-error": "Component Radio Error",
+      "file":{
+        "too-large": "File Size Too Large",
+        "max": "Please upload a file that is no larger than 5MB.",
+        "duplicated": "Duplicate File",
+        "already-uploded": "File already uploaded",
+        "failed": "Failed Upload",
+        "error": "Upload Error",
+        "dragAndDrop": "Drag and Drop {{type}} or click to",
+        "browse": "Browse",
+        "drag": "Drag and Drop Files or upload image",
+        "support": "Only Support format .jpg, .jpeg, .png"
+      },
+      "filter-button":{
+        "filterButton": {
+          "filter": "Filter",
+          "resetFilter": "Reset Filter"
+        },
+        "radioItems": {
+          "createdAt": "Created Date",
+          "updatedAt": "Updated Date"
+        },
+        "dateLabels": {
+          "startDate": "Start Date:",
+          "endDate": "End Date:"
+        },
+        "buttons": {
+          "cancel": "Cancel",
+          "submit": "Submit"
+        }
+      },
+      "no-matching-option": "No matching options",
+      "text-editor": "Text Editor",
+      "new-password": "New Password",
+      "not-found": "Data not found",
+      "no-data": "No data"
+    },
+    "organism":{
+      "back": "Back",
+      "notification": "Notification",
+      "content": "Content",
+      "permission": "Permission"
+    }
   }
 }

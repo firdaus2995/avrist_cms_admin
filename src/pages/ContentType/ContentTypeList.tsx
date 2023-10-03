@@ -6,7 +6,6 @@ import {
   useGetPostTypeListQuery,
   useDeleteContentTypeMutation,
 } from '../../services/ContentType/contentTypeApi';
-import { useTranslation } from 'react-i18next';
 import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
@@ -20,6 +19,7 @@ import DuplicateIcon from '@/assets/duplicate.svg';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import Typography from '@/components/atoms/Typography';
+import { t } from 'i18next';
 
 const TopRightButton = () => {
   return (
@@ -44,7 +44,7 @@ const CreateButton = () => {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-            Add New Content Type
+          {t('user.content-type-list.add-new-content-type')}
           </div>
         </button>
       </Link>
@@ -56,7 +56,6 @@ export default function ContentTypeList() {
   const roles = store.getState().loginSlice.roles;
   const contentTypeRegistrationRole = roles?.includes('CONTENT_TYPE_REGISTRATION');
 
-  const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);
 
@@ -118,7 +117,7 @@ export default function ContentTypeList() {
   // TABLE COLUMN
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Content Type Name</span>,
+      header: () => <span className="text-[14px]">{t('user.content-type-list.content-type-name')}</span>, // Use translation key for header
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -138,7 +137,7 @@ export default function ContentTypeList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Category</span>,
+      header: () => <span className="text-[14px]">{t('user.content-type-list.category')}</span>, // Use translation key for header
       accessorKey: 'isUseCategory',
       enableSorting: true,
       cell: (info: any) => (
@@ -146,7 +145,7 @@ export default function ContentTypeList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('action.action')}</span>,
+      header: () => <span className="text-[14px]">{t('user.content-type-list.action')}</span>, // Use translation key for header
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -164,14 +163,14 @@ export default function ContentTypeList() {
               </div>
             )}
             <Link to={`edit/${info.getValue()}`}>
-              <div className="tooltip" data-tip={t('action.edit')}>
+              <div className="tooltip" data-tip={t('user.content-type-list.action.edit')}>
                 <img
                   className={`cursor-pointer select-none flex items-center justify-center`}
                   src={TableEdit}
                 />
               </div>
             </Link>
-            <div className="tooltip" data-tip={t('action.delete')}>
+            <div className="tooltip" data-tip={t('user.content-type-list.action.delete')}>
               <img
                 className={`cursor-pointer select-none flex items-center justify-center`}
                 src={TableDelete}
@@ -188,15 +187,15 @@ export default function ContentTypeList() {
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete ${title}?`);
+    setTitleConfirm(t('user.content-type-list.are-you-sure') ?? ''); // Use translation key for title
+    setMessageConfirm(t('user.content-type-list.do-you-want-to-delete', { title }) ?? ''); // Use translation key for message
     setShowConfirm(true);
   };
 
   const onClickPageDuplicate = (id: number, title: string) => {
     setIdDuplicate(id);
-    setTitleConfirmDuplicate('Are you sure?');
-    setMessageConfirmDuplicate(`Do you want to duplicate ${title}?`);
+    setTitleConfirmDuplicate(t('user.content-type-list.are-you-sure') ??''); // Use translation key for title
+    setMessageConfirmDuplicate(t('user.content-type-list.do-you-want-to-duplicate', { title }) ?? ''); // Use translation key for message
     setShowConfirmDuplicate(true);
   };
 
@@ -209,7 +208,7 @@ export default function ContentTypeList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Content Type',
+            title: t('user.content-type-list.success-delete-content-type'), // Use translation key for success title
             message: d.postTypeDelete.message,
           }),
         );
@@ -220,8 +219,8 @@ export default function ContentTypeList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Content Type',
-            message: 'Something went wrong!',
+            title: t('user.content-type-list.failed-delete-content-type'), // Use translation key for error title
+            message: t('user.content-type-list.something-went-wrong'), // Use translation key for error message
           }),
         );
       });
@@ -236,7 +235,7 @@ export default function ContentTypeList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Duplicate Page',
+            title: t('user.content-type-list.success-duplicate-page'), // Use translation key for success title
           }),
         );
         await fetchQuery.refetch();
@@ -245,8 +244,8 @@ export default function ContentTypeList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Duplicate Page',
-            message: 'Something went wrong!',
+            title: t('user.content-type-list.failed-duplicate-page'), // Use translation key for error title
+            message: t('user.content-type-list.something-went-wrong'), // Use translation key for error message
           }),
         );
       });
@@ -260,10 +259,10 @@ export default function ContentTypeList() {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.content-type-list.cancel')} // Use translation key for cancel title
         message={messageConfirm}
         submitAction={submitDeletePage}
-        submitTitle="Yes"
+        submitTitle={t('user.content-type-list.yes')} // Use translation key for submit title
         loading={deletePageLoading}
         icon={WarningIcon}
         btnSubmitStyle={''}
@@ -274,22 +273,22 @@ export default function ContentTypeList() {
           setShowConfirmDuplicate(false);
         }}
         title={titleConfirmDuplicate}
-        cancelTitle="No"
+        cancelTitle={t('user.content-type-list.no')} // Use translation key for cancel title
         message={messageConfirmDuplicate}
         submitAction={submitDuplicatePage}
-        submitTitle="Yes"
+        submitTitle={t('user.content-type-list.yes')} // Use translation key for submit title
         icon={DuplicateIcon}
         btnSubmitStyle={'btn-warning text-white'}
       />
       <TitleCard
-        title="Content Type List"
+        title={t('user.content-type-list.content-type-list')} // Use translation key for title
         topMargin="mt-2"
         SearchBar={
           <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.content-type-list.search')??''} // Use translation key for placeholder
           />
         }
         TopSideButtons={<TopRightButton />}>
