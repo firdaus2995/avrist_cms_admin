@@ -1178,17 +1178,16 @@ export default function ContentManagerDetailData() {
         }}>
         <div className="flex flex-col justify-center items-center">
           <img src={PaperSubmit} className="w-10" />
-          <p className="font-bold mt-3 text-xl">Submit Content</p>
+          <p className="font-bold mt-3 text-xl">{t('user.content-manager-detail-data.modalMessages.autoApproveTitle')}</p>
           <p className="font-base mt-2 text-xl text-center">
-            Do you want to submit Homepage Avrist Life content data? Please recheck your content
-            data before submit content.
+            {t('user.content-manager-detail-data.modalMessages.autoApproveSubtitle')}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}
             updateFormValue={e => {
               setIsAutoApprove(e.value);
             }}
-            labelTitle="I want to auto approve this content data"
+            labelTitle={t('user.content-manager-detail-data.modalMessages.autoApproveLabel')}
             labelStyle="text-xl mt-2"
           />
         </div>
