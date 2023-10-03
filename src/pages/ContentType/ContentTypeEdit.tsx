@@ -582,7 +582,7 @@ export default function ContentTypeEdit() {
           </div>
           <div className="flex flex-col mx-10 mt-16">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              {`${t('user.content-type-edit.add-new')} ${getType(openedAttribute?.code) === 'looping' ? t('user.content-type-edit.looping') : `${t('user.content-type-edit.looping')} ${getType(openedAttribute?.code)}`}`}
+              {`${t('user.content-type-edit.add-new')} ${getType(openedAttribute?.code) === 'looping' ? t('user.content-type-edit.looping') : `${t('user.content-type-edit.add-new-extension')} ${getType(openedAttribute?.code)}`}`}
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
