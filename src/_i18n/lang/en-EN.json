@@ -494,7 +494,9 @@
       "slugName-placeholder": "Enter Slug Name",
       "use-category": "Use Category",
       "list-attribute": "List Attribute",
-      "add-new": "Add New"
+      "add-new": "Add",
+      "add-new-extension": "New",
+      "looping": "multiple content type"
     },
 
     "content-type-detail": {

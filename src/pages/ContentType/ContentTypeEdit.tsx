@@ -1,23 +1,21 @@
-import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useTranslation } from 'react-i18next';
-import { useAppDispatch } from '../../store';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Key, SetStateAction, useEffect, useState } from 'react';
+
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
-import { Key, SetStateAction, useEffect, useState } from 'react';
-import { InputText } from '@/components/atoms/Input/InputText';
-import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import TableEdit from '../../assets/table-edit.png';
 import TableDelete from '../../assets/table-delete.svg';
 import Modal from '@/components/atoms/Modal';
-import {
-  useGetConfigQuery,
-  useGetPostTypeDetailQuery,
-  usePostTypeUpdateMutation,
-} from '@/services/ContentType/contentTypeApi';
-import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import Radio from '@/components/molecules/Radio';
+import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { openToast } from '@/components/atoms/Toast/slice';
+import { copyArray } from '@/utils/logicHelper';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
+import { useAppDispatch } from '../../store';
+import { useGetConfigQuery, useGetPostTypeDetailQuery, usePostTypeUpdateMutation } from '@/services/ContentType/contentTypeApi';
 
 export default function ContentTypeEdit() {
   const params = useParams();
@@ -564,7 +562,7 @@ export default function ContentTypeEdit() {
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
             <div className="flex flex-row">
               <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.code)}</div>
+              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.code) === 'looping' ? 'looping content' : getType(openedAttribute?.code)}</div>
             </div>
             <div className="p-2">
               <svg
@@ -584,7 +582,7 @@ export default function ContentTypeEdit() {
           </div>
           <div className="flex flex-col mx-10 mt-16">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-            {t('user.content-type-edit.add-new')} {getType(openedAttribute?.code)}
+              {`${t('user.content-type-edit.add-new')} ${getType(openedAttribute?.code) === 'looping' ? t('user.content-type-edit.looping') : `${t('user.content-type-edit.add-new-extension')} ${getType(openedAttribute?.code)}`}`}
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
@@ -938,7 +936,7 @@ export default function ContentTypeEdit() {
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
             <div className="flex flex-row">
               <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType)}</div>
+              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType) === 'looping' ? 'looping content' : getType(openedAttribute?.fieldType)}</div>
             </div>
             <div className="p-2">
               <svg
@@ -958,7 +956,7 @@ export default function ContentTypeEdit() {
           </div>
           <div className="flex flex-col mx-10 mt-10">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              {getType(openedAttribute?.fieldType)}
+              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType) === 'looping' ? 'multiple content type' : getType(openedAttribute?.fieldType)}</div>
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
@@ -1093,6 +1091,12 @@ export default function ContentTypeEdit() {
                                     ...prevState,
                                     attributeList: updatedAttributeList,
                                   }));
+
+                                  const newOpenedAttribute: any = copyArray(openedAttribute);
+                                  if (newOpenedAttribute?.attributeList?.length > 0) {
+                                    newOpenedAttribute?.attributeList?.splice(idx, 1);
+                                    setOpenedAttribute(newOpenedAttribute);
+                                  };
                                 }}
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
