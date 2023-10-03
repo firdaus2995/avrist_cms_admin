@@ -124,7 +124,7 @@ export default function UsersEdit () {
           openToast({
             type: 'success',
             title: t('user.users-edit.users.toast-success'),
-            message: t('user.users-edit.user.edit.success-msg', { name: d.userUpdate.fullName }),
+            message: t('user.users-edit.user.edit.edit.success-msg', { name: d.userUpdate.fullName }),
           }),
         );
         navigate('/user');
@@ -152,7 +152,7 @@ export default function UsersEdit () {
 
   return (
     <TitleCard
-      title={t('user.users-edit.user.edit.title')}
+      title={t('user.users-edit.user.edit.edit.title')}
       topMargin="mt-2"
     >
       <ModalConfirm
@@ -161,11 +161,11 @@ export default function UsersEdit () {
           setShowChangeStatusModal(false);
           setIsActive(true);
         }}
-        title={t('user.users-edit.user.edit.modal.inactive-user')}
-        cancelTitle={t('user.users-edit.user.edit.btn.cancel')}
-        message={t('user.users-edit.user.edit.modal.leave-message') ?? ''}
+        title={t('user.users-edit.user.edit.edit.modal.inactive-user')}
+        cancelTitle={t('user.users-edit.user.edit.edit.btn.cancel')}
+        message={t('user.users-edit.user.edit.edit.modal.leave-message') ?? ''}
         submitAction={changeStatusSubmit}
-        submitTitle={t('user.users-edit.user.edit.btn.save')}
+        submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
         icon={UserOrange}
         btnSubmitStyle='btn-warning'
       />
@@ -175,10 +175,10 @@ export default function UsersEdit () {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle={t('user.users-edit.user.edit.btn.cancel')}
+        cancelTitle={t('user.users-edit.user.edit.edit.btn.cancel')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle={t('user.users-edit.user.edit.btn.save')}
+        submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
         icon={CancelIcon}
         btnSubmitStyle='btn-warning'
       />
@@ -195,18 +195,18 @@ export default function UsersEdit () {
         <div className="flex flex-col mt-[60px] gap-5">
           {/* ROW 1 */}
           <Radio
-            labelTitle={t('user.users-edit.user.status') ?? ''}
+            labelTitle={t('user.users-edit.user.edit.status') ?? ''}
             labelStyle="font-bold	"
             labelRequired
             defaultSelected={isActive}
             items={[
               {
                 value: true,
-                label: t('user.users-edit.user.active'),
+                label: t('user.users-edit.user.edit.active'),
               },
               {
                 value: false,
-                label: t('user.users-edit.user.inactive'),
+                label: t('user.users-edit.user.edit.inactive'),
               },
             ]}
             onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
@@ -222,7 +222,7 @@ export default function UsersEdit () {
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText
-                labelTitle={t('user.users-edit.user.userId')}
+                labelTitle={t('user.users-edit.user.edit.userId')}
                 labelStyle="font-bold	"
                 value={userId}
                 placeholder={t('user.users-edit.user.edit.placeholder-user-id')}
@@ -231,7 +231,7 @@ export default function UsersEdit () {
             </div>
             <div className="flex flex-1">
               <InputPassword
-                labelTitle={t('user.users-edit.user.password')}
+                labelTitle={t('user.users-edit.user.edit.password')}
                 labelStyle="font-bold	"
                 value={password}
                 placeholder={t('user.users-edit.user.edit.placeholder-user-password')}
@@ -246,7 +246,7 @@ export default function UsersEdit () {
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText
-                labelTitle={t('user.users-edit.user.fullName')}
+                labelTitle={t('user.users-edit.user.edit.fullName')}
                 labelStyle="font-bold	"
                 labelRequired
                 value={fullName}
@@ -258,7 +258,7 @@ export default function UsersEdit () {
             </div>
             <div className="flex flex-1">
               <InputDate
-                labelTitle={t('user.users-edit.user.dateOfBirth')}
+                labelTitle={t('user.users-edit.user.edit.dateOfBirth')}
                 labelStyle="font-bold	"
                 labelRequired
                 value={dob}
@@ -269,17 +269,17 @@ export default function UsersEdit () {
             </div>
             <div className="flex flex-1">
               <Radio
-                labelTitle={t('user.users-edit.user.gender') ?? ''}
+                labelTitle={t('user.users-edit.user.edit.gender') ?? ''}
                 labelStyle="font-bold	"
                 labelRequired
                 items={[
                   {
                     value: "MALE",
-                    label: t('user.users-edit.user.male'),
+                    label: t('user.users-edit.user.edit.male'),
                   },
                   {
                     value: "FEMALE",
-                    label: t('user.users-edit.user.female'),
+                    label: t('user.users-edit.user.edit.female'),
                   },
                 ]}
                 onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
@@ -295,7 +295,7 @@ export default function UsersEdit () {
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
               <InputText
-                labelTitle={t('user.users-edit.user.email')}
+                labelTitle={t('user.users-edit.user.edit.email')}
                 labelStyle="font-bold	"
                 labelRequired
                 type="email"
@@ -308,7 +308,7 @@ export default function UsersEdit () {
             </div>
             <div className="flex flex-1">
               <InputText
-                labelTitle={t('user.users-edit.user.company')}
+                labelTitle={t('user.users-edit.user.edit.company')}
                 labelStyle="font-bold	"
                 value={company}
                 disabled
@@ -316,7 +316,7 @@ export default function UsersEdit () {
             </div>
             <div className="flex flex-1">
               <DropDown
-                labelTitle={t('user.users-edit.user.role') ?? ''}
+                labelTitle={t('user.users-edit.user.edit.role') ?? ''}
                 labelStyle="font-bold	"
                 labelRequired
                 defaultValue={roleId}
@@ -333,17 +333,17 @@ export default function UsersEdit () {
         <div className="mt-[200px] flex justify-end items-end gap-2">
           <button className="btn btn-outline btn-md" onClick={(event: any) => {
             event.preventDefault();
-            setLeaveTitleModalShow(t('user.users-edit.user.edit.modal.confirmation'));
-            setMessageLeaveModalShow(t('user.users-edit.user.edit.modal.leave-confirmation'));
+            setLeaveTitleModalShow(t('user.users-edit.user.edit.edit.modal.confirmation'));
+            setMessageLeaveModalShow(t('user.users-edit.user.edit.edit.modal.leave-confirmation'));
             setShowLeaveModal(true);
           }}>
-            {isLoading ? t('user.users-edit.user.edit.btn.loading') : t('user.users-edit.user.edit.btn.cancel')}
+            {isLoading ? t('user.users-edit.user.edit.edit.btn.loading') : t('user.users-edit.user.edit.edit.btn.cancel')}
           </button>
           <button className="btn btn-success btn-md text-white" onClick={(event: any) => {
             event.preventDefault();
             onSave();
           }}>
-            {isLoading ? t('user.users-edit.user.edit.btn.loading') : t('user.users-edit.user.edit.btn.save')}
+            {isLoading ? t('user.users-edit.user.edit.edit.btn.loading') : t('user.users-edit.user.edit.edit.btn.save')}
           </button>
         </div>
       </form>
