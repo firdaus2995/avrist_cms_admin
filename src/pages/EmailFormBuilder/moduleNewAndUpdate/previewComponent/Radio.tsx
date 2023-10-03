@@ -22,8 +22,6 @@ const Radio: React.FC<IRadio> = ({
 }) => {
   const nameId: any = uuidv4();
 
-  console.log("ini preview radio ", items)
-
   return (
     <div 
       className={`flex flex-col py-4 px-4 bg-light-purple-2 rounded-xl gap-2 border-[1px] ${isActive ? 'border-lavender' : 'border-light-purple-2'}`}

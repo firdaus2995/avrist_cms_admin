@@ -20,26 +20,17 @@ export default function FileUploaderV2({
   disabled = false,
   maxSize,
   maxFile,
-  parentData,
+  items,
 }: any) {
   const [isMaxFile, setIsMaxFile] = useState(false);
-  function convertToArr(arr: any[], key: string | number | undefined) {
-    if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
-      return [];
-    }
-
-    const values = arr.map(obj => obj[key]);
-
-    return values;
-  }
 
   useEffect(() => {
     if (maxFile) {
-      if (parentData?.items?.length >= maxFile) {
+      if (items?.length >= maxFile) {
         setIsMaxFile(true);
-      }
-    }
-  }, [maxFile, parentData]);
+      };
+    };
+  }, [maxFile, items]);
 
   return (
     <div>
@@ -68,13 +59,10 @@ export default function FileUploaderV2({
               isDocument={isDocument}
               multiple={multiple}
               label={labelText}
-              onFilesChange={(e: any) => {
-                const values = convertToArr(e, 'response');
-                onChange(values);
-              }}
+              onFilesChange={onChange}
               disabled={disabled || isMaxFile}
               maxSize={maxSize}
-              parentData={parentData}
+              items={items}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">

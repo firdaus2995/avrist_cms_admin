@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import PasswordHide from "../../../assets/password-hide.png";
 import ErrorSmallIcon from "../../../assets/error-small.svg";
+import { t } from 'i18next';
 
 interface IInputPassword {
   labelTitle: string;
@@ -101,7 +102,7 @@ export const InputPassword: React.FC<IInputPassword> = ({
                   <img src={ErrorSmallIcon} className='mr-3' />
                   <p className='text-reddist text-sm'>
                     {
-                      errorMessage ?? 'This field is required'
+                      errorMessage ?? t('components.atoms.required')
                     }
                   </p>
                 </div>

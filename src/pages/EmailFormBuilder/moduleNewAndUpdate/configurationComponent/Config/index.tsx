@@ -21,7 +21,6 @@ const Config: React.FC<IConfig> = ({
   configList,
   valueChange,
 }) => {
-  // console.log("config ", configList)
   return (
     configList.map((element: any, index: number) => {
       switch (element.type) {

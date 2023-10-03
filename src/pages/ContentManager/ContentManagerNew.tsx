@@ -413,7 +413,7 @@ export default function ContentManagerNew() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success as draft',
+            title: t('user.content-manager-new.draft-success'),
           }),
         );
         goBack();
@@ -422,7 +422,7 @@ export default function ContentManagerNew() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed save as draft',
+            title: t('user.content-manager-new.draft-failed'),
           }),
         );
       });
@@ -672,7 +672,7 @@ export default function ContentManagerNew() {
                 required: `${name} is required`,
                 pattern: {
                   value: /^[0-9\- ]{8,14}$/,
-                  message: 'Invalid number',
+                  message: t('user.content-manager-new.invalid-number'),
                 },
               }}
               render={({ field }) => {
@@ -710,7 +710,7 @@ export default function ContentManagerNew() {
                 pattern: {
                   value:
                     /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                  message: 'Invalid URL',
+                  message: t('user.content-manager-new.invalid-url'),
                 },
               }}
               render={({ field }) => {
@@ -745,7 +745,7 @@ export default function ContentManagerNew() {
                   size="m"
                   weight="bold"
                   className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                  EMAIL_FORM
+                  {t('user.content-manager-new.email-form')}
                 </Typography>
                 <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
                   {name}
@@ -994,7 +994,7 @@ export default function ContentManagerNew() {
                             required: `${val.name} is required`,
                             pattern: {
                               value: /^[0-9\- ]{8,14}$/,
-                              message: 'Invalid number',
+                              message: t('user.content-manager-new.invalid-number'),
                             },
                           }}
                           render={({ field }) => {
@@ -1031,7 +1031,7 @@ export default function ContentManagerNew() {
                             pattern: {
                               value:
                                 /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                              message: 'Invalid URL',
+                              message: t('user.content-manager-new.invalid-url'),
                             },
                           }}
                           render={({ field }) => {
@@ -1066,7 +1066,7 @@ export default function ContentManagerNew() {
                               size="m"
                               weight="bold"
                               className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                              EMAIL_FORM
+                              {t('user.content-manager-new.email-form')}
                             </Typography>
                             <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
                               {val.name}
@@ -1115,7 +1115,7 @@ export default function ContentManagerNew() {
                     }}
                     className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                     <img src={Plus} className="mr-3" />
-                    Add Data
+                    {t('user.content-manager-new.add-data')}
                   </button>
                 </div>
               )}
@@ -1139,15 +1139,15 @@ export default function ContentManagerNew() {
               setShowLeaveModal(true);
             }}
             className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
+            {t('user.content-manager-new.cancel')}
           </button>
           <button
             onClick={saveDraft}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
-            Save as Draft
+            {t('user.content-manager-new.save-as-draft')}
           </button>
           <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
+            {t('user.content-manager-new.submit')}
           </button>
         </div>
       </div>
@@ -1163,10 +1163,10 @@ export default function ContentManagerNew() {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="No"
+        cancelTitle={t('no')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle="Yes"
+        submitTitle={t('yes')}
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
@@ -1212,13 +1212,13 @@ export default function ContentManagerNew() {
               name="title"
               control={control}
               defaultValue=""
-              rules={{ required: 'Title is required' }}
+              rules={{ required: t('user.content-manager-new.title-required') ?? '' }}
               render={({ field }) => (
                 <FormList.TextField
                   {...field}
                   key="title"
-                  labelTitle="Title"
-                  placeholder="Title"
+                  labelTitle={t('user.content-manager-new.title')}
+                  placeholder={t('user.content-manager-new.title')}
                   error={!!errors?.title?.message}
                   helperText={errors?.title?.message}
                   border={false}
@@ -1228,13 +1228,13 @@ export default function ContentManagerNew() {
             {postTypeDetail?.isUseCategory && (
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-                  Category
+                  {t('user.content-manager-new.category')}
                 </Typography>
                 <Controller
                   name="category"
                   control={control}
                   defaultValue=""
-                  rules={{ required: 'Category is required' }}
+                  rules={{ required: t('user.content-manager-new.category-required') ?? '' }}
                   render={({ field }) => {
                     const onChange = useCallback(
                       (e: any) => {
@@ -1247,8 +1247,8 @@ export default function ContentManagerNew() {
                       <FormList.TextInputDropDown
                         {...field}
                         key="category"
-                        labelTitle="Category"
-                        placeholder="Title"
+                        labelTitle={t('user.content-manager-new.category')}
+                        placeholder={t('user.content-manager-new.title')}
                         error={!!errors?.category?.message}
                         helperText={errors?.category?.message}
                         items={categoryList}
@@ -1263,13 +1263,13 @@ export default function ContentManagerNew() {
               name="shortDesc"
               control={control}
               defaultValue=""
-              rules={{ required: 'Field is required' }}
+              rules={{ required: t('user.content-manager-new.field-required') ?? '' }}
               render={({ field }) => (
                 <FormList.TextAreaField
                   {...field}
                   key="shortDesc"
-                  labelTitle="Short Description"
-                  placeholder="Enter Short Description"
+                  labelTitle={t('user.content-manager-new.short-description') ?? ''}
+                  placeholder={t('user.content-manager-new.short-placeholder')}
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
                   border={false}

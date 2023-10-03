@@ -818,7 +818,7 @@ export default function ContentManagerDetailData() {
                         }}
                         className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                         <img src={Plus} className="mr-3" />
-                        Add Data
+                      {t('user.content-manager-detail-data.addData')}
                       </button>
                     </div>
                   )}
@@ -837,15 +837,15 @@ export default function ContentManagerDetailData() {
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
           <button onClick={() => {}} className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
+          {t('user.content-manager-detail-data.cancel')}
           </button>
           <button
             onClick={() => {}}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
-            Save as Draft
+          {t('user.content-manager-detail-data.saveAsDraft')}
           </button>
           <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
+          {t('user.content-manager-detail-data.submit')}
           </button>
         </div>
       </div>
@@ -861,7 +861,7 @@ export default function ContentManagerDetailData() {
               goBack();
             }}
             className="btn btn-outline text-xs btn-sm w-28 h-10">
-            Cancel
+          {t('user.content-manager-detail-data.cancel')}
           </button>
           <button
             onClick={() => {
@@ -878,7 +878,7 @@ export default function ContentManagerDetailData() {
               }
             }}
             className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            Submit
+          {t('user.content-manager-detail-data.submit')}
           </button>
         </div>
       </div>
@@ -921,7 +921,7 @@ export default function ContentManagerDetailData() {
                     }}
                     className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                     <img src={Edit} className="mr-3" />
-                    Edit Content
+                  {t('user.content-manager-detail-data.editContent')}
                   </button>
                 )
               : null}
@@ -935,7 +935,7 @@ export default function ContentManagerDetailData() {
             }}
             className="btn bg-secondary-warning border-none text-xs btn-sm w-48 h-10">
             <img src={Restore} className="mr-3" />
-            Restore
+          {t('user.content-manager-detail-data.restore')}
           </button>
         );
       default:
@@ -950,7 +950,7 @@ export default function ContentManagerDetailData() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: t('user.content-manager-detail-data.success'),
             message: getMessageToast(status),
           }),
         );
@@ -960,7 +960,7 @@ export default function ContentManagerDetailData() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            title: t('user.content-manager-detail-data.failed'),
           }),
         );
         goBack();
@@ -974,7 +974,7 @@ export default function ContentManagerDetailData() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: t('user.content-manager-detail-data.success'),
             message: getMessageToast(status),
           }),
         );
@@ -984,7 +984,7 @@ export default function ContentManagerDetailData() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            title: t('user.content-manager-detail-data.failed'),
           }),
         );
         goBack();
@@ -994,11 +994,11 @@ export default function ContentManagerDetailData() {
   const getMessageToast = (status: string) => {
     switch (status) {
       case 'WAITING APPROVE':
-        return 'You successfully reviewed the content data!';
+        return t('user.content-manager-detail-data.success-review');
       case 'APPROVED':
-        return 'You successfully approved the content data!';
+        return t('user.content-manager-detail-data.success-approved');
       case 'REJECTED':
-        return 'You successfully rejected the content data!';
+        return t('user.content-manager-detail-data.success-rejected');
     }
   };
 
@@ -1032,14 +1032,14 @@ export default function ContentManagerDetailData() {
         toggle={() => {
           setIdLog(null);
         }}
-        title={`Log Approval - ${logTitle}`}
+        title={`${t('user.content-manager-detail-data.log-approval') ?? ''} - ${logTitle}`}
       />
       <ModalConfirm
         open={showModalReview}
-        title={'Review Page Content'}
-        cancelTitle="No"
-        message={'Are you sure you already review this page content?'}
-        submitTitle="Yes"
+        title={t('user.content-manager-detail-data.reviewPageContent')}
+        cancelTitle={t('user.content-manager-detail-data.no')}
+        message={t('user.content-manager-detail-data.modalMessages.reviewPageContent') ?? ''}
+        submitTitle={t('user.content-manager-detail-data.yes')}
         icon={PaperIcon}
         submitAction={() => {
           setShowModalReview(false);
@@ -1054,8 +1054,8 @@ export default function ContentManagerDetailData() {
       <ModalConfirm
         open={showModalWarning}
         title={''}
-        message={'Please check the checkbox below the page detail before you submit this form'}
-        submitTitle="Yes"
+        message={t('user.content-manager-detail-data.modalMessages.warning') ?? ''}
+        submitTitle={t('user.content-manager-detail-data.yes') }
         icon={WarningIcon}
         submitAction={() => {
           setShowModalWarning(false);
@@ -1069,14 +1069,14 @@ export default function ContentManagerDetailData() {
 
       <ModalConfirm
         open={showModalApprove}
-        title={'Approve'}
-        cancelTitle="No"
+        title={t('user.content-manager-detail-data.approve') }
+        cancelTitle={t('user.content-manager-detail-data.no') }
         message={
           contentDataDetailList?.status === 'WAITING_APPROVE'
-            ? 'Do you want to approve this page content?'
-            : 'Do you want to approve delete this page content?'
+            ? t('user.content-manager-detail-data.modalMessages.approveContent') ?? ''
+            : t('user.content-manager-detail-data.modalMessages.approveDelete') ?? ''
         }
-        submitTitle="Yes"
+        submitTitle={t('user.content-manager-detail-data.yes') }
         icon={CheckOrange}
         submitAction={() => {
           setShowModalApprove(false);
@@ -1096,10 +1096,10 @@ export default function ContentManagerDetailData() {
 
       <ModalConfirm
         open={showArchivedModal}
-        title={'Restore Content Data'}
-        cancelTitle="Cancel"
-        message={'Are you sure you restore this content data?'}
-        submitTitle="Yes"
+        title={t('user.content-manager-detail-data.restoreContentData') }
+        cancelTitle={t('user.content-manager-detail-data.cancel') }
+        message={t('user.content-manager-detail-data.modalMessages.restoreContentData') ?? ''}
+        submitTitle={t('user.content-manager-detail-data.yes') }
         icon={RestoreOrange}
         submitAction={() => {
           setShowArchivedModal(false);
@@ -1119,10 +1119,10 @@ export default function ContentManagerDetailData() {
         open={showModalRejected}
         formTitle=""
         height={640}
-        submitTitle={'Yes'}
+        submitTitle={t('user.content-manager-detail-data.yes') }
         submitType="bg-secondary-warning border-none"
         submitDisabled={rejectComments === ''}
-        cancelTitle={'No'}
+        cancelTitle={t('user.content-manager-detail-data.no') }
         cancelAction={() => {
           setShowModalRejected(false);
         }}
@@ -1140,17 +1140,17 @@ export default function ContentManagerDetailData() {
         <div className="flex flex-col justify-center items-center">
           <img src={PaperIcon} className="w-10" />
           {contentDataDetailList?.status === 'WAITING_APPROVE' ? (
-            <p className="font-semibold my-3 text-xl">Do you want to reject this content data?</p>
+            <p className="font-semibold my-3 text-xl">{t('user.content-manager-detail-data.modalMessages.rejectContent') }</p>
           ) : (
-            <p className="font-semibold my-3 text-xl">Do you want to reject this delete request?</p>
+            <p className="font-semibold my-3 text-xl">{t('user.content-manager-detail-data.deleteRejectConfirmation') }</p>
           )}
           <TextArea
             name="shortDesc"
-            labelTitle="Reject Comment"
+            labelTitle={t('user.content-manager-detail-data.rejectComment') }
             labelStyle="font-bold"
             value={rejectComments}
             labelRequired
-            placeholder={'Enter reject comments'}
+            placeholder={t('user.content-manager-detail-data.reject-comments-placeholder') ?? '' }
             containerStyle="rounded-3xl"
             onChange={e => {
               setRejectComments(e.target.value);
@@ -1199,20 +1199,11 @@ export default function ContentManagerDetailData() {
           <div className="ml-2 mt-6">
             <div className="grid grid-cols-1 gap-5">
               {contentDataDetailList?.lastEdited && (
-                <div>
-                  Last Edited by{' '}
-                  <span className="font-bold">{contentDataDetailList?.lastEdited?.editedBy}</span>{' '}
-                  at{' '}
-                  <span className="font-bold">
-                    {dayjs(contentDataDetailList?.lastEdited?.editedAt).format(
-                      'DD/MM/YYYY - HH:mm',
-                    )}
-                  </span>
-                </div>
+                <div>{t('user.content-manager-detail-data.lastEditedBy') } <span className='font-bold'>{contentDataDetailList?.lastEdited?.editedBy}</span> {t('user.content-manager-detail-data.at')} <span className='font-bold'>{dayjs(contentDataDetailList?.lastEdited?.editedAt).format('DD/MM/YYYY - HH:mm')}</span></div>
               )}
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="mt-5 ml-1 w-48 mr-16">
-                  Title
+                {t('user.content-manager-detail-data.title')}
                 </Typography>
                 <InputText
                   name="title"
@@ -1228,13 +1219,13 @@ export default function ContentManagerDetailData() {
               {contentDataDetailList?.isUseCategory && (
                 <div className="flex flex-row">
                   <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-                    Category
+                  {t('user.content-manager-detail-data.category')}
                   </Typography>
                   <Controller
                     name="category"
                     control={control}
                     defaultValue={contentDataDetailList?.categoryName}
-                    rules={{ required: 'Category is required' }}
+                    rules={{ required: `${t('user.content-manager-detail-data.category')} ${t('user.content-manager-detail-data.is-required')}` }}
                     render={({ field }) => {
                       const onChange = useCallback(
                         (e: any) => {
@@ -1247,8 +1238,8 @@ export default function ContentManagerDetailData() {
                         <FormList.TextInputDropDown
                           {...field}
                           key="category"
-                          labelTitle="Category"
-                          placeholder="Title"
+                          labelTitle={t('user.content-manager-detail-data.category')}
+                          placeholder={t('user.content-manager-detail-data.title')}
                           error={!!errors?.category?.message}
                           helperText={errors?.category?.message}
                           items={categoryList}
@@ -1261,14 +1252,14 @@ export default function ContentManagerDetailData() {
               )}
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-16">
-                  Short Description
+                {t('user.content-manager-detail-data.shortDescription')}
                 </Typography>
                 <TextArea
                   name="shortDesc"
                   labelTitle=""
                   value={contentDataDetailList?.shortDesc}
                   disabled={!isEdited}
-                  placeholder={'Enter description'}
+                  placeholder={t('user.content-manager-detail-data.description') ?? ''}
                   containerStyle="rounded-3xl"
                   onChange={e => {
                     handleChange(e.target.name, e.target.value);
@@ -1297,7 +1288,7 @@ export default function ContentManagerDetailData() {
                     setShowModalReview(true);
                   }
                 }}
-                labelTitle="I Already Review This Page Content"
+                labelTitle={t('user.content-manager-detail-data.iAlreadyReview')}
                 updateType={''}
               />
             </div>

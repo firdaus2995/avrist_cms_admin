@@ -11,6 +11,7 @@ import {
   IDropDown, 
   IItems,
 } from "./interfaces";
+import { t } from "i18next";
 
 const DropDown = ({
   labelTitle,
@@ -63,7 +64,7 @@ const DropDown = ({
 
   if (!items) {
     return (
-      <h2 className="text-red-900">Component Dropdown Error</h2>
+      <h2 className="text-red-900">{t('components.molecules.component-dropdown-error')}</h2>
     )
   }
 

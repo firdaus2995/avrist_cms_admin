@@ -86,8 +86,8 @@ export default function PageManagementArchive() {
 
   const onClickPageRestore = (id: number, title: string) => {
     setRestoreId(id);
-    setRestoreModalTitle('Are you sure?');
-    setRestoreModalBody(`Do you want to restore ${title} page?`);
+    setRestoreModalTitle(t('user.page-management.archive.restore-confirm.title') ?? '');
+    setRestoreModalBody(t('user.page-management.archive.restore-confirm.message', { title }) ?? '');
     setOpenRestoreModal(true);
   };
 
@@ -102,7 +102,7 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Restore Page',
+            title: t('user.page-management.archive.restore.success'),
             message: result.pageRestore.message,
           }),
         );
@@ -113,8 +113,8 @@ export default function PageManagementArchive() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Restore Page',
-            message: 'Something went wrong!',
+            title: t('user.page-management.archive.restore.failed'),
+            message: t('user.page-management.archive.restore.message'),
           }),
         );
       });
@@ -122,7 +122,7 @@ export default function PageManagementArchive() {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">Page Name</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.page-name')}</span>,
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -134,7 +134,7 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Created by</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.created-by')}</span>,
       accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -146,7 +146,7 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Created Date</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.created-date')}</span>,
       accessorKey: 'createdAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -158,7 +158,7 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Updated Date</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.updated-date')}</span>,
       accessorKey: 'updatedAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -170,7 +170,7 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -180,7 +180,7 @@ export default function PageManagementArchive() {
               onClickPageRestore(info.getValue(), info?.row?.original?.title);
             }}
             className="btn btn-primary text-xs btn-sm w-28">
-            Restore
+          {t('user.page-management.archive.row.restore')}
           </button>
           {canDelete && (
             <div className="tooltip" data-tip={t('action.delete')}>
@@ -209,8 +209,8 @@ export default function PageManagementArchive() {
 
   const onClickPageDelete = (id: number) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm("Do you want to permanently delete this page? If you delete this page, you can’t recover it.");
+    setTitleConfirm(t('user.page-management.archive.delete-confirm.title') ?? '');
+    setMessageConfirm(t('user.page-management.archive.delete-confirm.message') ?? '');
     setShowConfirm(true);
   };
 
@@ -222,10 +222,10 @@ export default function PageManagementArchive() {
           setOpenRestoreModal(false);
         }}
         title={restoreModalTitle}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.page-management.archive.cancel')}
         message={restoreModalBody}
         submitAction={submitRestorePage}
-        submitTitle="Yes"
+        submitTitle={t('user.page-management.archive.submit-title')}
         loading={isLoading}
         btnSubmitStyle={'btn-primary'}
         icon={undefined}
@@ -236,23 +236,25 @@ export default function PageManagementArchive() {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="Cancel"
+        cancelTitle={t('user.page-management.archive.cancel')}
         message={messageConfirm}
-        submitAction={() => { setShowConfirm(false); }}
-        submitTitle="Yes"
+        submitAction={() => {
+          setShowConfirm(false);
+        }}
+        submitTitle={t('user.page-management.archive.submit-title')}
         // loading={deleteContentManagerLoading}
         icon={WarningIcon}
         btnSubmitStyle={'btn-error'}
       />
       <TitleCard
-        title="Archive List"
+        title={t('user.page-management.archive.title-card')}
         topMargin="mt-2"
         SearchBar={
           <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder="Search"
+            placeholder={t('user.page-management.archive.search-placeholder') ?? ''}
           />
         }
         onBackClick={goBack}

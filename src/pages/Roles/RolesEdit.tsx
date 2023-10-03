@@ -90,7 +90,7 @@ export default function RolesEdit() {
     <>
       <TitleCard title={t('roles.edit.title')}>
         {isFetching ? (
-          <h1 className="text-center py-9">Loading...</h1>
+          <h1 className="text-center py-9">{t('user.roles-edit.loading')}</h1>
         ) : (
           <PermissionForm disabled={!editMode} />
         )}
@@ -100,10 +100,10 @@ export default function RolesEdit() {
             setShowComfirm(false);
           }}
           title={titleConfirm}
-          cancelTitle="No"
+          cancelTitle={t('user.roles-edit.modal.confirm.cancelTitle')}
           message={messageConfirm}
           submitAction={onLeave}
-          submitTitle="Yes"
+          submitTitle={t('user.roles-edit.modal.confirm.submitTitle')}
           icon={CancelIcon}
           btnSubmitStyle='btn-warning'
         />
@@ -117,8 +117,8 @@ export default function RolesEdit() {
           <button
             className="btn btn-outline btn-md"
             onClick={() => {
-              setTitleConfirm('Are you sure?');
-              setmessageConfirm(`Do you want to cancel all the process?`);
+              setTitleConfirm(t('user.roles-edit.btn.cancelconfirm') ?? '');
+              setmessageConfirm(t('user.roles-edit.btn.cancelconfirmMessage') ?? '');
               setShowComfirm(true);
             }}>
             {t('btn.cancel')}
@@ -129,7 +129,7 @@ export default function RolesEdit() {
               onClick={() => {
                 onSave();
               }}>
-              {onUpdateLoading ? 'Loading...' : t('btn.save')}
+              {onUpdateLoading ? t('user.roles-edit.btn.saveloading') : t('btn.save')}
             </button>
           ) : (
             <button
@@ -137,7 +137,7 @@ export default function RolesEdit() {
               onClick={() => {
                 window.location.assign(`/roles/edit/${params.id}`);
               }}>
-              Edit Roles
+              {t('user.roles-edit.btn.editRoles')}
             </button>
           )}
         </div>

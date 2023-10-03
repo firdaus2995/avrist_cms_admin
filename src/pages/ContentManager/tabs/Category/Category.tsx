@@ -20,7 +20,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 export default function CategoryTab(_props: { id: any }) {
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px] font-black">Category Name</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-category.categoryName')}</span>,
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -32,7 +32,7 @@ export default function CategoryTab(_props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">Category Description</span>,
+      header: () => <span className="text-[14px] font-black">{t('user.tabs-category.categoryDescription')}</span>,
       accessorKey: 'shortDesc',
       enableSorting: false,
       cell: (info: any) => (
@@ -142,8 +142,8 @@ export default function CategoryTab(_props: { id: any }) {
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
-    setTitleConfirm('Are you sure?');
-    setMessageConfirm(`Do you want to delete data ${title}?`);
+    setTitleConfirm(t('user.tabs-category.confirm.title') ?? '');
+    setMessageConfirm(t('user.tabs-category.confirm.message', { title }) ?? '');
     setShowConfirm(true);
   };
 
@@ -156,7 +156,7 @@ export default function CategoryTab(_props: { id: any }) {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Category',
+            title: t('user.tabs-category.toast.successDelete'),
             message: d.pageDelete.message,
           }),
         );
@@ -170,8 +170,8 @@ export default function CategoryTab(_props: { id: any }) {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Category',
-            message: 'Something went wrong!',
+            title: t('user.tabs-category.toast.failedDelete'),
+            message: t('user.tabs-category.toast.somethingWrong'),
           }),
         );
       });
@@ -185,10 +185,10 @@ export default function CategoryTab(_props: { id: any }) {
           setShowConfirm(false);
         }}
         title={titleConfirm}
-        cancelTitle="No"
+        cancelTitle={t('user.tabs-category.confirm.no')}
         message={messageConfirm}
         submitAction={submitDeleteCategory}
-        submitTitle="Yes"
+        submitTitle={t('user.tabs-category.confirm.yes')}
         loading={deleteCategoryLoading}
         icon={WarningIcon}
         btnSubmitStyle={'btn-error'}
@@ -196,8 +196,8 @@ export default function CategoryTab(_props: { id: any }) {
       <ModalConfirm
         open={showIsUsed}
         title={''}
-        message={"You can't delete this category, because this category is been used in an active page"}
-        submitTitle="Ok"
+        message={t('user.tabs-category.modal.cantDelete') ?? ''}
+        submitTitle={t('user.tabs-category.modal.ok')}
         icon={WarningIcon}
         submitAction={() => {
           setShowIsUsed(false);

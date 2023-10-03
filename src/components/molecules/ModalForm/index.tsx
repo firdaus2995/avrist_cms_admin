@@ -3,6 +3,7 @@ import CloseIcon from "../../../assets/close.png";
 import {
   IModalForm,
 } from "./types";
+import { t } from "i18next";
 
 export default function ModalForm ({
   open,
@@ -51,7 +52,7 @@ export default function ModalForm ({
               {cancelTitle}
             </button>
             <button disabled={submitDisabled} className={`btn ${submitType !== '' ? submitType : 'btn-success'} w-[105px]`} onClick={submitAction}>
-              {loading ? 'Loading...' : submitTitle}
+              {loading ? t('loading') + '...' : submitTitle}
             </button>
           </div>
         </div>

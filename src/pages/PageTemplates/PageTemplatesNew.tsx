@@ -311,7 +311,7 @@ export default function PageTemplatesNew() {
 
   const attributesColumns = [
     {
-      header: () => <span className="text-[14px]">Attribute Type</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-new.form.attribute.type.label')}</span>,
       accessorKey: 'fieldType',
       enableSorting: false,
       cell: (info: any) => {
@@ -324,7 +324,7 @@ export default function PageTemplatesNew() {
       },
     },
     {
-      header: () => <span className="text-[14px]">Field ID</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-new.form.attribute.fieldId.label')}</span>,
       accessorKey: 'fieldId',
       enableSorting: false,
       cell: (info: any) => (
@@ -336,7 +336,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Description</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-new.form.attribute.description.label')}</span>,
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
@@ -348,7 +348,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-new.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -389,7 +389,7 @@ export default function PageTemplatesNew() {
 
   const configColumns = [
     {
-      header: () => <span className="text-[14px]">Key</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-new.form.config.key.label')}</span>,
       accessorKey: 'key',
       enableSorting: false,
       cell: (info: any) => (
@@ -401,7 +401,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Description</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-new.form.config.description.label')}</span>,
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
@@ -413,7 +413,7 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Action</span>,
+      header: () => <span className="text-[14px]">{t('user.page-template-new.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -461,7 +461,7 @@ export default function PageTemplatesNew() {
             <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
               <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
                 <img src={EditPurple} className="w-6 h-6 mr-1" />
-                Edit Content
+              {t('user.page-template-new.edit-content')}
               </div>
             </button>
           </Link>
@@ -477,10 +477,10 @@ export default function PageTemplatesNew() {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle="No"
+        cancelTitle={t('no')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle="Yes"
+        submitTitle={t('yes')}
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
@@ -499,12 +499,12 @@ export default function PageTemplatesNew() {
         <div className="flex flex-col gap-5 w-full">
           <div className="flex flex-row">
             <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-              Attribute Type
+              {t('user.page-template-new.form.attribute.type.label')}
               <span className={'text-reddist text-lg'}>{`*`}</span>
             </Typography>
             <FormList.DropDown
               key="category"
-              labelTitle="Category"
+              labelTitle={t('user.page-template-new.category')}
               defaultValue={newAttributes.fieldType.label}
               resetValue={openAddAttributesModal}
               error={!!attributesErrors.fieldType}
@@ -521,10 +521,10 @@ export default function PageTemplatesNew() {
           </div>
           <FormList.TextField
             key="fieldId"
-            labelTitle="Field ID"
+            labelTitle={t('user.page-template-new.form.attribute.fieldId.label')}
             labelRequired
             themeColor="primary"
-            placeholder="Enter field ID"
+            placeholder={t('user.page-template-new.form.attribute.fieldId.placeholder')}
             value={newAttributes.fieldId}
             error={!!attributesErrors.fieldId}
             helperText={attributesErrors.fieldId}
@@ -535,9 +535,9 @@ export default function PageTemplatesNew() {
           />
           <FormList.TextAreaField
             key="description"
-            labelTitle="Description"
+            labelTitle={t('user.page-template-new.form.attribute.description.label')}
             themeColor="primary"
-            placeholder="Enter description"
+            placeholder={t('user.page-template-new.form.attribute.description.placeholder')}
             value={newAttributes.description}
             onChange={(e: any) => {
               setNewAttributes({ ...newAttributes, description: e.target.value });
@@ -549,7 +549,7 @@ export default function PageTemplatesNew() {
       {/*  THIS IS CONFIG FORM */}
       <ModalForm
         open={openAddConfigModal}
-        formTitle="Add Config"
+        formTitle={t('user.page-template-new.add-config')}
         submitType="btn-success"
         submitTitle={t('btn.save')}
         cancelTitle={t('btn.cancel')}
@@ -560,9 +560,9 @@ export default function PageTemplatesNew() {
         <div className="flex flex-col gap-5 w-full">
           <FormList.TextField
             key="key"
-            labelTitle="Key"
+            labelTitle={t('user.page-template-new.form.config.key.label')}
             labelRequired
-            placeholder="Enter key"
+            placeholder={t('user.page-template-new.form.config.key.placeholder')}
             value={newConfig.key}
             error={!!configErrors.key}
             helperText={configErrors.key}
@@ -573,8 +573,8 @@ export default function PageTemplatesNew() {
           />
           <FormList.TextAreaField
             key="description"
-            labelTitle="Description"
-            placeholder="Enter description"
+            labelTitle={t('user.page-template-new.form.config.description.label')}
+            placeholder={t('user.page-template-new.form.config.description.placeholder')}
             // error={!!errors?.pageName?.message}
             // helperText={errors?.pageName?.message}
             value={newConfig.description}
@@ -593,7 +593,7 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: `Page name is required` },
+              required: { value: true, message: t('user.page-template-new.form.pageName.required-message') },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
@@ -604,9 +604,9 @@ export default function PageTemplatesNew() {
                 <FormList.TextField
                   {...field}
                   key="pageName"
-                  labelTitle="Page Name"
+                  labelTitle={t('user.page-template-new.form.pageName.label')}
                   labelRequired
-                  placeholder="Enter page name"
+                  placeholder={t('user.page-template-new.form.pageName.placeholder')}
                   error={!!errors?.pageName?.message}
                   helperText={errors?.pageName?.message}
                   onChange={onChange}
@@ -622,7 +622,7 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: `Page description is required` },
+              required: { value: true, message: t('user.page-template-new.form.pageDescription.required-message') },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
@@ -633,9 +633,9 @@ export default function PageTemplatesNew() {
                 <FormList.TextField
                   {...field}
                   key="pageDescription"
-                  labelTitle="Page Description"
+                  labelTitle={t('user.page-template-new.form.pageDescription.label')}
                   labelRequired
-                  placeholder="Enter page description"
+                  placeholder={t('user.page-template-new.form.pageDescription.placeholder')}
                   error={!!errors?.pageDescription?.message}
                   helperText={errors?.pageDescription?.message}
                   onChange={onChange}
@@ -651,10 +651,10 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: `Page file name is required` },
+              required: { value: true, message: t('user.page-template-new.form.pageFileName.required-message') },
               pattern: {
                 value: /^[^\s-]+$/,
-                message: "Entered value can't contain spaces or dash",
+                message: t('user.page-template-new.form.pageFileName.pattern-message'),
               },
             }}
             render={({ field }) => {
@@ -665,9 +665,9 @@ export default function PageTemplatesNew() {
                 <FormList.TextField
                   {...field}
                   key="pageFileName"
-                  labelTitle="Page File Name"
+                  labelTitle={t('user.page-template-new.form.pageFileName.label')}
                   labelRequired
-                  placeholder="Enter page file name"
+                  placeholder={t('user.page-template-new.form.pageFileName.placeholder')}
                   error={!!errors?.pageFileName?.message}
                   helperText={errors?.pageFileName?.message}
                   onChange={onChange}
@@ -683,7 +683,7 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: false, message: `Image preview is required` },
+              required: { value: false, message: t('user.page-template-new.form.imagePreview.required-message') },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
@@ -693,12 +693,12 @@ export default function PageTemplatesNew() {
                 <FormList.FileUploaderV2
                   {...field}
                   key="imagePreview"
-                  labelTitle="Image Preview"
+                  labelTitle={t('user.page-template-new.form.imagePreview.label')}
                   labelRequired
                   labelText={
                     <>
-                      Drag and Drop Image Template Preview or click to{' '}
-                      <span className="text-primary font-semibold">Browse</span>
+                      {t('user.page-template-new.form.imagePreview.preview')}{' '}
+                      <span className="text-primary font-semibold">{t('user.page-template-new.form.imagePreview.browse')}</span>
                     </>
                   }
                   isDocument={false}
@@ -714,8 +714,8 @@ export default function PageTemplatesNew() {
           />
 
           <FormList.FieldButton
-            name="Attribute"
-            buttonTitle="Add Attribute"
+            name={t('user.page-template-new.form.attribute.label')}
+            buttonTitle={t('user.page-template-new.form.attribute.add')}
             visible={mode !== 'detail'}
             onClick={() => {
               setOpenAddAttributesModal(true);
@@ -736,8 +736,8 @@ export default function PageTemplatesNew() {
             <div />
           )}
           <FormList.FieldButton
-            name="Config"
-            buttonTitle="Add Config"
+            name={t('user.page-template-new.form.config.label')}
+            buttonTitle={t('user.page-template-new.form.config.add')}
             visible={mode !== 'detail'}
             onClick={() => {
               setOpenAddConfigModal(true);
@@ -768,10 +768,10 @@ export default function PageTemplatesNew() {
                   setMessageLeaveModalShow(t('modal.leave-confirmation'));
                   setShowLeaveModal(true);
                 }}>
-                {isLoading | isLoadingEdit ? 'Loading...' : t('btn.cancel')}
+                {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.cancel')}
               </button>
               <button type="submit" className="btn btn-success btn-md text-white">
-                {isLoading | isLoadingEdit ? 'Loading...' : t('btn.save')}
+                {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.save')}
               </button>
             </div>
           ) : null}

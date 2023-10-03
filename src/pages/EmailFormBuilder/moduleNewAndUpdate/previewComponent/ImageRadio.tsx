@@ -7,13 +7,12 @@ import { getImage } from '../../../../services/Images/imageUtils';
 interface IRadio {
   name: string;
   items: string[];
-  other?: boolean;
   isActive: boolean;
   onClick: () => void;
   onDelete: () => void;
 }
 
-const ImageRadio: React.FC<IRadio> = ({ name, items, other, isActive, onClick, onDelete }) => {
+const ImageRadio: React.FC<IRadio> = ({ name, items, isActive, onClick, onDelete }) => {
   const nameId: any = uuidv4();
 
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -48,18 +47,6 @@ const ImageRadio: React.FC<IRadio> = ({ name, items, other, isActive, onClick, o
                 style={{ backgroundImage: `url(${imageUrls[index]})` }}></div>
             </label>
           ))}
-          {other && (
-            <label className="label cursor-pointer justify-start flex h-[34px] gap-2 p-0">
-              <input
-                type="radio"
-                name={nameId}
-                className="radio radio-primary h-[22px] w-[22px] bg-white"
-              />
-              <span className="w-full label-text text-other-grey border-b-[1px] border-other-grey">
-                Other
-              </span>
-            </label>
-          )}
         </div>
         <img
           src={DeleteComponentIcon}

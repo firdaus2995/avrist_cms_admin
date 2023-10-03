@@ -6,6 +6,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { useAppDispatch } from '@/store';
 import Typography from '@/components/atoms/Typography';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
+import { t } from 'i18next';
 
 const NewPasswordForm = () => {
   const dispatch = useAppDispatch();
@@ -47,8 +48,8 @@ const NewPasswordForm = () => {
     // Check if newPassword and confirmNewPassword are empty
     if (!newPassword || !confirmNewPassword) {
       const updatedErrors = {
-        newPassword: !newPassword ? 'This field is required' : '',
-        confirmNewPassword: !confirmNewPassword ? 'This field is required' : '',
+        newPassword: !newPassword ? t('user.new-password-form.newPasswordRequiredError') : '',
+        confirmNewPassword: !confirmNewPassword ? t('user.new-password-form.newPasswordRequiredError') : '',
       };
       setAuthValue(prevState => ({
         ...prevState,
@@ -60,8 +61,8 @@ const NewPasswordForm = () => {
     // Check if newPassword and confirmNewPassword match
     if (newPassword !== confirmNewPassword) {
       const updatedErrors = {
-        newPassword: `Confirm password doesn’t match. Please try again!`,
-        confirmNewPassword: `Confirm password doesn’t match. Please try again!`,
+        newPassword: t('user.new-password-form.passwordMismatchError'),
+        confirmNewPassword: t('user.new-password-form.passwordMismatchError'),
       };
       setAuthValue(prevState => ({
         ...prevState,
@@ -76,9 +77,9 @@ const NewPasswordForm = () => {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success!',
-            message: 'Your new password was successfully saved!',
-          }),
+            title: t('user.new-password-form.successToastTitle'),
+            message: t('user.new-password-form.successToastMessage'),
+          })
         );
         navigate('/', { replace: true });
       })
@@ -86,9 +87,9 @@ const NewPasswordForm = () => {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
-            message: 'Invalid Links',
-          }),
+            title: t('user.new-password-form.errorToastTitle'),
+            message: t('user.new-password-form.errorToastMessage'),
+          })
         );
         navigate('/forgot-password', { replace: true, state: { resetFailed: true } });
       });
@@ -96,15 +97,15 @@ const NewPasswordForm = () => {
 
   return (
     <>
-      <h1 className="font-bold text-2xl my-5 text-dark-purple">Create New Password</h1>
+      <h1 className="font-bold text-2xl my-5 text-dark-purple">{t('user.new-password-form.createNewPasswordTitle')}</h1>
       <Typography type="body" size="normal" weight="regular" className="text-body-text-2 mb-10">
-        Enter your new password for Avrist Content Management System.
+        {t('user.new-password-form.createNewPasswordDescription')}
       </Typography>
       <form onSubmit={handleSubmit} className="mx-0 lg:mx-10">
         <AuthInput
           key="password"
-          label="New Password"
-          placeholder="Enter Password"
+          label={t('user.new-password-form.newPasswordLabel')}
+          placeholder={t('user.new-password-form.newPasswordPlaceholder')}
           error={authValue.errors.newPassword}
           onChange={handleNewPasswordChange}
           value={authValue.newPassword}
@@ -114,8 +115,8 @@ const NewPasswordForm = () => {
         />
         <AuthInput
           key="confirmPassword"
-          label="Confirm New Password"
-          placeholder="Enter Password"
+          label={t('user.new-password-form.confirmNewPasswordLabel')}
+          placeholder={t('user.new-password-form.confirmNewPasswordPlaceholder')}
           error={authValue.errors.confirmNewPassword}
           onChange={handleConfirmNewPasswordChange}
           value={authValue.confirmNewPassword}
@@ -124,7 +125,7 @@ const NewPasswordForm = () => {
         />
         <div className="flex flex-col items-end my-10">
           <button type="submit" className="btn btn-primary btn-wide">
-            {isLoading ? <LoadingCircle className="fill-white" /> : 'Create New Password'}
+            {isLoading ? <LoadingCircle className="fill-white" /> : t('user.new-password-form.createNewPasswordButton')}
           </button>
         </div>
       </form>
