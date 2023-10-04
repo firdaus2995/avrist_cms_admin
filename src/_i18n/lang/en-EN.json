@@ -587,17 +587,31 @@
         "list": {
           "form-name": "Form Name",
           "action": "Action",
-          "title": "Title",
+          "title-card": "Email Form Builder",
           "short-description": "Short Description",
           "cancel-title": "Cancel",
           "submit-title": "Yes",
           "email-form-builder": "Email Form Builder",
-          "email-body": "Email Body",
           "search": "Search",
           "add-new-form": "Add New Form",
-          "add-new-email-body": "Add New Email Body",
           "success-delete-email-form": "Success Delete Email Form",
           "failed-delete-email-form": "Failed Delete Email Form",
+          "success-delete-email-body": "Success Delete Email Body",
+          "failed-delete-email-body": "Failed Delete Email Body"
+        }
+      },
+      "email-body": {
+        "list": {
+          "form-title": "Form Name",
+          "action": "Action",
+          "title-card": "Email Body",
+          "title": "Title",
+          "short-description": "Short Description",
+          "cancel-title": "Cancel",
+          "submit-title": "Yes",
+          "email-body": "Email Body",
+          "search": "Search",
+          "add-new-form": "Add New Email Body",
           "success-delete-email-body": "Success Delete Email Body",
           "failed-delete-email-body": "Failed Delete Email Body"
         }

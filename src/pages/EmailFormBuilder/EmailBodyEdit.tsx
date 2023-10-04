@@ -71,7 +71,11 @@ export default function EmailBodyEdit() {
             title: 'Success',
           }),
         );
-        navigate('/email-form-builder');
+        navigate('/email-form-builder', {
+          state: {
+            from: "EMAIL_BODY"
+          },
+        });
       })
       .catch(() => {
         dispatch(
