@@ -232,7 +232,6 @@ export default function PageManagementDetail() {
       metaDescription: pageData?.metaDescription,
       shortDesc: pageData?.shortDesc,
       content,
-      imgFilename: pageTemplates.find((template: { id: any }) => template.id === selected)?.name,
       isDraft,
       isAutoApprove,
       pageTemplateId: selected,
@@ -273,7 +272,7 @@ export default function PageManagementDetail() {
           }}>
           <img src={TimelineLog} className="w-6 h-6" />
         </div>
-        <StatusBadge status={pageDetailList?.pageStatus || ''} />
+        <StatusBadge status={pageDetailList?.status || ''} />
       </div>
     );
   };
@@ -323,7 +322,7 @@ export default function PageManagementDetail() {
   }, []);
 
   const rightTopButton = () => {
-    switch (pageDetailList?.pageStatus) {
+    switch (pageDetailList?.status) {
       case 'WAITING_REVIEW':
         return null;
       case 'WAITING_APPROVE':
@@ -415,7 +414,7 @@ export default function PageManagementDetail() {
           />
           <Label
             title={t('user.page-management.detail.labels.chooseTemplate')}
-            value={pageDetailList?.imgFilename}
+            value={pageDetailList?.pageTemplate?.name}
           />
           <div className="flex justify-center my-5">
             <img src={pageDetailList?.pageTemplate?.imageUrl} />
@@ -707,7 +706,7 @@ export default function PageManagementDetail() {
           title={t('user.page-management.detail.labels.approve')}
           cancelTitle={t('user.page-management.detail.labels.restoreNo')}
           message={
-            pageDetailList?.pageStatus === 'WAITING_APPROVE'
+            pageDetailList?.status === 'WAITING_APPROVE'
               ? t('user.page-management.detail.labels.approveConfirmation') ?? ''
               : t('user.page-management.detail.labels.approveDeleteConfirmation') ?? ''
           }
@@ -717,7 +716,7 @@ export default function PageManagementDetail() {
             setShowModalApprove(false);
             const payload = {
               id: pageDetailList?.id,
-              status: pageDetailList?.pageStatus === 'DELETE_APPROVE' ? 'ARCHIVED' : 'APPROVED',
+              status: pageDetailList?.status === 'DELETE_APPROVE' ? 'ARCHIVED' : 'APPROVED',
               comment: 'Already approve',
             };
 
@@ -765,7 +764,7 @@ export default function PageManagementDetail() {
             const payload = {
               id: pageDetailList?.id,
               status:
-                pageDetailList?.pageStatus === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
+                pageDetailList?.status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
               comment: rejectComments,
             };
 
@@ -773,7 +772,7 @@ export default function PageManagementDetail() {
           }}>
           <div className="flex flex-col justify-center items-center">
             <img src={PaperIcon} className="w-10" />
-            {pageDetailList?.pageStatus === 'WAITING_APPROVE' ? (
+            {pageDetailList?.status === 'WAITING_APPROVE' ? (
               <p className="font-semibold my-3 text-xl">
                 {t('user.page-management.detail.labels.rejectConfirmation')}
               </p>
@@ -808,8 +807,8 @@ export default function PageManagementDetail() {
         )}
         {isEdited ? editContent() : viewContent()}
         {roles?.includes('PAGE_REVIEW') ? (
-          pageDetailList?.pageStatus === 'WAITING_REVIEW' ||
-          pageDetailList?.pageStatus === 'DELETE_REVIEW' ? (
+          pageDetailList?.status === 'WAITING_REVIEW' ||
+          pageDetailList?.status === 'DELETE_REVIEW' ? (
             <div className="flex flex-row justify-between">
               <div className="w-[30vh] mt-5">
                 <CheckBox
