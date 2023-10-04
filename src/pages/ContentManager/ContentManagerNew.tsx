@@ -49,6 +49,8 @@ export default function ContentManagerNew() {
     formState: { errors },
     getValues,
     trigger,
+    // setError,
+    // clearErrors,
   } = useForm();
 
   // LEAVE MODAL STATE
@@ -630,18 +632,36 @@ export default function ContentManagerNew() {
               key={id}
               name={id.toString()}
               control={control}
-              defaultValue=""
               rules={{
-                required: { value: true, message: `${name} is required` },
+                required: `${name} is required`,
+                validate: value => {
+                  if (value && value.length > 0) {
+                    // Parse the input value as JSON
+                    const parsedValue = JSON.parse(value);
+
+                    // Check if parsedValue is an array and every item has imageUrl and altText properties
+                    if (
+                      Array.isArray(parsedValue) &&
+                      parsedValue.every(item => item.imageUrl && item.altText)
+                    ) {
+                      return true; // Validation passed
+                    } else {
+                      return 'All items must have imageUrl and altText'; // Validation failed
+                    }
+                  } else {
+                    return `${name} is required`; // Validation failed for empty value
+                  }
+                },
               }}
               render={({ field }) => {
                 const onChange = useCallback(
                   (e: any) => {
                     handleFormChange(id, e, fieldType);
-                    field.onChange({ target: { value: e } });
+                    field.onChange(e);
                   },
                   [id, fieldType, field, handleFormChange],
                 );
+
                 return (
                   <FormList.FileUploaderV2
                     {...field}
@@ -651,7 +671,7 @@ export default function ContentManagerNew() {
                     labelTitle={name}
                     isDocument={false}
                     multiple={configs?.media_type === 'multiple_media'}
-                    error={!!errors?.[id]?.message}
+                    error={!!errors?.[id]}
                     helperText={errors?.[id]?.message}
                     onChange={onChange}
                   />
