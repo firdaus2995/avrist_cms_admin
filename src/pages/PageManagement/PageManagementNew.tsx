@@ -9,7 +9,7 @@ import CkEditor from '@/components/atoms/Ckeditor';
 import DropDown from '@/components/molecules/DropDown';
 import PaginationComponent from '@/components/molecules/Pagination';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
-import CancelIcon from "../../assets/cancel.png";
+import CancelIcon from '../../assets/cancel.png';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
@@ -19,6 +19,10 @@ import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi
 import { useCreatePageDataMutation } from '@/services/PageManagement/pageManagementApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
+import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
+import ModalForm from '@/components/molecules/ModalForm';
+import PaperSubmit from '../../assets/paper-submit.png';
 
 export default function PageManagementNew() {
   const {
@@ -26,6 +30,7 @@ export default function PageManagementNew() {
     handleSubmit,
     // eslint-disable-next-line no-empty-pattern
     formState: {},
+    getValues,
   } = useForm();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -38,63 +43,89 @@ export default function PageManagementNew() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit] = useState(6);
   // FORM DATA
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState('');
   // CONTENT SELECTION STATE
   const [listContents, setListContents] = useState<any>([]);
   const [contentTypeId, setContentTypeId] = useState<any>(null);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
-  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+
+  // AUTO APPROVE MODAL STATE
+  const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
+  const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   // RTK GET PAGE TEMPLATE
-  const fetchPageTemplatesQuery = useGetPageTemplateQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy: 'id',
-    direction: 'desc',
-    search,
-  }, {
-    refetchOnMountOrArgChange: true,
-  });
+  const fetchPageTemplatesQuery = useGetPageTemplateQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy: 'id',
+      direction: 'desc',
+      search,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data: dataPageTemplates } = fetchPageTemplatesQuery;
 
   // RTK CREATE PAGE TEMPLATE
   const [createPageData] = useCreatePageDataMutation();
 
   // RTK GET CONTENT
-  const fetchContentsQuery = useGetPostTypeListQuery({
-    pageIndex: 0,
-    limit: 999999,
-    sortBy: "name",
-    direction: "asc",
-    search: "",
-  }, {
-    refetchOnMountOrArgChange: true,
-  });
+  const fetchContentsQuery = useGetPostTypeListQuery(
+    {
+      pageIndex: 0,
+      limit: 999999,
+      sortBy: 'name',
+      direction: 'asc',
+      search: '',
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data: dataContents } = fetchContentsQuery;
+
+  // RTK GET ELIGIBLE AUTO APPROVE
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
     if (dataContents) {
-      setListContents(dataContents?.postTypeList?.postTypeList.map((element: any) => {
-        return {
-          value: element.id,
-          label: element.name,
-        };
-      }));
-    };
+      setListContents(
+        dataContents?.postTypeList?.postTypeList.map((element: any) => {
+          return {
+            value: element.id,
+            label: element.name,
+          };
+        }),
+      );
+    }
 
     if (dataPageTemplates) {
       setPageTemplates(dataPageTemplates?.pageTemplateList?.templates);
       setTotal(dataPageTemplates?.pageTemplateList?.total);
-    };
+    }
   }, [dataContents, dataPageTemplates]);
 
-  const handlerSubmit = (formData: any, type?: string) => {
+  const handlerSubmit = (type?: string) => {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+      setShowModalAutoApprove(true);
+    } else {
+      saveData(type);
+    }
+  };
+
+  const saveData = (type?: string) => {
+    const formData = getValues();
+
     let isDraft: boolean = false;
-    if (type === "draft") {
+    if (type === 'draft') {
       isDraft = true;
-    };
+    }
 
     const payload = {
       title: formData?.pageName,
@@ -103,8 +134,9 @@ export default function PageManagementNew() {
       metaDescription: formData?.metaDescription,
       shortDesc: formData?.shortDesc,
       content,
-      imgFilename: pageTemplates.find((template: { id: any; }) => template.id === selected)?.name,
+      imgFilename: pageTemplates.find((template: { id: any }) => template.id === selected)?.name,
       isDraft,
+      isAutoApprove,
       pageTemplateId: selected,
       postTypeId: contentTypeId,
     };
@@ -148,22 +180,57 @@ export default function PageManagementNew() {
         submitAction={onLeave}
         submitTitle={t('user.page-management-new.saveButton')}
         icon={CancelIcon}
-        btnSubmitStyle='btn-warning'
+        btnSubmitStyle="btn-warning"
       />
+      <ModalForm
+        open={showModalAutoApprove}
+        formTitle=""
+        height={640}
+        width={540}
+        submitTitle={'Yes'}
+        submitType="bg-secondary-warning border-none"
+        cancelTitle={'No'}
+        cancelAction={() => {
+          setShowModalAutoApprove(false);
+          setIsAutoApprove(false);
+        }}
+        submitPosition={'justify-center'}
+        submitAction={() => {
+          setShowModalAutoApprove(false);
+          saveData();
+        }}>
+        <div className="flex flex-col justify-center items-center">
+          <img src={PaperSubmit} className="w-10" />
+          <p className="font-bold mt-3 text-xl">{t('user.page-management-new.autoApproveTitle')}</p>
+          <p className="font-base mt-2 text-xl text-center">
+            {t('user.page-management-new.autoApproveSubtitle')}
+          </p>
+          <CheckBox
+            defaultValue={isAutoApprove}
+            updateFormValue={e => {
+              setIsAutoApprove(e.value);
+            }}
+            labelTitle={t('user.page-management-new.autoApproveLabel')}
+            labelStyle="text-xl mt-2"
+          />
+        </div>
+      </ModalForm>
       <div className="flex flex-col mt-5 gap-5">
         <div>
           <button className="w-[160px] !min-h-[45px] h-[45px] btn btn-outline btn-primary flex flex-row justify-center items-center gap-2">
             <img src={PreviewEye} className="h-[30px] w-[30px]" />
-          {t('user.page-management-new.previewButton')}
+            {t('user.page-management-new.previewButton')}
           </button>
         </div>
-        <form className="flex flex-col gap-5" onSubmit={handleSubmit((data: any) => {
-          handlerSubmit(data);
-        })}>
+        <form
+          className="flex flex-col gap-5"
+          onSubmit={handleSubmit((_data: any) => {
+            handlerSubmit();
+          })}>
           {/* FORM SECTION */}
           <div className="flex flex-col gap-3">
             <Typography weight="bold" size="l">
-            {t('user.page-management-new.generalInformation')}
+              {t('user.page-management-new.generalInformation')}
             </Typography>
             <div className="flex flex-row justify-between">
               <Controller
@@ -262,9 +329,9 @@ export default function PageManagementNew() {
             </div>
             <div className="flex flex-col justify-start gap-3">
               <Typography size="m" weight="semi">
-              {t('user.page-management-new.contentLabel')}
+                {t('user.page-management-new.contentLabel')}
               </Typography>
-              <CkEditor 
+              <CkEditor
                 onChange={(data: string) => {
                   setContent(data);
                 }}
@@ -277,7 +344,8 @@ export default function PageManagementNew() {
           <div className="flex flex-col gap-3">
             <div className="flex flex-row justify-between">
               <Typography size="m" weight="bold">
-                {t('user.page-management-new.templateLabel')}<span className='text-reddist'>*</span>
+                {t('user.page-management-new.templateLabel')}
+                <span className="text-reddist">*</span>
               </Typography>
               <InputSearch
                 onBlur={(e: any) => {
@@ -287,29 +355,28 @@ export default function PageManagementNew() {
               />
             </div>
             <div className="flex flex-wrap">
-              {
-                (pageTemplates.length > 0 && pageTemplates.length < 7) &&
-                  pageTemplates.map((element: any) => (
-                    <div key={element.id} className="px-[5%] py-5 flex flex-col basis-2/6 gap-3">
-                      <img
-                        src={element.imageUrl}
-                        className={`h-[450px] object-cover	cursor-pointer rounded-xl ${
-                          selected === element.id
-                            ? 'border-[#5A4180] border-4'
-                            : 'border-[#828282] border-2'
-                        }`}
-                        onClick={() => {
-                          setSelected(element.id);
-                        }}
-                      />
-                      <Typography size="l" weight="medium" alignment="center">
-                        {element.name}
-                      </Typography>
-                    </div>
-                  ))
-                }
+              {pageTemplates.length > 0 &&
+                pageTemplates.length < 7 &&
+                pageTemplates.map((element: any) => (
+                  <div key={element.id} className="px-[5%] py-5 flex flex-col basis-2/6 gap-3">
+                    <img
+                      src={element.imageUrl}
+                      className={`h-[450px] object-cover	cursor-pointer rounded-xl ${
+                        selected === element.id
+                          ? 'border-[#5A4180] border-4'
+                          : 'border-[#828282] border-2'
+                      }`}
+                      onClick={() => {
+                        setSelected(element.id);
+                      }}
+                    />
+                    <Typography size="l" weight="medium" alignment="center">
+                      {element.name}
+                    </Typography>
+                  </div>
+                ))}
             </div>
-            <div className='w-full flex justify-center'>
+            <div className="w-full flex justify-center">
               <PaginationComponent
                 total={total}
                 page={pageIndex}
@@ -328,7 +395,7 @@ export default function PageManagementNew() {
                 labelTitle={t('user.page-management-new.contentTypeLabel') ?? ''}
                 labelStyle="font-bold	"
                 labelWidth={175}
-                direction='row'
+                direction="row"
                 defaultValue=""
                 labelEmpty=""
                 items={listContents}
@@ -342,26 +409,24 @@ export default function PageManagementNew() {
           </div>
           {/* BUTTONS SECTION */}
           <div className="mt-[25%] flex justify-end items-end gap-2">
-            <button className="btn btn-outline btn-md" onClick={(event: any) => {
-              event.preventDefault();
-              setLeaveTitleModalShow(t('modal.confirmation'));
-              setMessageLeaveModalShow(t('modal.leave-confirmation'));
-              setShowLeaveModal(true);          
-            }}>
+            <button
+              className="btn btn-outline btn-md"
+              onClick={(event: any) => {
+                event.preventDefault();
+                setLeaveTitleModalShow(t('modal.confirmation'));
+                setMessageLeaveModalShow(t('modal.leave-confirmation'));
+                setShowLeaveModal(true);
+              }}>
               {t('btn.cancel')}
             </button>
-            <button 
+            <button
               className="btn btn-outline btn-warning btn-md"
               onClick={handleSubmit((data: any) => {
-                handlerSubmit(data, "draft")
-              })}
-            >
-            {t('user.page-management-new.saveDraftButton')}
+                handlerSubmit('draft');
+              })}>
+              {t('user.page-management-new.saveDraftButton')}
             </button>
-            <button 
-              type='submit' 
-              className="btn btn-success btn-md"
-            >
+            <button type="submit" className="btn btn-success btn-md">
               {t('btn.save')}
             </button>
           </div>
@@ -369,4 +434,4 @@ export default function PageManagementNew() {
       </div>
     </TitleCard>
   );
-};
+}

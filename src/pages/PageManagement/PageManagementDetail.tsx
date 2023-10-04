@@ -31,6 +31,8 @@ import ModalLog from './components/ModalLog';
 import TimelineLog from '@/assets/timeline-log.svg';
 import dayjs from 'dayjs';
 import { t } from 'i18next';
+import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
+import PaperSubmit from '../../assets/paper-submit.png';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -58,9 +60,16 @@ export default function PageManagementDetail() {
   const [rejectComments, setRejectComments] = useState('');
   const [showArchivedModal, setShowArchivedModal] = useState(false);
 
+  // AUTO APPROVE MODAL STATE
+  const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
+  const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
+
   // RTK GET DATA
   const fetchDataById = useGetPageByIdQuery({ id });
   const { data: pageDataDetail } = fetchDataById;
+
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
     if (pageDataDetail) {
@@ -81,7 +90,7 @@ export default function PageManagementDetail() {
   };
 
   // FORM VALIDATION
-  const { control, handleSubmit } = useForm();
+  const { control, handleSubmit, getValues } = useForm();
 
   useEffect(() => {
     setTimeout(() => {
@@ -144,7 +153,7 @@ export default function PageManagementDetail() {
                 status: 'WAITING_APPROVE',
                 comment: 'Already review',
               };
-  
+
               if (isAlreadyReview) {
                 onUpdateStatus(payload);
               } else {
@@ -205,17 +214,27 @@ export default function PageManagementDetail() {
       });
   };
 
-  const handlerSubmit = (formData: any) => {
+  const handlerSubmit = () => {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+      setShowModalAutoApprove(true);
+    } else {
+      saveData();
+    }
+  };
+
+  const saveData = () => {
+    const pageData = getValues();
     const payload = {
       id,
-      title: formData?.pageName,
-      slug: formData?.slug,
-      metatitle: formData?.metaTitle,
-      metaDescription: formData?.metaDescription,
-      shortDesc: formData?.shortDesc,
+      title: pageData?.pageName,
+      slug: pageData?.slug,
+      metatitle: pageData?.metaTitle,
+      metaDescription: pageData?.metaDescription,
+      shortDesc: pageData?.shortDesc,
       content,
       imgFilename: pageTemplates.find((template: { id: any }) => template.id === selected)?.name,
       isDraft,
+      isAutoApprove,
       pageTemplateId: selected,
       postTypeId: contentTypeId,
     };
@@ -599,6 +618,39 @@ export default function PageManagementDetail() {
         }}
         title={`${t('user.page-management.detail.labels.log-approval') ?? ''} - ${logTitle}`}
       />
+      <ModalForm
+        open={showModalAutoApprove}
+        formTitle=""
+        height={640}
+        width={540}
+        submitTitle={'Yes'}
+        submitType="bg-secondary-warning border-none"
+        cancelTitle={'No'}
+        cancelAction={() => {
+          setShowModalAutoApprove(false);
+          setIsAutoApprove(false);
+        }}
+        submitPosition={'justify-center'}
+        submitAction={() => {
+          setShowModalAutoApprove(false);
+          saveData();
+        }}>
+        <div className="flex flex-col justify-center items-center">
+          <img src={PaperSubmit} className="w-10" />
+          <p className="font-bold mt-3 text-xl">{t('user.page-management.detail.autoApproveTitle')}</p>
+          <p className="font-base mt-2 text-xl text-center">
+            {t('user.page-management.detail.autoApproveSubtitle')}
+          </p>
+          <CheckBox
+            defaultValue={isAutoApprove}
+            updateFormValue={e => {
+              setIsAutoApprove(e.value);
+            }}
+            labelTitle={t('user.page-management.detail.autoApproveLabel')}
+            labelStyle="text-xl mt-2"
+          />
+        </div>
+      </ModalForm>
       <ModalConfirm
         open={showApproveModal}
         cancelAction={() => {
