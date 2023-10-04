@@ -53,14 +53,7 @@ const CreateButton = () => {
 export default function GlobalConfigDataList() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
-  const [listData, setListData] = useState<any>([
-    {
-      variable: 'aa',
-      value: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-      description: 'aa',
-      id: 1,
-    }
-  ]);
+  const [listData, setListData] = useState<any>([]);
 
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
