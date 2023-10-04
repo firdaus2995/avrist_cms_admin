@@ -66,7 +66,18 @@ export default function FileUploaderV2({
               label={labelText}
               onFilesChange={(e: any) => {
                 const values = convertToArr(e, 'response');
-                onChange(values);
+                if (isDocument) {
+                  onChange(values);
+                }
+              }}
+              onAltTextChange={(_e: any) => {
+                // console.log(e);
+              }}
+              onCombineDataChange={(e: any) => {
+                const values = JSON.stringify(e);
+                if (!isDocument) {
+                  onChange(values);
+                }
               }}
               disabled={disabled}
               maxSize={maxSize}

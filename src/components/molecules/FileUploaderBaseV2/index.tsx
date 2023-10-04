@@ -202,7 +202,7 @@ export default function FileUploaderBaseV2({
               disabled={disabled || isLoading}
             />
             <div className="flex flex-col justify-center items-center h-[150px]">
-              <img className="w-12" src={UploadDocumentIcon} />
+              <img className="w-12" src={UploadDocumentIcon} alt='upload' />
               <span className="text-xs text-center mt-5">
                 {label || (
                   <span>
