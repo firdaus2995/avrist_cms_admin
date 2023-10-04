@@ -421,7 +421,7 @@ export default function PageManagementNew() {
             </button>
             <button
               className="btn btn-outline btn-warning btn-md"
-              onClick={handleSubmit((data: any) => {
+              onClick={handleSubmit((_data: any) => {
                 handlerSubmit('draft');
               })}>
               {t('user.page-management-new.saveDraftButton')}
