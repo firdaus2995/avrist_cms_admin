@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { SortingState } from '@tanstack/react-table';
 import { t } from 'i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import Plus from '@/assets/plus.png';
 import Table from '@/components/molecules/Table';
@@ -79,7 +79,7 @@ export default function EmailFormBuilderList() {
 
   const columnsEB = [
     {
-      header: () => <span className="text-[14px]">{t('user.email-form-builder-list.email-form-builder.list.title-label')}</span>,
+      header: () => <span className="text-[14px]">{t('user.email-form-builder-list.email-body.list.title')}</span>,
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -91,7 +91,7 @@ export default function EmailFormBuilderList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.email-form-builder-list.email-form-builder.list.short-description')}</span>,
+      header: () => <span className="text-[14px]">{t('user.email-form-builder-list.email-body.list.short-description')}</span>,
       accessorKey: 'shortDesc',
       enableSorting: true,
       cell: (info: any) => (
@@ -103,7 +103,7 @@ export default function EmailFormBuilderList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.email-form-builder-list.email-form-builder.list.action')}</span>,
+      header: () => <span className="text-[14px]">{t('user.email-form-builder-list.email-body.list.action')}</span>,
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -129,6 +129,7 @@ export default function EmailFormBuilderList() {
   ];
 
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const [listDataEFB, setListDataEFB] = useState([]);
   const [listDataEB, setListDataEB] = useState([]);
@@ -136,7 +137,7 @@ export default function EmailFormBuilderList() {
   const [searchEB, setSearchEB] = useState('');
 
   // TAB STATE
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(location?.state?.from === "EMAIL_BODY" ? 1 : 0);
 
   const [canCreateEmailFormBuilder, setCanCreateEmailFormBuilder] = useState(false);
   const [canEditEmailFormBuilder, setCanEditEmailFormBuilder] = useState(false);
@@ -256,7 +257,7 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Email Form',
+            title: t('user.email-form-builder-list.email-form-builder.list.success-delete-email-form'),
             message: d.postTypeDelete.message,
           }),
         );
@@ -267,7 +268,7 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Email Form',
+            title: t('user.email-form-builder-list.email-form-builder.list.failed-delete-email-form'),
             message: 'Something went wrong!',
           }),
         );
@@ -282,7 +283,7 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Email Form',
+            title: t('user.email-form-builder-list.email-body.list.success-delete-email-body'),
             message: d.message,
           }),
         );
@@ -293,7 +294,7 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Email Body',
+            title: t('user.email-form-builder-list.email-body.list.failed-delete-email-body'),
             message: t(`errors.${errorMessageTypeConverter(error.message)}`),
           }),
         );
@@ -338,6 +339,11 @@ export default function EmailFormBuilderList() {
           className={`btn bg-[#EEF1F7] text-[#ABB5C4] border-0 ${selectedTab === 0 ? '!bg-lavender !text-white' : ''} hover:!bg-primary hover:text-white`}
           onClick={() => {
             setSelectedTab(0);
+            navigate('', {
+              state: {
+                from: ""
+              },
+            });
           }}
         >
           {t('user.email-form-builder-list.email-form-builder.list.email-form-builder')}
@@ -346,9 +352,14 @@ export default function EmailFormBuilderList() {
           className={`btn bg-[#EEF1F7] text-[#ABB5C4] border-0 ${selectedTab === 1 ? '!bg-lavender !text-white' : ''} hover:!bg-primary hover:text-white`}
           onClick={() => {
             setSelectedTab(1);
+            navigate('', {
+              state: {
+                from: "EMAIL_BODY"
+              },
+            });
           }}
         >
-          {t('user.email-form-builder-list.email-form-builder.list.email-body')}
+          {t('user.email-form-builder-list.email-body.list.email-body')}
         </div>
       </div>
     )
@@ -381,8 +392,8 @@ export default function EmailFormBuilderList() {
         open={openDeleteModalEB}
         title={deleteModalTitleEB}
         message={deleteModalBodyEB}
-        cancelTitle={t('user.email-form-builder-list.email-form-builder.list.cancel-title')}
-        submitTitle={t('user.email-form-builder-list.email-form-builder.list.submit-title')}
+        cancelTitle={t('user.email-form-builder-list.email-body.list.cancel-title')}
+        submitTitle={t('user.email-form-builder-list.email-body.list.submit-title')}
         submitAction={submitDeleteEmailBody}
         cancelAction={() => {
           setOpenDeleteModalEB(false);
@@ -392,7 +403,7 @@ export default function EmailFormBuilderList() {
         btnSubmitStyle=""
       />
       <TitleCard
-        title={t('user.email-form-builder-list.email-form-builder.list.title')}
+        title={selectedTab === 0 ? t('user.email-form-builder-list.email-form-builder.list.title-card') : t('user.email-form-builder-list.email-body.list.title-card')}
         topMargin="mt-2"
         TopSideButtons={
           canCreateEmailFormBuilder ? (
@@ -404,7 +415,7 @@ export default function EmailFormBuilderList() {
             ) : (
               <Link to="new-body" className="btn btn-primary flex flex-row gap-2 rounded-xl">
                 <img src={Plus} className="w-[24px] h-[24px]" />
-                <span>{t('user.email-form-builder-list.email-form-builder.list.add-new-email-body')}</span>
+                <span>{t('user.email-form-builder-list.email-body.list.add-new-form')}</span>
               </Link>
             )
           ) : (
@@ -424,7 +435,7 @@ export default function EmailFormBuilderList() {
               onBlur={(e: any) => {
                 setSearchEB(e.target.value);
               }}
-              placeholder={t('user.email-form-builder-list.email-form-builder.list.search') ?? ''}
+              placeholder={t('user.email-form-builder-list.email-body.list.search') ?? ''}
             />
           )
         }>
