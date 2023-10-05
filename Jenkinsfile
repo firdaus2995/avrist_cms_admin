@@ -4,8 +4,8 @@ node {
 try{
     notifyBuild('STARTED')
     stage('Clone Repo') {
-        git url: 'https://gitlab.com/bit-avrist-website/avrist-cms-admin-page-web.git',
-            credentialsId: 'rogy-account',
+        git url: 'git@gitlab.com:bit-avrist-website/avrist-cms-admin-page-web.git',
+            credentialsId: 'avrist-sit-fe',
             branch: 'sit'
      }
     stage('Build Static HTML'){
