@@ -41,28 +41,24 @@ const LoginForm = () => {
   const [login, { isLoading }] = useLoginMutation();
 
   const handleLoginSubmit = (formData: { username: any; password: any }) => {
-    storeDataStorage('accessToken', 'res.login.accessToken');
-    storeDataStorage('refreshToken', 'res.login.refreshToken');
-    storeDataStorage('roles', ['USER_READ', 'USER_CREATE']);
-    window.location.assign('/');
-    // login({ userId: formData.username, password: formData.password })
-    //   .unwrap()
-    //   .then(res => {
-    //     storeDataStorage('accessToken', res.login.accessToken);
-    //     storeDataStorage('refreshToken', res.login.refreshToken);
-    //     storeDataStorage('roles', res.login.roles);
+    login({ userId: formData.username, password: formData.password })
+      .unwrap()
+      .then(res => {
+        storeDataStorage('accessToken', res.login.accessToken);
+        storeDataStorage('refreshToken', res.login.refreshToken);
+        storeDataStorage('roles', res.login.roles);
 
-    //     window.location.assign('/');
-    //   })
-    //   .catch(() => {
-    //     dispatch(
-    //       openToast({
-    //         type: 'error',
-    //         title: t('auth.signin-failed'),
-    //         message: t('auth.signin-failed'),
-    //       }),
-    //     );
-    //   });
+        window.location.assign('/');
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('auth.signin-failed'),
+            message: t('auth.signin-failed'),
+          }),
+        );
+      });
   };
 
   return (
