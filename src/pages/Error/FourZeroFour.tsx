@@ -11,7 +11,7 @@ const FourZeroThree = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center" style={{
+    <div className="flex flex-col justify-center items-center gap-5" style={{
       height: 'calc(100vh - 100px)'
     }}>
       <img src={NotFoundSVG} className="mt-[-100px] select-none pointer-events-none"/>
