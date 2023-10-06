@@ -612,6 +612,7 @@
           "email-body": "Email Body",
           "search": "Search",
           "add-new-form": "Add New Email Body",
+          "view-detail": "View Detail",
           "success-delete-email-body": "Success Delete Email Body",
           "failed-delete-email-body": "Failed Delete Email Body"
         }

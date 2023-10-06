@@ -109,12 +109,12 @@ export default function EmailFormBuilderList() {
       cell: (info: any) => (
         <div className="flex gap-3">
           <button 
-            className='btn btn-outline'
+            className='min-h-[34px] h-[34px] btn btn-outline btn-primary text-xs'
             onClick={() => {
               onClickEmailBodyView(info.getValue());
             }}
           >
-            {t('user.email-form-builder-list.email-form-builder.list.view-detail')}
+            {t('user.email-form-builder-list.email-body.list.view-detail')}
           </button>
           <img
             className={`cursor-pointer select-none flex items-center justify-center`}

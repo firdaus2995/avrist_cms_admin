@@ -65,7 +65,7 @@ export default function PageTemplatesList() {
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
             <button
-              className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs"
+              className='min-h-[34px] h-[34px] btn btn-outline btn-primary text-xs'
             >
               {t('user.page-template-list.page-template.table.view-detail')}
             </button>

@@ -204,7 +204,7 @@ export const emailFormBuilderApi = createApi({
               total
               emailBodies {
                 id
-                name
+                title
                 shortDesc
               }
             }
