@@ -16,13 +16,18 @@ import {
 } from '../../services/PageTemplate/pageTemplateApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function PageTemplatesList() {
   const { t } = useTranslation(); // Initialize the useTranslation hook
 
   const columns = [
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.page-id')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-list.page-template.table.page-id')}
+        </span>
+      ),
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -34,7 +39,11 @@ export default function PageTemplatesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.page-name')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-list.page-template.table.page-name')}
+        </span>
+      ),
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -46,7 +55,11 @@ export default function PageTemplatesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.uploaded-by')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-list.page-template.table.uploaded-by')}
+        </span>
+      ),
       accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -58,25 +71,31 @@ export default function PageTemplatesList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-list.page-template.table.action')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-list.page-template.table.action')}
+        </span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
-            <button
-              className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs"
-            >
+            <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
               {t('user.page-template-list.page-template.table.view-detail')}
             </button>
           </Link>
-          <img
-            className={`cursor-pointer select-none flex items-center justify-center`}
-            src={TableDelete}
-            onClick={() => {
-              onClickPageTemplateDelete(info.getValue());
-            }}
-          />
+          <RoleRenderer allowedRoles={['PAGE_TEMPLATE_DELETE']}>
+            <div className="tooltip" data-tip="Delete">
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageTemplateDelete(info.getValue());
+                }}
+              />
+            </div>
+          </RoleRenderer>
         </div>
       ),
     },
@@ -160,28 +179,31 @@ export default function PageTemplatesList() {
 
   const onClickPageTemplateDelete = (id: number) => {
     setDeletedId(id);
-    setDeleteModalTitle(t('user.page-template-list.page-template.table.delete-confirm-title') ?? '');
+    setDeleteModalTitle(
+      t('user.page-template-list.page-template.table.delete-confirm-title') ?? '',
+    );
     setDeleteModalBody(t('user.page-template-list.page-template.table.delete-confirm-body') ?? '');
     setOpenDeleteModal(true);
   };
 
   return (
     <React.Fragment>
-      <ModalConfirm
-        open={openDeleteModal}
-        title={deleteModalTitle}
-        message={deleteModalBody}
-        cancelTitle={t('user.page-template-list.buttons.cancel')}
-        submitTitle={t('user.page-template-list.buttons.yes')}
-        submitAction={submitDeleteUser}
-        cancelAction={() => {
-          setOpenDeleteModal(false);
-        }}
-        loading={isLoadingDelete}
-        icon={WarningIcon}
-        btnSubmitStyle=""
-      />
-      {/* <ModalForm
+      <RoleRenderer allowedRoles={['PAGE_TEMPLATE_READ']}>
+        <ModalConfirm
+          open={openDeleteModal}
+          title={deleteModalTitle}
+          message={deleteModalBody}
+          cancelTitle={t('user.page-template-list.buttons.cancel')}
+          submitTitle={t('user.page-template-list.buttons.yes')}
+          submitAction={submitDeleteUser}
+          cancelAction={() => {
+            setOpenDeleteModal(false);
+          }}
+          loading={isLoadingDelete}
+          icon={WarningIcon}
+          btnSubmitStyle=""
+        />
+        {/* <ModalForm
         open={openEditModal}
         loading={isLoadingEdit}
         formTitle="Page Template"
@@ -227,44 +249,45 @@ export default function PageTemplatesList() {
           disabled
         />
       </ModalForm> */}
-      <TitleCard
-        title={t('user.page-template-list.page-template.list.title')}
-        topMargin="mt-2"
-        TopSideButtons={
-          <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
-            {t('user.page-template-list.page-template.list.button-add')}
-          </Link>
-        }
-        SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              setSearch(e.target.value);
-            }}
-            placeholder={t('user.page-template-list.page-template.search-placeholder') ?? ''}
+        <TitleCard
+          title={t('user.page-template-list.page-template.list.title')}
+          topMargin="mt-2"
+          TopSideButtons={
+            <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+              {t('user.page-template-list.page-template.list.button-add')}
+            </Link>
+          }
+          SearchBar={
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearch(e.target.value);
+              }}
+              placeholder={t('user.page-template-list.page-template.search-placeholder') ?? ''}
+            />
+          }>
+          <Table
+            rows={listData}
+            columns={columns}
+            manualPagination={true}
+            manualSorting={true}
+            onSortModelChange={handleSortModelChange}
+            loading={isFetching}
+            error={isError}
           />
-        }>
-        <Table
-          rows={listData}
-          columns={columns}
-          manualPagination={true}
-          manualSorting={true}
-          onSortModelChange={handleSortModelChange}
-          loading={isFetching}
-          error={isError}
-        />
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
-          }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
-        />
-      </TitleCard>
+          <PaginationComponent
+            total={total}
+            page={pageIndex}
+            pageSize={pageLimit}
+            setPageSize={(page: number) => {
+              setPageLimit(page);
+              setPageIndex(0);
+            }}
+            setPage={(page: number) => {
+              setPageIndex(page);
+            }}
+          />
+        </TitleCard>
+      </RoleRenderer>
     </React.Fragment>
   );
 }

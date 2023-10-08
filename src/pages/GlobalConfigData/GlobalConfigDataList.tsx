@@ -18,6 +18,7 @@ import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import { getCredential } from '@/utils/Credential';
 import { t } from 'i18next';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 const TopRightButton = () => {
   return (
@@ -59,7 +60,7 @@ export default function GlobalConfigDataList() {
       value: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
       description: 'aa',
       id: 1,
-    }
+    },
   ]);
 
   const [showConfirm, setShowConfirm] = useState(false);
@@ -113,7 +114,9 @@ export default function GlobalConfigDataList() {
   // TABLE COLUMN
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">{t('user.global-config-data-list.columns.key')}</span>, // Update with i18n
+      header: () => (
+        <span className="text-[14px]">{t('user.global-config-data-list.columns.key')}</span>
+      ), // Update with i18n
       accessorKey: 'variable',
       enableSorting: true,
       cell: (info: any) => (
@@ -125,7 +128,9 @@ export default function GlobalConfigDataList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.global-config-data-list.columns.value')}</span>, // Update with i18n
+      header: () => (
+        <span className="text-[14px]">{t('user.global-config-data-list.columns.value')}</span>
+      ), // Update with i18n
       accessorKey: 'value',
       enableSorting: false,
       cell: (info: any) => (
@@ -137,7 +142,9 @@ export default function GlobalConfigDataList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.global-config-data-list.columns.description')}</span>, // Update with i18n
+      header: () => (
+        <span className="text-[14px]">{t('user.global-config-data-list.columns.description')}</span>
+      ), // Update with i18n
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
@@ -149,7 +156,9 @@ export default function GlobalConfigDataList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.global-config-data-list.action.action')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.global-config-data-list.action.action')}</span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -243,57 +252,58 @@ export default function GlobalConfigDataList() {
 
   return (
     <>
-      <ModalConfirm
-        open={showConfirm}
-        cancelAction={() => {
-          setShowConfirm(false);
-        }}
-        title={titleConfirm}
-        cancelTitle={t('user.global-config-data-list.modalConfirm.cancelTitle')}
-        message={messageConfirm}
-        submitAction={submitDeleteData}
-        submitTitle={t('user.global-config-data-list.modalConfirm.submitTitle')}
-        loading={deleteDataLoading}
-        icon={WarningIcon}
-        btnSubmitStyle={''}
-      />
-      <TitleCard
-        title={t('user.global-config-data-list.title')}
-        topMargin="mt-2"
-        SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              setSearch(e.target.value);
-            }}
-            placeholder={t('user.global-config-data-list.searchPlaceholder') ?? ''}
-          />
-        }
-        TopSideButtons={canCreate && <TopRightButton />}
-      >
-        <div className="w-full mb-5">
-          <Table
-            rows={listData}
-            columns={COLUMNS}
-            loading={false}
-            error={false}
-            manualPagination={true}
-            manualSorting={true}
-            onSortModelChange={handleSortModelChange}
-          />
-        </div>
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
+      <RoleRenderer allowedRoles={['GLOBAL_CONFIG_READ']}>
+        <ModalConfirm
+          open={showConfirm}
+          cancelAction={() => {
+            setShowConfirm(false);
           }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
+          title={titleConfirm}
+          cancelTitle={t('user.global-config-data-list.modalConfirm.cancelTitle')}
+          message={messageConfirm}
+          submitAction={submitDeleteData}
+          submitTitle={t('user.global-config-data-list.modalConfirm.submitTitle')}
+          loading={deleteDataLoading}
+          icon={WarningIcon}
+          btnSubmitStyle={''}
         />
-      </TitleCard>
+        <TitleCard
+          title={t('user.global-config-data-list.title')}
+          topMargin="mt-2"
+          SearchBar={
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearch(e.target.value);
+              }}
+              placeholder={t('user.global-config-data-list.searchPlaceholder') ?? ''}
+            />
+          }
+          TopSideButtons={canCreate && <TopRightButton />}>
+          <div className="w-full mb-5">
+            <Table
+              rows={listData}
+              columns={COLUMNS}
+              loading={false}
+              error={false}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+            />
+          </div>
+          <PaginationComponent
+            total={total}
+            page={pageIndex}
+            pageSize={pageLimit}
+            setPageSize={(page: number) => {
+              setPageLimit(page);
+              setPageIndex(0);
+            }}
+            setPage={(page: number) => {
+              setPageIndex(page);
+            }}
+          />
+        </TitleCard>
+      </RoleRenderer>
     </>
   );
 }

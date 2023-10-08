@@ -20,11 +20,14 @@ import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import Typography from '@/components/atoms/Typography';
 import { t } from 'i18next';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 const TopRightButton = () => {
   return (
     <div className="flex flex-row">
-      <CreateButton />
+      <RoleRenderer allowedRoles={['CONTENT_TYPE_CREATE']}>
+        <CreateButton />
+      </RoleRenderer>
     </div>
   );
 };
@@ -44,7 +47,7 @@ const CreateButton = () => {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-          {t('user.content-type-list.add-new-content-type')}
+            {t('user.content-type-list.add-new-content-type')}
           </div>
         </button>
       </Link>
@@ -117,7 +120,9 @@ export default function ContentTypeList() {
   // TABLE COLUMN
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">{t('user.content-type-list.content-type-name')}</span>, // Use translation key for header
+      header: () => (
+        <span className="text-[14px]">{t('user.content-type-list.content-type-name')}</span>
+      ), // Use translation key for header
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -162,23 +167,27 @@ export default function ContentTypeList() {
                 />
               </div>
             )}
-            <Link to={`edit/${info.getValue()}`}>
-              <div className="tooltip" data-tip={t('user.content-type-list.action.edit')}>
+            <RoleRenderer allowedRoles={['CONTENT_TYPE_EDIT']}>
+              <Link to={`edit/${info.getValue()}`}>
+                <div className="tooltip" data-tip={t('user.content-type-list.action.edit')}>
+                  <img
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableEdit}
+                  />
+                </div>
+              </Link>
+            </RoleRenderer>
+            <RoleRenderer allowedRoles={['CONTENT_TYPE_DELETE']}>
+              <div className="tooltip" data-tip={t('user.content-type-list.action.delete')}>
                 <img
                   className={`cursor-pointer select-none flex items-center justify-center`}
-                  src={TableEdit}
+                  src={TableDelete}
+                  onClick={() => {
+                    onClickPageDelete(info.getValue(), info?.row?.original?.name);
+                  }}
                 />
               </div>
-            </Link>
-            <div className="tooltip" data-tip={t('user.content-type-list.action.delete')}>
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableDelete}
-                onClick={() => {
-                  onClickPageDelete(info.getValue(), info?.row?.original?.name);
-                }}
-              />
-            </div>
+            </RoleRenderer>
           </div>
         );
       },
@@ -194,8 +203,10 @@ export default function ContentTypeList() {
 
   const onClickPageDuplicate = (id: number, title: string) => {
     setIdDuplicate(id);
-    setTitleConfirmDuplicate(t('user.content-type-list.are-you-sure') ??''); // Use translation key for title
-    setMessageConfirmDuplicate(t('user.content-type-list.do-you-want-to-duplicate', { title }) ?? ''); // Use translation key for message
+    setTitleConfirmDuplicate(t('user.content-type-list.are-you-sure') ?? ''); // Use translation key for title
+    setMessageConfirmDuplicate(
+      t('user.content-type-list.do-you-want-to-duplicate', { title }) ?? '',
+    ); // Use translation key for message
     setShowConfirmDuplicate(true);
   };
 
@@ -253,69 +264,71 @@ export default function ContentTypeList() {
 
   return (
     <>
-      <ModalConfirm
-        open={showConfirm}
-        cancelAction={() => {
-          setShowConfirm(false);
-        }}
-        title={titleConfirm}
-        cancelTitle={t('user.content-type-list.cancel')} // Use translation key for cancel title
-        message={messageConfirm}
-        submitAction={submitDeletePage}
-        submitTitle={t('user.content-type-list.yes')} // Use translation key for submit title
-        loading={deletePageLoading}
-        icon={WarningIcon}
-        btnSubmitStyle={''}
-      />
-      <ModalConfirm
-        open={showConfirmDuplicate}
-        cancelAction={() => {
-          setShowConfirmDuplicate(false);
-        }}
-        title={titleConfirmDuplicate}
-        cancelTitle={t('user.content-type-list.no')} // Use translation key for cancel title
-        message={messageConfirmDuplicate}
-        submitAction={submitDuplicatePage}
-        submitTitle={t('user.content-type-list.yes')} // Use translation key for submit title
-        icon={DuplicateIcon}
-        btnSubmitStyle={'btn-warning text-white'}
-      />
-      <TitleCard
-        title={t('user.content-type-list.content-type-list')} // Use translation key for title
-        topMargin="mt-2"
-        SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              setSearch(e.target.value);
-            }}
-            placeholder={t('user.content-type-list.search')??''} // Use translation key for placeholder
-          />
-        }
-        TopSideButtons={<TopRightButton />}>
-        <div className="overflow-x-auto w-full mb-5">
-          <Table
-            rows={listData}
-            columns={COLUMNS}
-            loading={false}
-            error={false}
-            manualPagination={true}
-            manualSorting={true}
-            onSortModelChange={handleSortModelChange}
-          />
-        </div>
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
+      <RoleRenderer allowedRoles={['CONTENT_TYPE_READ']}>
+        <ModalConfirm
+          open={showConfirm}
+          cancelAction={() => {
+            setShowConfirm(false);
           }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
+          title={titleConfirm}
+          cancelTitle={t('user.content-type-list.cancel')} // Use translation key for cancel title
+          message={messageConfirm}
+          submitAction={submitDeletePage}
+          submitTitle={t('user.content-type-list.yes')} // Use translation key for submit title
+          loading={deletePageLoading}
+          icon={WarningIcon}
+          btnSubmitStyle={''}
         />
-      </TitleCard>
+        <ModalConfirm
+          open={showConfirmDuplicate}
+          cancelAction={() => {
+            setShowConfirmDuplicate(false);
+          }}
+          title={titleConfirmDuplicate}
+          cancelTitle={t('user.content-type-list.no')} // Use translation key for cancel title
+          message={messageConfirmDuplicate}
+          submitAction={submitDuplicatePage}
+          submitTitle={t('user.content-type-list.yes')} // Use translation key for submit title
+          icon={DuplicateIcon}
+          btnSubmitStyle={'btn-warning text-white'}
+        />
+        <TitleCard
+          title={t('user.content-type-list.content-type-list')} // Use translation key for title
+          topMargin="mt-2"
+          SearchBar={
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearch(e.target.value);
+              }}
+              placeholder={t('user.content-type-list.search') ?? ''} // Use translation key for placeholder
+            />
+          }
+          TopSideButtons={<TopRightButton />}>
+          <div className="overflow-x-auto w-full mb-5">
+            <Table
+              rows={listData}
+              columns={COLUMNS}
+              loading={false}
+              error={false}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+            />
+          </div>
+          <PaginationComponent
+            total={total}
+            page={pageIndex}
+            pageSize={pageLimit}
+            setPageSize={(page: number) => {
+              setPageLimit(page);
+              setPageIndex(0);
+            }}
+            setPage={(page: number) => {
+              setPageIndex(page);
+            }}
+          />
+        </TitleCard>
+      </RoleRenderer>
     </>
   );
 }

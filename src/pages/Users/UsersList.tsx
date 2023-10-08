@@ -1,5 +1,5 @@
 import { SortingState } from '@tanstack/react-table';
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { t } from 'i18next';
 
@@ -16,6 +16,7 @@ import { useDeleteUserMutation, useGetUserQuery } from '../../services/User/user
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import Typography from '@/components/atoms/Typography';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function UsersList() {
   const StatusBadge = (status: any) => {
@@ -135,24 +136,34 @@ export default function UsersList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.users-list.user.list.table.header.action')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.users-list.user.list.table.header.action')}</span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <Link to={`edit/${info.getValue()}`}>
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableEdit}
-            />
-          </Link>
-          <img
-            className={`cursor-pointer select-none flex items-center justify-center`}
-            src={TableDelete}
-            onClick={() => {
-              onClickUserDelete(info.getValue(), info?.row?.original?.fullName);
-            }}
-          />
+          <RoleRenderer allowedRoles={['USER_EDIT']}>
+            <Link to={`edit/${info.getValue()}`}>
+              <div className="tooltip" data-tip="Edit">
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableEdit}
+                />
+              </div>
+            </Link>
+          </RoleRenderer>
+          <RoleRenderer allowedRoles={['USER_DELETE']}>
+            <div className="tooltip" data-tip="Delete">
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickUserDelete(info.getValue(), info?.row?.original?.fullName);
+                }}
+              />
+            </div>
+          </RoleRenderer>
         </div>
       ),
     },
@@ -249,63 +260,67 @@ export default function UsersList() {
   };
 
   return (
-    <React.Fragment>
-      <ModalConfirm
-        open={openDeleteModal}
-        cancelAction={() => {
-          setOpenDeleteModal(false);
-        }}
-        title={deleteModalTitle}
-        message={deleteModalBody}
-        cancelTitle={t('user.users-list.user.list.modal.cancel')}
-        submitTitle={t('user.users-list.user.list.modal.yes')}
-        submitAction={submitDeleteUser}
-        loading={isLoading}
-        icon={WarningIcon}
-        btnSubmitStyle=""
-      />
-      <TitleCard
-        title={t('user.users-list.user.list.title')}
-        topMargin="mt-2"
-        TopSideButtons={
-          <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
-            <img src={Plus} className="w-[24px] h-[24px]" />
-            {t('user.users-list.user.list.button-add')}
-          </Link>
-        }
-        SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              setSearch(e.target.value);
-            }}
-            placeholder={t('user.users-list.user.list.search-placeholder') ?? ''}
-          />
-        }>
-        <div className="overflow-x-auto w-full mb-5">
-          <Table
-            rows={listData}
-            columns={columns}
-            manualPagination={true}
-            manualSorting={true}
-            onSortModelChange={handleSortModelChange}
-            loading={isFetching}
-            error={isError}
-          />
-        </div>
-
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
+    <>
+      <RoleRenderer allowedRoles={['USER_READ']}>
+        <ModalConfirm
+          open={openDeleteModal}
+          cancelAction={() => {
+            setOpenDeleteModal(false);
           }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
+          title={deleteModalTitle}
+          message={deleteModalBody}
+          cancelTitle={t('user.users-list.user.list.modal.cancel')}
+          submitTitle={t('user.users-list.user.list.modal.yes')}
+          submitAction={submitDeleteUser}
+          loading={isLoading}
+          icon={WarningIcon}
+          btnSubmitStyle=""
         />
-      </TitleCard>
-    </React.Fragment>
+        <TitleCard
+          title={t('user.users-list.user.list.title')}
+          topMargin="mt-2"
+          TopSideButtons={
+            <RoleRenderer allowedRoles={['USER_CREATE']}>
+              <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+                <img src={Plus} className="w-[24px] h-[24px]" />
+                {t('user.users-list.user.list.button-add')}
+              </Link>
+            </RoleRenderer>
+          }
+          SearchBar={
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearch(e.target.value);
+              }}
+              placeholder={t('user.users-list.user.list.search-placeholder') ?? ''}
+            />
+          }>
+          <div className="overflow-x-auto w-full mb-5">
+            <Table
+              rows={listData}
+              columns={columns}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+              loading={isFetching}
+              error={isError}
+            />
+          </div>
+
+          <PaginationComponent
+            total={total}
+            page={pageIndex}
+            pageSize={pageLimit}
+            setPageSize={(page: number) => {
+              setPageLimit(page);
+              setPageIndex(0);
+            }}
+            setPage={(page: number) => {
+              setPageIndex(page);
+            }}
+          />
+        </TitleCard>
+      </RoleRenderer>
+    </>
   );
 }

@@ -24,6 +24,7 @@ import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
 import { FilterButton } from '@/components/molecules/FilterButton/index.';
 import { t } from 'i18next';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 const ArchiveButton = () => {
   return (
@@ -32,7 +33,7 @@ const ArchiveButton = () => {
         <button className=" border-secondary-warning border-[1px] rounded-xl w-36 py-3">
           <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-secondary-warning">
             <img src={ArchiveBox} className="w-6 h-6 mr-1" />
-          {t('user.page-management.list.page-list.archive')}
+            {t('user.page-management.list.page-list.archive')}
           </div>
         </button>
       </Link>
@@ -207,7 +208,11 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.page-name')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-management.list.page-list.row.page-name')}
+        </span>
+      ),
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -219,7 +224,11 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.created-by')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-management.list.page-list.row.created-by')}
+        </span>
+      ),
       accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -229,7 +238,11 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.created-date')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-management.list.page-list.row.created-date')}
+        </span>
+      ),
       accessorKey: 'createdAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -241,7 +254,11 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.updated-date')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-management.list.page-list.row.updated-date')}
+        </span>
+      ),
       accessorKey: 'updatedAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -253,7 +270,9 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.action')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-management.list.page-list.row.action')}</span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -261,19 +280,21 @@ export default function PageManagementList() {
           <Link to={`detail/${info.getValue()}`}>
             <div className="tooltip" data-tip={'View Detail'}>
               <button className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
-              {t('user.page-management.list.page-list.row.view-detail')}
+                {t('user.page-management.list.page-list.row.view-detail')}
               </button>
             </div>
           </Link>
-          <div className="tooltip" data-tip="Delete">
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={() => {
-                onClickPageDelete(info.getValue(), info?.row?.original?.title);
-              }}
-            />
-          </div>
+          <RoleRenderer allowedRoles={['PAGE_DELETE']}>
+            <div className="tooltip" data-tip="Delete">
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                }}
+              />
+            </div>
+          </RoleRenderer>
         </div>
       ),
     },
@@ -282,7 +303,7 @@ export default function PageManagementList() {
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
     setTitleConfirm(t('user.page-management.list.delete-confirm.title') ?? '');
-    setMessageConfirm(t('user.page-management.list.delete-confirm.message',{title})??'');
+    setMessageConfirm(t('user.page-management.list.delete-confirm.message', { title }) ?? '');
     setShowConfirm(true);
   };
 
@@ -344,106 +365,110 @@ export default function PageManagementList() {
             }}
           />
         )}
-        <CreateButton />
+        <RoleRenderer allowedRoles={['PAGE_CREATE']}>
+          <CreateButton />
+        </RoleRenderer>
       </div>
     );
   };
 
   return (
     <>
-      <ModalLog
-        id={idLog}
-        open={!!idLog}
-        toggle={() => {
-          setIdLog(null);
-        }}
-        title={`${t('user.page-management.list.log-approval') ?? ''} - ${logTitle}`}
-      />
-      <ModalConfirm
-        open={showConfirm}
-        cancelAction={() => {
-          setShowConfirm(false);
-        }}
-        title={titleConfirm}
-        cancelTitle={t('user.page-management.list.cancel')}
-        message={messageConfirm}
-        submitAction={submitDeletePage}
-        submitTitle={t('user.page-management.list.submit-title')}
-        loading={deletePageLoading}
-        icon={WarningIcon}
-        btnSubmitStyle={''}
-      />
-      <TitleCard
-        title={t('user.page-management.list.page-list.button-add') ?? ''}
-        topMargin="mt-2"
-        SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              if (isPageListActive) {
-                setSearchPageList(e.target.value);
-              } else {
-                setSearchMyTask(e.target.value);
-              }
-            }}
-            placeholder={t('user.page-management.list.page-list.search-placeholder') ?? ''}
-          />
-        }
-        TopSideButtons={<TopRightButton />}>
-        <div className="flex flex-row justify-between mb-5">
-          <div className="btn-group">
-            {listTabs.map(val => (
-              <button
-                key={val.isActive}
-                onClick={() => {
-                  setFilterOpen(false);
-                  resetState();
-                  setActiveTab(val.isActive);
-                }}
-                className={`btn ${
-                  activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-500'
-                } text-xs w-40`}>
-                {val.name}
-              </button>
-            ))}
-          </div>
-          {isPageListActive && <ArchiveButton />}
-        </div>
-        <div className="overflow-x-auto w-full mb-5">
-          {isPageListActive ? (
-            <Table
-              rows={listData}
-              columns={COLUMNS}
-              loading={false}
-              error={false}
-              manualPagination={true}
-              manualSorting={true}
-              onSortModelChange={handleSortModelChange}
-            />
-          ) : (
-            <Table
-              rows={listDataMyTask}
-              columns={COLUMNS}
-              loading={false}
-              error={false}
-              manualPagination={true}
-              manualSorting={true}
-              onSortModelChange={handleSortModelChange}
-            />
-          )}
-        </div>
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
+      <RoleRenderer allowedRoles={['PAGE_READ']}>
+        <ModalLog
+          id={idLog}
+          open={!!idLog}
+          toggle={() => {
+            setIdLog(null);
           }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
+          title={`${t('user.page-management.list.log-approval') ?? ''} - ${logTitle}`}
         />
-      </TitleCard>
+        <ModalConfirm
+          open={showConfirm}
+          cancelAction={() => {
+            setShowConfirm(false);
+          }}
+          title={titleConfirm}
+          cancelTitle={t('user.page-management.list.cancel')}
+          message={messageConfirm}
+          submitAction={submitDeletePage}
+          submitTitle={t('user.page-management.list.submit-title')}
+          loading={deletePageLoading}
+          icon={WarningIcon}
+          btnSubmitStyle={''}
+        />
+        <TitleCard
+          title={t('user.page-management.list.page-list.button-add') ?? ''}
+          topMargin="mt-2"
+          SearchBar={
+            <InputSearch
+              onBlur={(e: any) => {
+                if (isPageListActive) {
+                  setSearchPageList(e.target.value);
+                } else {
+                  setSearchMyTask(e.target.value);
+                }
+              }}
+              placeholder={t('user.page-management.list.page-list.search-placeholder') ?? ''}
+            />
+          }
+          TopSideButtons={<TopRightButton />}>
+          <div className="flex flex-row justify-between mb-5">
+            <div className="btn-group">
+              {listTabs.map(val => (
+                <button
+                  key={val.isActive}
+                  onClick={() => {
+                    setFilterOpen(false);
+                    resetState();
+                    setActiveTab(val.isActive);
+                  }}
+                  className={`btn ${
+                    activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-500'
+                  } text-xs w-40`}>
+                  {val.name}
+                </button>
+              ))}
+            </div>
+            {isPageListActive && <ArchiveButton />}
+          </div>
+          <div className="overflow-x-auto w-full mb-5">
+            {isPageListActive ? (
+              <Table
+                rows={listData}
+                columns={COLUMNS}
+                loading={false}
+                error={false}
+                manualPagination={true}
+                manualSorting={true}
+                onSortModelChange={handleSortModelChange}
+              />
+            ) : (
+              <Table
+                rows={listDataMyTask}
+                columns={COLUMNS}
+                loading={false}
+                error={false}
+                manualPagination={true}
+                manualSorting={true}
+                onSortModelChange={handleSortModelChange}
+              />
+            )}
+          </div>
+          <PaginationComponent
+            total={total}
+            page={pageIndex}
+            pageSize={pageLimit}
+            setPageSize={(page: number) => {
+              setPageLimit(page);
+              setPageIndex(0);
+            }}
+            setPage={(page: number) => {
+              setPageIndex(page);
+            }}
+          />
+        </TitleCard>
+      </RoleRenderer>
     </>
   );
 }

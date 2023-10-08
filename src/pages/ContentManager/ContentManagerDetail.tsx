@@ -43,7 +43,7 @@ export default function ContentManagerDetail() {
   // PERMISSION STATE
   const [canAddContentCategory] = useState(() => {
     return !!getCredential().roles.find((element: any) => {
-      if (element === 'CONTENT_MANAGER_REGISTRATION') {
+      if (element === 'CONTENT_MANAGER_CREATE') {
         return true;
       }
       return false;
