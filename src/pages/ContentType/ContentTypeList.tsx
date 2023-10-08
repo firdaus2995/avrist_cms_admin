@@ -57,7 +57,7 @@ const CreateButton = () => {
 
 export default function ContentTypeList() {
   const roles = store.getState().loginSlice.roles;
-  const contentTypeRegistrationRole = roles?.includes('CONTENT_TYPE_REGISTRATION');
+  const contentTypeRegistrationRole = roles?.includes('CONTENT_TYPE_CREATE');
 
   const dispatch = useAppDispatch();
   const [listData, setListData] = useState<any>([]);

@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SortingState } from '@tanstack/react-table';
 import { t } from 'i18next';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import Plus from '@/assets/plus.png';
 import Table from '@/components/molecules/Table';
@@ -91,7 +91,7 @@ export default function EmailFormBuilderList() {
     {
       header: () => (
         <span className="text-[14px]">
-          {t('user.email-form-builder-list.email-form-builder.list.title-label')}
+          {t('user.email-form-builder-list.email-body.list.title')}
         </span>
       ),
       accessorKey: 'title',
@@ -107,7 +107,7 @@ export default function EmailFormBuilderList() {
     {
       header: () => (
         <span className="text-[14px]">
-          {t('user.email-form-builder-list.email-form-builder.list.short-description')}
+          {t('user.email-form-builder-list.email-body.list.short-description')}
         </span>
       ),
       accessorKey: 'shortDesc',
@@ -123,7 +123,7 @@ export default function EmailFormBuilderList() {
     {
       header: () => (
         <span className="text-[14px]">
-          {t('user.email-form-builder-list.email-form-builder.list.action')}
+          {t('user.email-form-builder-list.email-body.list.action')}
         </span>
       ),
       accessorKey: 'id',
@@ -131,11 +131,11 @@ export default function EmailFormBuilderList() {
       cell: (info: any) => (
         <div className="flex gap-3">
           <button
-            className="btn btn-outline"
+            className="min-h-[34px] h-[34px] btn btn-outline btn-primary text-xs"
             onClick={() => {
               onClickEmailBodyView(info.getValue());
             }}>
-            {t('user.email-form-builder-list.email-form-builder.list.view-detail')}
+            {t('user.email-form-builder-list.email-body.list.view-detail')}
           </button>
           <img
             className={`cursor-pointer select-none flex items-center justify-center`}
@@ -150,6 +150,7 @@ export default function EmailFormBuilderList() {
   ];
 
   const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useAppDispatch();
   const [listDataEFB, setListDataEFB] = useState([]);
   const [listDataEB, setListDataEB] = useState([]);
@@ -157,7 +158,7 @@ export default function EmailFormBuilderList() {
   const [searchEB, setSearchEB] = useState('');
 
   // TAB STATE
-  const [selectedTab, setSelectedTab] = useState(0);
+  const [selectedTab, setSelectedTab] = useState(location?.state?.from === 'EMAIL_BODY' ? 1 : 0);
 
   const [canCreateEmailFormBuilder, setCanCreateEmailFormBuilder] = useState(false);
   const [canEditEmailFormBuilder, setCanEditEmailFormBuilder] = useState(false);
@@ -278,7 +279,9 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Email Form',
+            title: t(
+              'user.email-form-builder-list.email-form-builder.list.success-delete-email-form',
+            ),
             message: d.postTypeDelete.message,
           }),
         );
@@ -289,7 +292,9 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Email Form',
+            title: t(
+              'user.email-form-builder-list.email-form-builder.list.failed-delete-email-form',
+            ),
             message: 'Something went wrong!',
           }),
         );
@@ -304,7 +309,7 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success Delete Email Form',
+            title: t('user.email-form-builder-list.email-body.list.success-delete-email-body'),
             message: d.message,
           }),
         );
@@ -315,7 +320,7 @@ export default function EmailFormBuilderList() {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed Delete Email Body',
+            title: t('user.email-form-builder-list.email-body.list.failed-delete-email-body'),
             message: t(`errors.${errorMessageTypeConverter(error.message)}`),
           }),
         );
@@ -362,6 +367,11 @@ export default function EmailFormBuilderList() {
           } hover:!bg-primary hover:text-white`}
           onClick={() => {
             setSelectedTab(0);
+            navigate('', {
+              state: {
+                from: '',
+              },
+            });
           }}>
           {t('user.email-form-builder-list.email-form-builder.list.email-form-builder')}
         </div>
@@ -371,15 +381,20 @@ export default function EmailFormBuilderList() {
           } hover:!bg-primary hover:text-white`}
           onClick={() => {
             setSelectedTab(1);
+            navigate('', {
+              state: {
+                from: 'EMAIL_BODY',
+              },
+            });
           }}>
-          {t('user.email-form-builder-list.email-form-builder.list.email-body')}
+          {t('user.email-form-builder-list.email-body.list.email-body')}
         </div>
       </div>
     );
   };
 
   return (
-    <>
+    <React.Fragment>
       <RoleRenderer allowedRoles={['EMAIL_FORM_READ']}>
         <PreviewModal
           id={previewIdEFB}
@@ -406,8 +421,8 @@ export default function EmailFormBuilderList() {
           open={openDeleteModalEB}
           title={deleteModalTitleEB}
           message={deleteModalBodyEB}
-          cancelTitle={t('user.email-form-builder-list.email-form-builder.list.cancel-title')}
-          submitTitle={t('user.email-form-builder-list.email-form-builder.list.submit-title')}
+          cancelTitle={t('user.email-form-builder-list.email-body.list.cancel-title')}
+          submitTitle={t('user.email-form-builder-list.email-body.list.submit-title')}
           submitAction={submitDeleteEmailBody}
           cancelAction={() => {
             setOpenDeleteModalEB(false);
@@ -417,7 +432,11 @@ export default function EmailFormBuilderList() {
           btnSubmitStyle=""
         />
         <TitleCard
-          title={t('user.email-form-builder-list.email-form-builder.list.title')}
+          title={
+            selectedTab === 0
+              ? t('user.email-form-builder-list.email-form-builder.list.title-card')
+              : t('user.email-form-builder-list.email-body.list.title-card')
+          }
           topMargin="mt-2"
           TopSideButtons={
             canCreateEmailFormBuilder ? (
@@ -431,9 +450,7 @@ export default function EmailFormBuilderList() {
               ) : (
                 <Link to="new-body" className="btn btn-primary flex flex-row gap-2 rounded-xl">
                   <img src={Plus} className="w-[24px] h-[24px]" />
-                  <span>
-                    {t('user.email-form-builder-list.email-form-builder.list.add-new-email-body')}
-                  </span>
+                  <span>{t('user.email-form-builder-list.email-body.list.add-new-form')}</span>
                 </Link>
               )
             ) : (
@@ -453,7 +470,7 @@ export default function EmailFormBuilderList() {
                 onBlur={(e: any) => {
                   setSearchEB(e.target.value);
                 }}
-                placeholder={t('user.email-form-builder-list.email-form-builder.list.search') ?? ''}
+                placeholder={t('user.email-form-builder-list.email-body.list.search') ?? ''}
               />
             )
           }>
@@ -509,6 +526,6 @@ export default function EmailFormBuilderList() {
           )}
         </TitleCard>
       </RoleRenderer>
-    </>
+    </React.Fragment>
   );
 }

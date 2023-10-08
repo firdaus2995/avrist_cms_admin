@@ -184,7 +184,7 @@ export default function PageManagementList() {
   const COLUMNS = [
     {
       header: () => <span className="text-[14px]"></span>,
-      accessorKey: 'pageStatus',
+      accessorKey: 'status',
       enableSorting: false,
       cell: (info: any) => (
         <>
@@ -224,12 +224,8 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => (
-        <span className="text-[14px]">
-          {t('user.page-management.list.page-list.row.created-by')}
-        </span>
-      ),
-      accessorKey: 'createdBy.name',
+      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.created-by')}</span>,
+      accessorKey: 'createdBy',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">

@@ -36,101 +36,13 @@ export const pageManagementApi = createApi({
               }
             ) {
               total
-              pages {
+              pages {    
                 id
                 title
-                slug
-                metaTitle
-                metaDescription
-                shortDesc
-                content
-                imgFilename
-                pageTemplateId
-                postTypeId
-                pageStatus
-                comment
-                isDeleted
-                isPublished
+                status
+                createdBy 
                 createdAt
-                createdBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
                 updatedAt
-                updatedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                reviewedAt
-                reviewedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                publishedAt
-                publishedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                rejectedAt
-                rejectedBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                requestDeleteAt
-                requestDeleteBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                deleteReviewAt
-                deleteReviewBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                deleteApproveAt
-                deleteApproveBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                deleteRejectAt
-                deleteRejectBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
-                restoredAt
-                restoredBy {
-                  id
-                  name
-                  role {
-                    name
-                  }
-                }
               }
             }
           }
@@ -170,10 +82,12 @@ export const pageManagementApi = createApi({
               logs {
                 date
                 value {
-                  pageStatus
+                  status
                   comment
-                  createdByName
-                  logCreatedAt
+                  actionText
+                  user
+                  role
+                  createdAt
                 }
               }
             }
@@ -221,11 +135,10 @@ export const pageManagementApi = createApi({
               pages {
                 id
                 title
-                pageStatus
+                status
                 createdAt
                 createdBy
                 updatedAt
-                updatedBy
               }
             }
           }
@@ -245,7 +158,6 @@ export const pageManagementApi = createApi({
               metaDescription
               shortDesc
               content
-              imgFilename
               lastEdited {
                   editedBy
                   editedAt
@@ -259,8 +171,7 @@ export const pageManagementApi = createApi({
                 id
                 name
               }
-              pageStatus
-              comment
+              status
             }
           }
         `,
@@ -277,7 +188,6 @@ export const pageManagementApi = createApi({
             $metaDescription: String!
             $shortDesc: String!
             $content: String!
-            $imgFilename: String!
             $isDraft: Boolean!
             $isAutoApprove: Boolean!
             $pageTemplateId: Int!
@@ -291,7 +201,6 @@ export const pageManagementApi = createApi({
                 metaDescription: $metaDescription
                 shortDesc: $shortDesc
                 content: $content
-                imgFilename: $imgFilename
                 isDraft: $isDraft
                 isAutoApprove: $isAutoApprove
                 pageTemplateId: $pageTemplateId
@@ -305,18 +214,16 @@ export const pageManagementApi = createApi({
               metaDescription
               shortDesc
               content
-              imgFilename
               pageTemplate {
-                id
-                name
-                imageUrl
+                  id
+                  name
+                  imageUrl
               }        
               postType {
-                id
-                name
+                  id
+                  name
               }
-              pageStatus
-              comment
+              status
             }
           }
         `,
@@ -346,7 +253,6 @@ export const pageManagementApi = createApi({
             $metaDescription: String!
             $shortDesc: String!
             $content: String!
-            $imgFilename: String!
             $isDraft: Boolean!
             $isAutoApprove: Boolean!
             $pageTemplateId: Boolean!
@@ -360,7 +266,6 @@ export const pageManagementApi = createApi({
                 metaDescription: $metaDescription
                 shortDesc: $shortDesc
                 content: $content
-                imgFilename: $imgFilename
                 isDraft: $isDraft
                 isAutoApprove: $isAutoApprove
                 pageTemplateId: $pageTemplateId
@@ -375,18 +280,16 @@ export const pageManagementApi = createApi({
               metaDescription
               shortDesc
               content
-              imgFilename
               pageTemplate {
-                id
-                name
-                imageUrl
-              }
+                  id
+                  name
+                  imageUrl
+              }        
               postType {
-                id
-                name
+                  id
+                  name
               }
-              pageStatus
-              comment
+              status
             }
           }
         `,
