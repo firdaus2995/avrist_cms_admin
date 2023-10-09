@@ -2,7 +2,7 @@ import { useState } from 'react';
 import Collapse from '@mui/material/Collapse';
 import { CheckBox } from '../../atoms/Input/CheckBox';
 import { IPermissionCollase, ISubCollapse } from './types';
-// import { store } from '@/store';
+
 export default function PermissionCollapse(props: IPermissionCollase) {
   const { permission, disabled, onChange, allPermission } = props;
 
@@ -11,7 +11,6 @@ export default function PermissionCollapse(props: IPermissionCollase) {
   return (
     <>
       {permission?.listContent.length > 1 ? (
-
         <div className="mb-6">
           <div
             onClick={() => {
@@ -44,7 +43,13 @@ export default function PermissionCollapse(props: IPermissionCollase) {
           <Collapse in={open}>
             <div className="py-4 pl-4 ">
               {permission.listContent.map((content, i) => (
-                <SubCollapse key={i} subcollapse={content} disabled={disabled} onChange={onChange} allPermission={allPermission} />
+                <SubCollapse
+                  key={i}
+                  subcollapse={content}
+                  disabled={disabled}
+                  onChange={onChange}
+                  allPermission={allPermission}
+                />
               ))}
             </div>
           </Collapse>
@@ -87,8 +92,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
                   updateType={d.permission}
                   labelTitle={d.permissionTitleLabel}
                   defaultValue={allPermission?.includes(d.permission)}
-                  // defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
-                  disabled={disabled}
+                  disabled={shouldDisableCheckBox(d.permission, allPermission)}
                   updateFormValue={() => {
                     onChange(d.permission);
                   }}
@@ -105,7 +109,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
 const SubCollapse = (props: ISubCollapse) => {
   const { subcollapse, disabled, onChange, allPermission } = props;
   const [open, setOpen] = useState(false);
-  
+
   return (
     <div className="mb-6">
       <div
@@ -143,9 +147,8 @@ const SubCollapse = (props: ISubCollapse) => {
               key={i}
               updateType={d.permission}
               labelTitle={d.permissionTitleLabel}
-              // defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
               defaultValue={allPermission?.includes(d.permission)}
-              disabled={disabled}
+              disabled={disabled ?? shouldDisableCheckBox(d.permission, allPermission)}
               updateFormValue={() => {
                 onChange(d.permission);
               }}
@@ -156,3 +159,13 @@ const SubCollapse = (props: ISubCollapse) => {
     </div>
   );
 };
+
+// check apakah harus di disabled
+function shouldDisableCheckBox(permission: string, allPermission: any[]) {
+  if (permission.endsWith('_READ')) {
+    //  check jika satu row / kategori
+    const categoryOrRow = permission.split('_READ')[0];
+    return allPermission.some((perm: any) => perm.startsWith(categoryOrRow) && perm !== permission);
+  }
+  return false;
+}

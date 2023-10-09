@@ -28,7 +28,7 @@ export default function PermissionList(props: IPermisionList) {
       dispatch(setPermissions(filter));
     } else {
       // Extract the base permission name
-      const basePermission = d.replace(/_(READ|CREATE|EDIT|DELETE)$/, '');
+      const basePermission = d.replace(/_(READ|CREATE|EDIT|DELETE|REVIEW|APPROVE|REGISTER|UPDATE)$/, '');
 
       // Check if the base read permission exists in allPermission
       const readPermission = `${basePermission}_READ`;
