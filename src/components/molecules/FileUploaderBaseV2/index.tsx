@@ -31,6 +31,7 @@ export default function FileUploaderBaseV2({
   label,
   maxSize,
   items,
+  error,
 }: any) {
   const dispatch = useAppDispatch();
   const inputRef = useRef<any>(null);
@@ -184,7 +185,7 @@ export default function FileUploaderBaseV2({
         onDragOver={e => {
           e.preventDefault();
         }}
-        className={`min-w-[150px] bg-white border-dashed border-[2px] border-lavender rounded-xl`}
+        className={`min-w-[150px] bg-white border-dashed border-[2px] rounded-xl ${error ? 'border-reddist' : 'border-lavender'}`}
       >
         {(!items?.length || multiple) && (
           <label

@@ -137,13 +137,17 @@ export default function EmailFormBuilderList() {
             }}>
             {t('user.email-form-builder-list.email-body.list.view-detail')}
           </button>
-          <img
-            className={`cursor-pointer select-none flex items-center justify-center`}
-            src={TableDelete}
-            onClick={() => {
-              onClickEmailBodyDelete(info.getValue());
-            }}
-          />
+          {
+            canDeleteEmailFormBuilder && (
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickEmailBodyDelete(info.getValue());
+                }}
+              />
+            )
+          }
         </div>
       ),
     },
