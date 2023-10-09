@@ -670,6 +670,8 @@ export default function EmailFormBuilderNew() {
         };
       });
     };
+
+    setActiveComponent(null);
   };
 
   const handlerDeleteComponent = (index: number) => {
