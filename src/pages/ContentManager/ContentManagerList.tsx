@@ -8,6 +8,7 @@ import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
 import Typography from '@/components/atoms/Typography';
 import { t } from 'i18next';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function ContentManagerList() {
   const [listData, setListData] = useState<any>([]);
@@ -78,41 +79,43 @@ export default function ContentManagerList() {
 
   return (
     <>
-      <TitleCard
-        title={t('user.content-manager.title')}
-        topMargin="mt-2"
-        SearchBar={
-          <InputSearch
-            onBlur={(e: any) => {
-              setSearch(e.target.value);
+      <RoleRenderer allowedRoles={['CONTENT_MANAGER_READ']}>
+        <TitleCard
+          title={t('user.content-manager.title')}
+          topMargin="mt-2"
+          SearchBar={
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearch(e.target.value);
+              }}
+              placeholder={t('user.content-manager.searchPlaceholder') ?? ''}
+            />
+          }>
+          <div className="overflow-x-auto w-full mb-5">
+            <Table
+              rows={listData}
+              columns={COLUMNS}
+              loading={false}
+              error={false}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+            />
+          </div>
+          <PaginationComponent
+            total={total}
+            page={pageIndex}
+            pageSize={pageLimit}
+            setPageSize={(page: number) => {
+              setPageLimit(page);
+              setPageIndex(0);
             }}
-            placeholder={t('user.content-manager.searchPlaceholder') ?? ''}
+            setPage={(page: number) => {
+              setPageIndex(page);
+            }}
           />
-        }>
-        <div className="overflow-x-auto w-full mb-5">
-          <Table
-            rows={listData}
-            columns={COLUMNS}
-            loading={false}
-            error={false}
-            manualPagination={true}
-            manualSorting={true}
-            onSortModelChange={handleSortModelChange}
-          />
-        </div>
-        <PaginationComponent
-          total={total}
-          page={pageIndex}
-          pageSize={pageLimit}
-          setPageSize={(page: number) => {
-            setPageLimit(page);
-            setPageIndex(0);
-          }}
-          setPage={(page: number) => {
-            setPageIndex(page);
-          }}
-        />
-      </TitleCard>
+        </TitleCard>
+      </RoleRenderer>
     </>
   );
 }

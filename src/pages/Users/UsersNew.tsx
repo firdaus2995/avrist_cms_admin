@@ -300,7 +300,7 @@ export default function UsersNew() {
           {/* ROW 5 */}
           <div className="max-w-[365px]">
             <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
-              Attribute Type
+              Department
               <span className={'text-reddist text-lg'}>{`*`}</span>
             </Typography>
             <FormList.DropDown

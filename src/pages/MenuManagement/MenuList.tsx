@@ -24,6 +24,7 @@ import WarningIcon from '../../assets/warning.png';
 import CancelIcon from '../../assets/cancel.png';
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function MenuList() {
   // const params = useParams();
@@ -145,7 +146,6 @@ export default function MenuList() {
         );
       });
   };
-
 
   function clearForm() {
     setTitle('');
@@ -371,7 +371,7 @@ export default function MenuList() {
               className="w-6 h-6">
               <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
             </svg>
-          {t('user.menu-list.menuList.addPages')}
+            {t('user.menu-list.menuList.addPages')}
           </div>
         ) : (
           <>
@@ -383,7 +383,7 @@ export default function MenuList() {
                 setIsOpenForm(true);
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-                {t('user.menu-list.menuList.pages')}
+              {t('user.menu-list.menuList.pages')}
             </div>
             <div
               role="button"
@@ -393,7 +393,7 @@ export default function MenuList() {
                 setIsOpenForm(true);
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-                {t('user.menu-list.menuList.links')}
+              {t('user.menu-list.menuList.links')}
             </div>
           </>
         )}
@@ -487,7 +487,6 @@ export default function MenuList() {
       </div>
     );
   };
-  
 
   const onUpdateDataStructure = () => {
     const data = dataScructure;
@@ -525,81 +524,84 @@ export default function MenuList() {
 
   return (
     <>
-    <TitleCard title=''>
-      <div className='p-5 text-2xl font-bold mb-5 gap-2 text-primary flex flex-row'>
-        <img src={LifeInsurance} className='w-8' />
-        {t("user.menu-list.menuList.avristLifeInsurance")}
-      </div>
-      <div className='p-5 text-2xl font-semibold border-b-2 mb-10'>{t("user.menu-list.menuList.menuStructure")}</div>
-      {isOpenForm && renderForm()}
-      {!isOpenForm && (
-        <>
-          {dataScructure?.length > 0 && (
-            <SortableTreeComponent
-              data={dataScructure}
-              onClick={(data: any) => {
-                onEdit(data);
-              }}
-              onChange={function (_data: any): void {
-                setDataStructure(_data);
-              }}
-            />
+      <RoleRenderer allowedRoles={['MENU_READ']}>
+        <TitleCard title="">
+          <div className="p-5 text-2xl font-bold mb-5 gap-2 text-primary flex flex-row">
+            <img src={LifeInsurance} className="w-8" />
+            {t('user.menu-list.menuList.avristLifeInsurance')}
+          </div>
+          <div className="p-5 text-2xl font-semibold border-b-2 mb-10">
+            {t('user.menu-list.menuList.menuStructure')}
+          </div>
+          {isOpenForm && renderForm()}
+          {!isOpenForm && (
+            <>
+              {dataScructure?.length > 0 && (
+                <SortableTreeComponent
+                  data={dataScructure}
+                  onClick={(data: any) => {
+                    onEdit(data);
+                  }}
+                  onChange={function (_data: any): void {
+                    setDataStructure(_data);
+                  }}
+                />
+              )}
+              {renderAddButtons()}
+            </>
           )}
-          {renderAddButtons()}
-        </>
-      )}
-  
-      <div className='flex justify-end absolute bottom-10 right-10'>
-        <div className='flex flex-row p-2 gap-2'>
-          <button
-            onClick={() => {
-              setShowCancel(true);
+
+          <div className="flex justify-end absolute bottom-10 right-10">
+            <div className="flex flex-row p-2 gap-2">
+              <button
+                onClick={() => {
+                  setShowCancel(true);
+                }}
+                className="btn btn-outline text-xs btn-sm w-28 h-10">
+                {t('user.menu-list.menuList.cancel')}
+              </button>
+              <button
+                disabled={dataScructure === dataScructureInit}
+                onClick={() => {
+                  onUpdateDataStructure();
+                }}
+                className="btn btn-success text-xs btn-sm w-28 h-10">
+                {t('user.menu-list.menuList.submit')}
+              </button>
+            </div>
+          </div>
+
+          {modalEdit()}
+          <ModalConfirm
+            open={showComfirm}
+            cancelAction={() => {
+              setShowComfirm(false);
             }}
-            className='btn btn-outline text-xs btn-sm w-28 h-10'>
-            {t("user.menu-list.menuList.cancel")}
-          </button>
-          <button
-            disabled={dataScructure === dataScructureInit}
-            onClick={() => {
-              onUpdateDataStructure();
+            title={titleConfirm}
+            cancelTitle={t('user.menu-list.menuList.no')}
+            message={messageConfirm}
+            submitAction={onDelete}
+            submitTitle={t('user.menu-list.menuList.yes')}
+            icon={WarningIcon}
+            btnSubmitStyle={''}
+          />
+          <ModalConfirm
+            open={showCancel}
+            cancelAction={() => {
+              setShowCancel(false);
             }}
-            className='btn btn-success text-xs btn-sm w-28 h-10'>
-            {t("user.menu-list.menuList.submit")}
-          </button>
-        </div>
-      </div>
-  
-      {modalEdit()}
-      <ModalConfirm
-        open={showComfirm}
-        cancelAction={() => {
-          setShowComfirm(false);
-        }}
-        title={titleConfirm}
-        cancelTitle={t("user.menu-list.menuList.no")}
-        message={messageConfirm}
-        submitAction={onDelete}
-        submitTitle={t("user.menu-list.menuList.yes")}
-        icon={WarningIcon}
-        btnSubmitStyle={""}
-      />
-      <ModalConfirm
-        open={showCancel}
-        cancelAction={() => {
-          setShowCancel(false);
-        }}
-        title={t("user.menu-list.menuList.confirmCancelTitle")}
-        cancelTitle={t("user.menu-list.menuList.no")}
-        message={t("user.menu-list.menuList.confirmCancelMessage") ?? ''}
-        submitAction={() => {
-          navigate(0);
-        }}
-        submitTitle={t("user.menu-list.menuList.yes")}
-        icon={CancelIcon}
-        btnSubmitStyle={"btn-warning"}
-      />
-    </TitleCard>
-  </>
-  
+            title={t('user.menu-list.menuList.confirmCancelTitle')}
+            cancelTitle={t('user.menu-list.menuList.no')}
+            message={t('user.menu-list.menuList.confirmCancelMessage') ?? ''}
+            submitAction={() => {
+              navigate(0);
+            }}
+            submitTitle={t('user.menu-list.menuList.yes')}
+            icon={CancelIcon}
+            btnSubmitStyle={'btn-warning'}
+          />
+        </TitleCard>
+      </RoleRenderer>
+    </>
   );
 }
