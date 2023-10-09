@@ -12,6 +12,7 @@ interface ITNC {
 
 const TNC: React.FC<ITNC> = ({ data, configList, valueChange }) => {
   const [inputTextValue, setInputTextValue] = useState(data?.name);
+  
   return (
     <React.Fragment>
       <InputText
@@ -34,11 +35,13 @@ const TNC: React.FC<ITNC> = ({ data, configList, valueChange }) => {
         fieldTypeLabel="Upload TnC Document"
         isDocument={true}
         multiple={false}
+        border={false}
+        parentData={data}
+        error={data?.mandatory?.items}
+        helperText="This field is required"
         onChange={(e: any) => {
           valueChange('items', e);
         }}
-        border={false}
-        parentData={data}
       />
       <Config data={data} configList={configList} valueChange={valueChange} />
     </React.Fragment>

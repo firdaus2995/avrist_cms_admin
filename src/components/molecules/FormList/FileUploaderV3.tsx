@@ -63,6 +63,7 @@ export default function FileUploaderV2({
               disabled={disabled || isMaxFile}
               maxSize={maxSize}
               items={items}
+              error={error}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">
