@@ -2,9 +2,9 @@ import { useState } from 'react';
 import Collapse from '@mui/material/Collapse';
 import { CheckBox } from '../../atoms/Input/CheckBox';
 import { IPermissionCollase, ISubCollapse } from './types';
-import { store } from '@/store';
+// import { store } from '@/store';
 export default function PermissionCollapse(props: IPermissionCollase) {
-  const { permission, disabled, onChange } = props;
+  const { permission, disabled, onChange, allPermission } = props;
 
   const [open, setOpen] = useState(false);
 
@@ -44,7 +44,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
           <Collapse in={open}>
             <div className="py-4 pl-4 ">
               {permission.listContent.map((content, i) => (
-                <SubCollapse key={i} subcollapse={content} disabled={disabled} onChange={onChange} />
+                <SubCollapse key={i} subcollapse={content} disabled={disabled} onChange={onChange} allPermission={allPermission} />
               ))}
             </div>
           </Collapse>
@@ -86,7 +86,8 @@ export default function PermissionCollapse(props: IPermissionCollase) {
                   key={i}
                   updateType={d.permission}
                   labelTitle={d.permissionTitleLabel}
-                  defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
+                  defaultValue={allPermission?.includes(d.permission)}
+                  // defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
                   disabled={disabled}
                   updateFormValue={() => {
                     onChange(d.permission);
@@ -102,7 +103,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
 }
 
 const SubCollapse = (props: ISubCollapse) => {
-  const { subcollapse, disabled, onChange } = props;
+  const { subcollapse, disabled, onChange, allPermission } = props;
   const [open, setOpen] = useState(false);
   
   return (
@@ -142,7 +143,8 @@ const SubCollapse = (props: ISubCollapse) => {
               key={i}
               updateType={d.permission}
               labelTitle={d.permissionTitleLabel}
-              defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
+              // defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
+              defaultValue={allPermission?.includes(d.permission)}
               disabled={disabled}
               updateFormValue={() => {
                 onChange(d.permission);
