@@ -1,47 +1,29 @@
-import { 
-  t,
-} from "i18next";
-import { 
-  useEffect, 
-  useState,
-} from "react";
-import { 
-  useNavigate, 
-  useParams,
-} from "react-router-dom";
-import dayjs from "dayjs";
+import { t } from 'i18next';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
 
-import UserOrange from "../../assets/user-orange.svg";
-import ModalConfirm from "../../components/molecules/ModalConfirm";
-import CancelIcon from "../../assets/cancel.png";
-import Radio from "../../components/molecules/Radio";
-import DropDown from "../../components/molecules/DropDown";
-import { 
-  TitleCard,
-} from "../../components/molecules/Cards/TitleCard";
-import { 
-  useAppDispatch,
-} from "../../store";
-import { 
-  InputText,
-} from "../../components/atoms/Input/InputText";
-import { 
-  InputPassword,
-} from "../../components/atoms/Input/InputPassword";
-import { 
-  InputDate,
-} from "../../components/atoms/Input/InputDate";
-import { 
-  useEditUserMutation, 
-  useGetRoleQuery, 
+import UserOrange from '../../assets/user-orange.svg';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
+import CancelIcon from '../../assets/cancel.png';
+import Radio from '../../components/molecules/Radio';
+import DropDown from '../../components/molecules/DropDown';
+import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import { useAppDispatch } from '../../store';
+import { InputText } from '../../components/atoms/Input/InputText';
+import { InputPassword } from '../../components/atoms/Input/InputPassword';
+import { InputDate } from '../../components/atoms/Input/InputDate';
+import {
+  useEditUserMutation,
+  useGetRoleQuery,
   useGetUserDetailQuery,
-} from "../../services/User/userApi";
-import { 
-  openToast,
-} from "../../components/atoms/Toast/slice";
-import FileUploaderAvatar from "@/components/molecules/FileUploaderAvatar";
+} from '../../services/User/userApi';
+import { openToast } from '../../components/atoms/Toast/slice';
+import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
+import Typography from '../../components/atoms/Typography';
+import FormList from '../../components/molecules/FormList';
 
-export default function UsersEdit () {
+export default function UsersEdit() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
@@ -49,36 +31,43 @@ export default function UsersEdit () {
   // FORM STATE
   const [id] = useState<any>(Number(params.id));
   const [isActive, setIsActive] = useState<any>(true);
-  const [userId, setUserId] = useState<string>("");
-  const [password] = useState<string>("XXXXXXXXXXXXXXXXXXXXXXXXXXXXX");
-  const [fullName, setFullName] = useState<string>("");
-  const [dob, setDob] = useState<any>("");
-  const [gender, setGender] = useState<string | number | boolean>("");
-  const [email, setEmail] = useState<string>("");
-  const [company] = useState<string>("Avrist Life Insurance");
+  const [userId, setUserId] = useState<string>('');
+  const [password] = useState<string>('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
+  const [fullName, setFullName] = useState<string>('');
+  const [dob, setDob] = useState<any>('');
+  const [gender, setGender] = useState<string | number | boolean>('');
+  const [email, setEmail] = useState<string>('');
+  const [company] = useState<string>('Avrist Life Insurance');
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
   const [avatar, setAvatar] = useState('');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
-  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
-
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+  // LIST STATE
+  const [listAttributes] = useState<any>([
+    { value: '1', label: 'CMC' },
+    { value: '2', label: 'DPLK/Pension' },
+    { value: '3', label: 'Syariah' },
+    { value: '4', label: 'HR' },
+  ]);
   // RTK GET ROLE
-  const fetchUserDetailQuery = useGetUserDetailQuery({id}, {
-    refetchOnMountOrArgChange: true,
-  });
+  const fetchUserDetailQuery = useGetUserDetailQuery(
+    { id },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const fetchRoleQuery = useGetRoleQuery({});
 
   // RTK USER DETAIL
   const { data } = fetchUserDetailQuery;
-  const { data: fetchedRole } = fetchRoleQuery;  
+  const { data: fetchedRole } = fetchRoleQuery;
 
   // RTK EDIT USER
-  const [ editUser, {
-    isLoading,
-  }] = useEditUserMutation();
+  const [editUser, { isLoading }] = useEditUserMutation();
 
   useEffect(() => {
     if (fetchedRole) {
@@ -86,11 +75,11 @@ export default function UsersEdit () {
         return {
           value: Number(element.id),
           label: element.name,
-        }
-      })
+        };
+      });
       setRoleData(roleList);
-    };
-  }, [fetchedRole])
+    }
+  }, [fetchedRole]);
 
   useEffect(() => {
     if (data) {
@@ -102,21 +91,21 @@ export default function UsersEdit () {
       setEmail(userDetail.email);
       setRoleId(userDetail.role.id);
       setIsActive(userDetail.statusActive);
-    };
-  }, [data])
+    }
+  }, [data]);
 
   const onSave = () => {
     const payload = {
       id,
       fullName,
       dob: dayjs(dob).format('YYYY-MM-DD'),
-      gender: gender === "FEMALE" ? false : gender === "MALE" ? true : null,
+      gender: gender === 'FEMALE' ? false : gender === 'MALE' ? true : null,
       email,
       company,
       profilePicture: avatar,
       statusActive: isActive,
       roleId,
-    };    
+    };
     editUser(payload)
       .unwrap()
       .then((d: any) => {
@@ -124,7 +113,9 @@ export default function UsersEdit () {
           openToast({
             type: 'success',
             title: t('user.users-edit.users.toast-success'),
-            message: t('user.users-edit.user.edit.edit.success-msg', { name: d.userUpdate.fullName }),
+            message: t('user.users-edit.user.edit.edit.success-msg', {
+              name: d.userUpdate.fullName,
+            }),
           }),
         );
         navigate('/user');
@@ -151,10 +142,7 @@ export default function UsersEdit () {
   };
 
   return (
-    <TitleCard
-      title={t('user.users-edit.user.edit.edit.title')}
-      topMargin="mt-2"
-    >
+    <TitleCard title={t('user.users-edit.user.edit.edit.title')} topMargin="mt-2">
       <ModalConfirm
         open={showChangeStatusModal}
         cancelAction={() => {
@@ -167,7 +155,7 @@ export default function UsersEdit () {
         submitAction={changeStatusSubmit}
         submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
         icon={UserOrange}
-        btnSubmitStyle='btn-warning'
+        btnSubmitStyle="btn-warning"
       />
       <ModalConfirm
         open={showLeaveModal}
@@ -180,12 +168,12 @@ export default function UsersEdit () {
         submitAction={onLeave}
         submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
         icon={CancelIcon}
-        btnSubmitStyle='btn-warning'
+        btnSubmitStyle="btn-warning"
       />
-      <form className="flex flex-col w-100" >
-        <div className='flex items-center justify-center'>
+      <form className="flex flex-col w-100">
+        <div className="flex items-center justify-center">
           <FileUploaderAvatar
-            id={"edit_profile_picture"}
+            id={'edit_profile_picture'}
             image={avatar}
             imageChanged={(image: any) => {
               setAvatar(image);
@@ -209,7 +197,10 @@ export default function UsersEdit () {
                 label: t('user.users-edit.user.edit.inactive'),
               },
             ]}
-            onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
+            onSelect={(
+              event: React.ChangeEvent<HTMLInputElement>,
+              value: string | number | boolean,
+            ) => {
               if (event) {
                 setIsActive(value);
                 if (value === false) {
@@ -238,9 +229,7 @@ export default function UsersEdit () {
                 disabled
               />
             </div>
-            <div className="flex flex-1">
-              {/* SPACES */}
-            </div>
+            <div className="flex flex-1">{/* SPACES */}</div>
           </div>
           {/* ROW 3 */}
           <div className="flex flex-row gap-14">
@@ -274,15 +263,18 @@ export default function UsersEdit () {
                 labelRequired
                 items={[
                   {
-                    value: "MALE",
+                    value: 'MALE',
                     label: t('user.users-edit.user.edit.male'),
                   },
                   {
-                    value: "FEMALE",
+                    value: 'FEMALE',
                     label: t('user.users-edit.user.edit.female'),
                   },
                 ]}
-                onSelect={(event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => {
+                onSelect={(
+                  event: React.ChangeEvent<HTMLInputElement>,
+                  value: string | number | boolean,
+                ) => {
                   if (event) {
                     setGender(value);
                   }
@@ -329,21 +321,51 @@ export default function UsersEdit () {
               />
             </div>
           </div>
+          {/* ROW 5 */}
+          <div className="max-w-[365px]">
+            <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
+              Department
+              <span className={'text-reddist text-lg'}>{`*`}</span>
+            </Typography>
+            <FormList.DropDown
+              key="department"
+              labelTitle="Department"
+              // defaultValue={}
+              // resetValue={}
+              // error={}
+              // helperText={}
+              themeColor="primary"
+              items={listAttributes}
+              onChange={(e: any) => {
+                console.log(e);
+              }}
+            />
+          </div>
         </div>
         <div className="mt-[200px] flex justify-end items-end gap-2">
-          <button className="btn btn-outline btn-md" onClick={(event: any) => {
-            event.preventDefault();
-            setLeaveTitleModalShow(t('user.users-edit.user.edit.edit.modal.confirmation'));
-            setMessageLeaveModalShow(t('user.users-edit.user.edit.edit.modal.leave-confirmation'));
-            setShowLeaveModal(true);
-          }}>
-            {isLoading ? t('user.users-edit.user.edit.edit.btn.loading') : t('user.users-edit.user.edit.edit.btn.cancel')}
+          <button
+            className="btn btn-outline btn-md"
+            onClick={(event: any) => {
+              event.preventDefault();
+              setLeaveTitleModalShow(t('user.users-edit.user.edit.edit.modal.confirmation'));
+              setMessageLeaveModalShow(
+                t('user.users-edit.user.edit.edit.modal.leave-confirmation'),
+              );
+              setShowLeaveModal(true);
+            }}>
+            {isLoading
+              ? t('user.users-edit.user.edit.edit.btn.loading')
+              : t('user.users-edit.user.edit.edit.btn.cancel')}
           </button>
-          <button className="btn btn-success btn-md text-white" onClick={(event: any) => {
-            event.preventDefault();
-            onSave();
-          }}>
-            {isLoading ? t('user.users-edit.user.edit.edit.btn.loading') : t('user.users-edit.user.edit.edit.btn.save')}
+          <button
+            className="btn btn-success btn-md text-white"
+            onClick={(event: any) => {
+              event.preventDefault();
+              onSave();
+            }}>
+            {isLoading
+              ? t('user.users-edit.user.edit.edit.btn.loading')
+              : t('user.users-edit.user.edit.edit.btn.save')}
           </button>
         </div>
       </form>
