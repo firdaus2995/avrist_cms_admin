@@ -6,7 +6,7 @@ import { IPermissionCollase, ISubCollapse } from './types';
 export default function PermissionCollapse(props: IPermissionCollase) {
   const { permission, disabled, onChange, allPermission } = props;
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <>
