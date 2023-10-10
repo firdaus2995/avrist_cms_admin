@@ -5,7 +5,6 @@ import dayjs from 'dayjs';
 
 import UserOrange from '../../assets/user-orange.svg';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
-import DropDown from '../../components/molecules/DropDown';
 import Radio from '../../components/molecules/Radio';
 import CancelIcon from '../../assets/cancel.png';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
@@ -19,21 +18,18 @@ import { errorMessageTypeConverter } from '@/utils/logicHelper';
 import FormList from '../../components/molecules/FormList';
 import Typography from '../../components/atoms/Typography';
 import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
+import { useForm, Controller } from 'react-hook-form';
 
 export default function UsersNew() {
-  const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const [roleData, setRoleData] = useState([]);
   // FORM STATE
   const [isActive, setIsActive] = useState<any>(true);
-  const [userId, setUserId] = useState<string>('');
   const [password] = useState<string>('Avrist01#');
-  const [fullName, setFullName] = useState<string>('');
   const [dob, setDob] = useState<any>('');
   const [gender, setGender] = useState<string | number | boolean>('');
-  const [email, setEmail] = useState<string>('');
   const [company] = useState<string>('Avrist Life Insurance');
-  const [roleId, setRoleId] = useState<string | number | boolean>(0);
   const [avatar, setAvatar] = useState('');
   const now = dayjs().format('YYYY-MM-DD');
   // CHANGE STATUS MODAL
@@ -41,7 +37,7 @@ export default function UsersNew() {
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');  
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
   // LIST STATE
   const [listAttributes] = useState<any>([
     { value: '1', label: 'CMC' },
@@ -57,6 +53,12 @@ export default function UsersNew() {
   // RTK CREATE USER
   const [createUser, { isLoading }] = useCreateUserMutation();
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+
   useEffect(() => {
     if (data) {
       const roleList = data?.roleList?.roles.map((element: any) => {
@@ -69,18 +71,18 @@ export default function UsersNew() {
     }
   }, [data]);
 
-  const onSave = () => {
+  function onSubmit(data: { userId: any; fullName: any; email: any; role: any }) {
     const payload = {
-      userId,
+      userId: data?.userId,
       password,
-      fullName,
+      fullName: data?.fullName,
       dob: dayjs(dob).format('YYYY-MM-DD'),
       gender: gender === 'FEMALE' ? false : gender === 'MALE' ? true : null,
-      email,
+      email: data?.email,
       company,
       profilePicture: avatar,
       statusActive: isActive,
-      roleId,
+      roleId: data?.role,
     };
     createUser(payload)
       .unwrap()
@@ -103,7 +105,7 @@ export default function UsersNew() {
           }),
         );
       });
-  };
+  }
 
   const changeStatusSubmit = () => {
     setIsActive(false);
@@ -144,10 +146,14 @@ export default function UsersNew() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-      <form className="flex flex-col w-100">
-        <div className='flex items-center justify-center'>
+      <form
+        className="flex flex-col w-100"
+        onSubmit={handleSubmit((data: any) => {
+          onSubmit(data);
+        })}>
+        <div className="flex items-center justify-center">
           <FileUploaderAvatar
-            id={"add_profile_picture"}
+            id={'add_profile_picture'}
             image={avatar}
             imageChanged={(image: any) => {
               setAvatar(image);
@@ -185,16 +191,32 @@ export default function UsersNew() {
           />
           {/* ROW 2 */}
           <div className="flex flex-row gap-14">
-            <div className="flex flex-1">
-              <InputText
-                labelTitle={t('user.users-new.user.add.user-id')}
-                labelStyle="font-bold"
-                labelRequired
-                value={userId}
-                placeholder={t('user.add.placeholder-user-id')}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setUserId(event.target.value);
-                }}
+            <div className="max-w-[340px]">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
+                {t('user.users-new.user.add.user-id')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <Controller
+                name="userId"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'User ID is required' }}
+                render={({ field }) => (
+                  <FormList.TextField
+                    {...field}
+                    key="userId"
+                    inputWidth={340}
+                    placeholder={t('user.add.placeholder-user-id')}
+                    error={!!errors?.userId?.message}
+                    helperText={errors?.userId?.message}
+                    roundStyle="3xl"
+                    border={false}
+                    value={field.value}
+                    onChange={(e: { target: { value: any } }) => {
+                      field.onChange(e.target.value);
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-1">
@@ -211,69 +233,132 @@ export default function UsersNew() {
           </div>
           {/* ROW 3 */}
           <div className="flex flex-row gap-14">
-            <div className="flex flex-1">
-              <InputText
-                labelTitle={t('user.users-new.user.add.fullname')}
-                labelStyle="font-bold"
-                labelRequired
-                value={fullName}
-                placeholder={t('user.add.placeholder-user-fullname')}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setFullName(event.target.value);
-                }}
+            <div className="max-w-[340px]">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
+                {t('user.users-new.user.add.fullname')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <Controller
+                name="fullName"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Full name is required' }}
+                render={({ field }) => (
+                  <FormList.TextField
+                    {...field}
+                    key="fullName"
+                    inputWidth={340}
+                    placeholder={t('user.add.placeholder-user-fullname')}
+                    error={!!errors?.fullName?.message}
+                    helperText={errors?.fullName?.message}
+                    roundStyle="3xl"
+                    border={false}
+                    value={field.value}
+                    onChange={(e: { target: { value: any } }) => {
+                      field.onChange(e.target.value);
+                    }}
+                  />
+                )}
               />
             </div>
-            <div className="flex flex-1">
-              <InputDate
-                labelTitle={t('user.users-new.user.add.date-of-birth')}
-                labelStyle="font-bold"
-                labelRequired
-                max={now}
-                value={dob}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setDob(event.target.value);
-                }}
+            <div className="max-w-[340px]">
+              <Controller
+                name="dob"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Date of birth is required' }}
+                render={({ field }) => (
+                  <InputDate
+                    {...field}
+                    labelTitle={t('user.users-new.user.add.date-of-birth')}
+                    labelStyle="font-bold"
+                    labelRequired
+                    containerStyle="w-[340px]"
+                    error={!!errors?.dob?.message && dob === ''}
+                    helperText={errors?.dob?.message}
+                    max={now}
+                    value={dob}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      setDob(event.target.value);
+                      field.onChange(event.target.value);
+                    }}
+                  />
+                )}
               />
             </div>
-            <div className="flex flex-1">
-              <Radio
-                labelTitle={t('user.users-new.user.add.gender') ?? ''}
-                labelStyle="font-bold"
-                labelRequired
-                items={[
-                  {
-                    value: 'MALE',
-                    label: t('user.users-new.user.add.male'),
-                  },
-                  {
-                    value: 'FEMALE',
-                    label: t('user.users-new.user.add.female'),
-                  },
-                ]}
-                onSelect={(
-                  event: React.ChangeEvent<HTMLInputElement>,
-                  value: string | number | boolean,
-                ) => {
-                  if (event) {
-                    setGender(value);
-                  }
-                }}
+            <div className="max-w-[340px]">
+              <Controller
+                name="gender"
+                control={control}
+                defaultValue={gender}
+                rules={{ required: 'Gender is required' }}
+                render={({ field }) => (
+                  <Radio
+                    {...field}
+                    labelTitle={t('user.users-new.user.add.gender') ?? ''}
+                    labelStyle="font-bold"
+                    labelRequired
+                    error={!!errors?.gender?.message && gender === ''}
+                    helperText={errors?.gender?.message}
+                    items={[
+                      {
+                        value: 'MALE',
+                        label: t('user.users-new.user.add.male'),
+                      },
+                      {
+                        value: 'FEMALE',
+                        label: t('user.users-new.user.add.female'),
+                      },
+                    ]}
+                    onSelect={(
+                      event: React.ChangeEvent<HTMLInputElement>,
+                      value: string | number | boolean,
+                    ) => {
+                      if (event) {
+                        setGender(value);
+                        field.onChange(value);
+                      }
+                    }}
+                  />
+                )}
               />
             </div>
           </div>
           {/* ROW 4 */}
           <div className="flex flex-row gap-14">
-            <div className="flex flex-1">
-              <InputText
-                labelTitle={t('user.users-new.user.add.user-email')}
-                labelStyle="font-bold"
-                labelRequired
-                type="email"
-                value={email}
-                placeholder={t('user.add.placeholder-user-email')}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setEmail(event.target.value);
+            <div className="max-w-[340px]">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
+                {t('user.users-new.user.add.user-email')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                rules={{
+                  required: 'Email is required',
+                  pattern: {
+                    value:
+                      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                    message: 'Please enter a valid email',
+                  },
                 }}
+                render={({ field }) => (
+                  <FormList.TextField
+                    {...field}
+                    key="email"
+                    inputWidth={340}
+                    error={!!errors?.email?.message}
+                    helperText={errors?.email?.message}
+                    roundStyle="3xl"
+                    placeholder={t('user.add.placeholder-user-email')}
+                    border={false}
+                    value={field.value}
+                    onChange={(e: { target: { value: any } }) => {
+                      field.onChange(e.target.value);
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-1">
@@ -284,19 +369,32 @@ export default function UsersNew() {
                 disabled
               />
             </div>
-            <div className="flex flex-1">
-              <DropDown
-                labelTitle={t('user.users-new.user.add.role') ?? ''}
-                labelStyle="font-bold"
-                labelRequired
+            <div className="max-w-[340px]">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
+                {t('user.users-new.user.add.role')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <Controller
+                name="role"
+                control={control}
                 defaultValue=""
-                labelEmpty={t('user.users-new.user.add.choose-role') ?? ''}
-                items={roleData}
-                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                  if (event) {
-                    setRoleId(value);
-                  }
-                }}
+                rules={{ required: 'Role is required' }}
+                render={({ field }) => (
+                  <FormList.DropDown
+                    {...field}
+                    key="role"
+                    labelTitle={t('user.page-template-new.category')}
+                    defaultValue=""
+                    inputWidth={340}
+                    error={!!errors?.role?.message}
+                    helperText={errors?.role?.message}
+                    themeColor="primary"
+                    items={roleData}
+                    onChange={(e: any) => {
+                      field.onChange(e.value);
+                    }}
+                  />
+                )}
               />
             </div>
           </div>
@@ -306,18 +404,27 @@ export default function UsersNew() {
               Department
               <span className={'text-reddist text-lg'}>{`*`}</span>
             </Typography>
-            <FormList.DropDown
-              key="department"
-              labelTitle="Department"
-              // defaultValue={}
-              // resetValue={}
-              // error={}
-              // helperText={}
-              themeColor="primary"
-              items={listAttributes}
-              onChange={(e: any) => {
-                console.log(e);
-              }}
+            <Controller
+              name="department"
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Department is required' }}
+              render={({ field }) => (
+                <FormList.DropDown
+                  {...field}
+                  key="department"
+                  labelTitle="Department"
+                  defaultValue=""
+                  inputWidth={340}
+                  error={!!errors?.department?.message}
+                  helperText={errors?.department?.message}
+                  themeColor="primary"
+                  items={listAttributes}
+                  onChange={(e: any) => {
+                    field.onChange(e.value);
+                  }}
+                />
+              )}
             />
           </div>
         </div>
@@ -332,12 +439,7 @@ export default function UsersNew() {
             }}>
             {isLoading ? t('loading') : t('btn.cancel')}
           </button>
-          <button
-            className="btn btn-success btn-md text-white"
-            onClick={(event: any) => {
-              event.preventDefault();
-              onSave();
-            }}>
+          <button className="btn btn-success btn-md text-white" type="submit">
             {isLoading ? t('loading') : t('btn.save')}
           </button>
         </div>
