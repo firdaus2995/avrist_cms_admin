@@ -89,7 +89,6 @@ export default function PermissionCollapse(props: IPermissionCollase) {
                   defaultValue={store.getState().rolesSlice?.permissions?.includes(d.permission)}
                   disabled={disabled}
                   updateFormValue={() => {
-                    console.log(store.getState().rolesSlice)
                     onChange(d.permission);
                   }}
                 />
