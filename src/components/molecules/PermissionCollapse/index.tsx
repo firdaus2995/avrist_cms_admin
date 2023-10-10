@@ -6,7 +6,7 @@ import { store } from '@/store';
 export default function PermissionCollapse(props: IPermissionCollase) {
   const { permission, disabled, onChange } = props;
 
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
 
   return (
     <>
@@ -103,7 +103,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
 
 const SubCollapse = (props: ISubCollapse) => {
   const { subcollapse, disabled, onChange } = props;
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   
   return (
     <div className="mb-6">
