@@ -25,13 +25,13 @@ export default function UsersNew() {
   const navigate = useNavigate();
   const [roleData, setRoleData] = useState([]);
   // FORM STATE
+  const now = dayjs().format('YYYY-MM-DD');
   const [isActive, setIsActive] = useState<any>(true);
   const [password] = useState<string>('Avrist01#');
-  const [dob, setDob] = useState<any>('');
+  const [dob, setDob] = useState<any>('DD-MM-YYYY');
   const [gender, setGender] = useState<string | number | boolean>('');
   const [company] = useState<string>('Avrist Life Insurance');
   const [avatar, setAvatar] = useState('');
-  const now = dayjs().format('YYYY-MM-DD');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
@@ -200,7 +200,7 @@ export default function UsersNew() {
                 name="userId"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'User ID is required' }}
+                rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <FormList.TextField
                     {...field}
@@ -242,7 +242,7 @@ export default function UsersNew() {
                 name="fullName"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'Full name is required' }}
+                rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <FormList.TextField
                     {...field}
@@ -266,7 +266,7 @@ export default function UsersNew() {
                 name="dob"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'Date of birth is required' }}
+                rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <InputDate
                     {...field}
@@ -274,12 +274,16 @@ export default function UsersNew() {
                     labelStyle="font-bold"
                     labelRequired
                     containerStyle="w-[340px]"
-                    error={!!errors?.dob?.message && dob === ''}
+                    error={!!errors?.dob?.message && dob === 'DD-MM-YYYY'}
                     helperText={errors?.dob?.message}
                     max={now}
                     value={dob}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      setDob(event.target.value);
+                      if (event.target.value === '') {
+                        setDob("DD-MM-YYYY")
+                      }else{
+                        setDob(event.target.value);
+                      }
                       field.onChange(event.target.value);
                     }}
                   />
@@ -291,7 +295,7 @@ export default function UsersNew() {
                 name="gender"
                 control={control}
                 defaultValue={gender}
-                rules={{ required: 'Gender is required' }}
+                rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <Radio
                     {...field}
@@ -336,7 +340,7 @@ export default function UsersNew() {
                 control={control}
                 defaultValue=""
                 rules={{
-                  required: 'Email is required',
+                  required: t('components.atoms.required') ?? '',
                   pattern: {
                     value:
                       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
@@ -378,7 +382,7 @@ export default function UsersNew() {
                 name="role"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'Role is required' }}
+                rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <FormList.DropDown
                     {...field}
@@ -408,7 +412,7 @@ export default function UsersNew() {
               name="department"
               control={control}
               defaultValue=""
-              rules={{ required: 'Department is required' }}
+              rules={{ required: t('components.atoms.required') ?? '' }}
               render={({ field }) => (
                 <FormList.DropDown
                   {...field}
