@@ -8,6 +8,7 @@ import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import Radio from '../../components/molecules/Radio';
 import DropDown from '../../components/molecules/DropDown';
+import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '../../store';
 import { InputText } from '../../components/atoms/Input/InputText';
@@ -19,15 +20,16 @@ import {
   useGetUserDetailQuery,
 } from '../../services/User/userApi';
 import { openToast } from '../../components/atoms/Toast/slice';
-import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
-import Typography from '../../components/atoms/Typography';
-import FormList from '../../components/molecules/FormList';
+import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
 
 export default function UsersEdit() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
+
+  // BACKEND STATE
   const [roleData, setRoleData] = useState([]);
+  const [departmentData, setDepartmentData] = useState([]);
   // FORM STATE
   const [id] = useState<any>(Number(params.id));
   const [isActive, setIsActive] = useState<any>(true);
@@ -39,6 +41,7 @@ export default function UsersEdit() {
   const [email, setEmail] = useState<string>('');
   const [company] = useState<string>('Avrist Life Insurance');
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
+  const [departmentId, setDepartmentId] = useState<string | number | boolean>(0);
   const [avatar, setAvatar] = useState('');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
@@ -46,13 +49,7 @@ export default function UsersEdit() {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
-  // LIST STATE
-  const [listAttributes] = useState<any>([
-    { value: '1', label: 'CMC' },
-    { value: '2', label: 'DPLK/Pension' },
-    { value: '3', label: 'Syariah' },
-    { value: '4', label: 'HR' },
-  ]);
+
   // RTK GET ROLE
   const fetchUserDetailQuery = useGetUserDetailQuery(
     { id },
@@ -60,18 +57,24 @@ export default function UsersEdit() {
       refetchOnMountOrArgChange: true,
     },
   );
+  
+  // RTK GET ROLE
   const fetchRoleQuery = useGetRoleQuery({});
+  const { data: dataRole } = fetchRoleQuery;
+
+  // RTK GET DEPARTMENT
+  const fetchDepartmentQuery = useGetDepartmentQuery({});
+  const { data: dataDepartment } = fetchDepartmentQuery;  
 
   // RTK USER DETAIL
   const { data } = fetchUserDetailQuery;
-  const { data: fetchedRole } = fetchRoleQuery;
 
   // RTK EDIT USER
   const [editUser, { isLoading }] = useEditUserMutation();
 
   useEffect(() => {
-    if (fetchedRole) {
-      const roleList = fetchedRole?.roleList?.roles.map((element: any) => {
+    if (dataRole) {
+      const roleList = dataRole?.roleList?.roles.map((element: any) => {
         return {
           value: Number(element.id),
           label: element.name,
@@ -79,7 +82,19 @@ export default function UsersEdit() {
       });
       setRoleData(roleList);
     }
-  }, [fetchedRole]);
+  }, [dataRole]);
+
+  useEffect(() => {
+    if (dataDepartment) {
+      const departmentList = dataDepartment?.departmentList?.departments.map((element: any) => {
+        return {
+          value: Number(element.id),
+          label: element.name,
+        };
+      });
+      setDepartmentData(departmentList);
+    };
+  }, [dataDepartment]);
 
   useEffect(() => {
     if (data) {
@@ -90,6 +105,7 @@ export default function UsersEdit() {
       setGender(userDetail.gender);
       setEmail(userDetail.email);
       setRoleId(userDetail.role.id);
+      setDepartmentId(userDetail.department.id);
       setIsActive(userDetail.statusActive);
     }
   }, [data]);
@@ -105,7 +121,9 @@ export default function UsersEdit() {
       profilePicture: avatar,
       statusActive: isActive,
       roleId,
+      departmentId,
     };
+
     editUser(payload)
       .unwrap()
       .then((d: any) => {
@@ -142,7 +160,7 @@ export default function UsersEdit() {
   };
 
   return (
-    <TitleCard title={t('user.users-edit.user.edit.edit.title')} topMargin="mt-2">
+    <TitleCard title={t('user.users-edit.user.edit.title')} topMargin="mt-2">
       <ModalConfirm
         open={showChangeStatusModal}
         cancelAction={() => {
@@ -322,24 +340,24 @@ export default function UsersEdit() {
             </div>
           </div>
           {/* ROW 5 */}
-          <div className="max-w-[365px]">
-            <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
-              Department
-              <span className={'text-reddist text-lg'}>{`*`}</span>
-            </Typography>
-            <FormList.DropDown
-              key="department"
-              labelTitle="Department"
-              // defaultValue={}
-              // resetValue={}
-              // error={}
-              // helperText={}
-              themeColor="primary"
-              items={listAttributes}
-              onChange={(e: any) => {
-                console.log(e);
-              }}
-            />
+          <div className="flex flex-row gap-14">
+            <div className="flex flex-1">
+              <DropDown
+                labelTitle={t('user.users-new.user.add.department') ?? ''}
+                labelStyle="font-bold"
+                labelRequired
+                defaultValue={departmentId}
+                labelEmpty={t('user.users-new.user.add.choose-department') ?? ''}
+                items={departmentData}
+                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                  if (event) {
+                    setDepartmentId(value);
+                  }
+                }}
+              />
+            </div>
+            <div className="flex flex-1">{/* SPACES */}</div>
+            <div className="flex flex-1">{/* SPACES */}</div>
           </div>
         </div>
         <div className="mt-[200px] flex justify-end items-end gap-2">

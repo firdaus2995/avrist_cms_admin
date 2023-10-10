@@ -22,6 +22,8 @@ import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
 export default function UsersNew() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  // BACKEND STATE
   const [roleData, setRoleData] = useState([]);
   const [departmentData, setDepartmentData] = useState([]);
   // FORM STATE
@@ -47,7 +49,7 @@ export default function UsersNew() {
   const fetchRoleQuery = useGetRoleQuery({});
   const { data: dataRole } = fetchRoleQuery;
 
-  // RTK GET ROLE
+  // RTK GET DEPARTMENT
   const fetchDepartmentQuery = useGetDepartmentQuery({});
   const { data: dataDepartment } = fetchDepartmentQuery;  
 
@@ -79,7 +81,6 @@ export default function UsersNew() {
   }, [dataDepartment]);
 
   const onSave = () => {
-
     const payload = {
       userId,
       password,
@@ -93,6 +94,7 @@ export default function UsersNew() {
       roleId,
       departmentId,
     };
+    
     createUser(payload)
       .unwrap()
       .then((d: any) => {

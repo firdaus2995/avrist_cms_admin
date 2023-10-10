@@ -34,13 +34,14 @@ const DropDown = ({
     if (defaultValue) {      
       const found: any = items?.find((element: any) => {
         return element.value === defaultValue
-      });      
+      });
+
       if (found !== undefined) {
         setSelected(found.value);
         setSelectedLabel(found.label);
       };
     };
-  }, [defaultValue])
+  }, [defaultValue, items])
 
   useEffect(() => {
     const handleClickOutside: any = (event: React.SyntheticEvent) => {
