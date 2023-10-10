@@ -86,9 +86,10 @@ export default function PermissionCollapse(props: IPermissionCollase) {
                   key={i}
                   updateType={d.permission}
                   labelTitle={d.permissionTitleLabel}
-                  defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
+                  defaultValue={store.getState().rolesSlice?.permissions?.includes(d.permission)}
                   disabled={disabled}
                   updateFormValue={() => {
+                    console.log(store.getState().rolesSlice)
                     onChange(d.permission);
                   }}
                 />
@@ -142,7 +143,7 @@ const SubCollapse = (props: ISubCollapse) => {
               key={i}
               updateType={d.permission}
               labelTitle={d.permissionTitleLabel}
-              defaultValue={store.getState().rolesSlice?.permission?.includes(d.permission)}
+              defaultValue={store.getState().rolesSlice?.permissions?.includes(d.permission)}
               disabled={disabled}
               updateFormValue={() => {
                 onChange(d.permission);
