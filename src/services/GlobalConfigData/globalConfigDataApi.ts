@@ -32,7 +32,6 @@ export const globalConfigDataApi = createApi({
             $search: String
           ) {
             configList(
-              postTypeGroup: "CONTENT_TYPE"
               pageableRequest: {
                 pageIndex: $pageIndex
                 limit: $limit
