@@ -203,6 +203,7 @@ export default function UsersNew() {
                 value={password}
                 placeholder={t('user.add.placeholder-user-password')}
                 disabled
+                visible
               />
             </div>
             <div className="flex flex-1">{/* SPACES */}</div>

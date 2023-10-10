@@ -19,6 +19,7 @@ interface IInputPassword {
   actionLink?: string;
   actionLinkClicked?: any;
   disabled?: boolean;
+  visible?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
@@ -37,6 +38,7 @@ export const InputPassword: React.FC<IInputPassword> = ({
   actionLink,
   actionLinkClicked,
   disabled,
+  visible,
   onChange,
 }) => {
   const [type, setType] = useState("password");
@@ -64,7 +66,7 @@ export const InputPassword: React.FC<IInputPassword> = ({
           `}
         >
           <input
-            type={type}
+            type={visible ? 'text' : type}
             value={value}
             disabled={disabled}
             placeholder={placeholder ?? ''}
