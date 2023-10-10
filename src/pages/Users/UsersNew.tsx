@@ -35,6 +35,7 @@ export default function UsersNew() {
   const [company] = useState<string>('Avrist Life Insurance');
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
   const [avatar, setAvatar] = useState('');
+  const now = dayjs().format('YYYY-MM-DD');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
@@ -203,6 +204,7 @@ export default function UsersNew() {
                 value={password}
                 placeholder={t('user.add.placeholder-user-password')}
                 disabled
+                visible
               />
             </div>
             <div className="flex flex-1">{/* SPACES */}</div>
@@ -226,6 +228,7 @@ export default function UsersNew() {
                 labelTitle={t('user.users-new.user.add.date-of-birth')}
                 labelStyle="font-bold"
                 labelRequired
+                max={now}
                 value={dob}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
                   setDob(event.target.value);

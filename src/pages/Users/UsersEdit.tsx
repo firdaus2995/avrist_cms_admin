@@ -40,6 +40,7 @@ export default function UsersEdit() {
   const [company] = useState<string>('Avrist Life Insurance');
   const [roleId, setRoleId] = useState<string | number | boolean>(0);
   const [avatar, setAvatar] = useState('');
+  const now = dayjs().format('YYYY-MM-DD');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
@@ -249,6 +250,7 @@ export default function UsersEdit() {
               <InputDate
                 labelTitle={t('user.users-edit.user.edit.dateOfBirth')}
                 labelStyle="font-bold	"
+                max={now}
                 labelRequired
                 value={dob}
                 onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
