@@ -21,6 +21,7 @@ export default function FileUploaderV2({
   maxSize,
   // previewMode,
   value,
+  showMaxSize,
 }: any) {
   function convertToArr(arr: any[], key: string | number | undefined) {
     if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
@@ -67,10 +68,13 @@ export default function FileUploaderV2({
         {fieldTypeLabel}
       </Typography>
       <div className="flex flex-row">
-        <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
-          {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
-        </Typography>
+        {labelTitle ? (
+          <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
+            {labelTitle}
+            <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+          </Typography>
+        ) : null}
+
         <div
           className={`
             form-control
@@ -103,6 +107,7 @@ export default function FileUploaderV2({
               disabled={disabled}
               maxSize={maxSize}
               value={value}
+              showMaxSize={showMaxSize}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">

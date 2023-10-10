@@ -66,6 +66,7 @@ export default function FileUploaderBase({
   onAltTextChange,
   onCombineDataChange,
   // value,
+  showMaxSize,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
@@ -120,7 +121,7 @@ export default function FileUploaderBase({
         openToast({
           type: 'error',
           title: t('components.molecules.file.too-large'),
-          message: t('components.molecules.file.max'),
+          message: t('components.molecules.file.max', { max: maxFileSize.toString().slice(0, 1) }),
         }),
       );
       setIsUploadLoading(false);
@@ -229,9 +230,16 @@ export default function FileUploaderBase({
               </div>
             </label>
           </div>
-          <p className="text-body-text-3 text-xs mt-2">{`Only Support format ${
-            isDocument ? '.pdf' : '.jpg, .jpeg, .png'
-          }`}</p>
+          <div className="w-full flex flex-row justify-between">
+            <p className="text-body-text-3 text-xs mt-2">{`Only Support format ${
+              isDocument ? '.pdf' : '.jpg, .jpeg, .png'
+            }`}</p>
+            {showMaxSize ? (
+              <p className="text-body-text-3 text-xs mt-2">{`Max. ${maxSize
+                .toString()
+                .slice(0, 1)} MB`}</p>
+            ) : null}
+          </div>
         </>
       )}
       <div>
