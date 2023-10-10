@@ -16,7 +16,8 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import PermissionForm from '../../components/organisms/PermissionForm';
 import PermissionList from '../../components/organisms/PermissionList';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
-import CancelIcon from "../../assets/cancel.png";
+import CancelIcon from '../../assets/cancel.png';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function RolesEdit() {
   const dispatch = useAppDispatch();
@@ -45,8 +46,8 @@ export default function RolesEdit() {
   }, [data]);
 
   useEffect(() => {
-    void fetchQuery.refetch()
-  }, [])
+    void fetchQuery.refetch();
+  }, []);
 
   const onSave = () => {
     const payload = {
@@ -84,64 +85,66 @@ export default function RolesEdit() {
   const onLeave = () => {
     setShowComfirm(false);
     navigate('/roles');
-  }
+  };
 
   return (
     <>
-      <TitleCard title={t('roles.edit.title')}>
-        {isFetching ? (
-          <h1 className="text-center py-9">{t('user.roles-edit.loading')}</h1>
-        ) : (
-          <PermissionForm disabled={!editMode} />
-        )}
-        <ModalConfirm
-          open={showComfirm}
-          cancelAction={() => {
-            setShowComfirm(false);
-          }}
-          title={titleConfirm}
-          cancelTitle={t('user.roles-edit.modal.confirm.cancelTitle')}
-          message={messageConfirm}
-          submitAction={onLeave}
-          submitTitle={t('user.roles-edit.modal.confirm.submitTitle')}
-          icon={CancelIcon}
-          btnSubmitStyle='btn-warning'
-        />
-
-        <PermissionList
-          permissionList={data?.roleById.permissionHierarchy ?? []}
-          loading={isFetching}
-          disabled={!editMode}
-        />
-        <div className="flex float-right gap-3">
-          <button
-            className="btn btn-outline btn-md"
-            onClick={() => {
-              setTitleConfirm(t('user.roles-edit.btn.cancelconfirm') ?? '');
-              setmessageConfirm(t('user.roles-edit.btn.cancelconfirmMessage') ?? '');
-              setShowComfirm(true);
-            }}>
-            {t('btn.cancel')}
-          </button>
-          {editMode ? (
-            <button
-              className="btn btn-success btn-md text-white"
-              onClick={() => {
-                onSave();
-              }}>
-              {onUpdateLoading ? t('user.roles-edit.btn.saveloading') : t('btn.save')}
-            </button>
+      <RoleRenderer allowedRoles={['ROLE_EDIT']}>
+        <TitleCard title={t('roles.edit.title')}>
+          {isFetching ? (
+            <h1 className="text-center py-9">{t('user.roles-edit.loading')}</h1>
           ) : (
-            <button
-              className="btn btn-success btn-md text-white"
-              onClick={() => {
-                window.location.assign(`/roles/edit/${params.id}`);
-              }}>
-              {t('user.roles-edit.btn.editRoles')}
-            </button>
+            <PermissionForm disabled={!editMode} />
           )}
-        </div>
-      </TitleCard>
+          <ModalConfirm
+            open={showComfirm}
+            cancelAction={() => {
+              setShowComfirm(false);
+            }}
+            title={titleConfirm}
+            cancelTitle={t('user.roles-edit.modal.confirm.cancelTitle')}
+            message={messageConfirm}
+            submitAction={onLeave}
+            submitTitle={t('user.roles-edit.modal.confirm.submitTitle')}
+            icon={CancelIcon}
+            btnSubmitStyle="btn-warning"
+          />
+
+          <PermissionList
+            permissionList={data?.roleById.permissionHierarchy ?? []}
+            loading={isFetching}
+            disabled={!editMode}
+          />
+          <div className="flex float-right gap-3">
+            <button
+              className="btn btn-outline btn-md"
+              onClick={() => {
+                setTitleConfirm(t('user.roles-edit.btn.cancelconfirm') ?? '');
+                setmessageConfirm(t('user.roles-edit.btn.cancelconfirmMessage') ?? '');
+                setShowComfirm(true);
+              }}>
+              {t('btn.cancel')}
+            </button>
+            {editMode ? (
+              <button
+                className="btn btn-success btn-md text-white"
+                onClick={() => {
+                  onSave();
+                }}>
+                {onUpdateLoading ? t('user.roles-edit.btn.saveloading') : t('btn.save')}
+              </button>
+            ) : (
+              <button
+                className="btn btn-success btn-md text-white"
+                onClick={() => {
+                  window.location.assign(`/roles/edit/${params.id}`);
+                }}>
+                {t('user.roles-edit.btn.editRoles')}
+              </button>
+            )}
+          </div>
+        </TitleCard>
+      </RoleRenderer>
     </>
   );
 }

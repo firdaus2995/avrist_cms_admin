@@ -34,12 +34,14 @@ const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
         fieldTypeLabel="Image Option"
         isDocument={false}
         multiple={true}
-        onChange={(e: any) => {
-          valueChange('items', e);
-        }}
+        error={data?.mandatory?.items}
+        helperText="This field is required"
         border={false}
         maxFile={5}
         items={data?.items}
+        onChange={(e: any) => {
+          valueChange('items', e);
+        }}
       />
       <Config data={data} configList={configList} valueChange={valueChange} />
     </React.Fragment>

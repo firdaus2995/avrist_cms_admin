@@ -9,7 +9,10 @@ import { getCredential } from '@/utils/Credential';
 const LoginPage = React.lazy(async () => await import('../pages/Login'));
 const LoginPortal = React.lazy(async () => await import('../pages/LoginPortal'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
-const NotFoundPage = React.lazy(async () => await import('../pages/NotFound'));
+
+// ERROR PAGE
+const Error403Page = React.lazy(async () => await import('../pages/Error/FourZeroThree'))
+const Error404Page = React.lazy(async () => await import('../pages/Error/FourZeroFour'));
 
 // IMPORT USERS PAGE
 const UserPage = React.lazy(async () => await import('../pages/Users'));
@@ -111,6 +114,8 @@ export default function RoutesComponent() {
             </Suspense>
           }>
           <Route index element={<DashboardPage />} />
+          {/* FORBIDDEN */}
+          <Route path='403' element={<Error403Page />} />
           {/* USER PAGES ROUTE */}
           <Route element={<ProtectedPage permission="USER_READ" />}>
             <Route path="user" element={<UserPage />} />
@@ -228,9 +233,10 @@ export default function RoutesComponent() {
           <Route element={<ProtectedPage permission="GLOBAL_CONFIG_EDIT" />}>
             <Route path="global-config-data/edit/:key" element={<GlobalConfigDataNewPage />} />
           </Route>
+          {/* NOT FOUND */}
+          <Route path="*" element={<Error404Page />} />
         </Route>
       </Route>
-      <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 }
@@ -254,7 +260,7 @@ const ProtectedPage = ({
 }: any) => {
   const checkPermission: boolean = getCredential().roles.includes(permission);
   if (!checkPermission) {
-    return <Navigate to='/' replace />
+    return <Navigate to='/403' replace />
   };
   
   return <Outlet />

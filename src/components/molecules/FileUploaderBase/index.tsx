@@ -271,7 +271,7 @@ export default function FileUploaderBase({
                     }}
                     value={altTexts[index] || ''}
                   />
-                  {index === 0 && (
+                  {index === 0 && filesData?.length > 1 && (
                     <div
                       className="cursor-pointer ml-4"
                       onClick={() => {

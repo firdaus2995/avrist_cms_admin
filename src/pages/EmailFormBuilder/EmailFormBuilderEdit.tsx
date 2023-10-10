@@ -736,6 +736,7 @@ export default function EmailFormBuilderEdit() {
       default:
         component = false;
     }
+
     if (component) {
       setComponents((prevItem: any) => {
         const currentComponents: any = copyArray(prevItem);
@@ -757,6 +758,8 @@ export default function EmailFormBuilderEdit() {
         };
       });
     };
+
+    setActiveComponent(null);
   };
 
   const handlerReorderComponent = (dragIndex: number, hoverIndex: number) => {

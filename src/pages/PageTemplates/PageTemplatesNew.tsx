@@ -22,6 +22,7 @@ import {
 } from '@/services/PageTemplate/pageTemplateApi';
 import { useGetConfigQuery } from '@/services/ContentType/contentTypeApi';
 import { openToast } from '@/components/atoms/Toast/slice';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 const initialAttributes = {
   fieldType: '',
@@ -311,7 +312,9 @@ export default function PageTemplatesNew() {
 
   const attributesColumns = [
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-new.form.attribute.type.label')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-template-new.form.attribute.type.label')}</span>
+      ),
       accessorKey: 'fieldType',
       enableSorting: false,
       cell: (info: any) => {
@@ -324,7 +327,11 @@ export default function PageTemplatesNew() {
       },
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-new.form.attribute.fieldId.label')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-new.form.attribute.fieldId.label')}
+        </span>
+      ),
       accessorKey: 'fieldId',
       enableSorting: false,
       cell: (info: any) => (
@@ -336,7 +343,11 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-new.form.attribute.description.label')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-new.form.attribute.description.label')}
+        </span>
+      ),
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
@@ -357,30 +368,34 @@ export default function PageTemplatesNew() {
         }
         return (
           <div className="flex gap-3">
-            <div className="tooltip" data-tip="Edit">
-              <button>
+            <RoleRenderer allowedRoles={['PAGE_TEMPLATE_EDIT']}>
+              <div className="tooltip" data-tip="Edit">
+                <button>
+                  <img
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableEdit}
+                    onClick={e => {
+                      e.preventDefault();
+                      setAttributesEditIndex(info.row.index);
+                      setNewAttributes(info.row.original);
+                      setOpenAddAttributesModal(true);
+                    }}
+                  />
+                </button>
+              </div>
+            </RoleRenderer>
+            <RoleRenderer allowedRoles={['PAGE_TEMPLATE_DELETE']}>
+              <div className="tooltip" data-tip="Delete">
                 <img
                   className={`cursor-pointer select-none flex items-center justify-center`}
-                  src={TableEdit}
+                  src={TableDelete}
                   onClick={e => {
                     e.preventDefault();
-                    setAttributesEditIndex(info.row.index);
-                    setNewAttributes(info.row.original);
-                    setOpenAddAttributesModal(true);
+                    onDeleteAttributes(info.row.index);
                   }}
                 />
-              </button>
-            </div>
-            <div className="tooltip" data-tip="Delete">
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableDelete}
-                onClick={e => {
-                  e.preventDefault();
-                  onDeleteAttributes(info.row.index);
-                }}
-              />
-            </div>
+              </div>
+            </RoleRenderer>
           </div>
         );
       },
@@ -389,7 +404,9 @@ export default function PageTemplatesNew() {
 
   const configColumns = [
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-new.form.config.key.label')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-template-new.form.config.key.label')}</span>
+      ),
       accessorKey: 'key',
       enableSorting: false,
       cell: (info: any) => (
@@ -401,7 +418,11 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-new.form.config.description.label')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-new.form.config.description.label')}
+        </span>
+      ),
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
@@ -461,7 +482,7 @@ export default function PageTemplatesNew() {
             <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
               <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
                 <img src={EditPurple} className="w-6 h-6 mr-1" />
-              {t('user.page-template-new.edit-content')}
+                {t('user.page-template-new.edit-content')}
               </div>
             </button>
           </Link>
@@ -593,7 +614,10 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: t('user.page-template-new.form.pageName.required-message') },
+              required: {
+                value: true,
+                message: t('user.page-template-new.form.pageName.required-message'),
+              },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
@@ -622,7 +646,10 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: t('user.page-template-new.form.pageDescription.required-message') },
+              required: {
+                value: true,
+                message: t('user.page-template-new.form.pageDescription.required-message'),
+              },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
@@ -651,7 +678,10 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: true, message: t('user.page-template-new.form.pageFileName.required-message') },
+              required: {
+                value: true,
+                message: t('user.page-template-new.form.pageFileName.required-message'),
+              },
               pattern: {
                 value: /^[^\s-]+$/,
                 message: t('user.page-template-new.form.pageFileName.pattern-message'),
@@ -683,7 +713,10 @@ export default function PageTemplatesNew() {
             control={control}
             defaultValue=""
             rules={{
-              required: { value: false, message: t('user.page-template-new.form.imagePreview.required-message') },
+              required: {
+                value: false,
+                message: t('user.page-template-new.form.imagePreview.required-message'),
+              },
             }}
             render={({ field }) => {
               const onChange = useCallback((e: any) => {
@@ -698,7 +731,9 @@ export default function PageTemplatesNew() {
                   labelText={
                     <>
                       {t('user.page-template-new.form.imagePreview.preview')}{' '}
-                      <span className="text-primary font-semibold">{t('user.page-template-new.form.imagePreview.browse')}</span>
+                      <span className="text-primary font-semibold">
+                        {t('user.page-template-new.form.imagePreview.browse')}
+                      </span>
                     </>
                   }
                   isDocument={false}
