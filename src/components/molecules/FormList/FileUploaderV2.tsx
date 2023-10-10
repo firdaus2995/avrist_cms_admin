@@ -1,6 +1,7 @@
 import Typography from '@/components/atoms/Typography';
 import FileUploaderBase from '@/components/molecules/FileUploaderBase';
 import ErrorSmallIcon from '@/assets/error-small.svg';
+import { useEffect } from 'react';
 
 export default function FileUploaderV2({
   labelTitle,
@@ -18,6 +19,8 @@ export default function FileUploaderV2({
   border = true,
   disabled = false,
   maxSize,
+  previewMode,
+  value,
 }: any) {
   function convertToArr(arr: any[], key: string | number | undefined) {
     if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
@@ -34,6 +37,20 @@ export default function FileUploaderV2({
       );
       return jsonString;
     }
+  }
+
+  useEffect(() => {
+    console.log(value);
+  }, [value]);
+
+  if (previewMode) {
+    return (
+      <>
+        {value && JSON.parse(value)?.map((item: any, index: any) => (
+          <p key={index}>{JSON.stringify(item)}</p>
+        ))}
+      </>
+    );
   }
 
   return (

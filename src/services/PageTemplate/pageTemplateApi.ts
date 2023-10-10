@@ -166,6 +166,7 @@ export const pageTemplateApi: any = createApi({
                 id
                 name
               }
+              imageUrl
             }
           }
         `,

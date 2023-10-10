@@ -75,7 +75,7 @@ export default function FileUploaderBase({
   const formatData = () => {
     const formattedData = filesData.map((data: any, index: any) => {
       return {
-        imageUrl: data.name,
+        imageUrl: data.response,
         altText: altTexts[index] || '',
       };
     });
