@@ -46,9 +46,13 @@ export default function FileUploaderV2({
   if (previewMode) {
     return (
       <>
-        {value && JSON.parse(value)?.map((item: any, index: any) => (
-          <p key={index}>{JSON.stringify(item)}</p>
-        ))}
+        {value &&
+          JSON.parse(value)?.map((item: any, index: any) => (
+            <>
+              <p key={index}>{JSON.stringify(item)}</p>
+              <p key={index}>TEST PURPOSES ONLY</p>
+            </>
+          ))}
       </>
     );
   }
