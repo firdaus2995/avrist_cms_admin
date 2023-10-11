@@ -4,10 +4,12 @@ import React, { useEffect, useState } from 'react';
 import { isDesktop, isTablet, isMobile } from 'react-device-detect';
 import { useLocation } from 'react-router-dom';
 import { Outlet, useNavigate } from 'react-router';
+import { ErrorBoundary } from "react-error-boundary";
 
 import NotifCheck from '../../../assets/notif-check.svg';
 import NoNotifications from '../../../assets/no-notifications.svg';
 import DeleteSmall from '../../../assets/delete-small.svg';
+import InternalServerError from '@/pages/Error/InternalServerError';
 import { setOpen } from './slice';
 import { Navbar } from '../../molecules/Navbar';
 import { Sidebar } from '../../molecules/Sidebar';
@@ -18,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '../../../store';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
 import { useDeleteNotificationMutation, useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
+import { setEventTriggered } from '@/services/Event/eventErrorSlice';
 
 const Layout: React.FC<any> = props => {
   const location = useLocation();
@@ -25,6 +28,7 @@ const Layout: React.FC<any> = props => {
   const dispatch = useAppDispatch();
   const { open } = useAppSelector(s => s.layoutSlice);
   const { activatedNotificationPage } = useAppSelector(s => s.notificationSlice)
+  const { eventTriggered } = useAppSelector(s => s.eventErrorSlice)
 
   const [notifications, setNotifications] = useState<any>([]);
   const [isSelectedAll, setIsSelectedAll] = useState<any>(false);
@@ -45,6 +49,13 @@ const Layout: React.FC<any> = props => {
 
   // RTK DELETE NOTIFICATION
   const [ deleteNotification ] = useDeleteNotificationMutation();
+
+  useEffect(() => {
+    if (eventTriggered === 'INTERNAL_ERROR') {
+      navigate('internal-server-error');
+    };
+    dispatch(setEventTriggered(false));
+  }, [eventTriggered])
 
   useEffect(() => {
     dispatch(setActivatedNotificationPage(false));
@@ -225,109 +236,111 @@ const Layout: React.FC<any> = props => {
       <div
         className={`${open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'} pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full ease-in-out duration-300`}
       >
-        {
-          activatedNotificationPage ? (
-            <TitleCard
-              hasBack={true}
-              backTitle={t('components.organism.back') ?? ''}
-              onBackClick={goBack}
-              title={t('components.organism.notification')}
-              TopSideButtons={<ReadAllButton />}
-            >
-              <div className="flex flex-row justify-between">
-                <div className="flex flex-row">
-                  <CheckBox
-                    defaultValue={isSelectedAll}
-                    labelTitle={t('user.notification.selected-all')}
-                    updateFormValue={(event: any) => {
-                      handlerSelectAll(event.value);
-                    }}
-                  />
+        <ErrorBoundary FallbackComponent={InternalServerError} key={location.pathname}>
+          {
+            activatedNotificationPage ? (
+              <TitleCard
+                hasBack={true}
+                backTitle={t('components.organism.back') ?? ''}
+                onBackClick={goBack}
+                title={t('components.organism.notification')}
+                TopSideButtons={<ReadAllButton />}
+              >
+                <div className="flex flex-row justify-between">
+                  <div className="flex flex-row">
+                    <CheckBox
+                      defaultValue={isSelectedAll}
+                      labelTitle={t('user.notification.selected-all')}
+                      updateFormValue={(event: any) => {
+                        handlerSelectAll(event.value);
+                      }}
+                    />
+                  </div>
+                  {
+                    selected.length > 0 && (
+                      <div className="flex flex-row items-center justify-end gap-3 cursor-pointer">
+                        <img className="w-[18px] h-[18px]" src={DeleteSmall} />
+                        <p 
+                          className="text-[14px] text-body-text-2"
+                          onClick={() => {
+                            void handlerDeleteNotificationSelected();
+                          }}
+                        >
+                          {t('user.notification.delete')} {t('user.notification.selected')}
+                        </p>
+                      </div>
+                    )
+                  }
                 </div>
                 {
-                  selected.length > 0 && (
-                    <div className="flex flex-row items-center justify-end gap-3 cursor-pointer">
-                      <img className="w-[18px] h-[18px]" src={DeleteSmall} />
-                      <p 
-                        className="text-[14px] text-body-text-2"
-                        onClick={() => {
-                          void handlerDeleteNotificationSelected();
-                        }}
-                      >
-                        {t('user.notification.delete')} {t('user.notification.selected')}
-                      </p>
+                  notifications.length > 0 ? (
+                    <InfiniteScroll
+                      className="flex flex-col"
+                      dataLength={notifications.length}
+                      next={handlerFetchMore}
+                      loader={''}
+                      hasMore={limit < total}
+                      height={900}
+                    >
+                      {
+                        notifications.map((element: any, index: number) => (
+                          <div 
+                            key={index} 
+                            className="flex flex-row border-b-[1px] border-[#D6D6D6] py-4"
+                          >
+                            <div className="flex items-center">
+                              <CheckBox
+                                defaultValue={element.isSelected}
+                                labelTitle=""
+                                updateFormValue={(event: any) => {
+                                  handlerSelectOne(event.value, index);
+                                }}        
+                              />
+                            </div>
+                            <div 
+                              className="flex flex-col flex-1 gap-[4px] cursor-pointer"
+                              onClick={() => {
+                                void handlerReadNotificationSingle(element.id)
+                              }}
+                            >
+                              <h2 className={`text-[14px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
+                              <h4 className='text-[16px] text-body-text-2'>{element.content}</h4>
+                              <h6 className='text-[14px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
+                            </div>  
+                            <div className="flex items-center justify-end min-w-[100px]">
+                              {
+                                element.isSelected && (
+                                  <div 
+                                    className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer"
+                                    onClick={() => {
+                                      void handlerDeleteNotificationSingle(element.id);
+                                    }}
+                                  >
+                                    <img className="w-[18px] h-[18px]" src={DeleteSmall} />
+                                    <p className="text-[14px] text-body-text-2">{t('user.notification.delete')}</p>
+                                  </div>
+                                )
+                              }
+                            </div>
+                          </div>
+                        ))
+                      }
+                    </InfiniteScroll>
+                  ) : (
+                    <div className="flex justify-center p-[150px]">
+                      <img className="w-[150px]" src={NoNotifications} />
                     </div>
                   )
                 }
-              </div>
-              {
-                notifications.length > 0 ? (
-                  <InfiniteScroll
-                    className="flex flex-col"
-                    dataLength={notifications.length}
-                    next={handlerFetchMore}
-                    loader={''}
-                    hasMore={limit < total}
-                    height={900}
-                  >
-                    {
-                      notifications.map((element: any, index: number) => (
-                        <div 
-                          key={index} 
-                          className="flex flex-row border-b-[1px] border-[#D6D6D6] py-4"
-                        >
-                          <div className="flex items-center">
-                            <CheckBox
-                              defaultValue={element.isSelected}
-                              labelTitle=""
-                              updateFormValue={(event: any) => {
-                                handlerSelectOne(event.value, index);
-                              }}        
-                            />
-                          </div>
-                          <div 
-                            className="flex flex-col flex-1 gap-[4px] cursor-pointer"
-                            onClick={() => {
-                              void handlerReadNotificationSingle(element.id)
-                            }}
-                          >
-                            <h2 className={`text-[14px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
-                            <h4 className='text-[16px] text-body-text-2'>{element.content}</h4>
-                            <h6 className='text-[14px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
-                          </div>  
-                          <div className="flex items-center justify-end min-w-[100px]">
-                            {
-                              element.isSelected && (
-                                <div 
-                                  className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer"
-                                  onClick={() => {
-                                    void handlerDeleteNotificationSingle(element.id);
-                                  }}
-                                >
-                                  <img className="w-[18px] h-[18px]" src={DeleteSmall} />
-                                  <p className="text-[14px] text-body-text-2">{t('user.notification.delete')}</p>
-                                </div>
-                              )
-                            }
-                          </div>
-                        </div>
-                      ))
-                    }
-                  </InfiniteScroll>
-                ) : (
-                  <div className="flex justify-center p-[150px]">
-                    <img className="w-[150px]" src={NoNotifications} />
-                  </div>
-                )
-              }
-            </TitleCard>
-                ) : (
-            <React.Fragment>
-              <Outlet />
-              {props.children}
-            </React.Fragment>
-          )
-        }
+              </TitleCard>
+            ) : (
+              <React.Fragment>
+                <Outlet />
+                {props.children}
+              </React.Fragment>
+            )
+          }
+        </ErrorBoundary>
       </div>
     </div>
   );
