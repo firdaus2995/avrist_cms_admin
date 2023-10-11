@@ -43,19 +43,19 @@ export default function FileUploaderV2({
     console.log(value);
   }, [value]);
 
-  if (previewMode) {
-    return (
-      <>
-        {value &&
-          JSON.parse(value)?.map((item: any, index: any) => (
-            <>
-              <p key={index}>{JSON.stringify(item)}</p>
-              <p key={index}>TEST PURPOSES ONLY</p>
-            </>
-          ))}
-      </>
-    );
-  }
+  // if (previewMode) {
+  //   return (
+  //     <>
+  //       {value &&
+  //         JSON.parse(value)?.map((item: any, index: any) => (
+  //           <>
+  //             <p key={index}>{JSON.stringify(item)}</p>
+  //             <p key={index}>TEST PURPOSES ONLY</p>
+  //           </>
+  //         ))}
+  //     </>
+  //   );
+  // }
 
   return (
     <div>
@@ -102,6 +102,7 @@ export default function FileUploaderV2({
               }}
               disabled={disabled}
               maxSize={maxSize}
+              value={value}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">
