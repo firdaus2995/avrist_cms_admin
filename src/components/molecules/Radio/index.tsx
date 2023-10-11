@@ -3,6 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 
 import { IItems, IRadio } from './interfaces';
 import { t } from 'i18next';
+import ErrorSmallIcon from '@/assets/error-small.svg';
 
 const Radio = ({
   labelTitle,
@@ -12,6 +13,8 @@ const Radio = ({
   defaultSelected,
   onSelect,
   containerStyle,
+  helperText,
+  error,
 }: IRadio) => {
   const [checked, setChecked] = useState<any>(null);
   const [name] = useState<string>(uuidv4());
@@ -62,6 +65,12 @@ const Radio = ({
           );
         })}
       </div>
+      {error && (
+        <div className="flex flex-row px-1 py-2">
+          <img src={ErrorSmallIcon} className="mr-3" />
+          <p className="text-reddist text-sm">{helperText}</p>
+        </div>
+      )}
     </div>
   );
 };

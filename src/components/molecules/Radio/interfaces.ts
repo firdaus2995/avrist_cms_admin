@@ -6,6 +6,8 @@ export interface IRadio {
   defaultSelected?: string | number | boolean;
   onSelect?: (event: React.ChangeEvent<HTMLInputElement>, value: string | number | boolean) => void;
   containerStyle?: any;
+  error?: any;
+  helperText?: any;
 }
 
 export interface IItems {

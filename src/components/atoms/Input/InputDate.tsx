@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import DateIcon from '../../../assets/date.png';
+import ErrorSmallIcon from '@/assets/error-small.svg';
 
 interface IInputDate {
   labelTitle: string;
@@ -12,6 +13,8 @@ interface IInputDate {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   min?: any;
   max?: any;
+  error?: any;
+  helperText?: any;
 }
 
 export const InputDate: React.FC<IInputDate> = ({
@@ -24,6 +27,8 @@ export const InputDate: React.FC<IInputDate> = ({
   onChange,
   min,
   max,
+  helperText,
+  error,
 }) => {
   return (
     <div className={`form-control w-full ${containerStyle} `}>
@@ -52,6 +57,12 @@ export const InputDate: React.FC<IInputDate> = ({
         />
         <img src={DateIcon} className="w-[18px] h-[18px]" />
       </div>
+      {error && (
+        <div className="flex flex-row px-1 py-2">
+          <img src={ErrorSmallIcon} className="mr-3" />
+          <p className="text-reddist text-sm">{helperText}</p>
+        </div>
+      )}
     </div>
   );
 };
