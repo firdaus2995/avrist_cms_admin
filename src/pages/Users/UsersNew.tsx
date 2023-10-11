@@ -404,7 +404,7 @@ export default function UsersNew() {
                   <FormList.DropDown
                     {...field}
                     key="role"
-                    labelTitle={t('user.page-template-new.category')}
+                    labelTitle={t('user.users-new.user.add.role')}
                     defaultValue=""
                     inputWidth={340}
                     error={!!errors?.role?.message}

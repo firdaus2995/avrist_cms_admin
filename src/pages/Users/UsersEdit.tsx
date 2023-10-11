@@ -21,6 +21,9 @@ import {
 } from '../../services/User/userApi';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
+import Typography from '@/components/atoms/Typography';
+import { useForm, Controller } from 'react-hook-form';
+import FormList from '@/components/molecules/FormList';
 
 export default function UsersEdit() {
   const navigate = useNavigate();
@@ -73,6 +76,13 @@ export default function UsersEdit() {
   // RTK EDIT USER
   const [editUser, { isLoading }] = useEditUserMutation();
 
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm();
+
   useEffect(() => {
     if (dataRole) {
       const roleList = dataRole?.roleList?.roles.map((element: any) => {
@@ -108,6 +118,20 @@ export default function UsersEdit() {
       setRoleId(userDetail.role.id);
       setDepartmentId(userDetail.department.id);
       setIsActive(userDetail.statusActive);
+
+      const defaultValues = {
+        fullName: '',
+        dob: '',
+        email: '',
+        gender: '',
+        role: '',
+      };
+      defaultValues.fullName= userDetail.fullName;
+      defaultValues.dob= userDetail.dob;
+      defaultValues.email= userDetail.email;
+      defaultValues.gender= userDetail.gender;
+      defaultValues.role= userDetail.role.id;
+      reset({ ...defaultValues });
     }
   }, [data]);
 
@@ -189,7 +213,9 @@ export default function UsersEdit() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-      <form className="flex flex-col w-100">
+      <form className="flex flex-col w-100" onSubmit={handleSubmit((data: any) => {
+          onSave();
+        })}>
         <div className="flex items-center justify-center">
           <FileUploaderAvatar
             id={'edit_profile_picture'}
@@ -252,70 +278,139 @@ export default function UsersEdit() {
           </div>
           {/* ROW 3 */}
           <div className="flex flex-row gap-14">
-            <div className="flex flex-1">
-              <InputText
-                labelTitle={t('user.users-edit.user.edit.fullName')}
-                labelStyle="font-bold	"
-                labelRequired
-                value={fullName}
-                placeholder={t('user.users-edit.user.edit.placeholder-user-fullname')}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setFullName(event.target.value);
-                }}
+            <div className="max-w-[340px]">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
+                {t('user.users-edit.user.edit.fullName')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <Controller
+                name="fullName"
+                control={control}
+                defaultValue={data?.userById?.fullName ?? ""}
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <FormList.TextField
+                    {...field}
+                    key="fullName"
+                    inputWidth={340}
+                    placeholder={t('user.users-edit.user.edit.placeholder-user-fullname')}
+                    error={!!errors?.fullName?.message}
+                    helperText={errors?.fullName?.message}
+                    roundStyle="3xl"
+                    border={false}
+                    value={fullName}
+                    onChange={(e: { target: { value: any } }) => {
+                      field.onChange(e.target.value);
+                      setFullName(e.target.value);
+                    }}
+                  />
+                )}
               />
             </div>
-            <div className="flex flex-1">
-              <InputDate
-                labelTitle={t('user.users-edit.user.edit.dateOfBirth')}
-                labelStyle="font-bold	"
-                max={now}
-                labelRequired
-                value={dob}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setDob(event.target.value);
-                }}
+            <div className="max-w-[340px]">
+              <Controller
+                name="dob"
+                control={control}
+                defaultValue={dob}
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <InputDate
+                    {...field}
+                    labelTitle={t('user.users-edit.user.edit.dateOfBirth')}
+                    labelStyle="font-bold"
+                    labelRequired
+                    containerStyle="w-[340px]"
+                    error={!!errors?.dob?.message && dob === 'DD-MM-YYYY'}
+                    helperText={errors?.dob?.message}
+                    max={now}
+                    value={dob}
+                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                      if (event.target.value === '') {
+                        setDob("DD-MM-YYYY")
+                      }else{
+                        setDob(event.target.value);
+                      }
+                      field.onChange(event.target.value);
+                    }}
+                  />
+                )}
               />
             </div>
-            <div className="flex flex-1">
-              <Radio
-                labelTitle={t('user.users-edit.user.edit.gender') ?? ''}
-                labelStyle="font-bold	"
-                labelRequired
-                items={[
-                  {
-                    value: 'MALE',
-                    label: t('user.users-edit.user.edit.male'),
-                  },
-                  {
-                    value: 'FEMALE',
-                    label: t('user.users-edit.user.edit.female'),
-                  },
-                ]}
-                onSelect={(
-                  event: React.ChangeEvent<HTMLInputElement>,
-                  value: string | number | boolean,
-                ) => {
-                  if (event) {
-                    setGender(value);
-                  }
-                }}
-                defaultSelected={gender}
+            <div className="max-w-[340px]">
+              <Controller
+                name="gender"
+                control={control}
+                defaultValue={gender}
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <Radio
+                    {...field}
+                    labelTitle={t('user.users-edit.user.edit.gender') ?? ''}
+                    labelStyle="font-bold"
+                    labelRequired
+                    defaultSelected={gender}
+                    error={!!errors?.gender?.message && gender === ''}
+                    helperText={errors?.gender?.message}
+                    items={[
+                      {
+                        value: 'MALE',
+                        label: t('user.users-edit.user.edit.male'),
+                      },
+                      {
+                        value: 'FEMALE',
+                        label: t('user.users-edit.user.edit.female'),
+                      },
+                    ]}
+                    onSelect={(
+                      event: React.ChangeEvent<HTMLInputElement>,
+                      value: string | number | boolean,
+                    ) => {
+                      if (event) {
+                        setGender(value);
+                        field.onChange(value);
+                      }
+                    }}
+                  />
+                )}
               />
             </div>
           </div>
           {/* ROW 4 */}
           <div className="flex flex-row gap-14">
-            <div className="flex flex-1">
-              <InputText
-                labelTitle={t('user.users-edit.user.edit.email')}
-                labelStyle="font-bold	"
-                labelRequired
-                type="email"
-                value={email}
-                placeholder={t('user.users-edit.user.edit.placeholder-user-email')}
-                onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                  setEmail(event.target.value);
+          <div className="max-w-[340px]">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
+                {t('user.users-edit.user.edit.email')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                rules={{
+                  required: t('components.atoms.required') ?? '',
+                  pattern: {
+                    value:
+                      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+                    message: 'Please enter a valid email',
+                  },
                 }}
+                render={({ field }) => (
+                  <FormList.TextField
+                    {...field}
+                    key="email"
+                    inputWidth={340}
+                    error={!!errors?.email?.message}
+                    helperText={errors?.email?.message}
+                    roundStyle="3xl"
+                    placeholder={t('user.users-edit.user.edit.placeholder-user-email')}
+                    border={false}
+                    value={email}
+                    onChange={(e: { target: { value: any } }) => {
+                      field.onChange(e.target.value);
+                      setEmail(e.target.value);
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-1">
@@ -326,18 +421,28 @@ export default function UsersEdit() {
                 disabled
               />
             </div>
-            <div className="flex flex-1">
-              <DropDown
-                labelTitle={t('user.users-edit.user.edit.role') ?? ''}
-                labelStyle="font-bold	"
-                labelRequired
-                defaultValue={roleId}
-                items={roleData}
-                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                  if (event) {
-                    setRoleId(value);
-                  }
-                }}
+            <div className="max-w-[340px]">
+              <Controller
+                name="role"
+                control={control}
+                defaultValue=""
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <DropDown
+                    {...field}
+                    labelTitle={t('user.users-edit.user.edit.role') ?? ''}
+                    labelStyle="font-bold	"
+                    labelRequired
+                    defaultValue={roleId}
+                    items={roleData}
+                    onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                      if (event) {
+                        field.onChange(value);
+                        setRoleId(value);
+                      }
+                    }}
+                  />
+                )}
               />
             </div>
           </div>
@@ -379,10 +484,7 @@ export default function UsersEdit() {
           </button>
           <button
             className="btn btn-success btn-md text-white"
-            onClick={(event: any) => {
-              event.preventDefault();
-              onSave();
-            }}>
+            type='submit'>
             {isLoading
               ? t('user.users-edit.user.edit.edit.btn.loading')
               : t('user.users-edit.user.edit.edit.btn.save')}
