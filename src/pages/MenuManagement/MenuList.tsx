@@ -1,10 +1,11 @@
 // import { useParams } from 'react-router-dom';
 // import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-// import { useTranslation } from 'react-i18next';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { InputText } from '../../components/atoms/Input/InputText';
 import DropDown from '../../components/molecules/DropDown';
 import { CheckBox } from '../../components/atoms/Input/CheckBox';
+import { useForm, Controller } from 'react-hook-form';
+import FormList from '@/components/molecules/FormList';
 import LifeInsurance from '../../assets/lifeInsurance.png';
 import SortableTreeComponent from '../../components/atoms/SortableTree';
 import {
@@ -22,6 +23,7 @@ import Modal from '../../components/atoms/Modal';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
 import CancelIcon from '../../assets/cancel.png';
+import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
@@ -30,6 +32,15 @@ export default function MenuList() {
   // const params = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+
+  const {
+    control,
+    formState: { errors },
+  } = useForm();
+
+  const maxImageSize = 2 * 1024 * 1024;
+  const maxChar = 50;
+
   const [isAddClick, setIsAddClicked] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
 
@@ -45,6 +56,8 @@ export default function MenuList() {
   const [type, setType] = useState<any | null>('');
   const [isOpenTab, setIsOpenTab] = useState(false);
   const [urlLink, setUrlLink] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [description, setDescription] = useState('');
 
   const fetchQuery = useGetMenuListQuery(
     {},
@@ -208,6 +221,10 @@ export default function MenuList() {
                 {
                   value: 'LINK',
                   label: 'Link',
+                },
+                {
+                  value: 'NO_LANDING_PAGE',
+                  label: 'No Landing Page',
                 },
               ]}
               onSelect={(_e, val) => {
@@ -383,7 +400,7 @@ export default function MenuList() {
                 setIsOpenForm(true);
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-              {t('user.menu-list.menuList.pages')}
+              {t('user.menu-list.menuList.page')}
             </div>
             <div
               role="button"
@@ -393,7 +410,17 @@ export default function MenuList() {
                 setIsOpenForm(true);
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-              {t('user.menu-list.menuList.links')}
+              {t('user.menu-list.menuList.link')}
+            </div>
+            <div
+              role="button"
+              onClick={() => {
+                // setFormData({...formData, type: 'No Landing Page'});
+                setType('No Landing Page');
+                setIsOpenForm(true);
+              }}
+              className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
+              {t('user.menu-list.menuList.noLandingPage')}
             </div>
           </>
         )}
@@ -431,6 +458,10 @@ export default function MenuList() {
                 value: 'Link',
                 label: 'Link',
               },
+              {
+                value: 'No Landing Page',
+                label: 'No Landing Page',
+              },
             ]}
             onSelect={(_e, val) => {
               setType(val);
@@ -451,38 +482,113 @@ export default function MenuList() {
               }}
             />
           </div>
-        ) : (
-          <div className="flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold">
-            {t('user.menu-list.menuList.urlLink')}
-            <InputText
-              labelTitle=""
-              value={urlLink}
-              inputStyle="rounded-3xl"
-              onChange={e => {
-                setUrlLink(e.target.value);
-              }}
-            />
+        ) : type === 'Link' ? (
+          <div>
+            <div className="flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold">
+              {t('user.menu-list.menuList.urlLink')}
+              <InputText
+                labelTitle=""
+                value={urlLink}
+                inputStyle="rounded-3xl"
+                onChange={e => {
+                  setUrlLink(e.target.value);
+                }}
+              />
+            </div>
+            <div className="w-40 ml-28">
+              <CheckBox
+                defaultValue={isOpenTab}
+                updateFormValue={e => {
+                  setIsOpenTab(e.value);
+                }}
+                labelTitle={t('user.menu-list.menuList.openInNewTab')}
+                updateType={''}
+              />
+            </div>
           </div>
+        ) : (
+          <span></span>
         )}
-        <p></p>
-        <div className="w-40 ml-28">
-          <CheckBox
-            defaultValue={isOpenTab}
-            updateFormValue={e => {
-              setIsOpenTab(e.value);
-            }}
-            labelTitle={t('user.menu-list.menuList.openInNewTab')}
-            updateType={''}
-          />
+        <span></span>
+        <div className={`w-full mb-32 ${type === 'No Landing Page' ? '-mt-5' : ''}`}>
+          <div className="flex flex-row whitespace-nowrap justify-between gap-6">
+            <span className="flex flex-col gap-1">
+              <span className="text-lg font-bold">{t('user.menu-list.menuList.menuIcon')}</span>
+              <span className="font-normal">({t('user.menu-list.menuList.optional')})</span>
+            </span>
+            <div className="w-full h-full">
+              <Controller
+                key="imagePreview"
+                name="imagePreview"
+                control={control}
+                defaultValue=""
+                rules={{
+                  required: {
+                    value: false,
+                    message: t('user.page-template-new.form.imagePreview.required-message'),
+                  },
+                }}
+                render={({ field }) => {
+                  const onChange = useCallback((e: any) => {
+                    setImageUrl(e.replace(/"/g, '\\"'));
+                    field.onChange({ target: { value: e } });
+                  }, []);
+                  return (
+                    <FormList.FileUploaderV2
+                      {...field}
+                      key="imagePreview"
+                      isDocument={false}
+                      multiple={false}
+                      error={!!errors?.imagePreview?.message}
+                      helperText={errors?.imagePreview?.message}
+                      onChange={onChange}
+                      border={false}
+                      disabled={false}
+                      maxSize={maxImageSize}
+                      showMaxSize={true}
+                    />
+                  );
+                }}
+              />
+            </div>
+          </div>
+
+          <div className="flex flex-row justify-between mt-10">
+            <span className="flex flex-col gap-1 pt-3">
+              <span className="text-lg font-bold">{t('user.menu-list.menuList.description')}</span>
+            </span>
+            <div className="w-full">
+              <TextArea
+                name="shortDesc"
+                labelTitle={''}
+                value={description}
+                placeholder={t('user.menu-list.menuList.descriptionPlaceholder') ?? ''}
+                containerStyle="rounded-3xl"
+                onChange={e => {
+                  e.target.value.length <= maxChar
+                    ? setDescription(e.target.value)
+                    : e.preventDefault();
+                }}
+              />
+              <div className="w-full flex justify-end">
+                <p className="text-body-text-3 text-xs mt-2">
+                  {t('user.menu-list.menuList.maxDescription', { maxChar })}
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-        <div
-          role="button"
-          aria-disabled
-          onClick={() => {
-            onCreate();
-          }}
-          className="py-4 w-28 place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-          {t('user.menu-list.menuList.save')}
+
+        <div className="w-full flex justify-end my-10">
+          <div
+            role="button"
+            aria-disabled
+            onClick={() => {
+              onCreate();
+            }}
+            className="py-4 w-28 place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
+            {t('user.menu-list.menuList.save')}
+          </div>
         </div>
       </div>
     );
