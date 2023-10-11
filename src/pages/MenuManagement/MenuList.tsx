@@ -39,7 +39,7 @@ export default function MenuList() {
   } = useForm();
 
   const maxImageSize = 2 * 1024 * 1024;
-  const maxChar = 50;
+  const maxChar = 70;
 
   const [isAddClick, setIsAddClicked] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
@@ -56,7 +56,7 @@ export default function MenuList() {
   const [type, setType] = useState<any | null>('');
   const [isOpenTab, setIsOpenTab] = useState(false);
   const [urlLink, setUrlLink] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
+  const [, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
 
   const fetchQuery = useGetMenuListQuery(
