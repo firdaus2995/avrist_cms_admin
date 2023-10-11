@@ -20,6 +20,7 @@ import { useAppDispatch, useAppSelector } from '../../../store';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
 import { useDeleteNotificationMutation, useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
+import { setEventTriggered } from '@/services/Event/eventErrorSlice';
 
 const Layout: React.FC<any> = props => {
   const location = useLocation();
@@ -27,6 +28,7 @@ const Layout: React.FC<any> = props => {
   const dispatch = useAppDispatch();
   const { open } = useAppSelector(s => s.layoutSlice);
   const { activatedNotificationPage } = useAppSelector(s => s.notificationSlice)
+  const { eventTriggered } = useAppSelector(s => s.eventErrorSlice)
 
   const [notifications, setNotifications] = useState<any>([]);
   const [isSelectedAll, setIsSelectedAll] = useState<any>(false);
@@ -47,6 +49,13 @@ const Layout: React.FC<any> = props => {
 
   // RTK DELETE NOTIFICATION
   const [ deleteNotification ] = useDeleteNotificationMutation();
+
+  useEffect(() => {
+    if (eventTriggered === 'INTERNAL_ERROR') {
+      navigate('internal-server-error');
+    };
+    dispatch(setEventTriggered(false));
+  }, [eventTriggered])
 
   useEffect(() => {
     dispatch(setActivatedNotificationPage(false));

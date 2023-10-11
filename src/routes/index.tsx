@@ -13,6 +13,7 @@ const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'))
 // ERROR PAGE
 const Error403Page = React.lazy(async () => await import('../pages/Error/FourZeroThree'))
 const Error404Page = React.lazy(async () => await import('../pages/Error/FourZeroFour'));
+const ErrorInternalServerErrorPage = React.lazy(async () => await import('../pages/Error/InternalServerError'))
 
 // IMPORT USERS PAGE
 const UserPage = React.lazy(async () => await import('../pages/Users'));
@@ -116,6 +117,8 @@ export default function RoutesComponent() {
           <Route index element={<DashboardPage />} />
           {/* FORBIDDEN */}
           <Route path='403' element={<Error403Page />} />
+          {/* INTERNAL SERVER ERROR */}
+          <Route path='internal-server-error' element={<ErrorInternalServerErrorPage />} />
           {/* USER PAGES ROUTE */}
           <Route element={<ProtectedPage permission="USER_READ" />}>
             <Route path="user" element={<UserPage />} />

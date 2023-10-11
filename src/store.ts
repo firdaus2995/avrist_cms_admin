@@ -23,6 +23,7 @@ import rolesSlice from './services/Roles/rolesSlice';
 import toastSlice from './components/atoms/Toast/slice';
 import pageManagementSlice from './services/PageManagement/pageManagementSlice';
 import notificationSlice from './services/Notification/notificationSlice';
+import eventErrorSlice from './services/Event/eventErrorSlice';
 
 export const store: any = configureStore({
   reducer: {
@@ -33,6 +34,7 @@ export const store: any = configureStore({
     toastSlice,
     pageManagementSlice,
     notificationSlice,
+    eventErrorSlice,
     [loginApi.reducerPath]: loginApi.reducer,
     [rolesApi.reducerPath]: rolesApi.reducer,
     [userApi.reducerPath]: userApi.reducer,
