@@ -19,7 +19,7 @@ export default function FileUploaderV2({
   border = true,
   disabled = false,
   maxSize,
-  previewMode,
+  // previewMode,
   value,
 }: any) {
   function convertToArr(arr: any[], key: string | number | undefined) {
