@@ -7,6 +7,7 @@ import UserOrange from '../../assets/user-orange.svg';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import Radio from '../../components/molecules/Radio';
 import CancelIcon from '../../assets/cancel.png';
+import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { InputText } from '../../components/atoms/Input/InputText';
 import { InputPassword } from '../../components/atoms/Input/InputPassword';
@@ -17,13 +18,17 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 import FormList from '../../components/molecules/FormList';
 import Typography from '../../components/atoms/Typography';
-import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
 import { useForm, Controller } from 'react-hook-form';
+import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
+import DropDown from '@/components/molecules/DropDown';
 
 export default function UsersNew() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+
+  // BACKEND STATE
   const [roleData, setRoleData] = useState([]);
+  const [departmentData, setDepartmentData] = useState([]);
   // FORM STATE
   const now = dayjs().format('YYYY-MM-DD');
   const [isActive, setIsActive] = useState<any>(true);
@@ -31,24 +36,22 @@ export default function UsersNew() {
   const [dob, setDob] = useState<any>('DD-MM-YYYY');
   const [gender, setGender] = useState<string | number | boolean>('');
   const [company] = useState<string>('Avrist Life Insurance');
+  const [departmentId, setDepartmentId] = useState<string | number | boolean>(0);
   const [avatar, setAvatar] = useState('');
   // CHANGE STATUS MODAL
   const [showChangeStatusModal, setShowChangeStatusModal] = useState<boolean>(false);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
-  // LIST STATE
-  const [listAttributes] = useState<any>([
-    { value: '1', label: 'CMC' },
-    { value: '2', label: 'DPLK/Pension' },
-    { value: '3', label: 'Syariah' },
-    { value: '4', label: 'HR' },
-  ]);
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');  
 
   // RTK GET ROLE
   const fetchRoleQuery = useGetRoleQuery({});
-  const { data } = fetchRoleQuery;
+  const { data: dataRole } = fetchRoleQuery;
+
+  // RTK GET DEPARTMENT
+  const fetchDepartmentQuery = useGetDepartmentQuery({});
+  const { data: dataDepartment } = fetchDepartmentQuery;  
 
   // RTK CREATE USER
   const [createUser, { isLoading }] = useCreateUserMutation();
@@ -60,8 +63,8 @@ export default function UsersNew() {
   } = useForm();
 
   useEffect(() => {
-    if (data) {
-      const roleList = data?.roleList?.roles.map((element: any) => {
+    if (dataRole) {
+      const roleList = dataRole?.roleList?.roles.map((element: any) => {
         return {
           value: Number(element.id),
           label: element.name,
@@ -69,7 +72,19 @@ export default function UsersNew() {
       });
       setRoleData(roleList);
     }
-  }, [data]);
+  }, [dataRole]);
+
+  useEffect(() => {
+    if (dataDepartment) {
+      const departmentList = dataDepartment?.departmentList?.departments.map((element: any) => {
+        return {
+          value: Number(element.id),
+          label: element.name,
+        };
+      });
+      setDepartmentData(departmentList);
+    };
+  }, [dataDepartment]);
 
   function onSubmit(data: { userId: any; fullName: any; email: any; role: any }) {
     const payload = {
@@ -83,7 +98,9 @@ export default function UsersNew() {
       profilePicture: avatar,
       statusActive: isActive,
       roleId: data?.role,
+      departmentId,
     };
+    
     createUser(payload)
       .unwrap()
       .then((d: any) => {
@@ -403,33 +420,24 @@ export default function UsersNew() {
             </div>
           </div>
           {/* ROW 5 */}
-          <div className="max-w-[365px]">
-            <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
-              Department
-              <span className={'text-reddist text-lg'}>{`*`}</span>
-            </Typography>
-            <Controller
-              name="department"
-              control={control}
-              defaultValue=""
-              rules={{ required: t('components.atoms.required') ?? '' }}
-              render={({ field }) => (
-                <FormList.DropDown
-                  {...field}
-                  key="department"
-                  labelTitle="Department"
-                  defaultValue=""
-                  inputWidth={340}
-                  error={!!errors?.department?.message}
-                  helperText={errors?.department?.message}
-                  themeColor="primary"
-                  items={listAttributes}
-                  onChange={(e: any) => {
-                    field.onChange(e.value);
-                  }}
-                />
-              )}
-            />
+          <div className="flex flex-row gap-14">
+            <div className="flex flex-1">
+              <DropDown
+                labelTitle={t('user.users-new.user.add.department') ?? ''}
+                labelStyle="font-bold"
+                labelRequired
+                defaultValue=""
+                labelEmpty={t('user.users-new.user.add.choose-department') ?? ''}
+                items={departmentData}
+                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                  if (event) {
+                    setDepartmentId(value);
+                  }
+                }}
+              />
+            </div>
+            <div className="flex flex-1">{/* SPACES */}</div>
+            <div className="flex flex-1">{/* SPACES */}</div>
           </div>
         </div>
         <div className="mt-[200px] flex justify-end items-end gap-2">

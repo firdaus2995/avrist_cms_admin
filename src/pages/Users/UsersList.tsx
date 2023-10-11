@@ -21,7 +21,6 @@ import RoleRenderer from '../../components/atoms/RoleRenderer';
 export default function UsersList() {
   const StatusBadge = (status: any) => {
     function getStyle({ status }: any) {
-      // console.log('first ', status);
       if (status) {
         return 'bg-[#D9E7D6] border-[#8AA97C]';
       } else if (status === undefined) {
@@ -44,6 +43,7 @@ export default function UsersList() {
     const badgeClasses = `flex w-28 items-center justify-center text-gray h-7 border-2 ${getStyle(
       status,
     )}`;
+    
     return (
       <span className={badgeClasses}>
         <Typography type="body" size="xs" weight="medium">
@@ -52,6 +52,7 @@ export default function UsersList() {
       </span>
     );
   };
+  
   // TABLE COLUMN
   const columns = [
     {
