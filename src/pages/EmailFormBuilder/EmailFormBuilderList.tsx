@@ -235,7 +235,7 @@ export default function EmailFormBuilderList() {
 
   useEffect(() => {
     if (dataEFB) {
-      setListDataEFB(dataEFB?.postTypeList?.postTypeList);
+      setListDataEFB(dataEFB?.HEHE?.postTypeList);
       setTotalEFB(dataEFB?.postTypeList?.total);
     }
   }, [dataEFB]);
