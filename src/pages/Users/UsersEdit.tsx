@@ -213,7 +213,7 @@ export default function UsersEdit() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-      <form className="flex flex-col w-100" onSubmit={handleSubmit((data: any) => {
+      <form className="flex flex-col w-100" onSubmit={handleSubmit((_data: any) => {
           onSave();
         })}>
         <div className="flex items-center justify-center">

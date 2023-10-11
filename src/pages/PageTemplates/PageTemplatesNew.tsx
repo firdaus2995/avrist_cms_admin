@@ -270,11 +270,13 @@ export default function PageTemplatesNew() {
       const defaultPageDescription = data?.shortDesc || '';
       const defaultPageFileName = data?.filenameCode || '';
       const defaultPageId = data?.id || '';
+      const defaultImageUrl = data?.imageUrl || '';
 
       setValue('pageName', defaultPageName);
       setValue('pageDescription', defaultPageDescription);
       setValue('pageFileName', defaultPageFileName);
       setValue('pageId', defaultPageId);
+      setValue('imagePreview', defaultImageUrl);
 
       const originalAttributes = data?.attributes;
       const combineAttributes = originalAttributes.map((item: any) => ({
@@ -711,11 +713,31 @@ export default function PageTemplatesNew() {
             key="imagePreview"
             name="imagePreview"
             control={control}
-            defaultValue=""
+            // rules={{
+            //   required: {
+            //     value: false,
+            //     message: t('user.page-template-new.form.imagePreview.required-message'),
+            //   },
+            // }}
             rules={{
-              required: {
-                value: false,
-                message: t('user.page-template-new.form.imagePreview.required-message'),
+              required: `${t('user.page-template-new.form.imagePreview.required-message')}`,
+              validate: value => {
+                if (value && value.length > 0) {
+                  // Parse the input value as JSON
+                  const parsedValue = JSON.parse(value);
+
+                  // Check if parsedValue is an array and every item has imageUrl and altText properties
+                  if (
+                    Array.isArray(parsedValue) &&
+                    parsedValue.every(item => item.imageUrl && item.altText)
+                  ) {
+                    return true; // Validation passed
+                  } else {
+                    return 'All items must have Image and Alt Text'; // Validation failed
+                  }
+                } else {
+                  return `${t('user.page-template-new.form.imagePreview.required-message')}`; // Validation failed for empty value
+                }
               },
             }}
             render={({ field }) => {
@@ -743,6 +765,7 @@ export default function PageTemplatesNew() {
                   onChange={onChange}
                   border={false}
                   disabled={mode === 'detail'}
+                  previewMode={mode === 'detail'}
                 />
               );
             }}

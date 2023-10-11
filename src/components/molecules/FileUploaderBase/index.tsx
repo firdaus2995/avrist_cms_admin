@@ -65,6 +65,7 @@ export default function FileUploaderBase({
   onFilesChange,
   onAltTextChange,
   onCombineDataChange,
+  // value,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
@@ -75,7 +76,7 @@ export default function FileUploaderBase({
   const formatData = () => {
     const formattedData = filesData.map((data: any, index: any) => {
       return {
-        imageUrl: data.name,
+        imageUrl: data.response,
         altText: altTexts[index] || '',
       };
     });
@@ -234,6 +235,14 @@ export default function FileUploaderBase({
         </>
       )}
       <div>
+        {/* PREVIEW */}
+        {/* <p>{value}</p>
+        {JSON.parse(value ?? '')?.map((x,i)=> {
+          return (
+            <p>Hai</p>
+          )
+        })} */}
+
         {filesData.map((data: any, index: any) => {
           return (
             <div key={index}>
