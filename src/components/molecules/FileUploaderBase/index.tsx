@@ -228,7 +228,7 @@ export default function FileUploaderBase({
     setIsUploadLoading(false);
   };
 
-  function safeParseJSON(jsonString) {
+  function safeParseJSON(jsonString:any) {
     try {
       return JSON.parse(jsonString);
     } catch (e) {
