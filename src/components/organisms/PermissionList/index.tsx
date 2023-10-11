@@ -10,18 +10,35 @@ export default function PermissionList(props: IPermisionList) {
   const { permissionList, loading, disabled } = props;
   const dispatch = useAppDispatch();
   const { permissions } = useAppSelector(state => state.rolesSlice);
-  const [allPermission, setAllPermission] = useState<string[]>([]);
+  const [existingPermission, setExistingPermission] = useState<any>([]);
+  // const onChangePermission = (d: string) => {
+  //   const checkIfExist = permissions.find((p: string) => p === d);
+  //   if (checkIfExist) {
+  //     const filter = permissions.filter((f: any) => f !== checkIfExist);
+  //     dispatch(setPermissions(filter));
+  //   } else {
+  //     dispatch(setPermissions([...permissions, d, 'MENU_READ']));
+  //   }
+  // };
 
-  useEffect(() => {
-    if (permissionList) {
-      const temp = extractPermissions(permissionList);
-      setAllPermission(temp);
+  const onChangePermission = (d: string) => {
+    const checkIfExist = permissions.find((p: string) => p === d);
+    if (checkIfExist) {
+      const filter = permissions.filter((f: string) => f !== checkIfExist);
+      dispatch(setPermissions(filter));
+    } else {
+      // Extract the base permission name
+      const basePermission = d.replace(/_(READ|CREATE|EDIT|DELETE|REVIEW|APPROVE|REGISTER|UPDATE)$/, '');
+
+      // Check if the base read permission exists in allPermission
+      const readPermission = `${basePermission}_READ`;
+      if (existingPermission.includes(readPermission)) {
+        dispatch(setPermissions([...permissions, d, readPermission]));
+      } else {
+        dispatch(setPermissions([...permissions, d]));
+      }
     }
-  }, [permissionList]);
-
-  useEffect(() => {
-    console.log('permisss ', permissions);
-  }, [permissions]);
+  };
 
   function extractPermissions(data: any) {
     const permissionsArray: string[] = [];
@@ -37,28 +54,17 @@ export default function PermissionList(props: IPermisionList) {
     return permissionsArray;
   }
 
-  const onChangePermission = (d: string) => {
-    const checkIfExist = permissions.includes(d);
-
-    if (checkIfExist) {
-      const updatedPermissions = permissions.filter((p: any) => p !== d);
-      dispatch(setPermissions(updatedPermissions));
-    } else {
-      const basePermission = d.replace(/_(READ|CREATE|EDIT|DELETE)$/, '');
-
-      const readPermission = `${basePermission}_READ`;
-      if (allPermission.includes(readPermission)) {
-        dispatch(setPermissions([...permissions, d, readPermission]));
-      } else {
-        dispatch(setPermissions([...permissions, d]));
-      }
+  useEffect(() => {
+    if (permissionList) {
+      const temp = extractPermissions(permissionList);
+      setExistingPermission(temp);
     }
-  };
+  }, [permissionList]);
 
   return (
     <div>
       <div>
-        <div className="flex gap-4 items-center">
+        <div className="flex gap-4 items-center ">
           <img src={PermissionImg} alt="permission" className="h-[22px]" />
           <p className="font-bold text-lg">{t('components.organism.permission')}</p>
         </div>
@@ -71,6 +77,7 @@ export default function PermissionList(props: IPermisionList) {
                 permission={permission}
                 disabled={disabled}
                 onChange={onChangePermission}
+                allPermission={permissions}
               />
             </div>
           ))
