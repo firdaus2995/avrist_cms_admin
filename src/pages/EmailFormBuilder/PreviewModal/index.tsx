@@ -8,7 +8,7 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 import { copyArray } from '@/utils/logicHelper';
-import { getImage } from '../../../services/Images/imageUtils';
+import { getImage } from '../../../utils/imageUtils';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 
 export default function PreviewModal(props: any) {

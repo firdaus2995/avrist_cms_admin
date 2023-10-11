@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import DeleteComponentIcon from '../../../../assets/efb/preview-delete.svg';
-import { getImage } from '../../../../services/Images/imageUtils';
+import { getImage } from '../../../../utils/imageUtils';
 
 interface IRadio {
   name: string;

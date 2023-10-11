@@ -8,7 +8,7 @@ import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { copyArray, formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
-import { getImageAxios } from '../../../services/Images/imageUtils';
+import { getImageAxios } from '../../../utils/imageUtils';
 import { t } from 'i18next';
 
 const baseUrl = import.meta.env.VITE_API_URL;

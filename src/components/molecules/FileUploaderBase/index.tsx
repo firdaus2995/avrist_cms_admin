@@ -55,6 +55,40 @@ const FileItem = (props: any) => {
   );
 };
 
+const FileItemPreview = (props: any) => {
+  const { name, value } = props;
+  console.log(props)
+  return (
+    <>
+      <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
+        {value?.type?.startsWith('image/') ? (
+          <img
+            className="object-cover h-12 w-12 rounded-lg mr-3 border"
+            src={URL.createObjectURL(value)}
+            alt={name}
+          />
+        ) : (
+          <div className="h-12 w-12 flex justify-center items-center bg-light-purple rounded-lg mr-3">
+            <img className="h-9 w-9" src={Document} alt="document" />
+          </div>
+        )}
+        <div className="flex flex-1 h-14 justify-center flex-col">
+          <p className="truncate w-52">Test</p>
+          {/* <p className="text-body-text-3 text-xs">{value ? bytesToSize(value?.size) : ''}</p> */}
+        </div>
+        <div className="h-11">
+          {/* <div
+            data-tip={'Delete'}
+            className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
+            onClick={onDeletePress}>
+            <img src={Close} className="w-5 h-5" />
+          </div> */}
+        </div>
+      </div>
+    </>
+  );
+};
+
 export default function FileUploaderBase({
   isDocument,
   multiple,
@@ -65,7 +99,7 @@ export default function FileUploaderBase({
   onFilesChange,
   onAltTextChange,
   onCombineDataChange,
-  // value,
+  value,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
@@ -194,6 +228,15 @@ export default function FileUploaderBase({
     setIsUploadLoading(false);
   };
 
+  function safeParseJSON(jsonString) {
+    try {
+      return JSON.parse(jsonString);
+    } catch (e) {
+      console.error('Error parsing JSON:', e);
+      return [];
+    }
+  }
+
   return (
     <>
       {(!filesData.length || multiple) && (
@@ -236,12 +279,9 @@ export default function FileUploaderBase({
       )}
       <div>
         {/* PREVIEW */}
-        {/* <p>{value}</p>
-        {JSON.parse(value ?? '')?.map((x,i)=> {
-          return (
-            <p>Hai</p>
-          )
-        })} */}
+        {safeParseJSON(value).map((data: any, i: any) => {
+          return <FileItemPreview key={i} {...data} />;
+        })}
 
         {filesData.map((data: any, index: any) => {
           return (
