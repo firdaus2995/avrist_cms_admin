@@ -9,6 +9,7 @@ import { getCredential, removeCredential } from './Credential';
 import { loginApi } from '../services/Login/loginApi';
 import { storeDataStorage } from './SessionStorage';
 import { openToast } from '../components/atoms/Toast/slice';
+import { setEventTriggered } from '@/services/Event/eventErrorSlice';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const mutex = new Mutex();
 
@@ -80,7 +81,9 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
       await mutex.waitForUnlock();
       result = await baseQuery(args, api, extraOptions);
     }
-  }
+  } else if (result?.error?.message.includes('INTERNAL_ERROR')) {
+    store.dispatch(setEventTriggered('INTERNAL_ERROR'));
+  };
   return result;
 };
 
