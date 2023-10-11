@@ -87,10 +87,10 @@ const Table: React.FC<IDataGrid> = props => {
         <tbody className="relative ">
           {loading ? (
             <Skeleton 
-              columnsLength={columns.length}
-              rowsLength={rows.length}
+              columnsLength={columns?.length}
+              rowsLength={rows?.length}
             />
-          ) : rows.length ? (
+          ) : rows?.length ? (
             table.getRowModel().rows.map((row, i) => {
               return (
                 <React.Fragment key={i}>
@@ -112,7 +112,7 @@ const Table: React.FC<IDataGrid> = props => {
             })
           ) : (
             <ErrorComponent
-              colspan={columns.length}
+              colspan={columns?.length}
               message={
                 error
                   ? t('components.molecules.not-found')

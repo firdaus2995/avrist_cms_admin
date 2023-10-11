@@ -145,8 +145,8 @@ export default function PageManagementList() {
       setTotal(data?.pageList?.total);
     }
     if (dataMyTask && !isPageListActive) {
-      setListDataMyTask(dataMyTask?.pageList?.pages);
-      setTotal(dataMyTask?.pageList?.total);
+      setListDataMyTask(dataMyTask?.pageMyTaskList?.pages);
+      setTotal(dataMyTask?.pageMyTaskList?.total);
     }
   }, [data, dataMyTask, isPageListActive]);
 
@@ -164,7 +164,7 @@ export default function PageManagementList() {
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback(
     (sortModel: SortingState) => {
-      if (sortModel.length) {
+      if (sortModel?.length) {
         const sortBy = sortModel[0].id;
         const direction = sortModel[0].desc ? 'desc' : 'asc';
 
@@ -394,7 +394,7 @@ export default function PageManagementList() {
           btnSubmitStyle={''}
         />
         <TitleCard
-          title={t('user.page-management.list.page-list.button-add') ?? ''}
+          title={t('user.page-management.list.page-list.title') ?? ''}
           topMargin="mt-2"
           SearchBar={
             <InputSearch
