@@ -14,6 +14,7 @@ import { contentManagerApi } from './services/ContentManager/contentManagerApi';
 import { configApi } from './services/Config/configApi';
 import { globalConfigDataApi } from './services/GlobalConfigData/globalConfigDataApi';
 import { notificationApi } from './services/Notification/notificationApi';
+import { departmentApi } from './services/Department/departmentApi';
 
 import navbarSlice from './components/molecules/Navbar/slice';
 import layoutSlice from './components/organisms/Layout/slice';
@@ -44,6 +45,7 @@ export const store: any = configureStore({
     [configApi.reducerPath]: configApi.reducer,
     [globalConfigDataApi.reducerPath]: globalConfigDataApi.reducer,
     [notificationApi.reducerPath]: notificationApi.reducer,
+    [departmentApi.reducerPath]: departmentApi.reducer,
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware()
@@ -59,6 +61,7 @@ export const store: any = configureStore({
       .concat(configApi.middleware)
       .concat(globalConfigDataApi.middleware)
       .concat(notificationApi.middleware)
+      .concat(departmentApi.middleware)
 });
 
 export type RootState = ReturnType<typeof store.getState>;

@@ -886,7 +886,9 @@
           "user-email": "Email",
           "company": "Company",
           "role": "Role",
+          "department": "Department",
           "choose-role": "Choose Your Role",
+          "choose-department": "Choose Your Department",
           "success-msg": "User {{name}} has been added successfully"
         },
         "modal": {
