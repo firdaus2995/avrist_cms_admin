@@ -8,7 +8,8 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { t } from 'i18next';
-// import FormList from '../FormList';
+import AdobePdfIcon from '@/assets/adobe-pdf.svg';
+import { getImage } from '../../../utils/imageUtils';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
@@ -56,25 +57,22 @@ const FileItem = (props: any) => {
 };
 
 const FileItemPreview = (props: any) => {
-  const { name, value } = props;
-  console.log(props)
+  const { image, isDocument } = props;
   return (
     <>
       <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
-        {value?.type?.startsWith('image/') ? (
-          <img
-            className="object-cover h-12 w-12 rounded-lg mr-3 border"
-            src={URL.createObjectURL(value)}
-            alt={name}
-          />
+        {isDocument ? (
+          <img className="object-cover h-12 w-12 rounded-lg mr-3 border" src={AdobePdfIcon} />
         ) : (
-          <div className="h-12 w-12 flex justify-center items-center bg-light-purple rounded-lg mr-3">
-            <img className="h-9 w-9" src={Document} alt="document" />
-          </div>
+          <div
+            className="h-12 w-12 rounded-lg bg-[#5E217C] bg-cover"
+            style={{ backgroundImage: `url(${image?.objectUrl})` }}></div>
         )}
-        <div className="flex flex-1 h-14 justify-center flex-col">
-          <p className="truncate w-52">Test</p>
-          {/* <p className="text-body-text-3 text-xs">{value ? bytesToSize(value?.size) : ''}</p> */}
+        <div className="flex flex-1 h-14 justify-center flex-col ml-3">
+          <p className="truncate w-52">{image?.imageName ?? ''}</p>
+          <p className="text-body-text-3 text-xs">
+            {image?.fileSize ? bytesToSize(image?.fileSize) : ''}
+          </p>
         </div>
         <div className="h-11">
           {/* <div
@@ -106,6 +104,7 @@ export default function FileUploaderBase({
   const [isUploadLoading, setIsUploadLoading] = useState<any>(false);
   const [altTexts, setAltTexts] = useState<string[]>([]);
   const inputRef = useRef<any>(null);
+  const [imageUrls, setImageUrls] = useState<any>([]);
 
   const formatData = () => {
     const formattedData = filesData.map((data: any, index: any) => {
@@ -228,7 +227,7 @@ export default function FileUploaderBase({
     setIsUploadLoading(false);
   };
 
-  function safeParseJSON(jsonString:any) {
+  function safeParseJSON(jsonString: any) {
     try {
       return JSON.parse(jsonString);
     } catch (e) {
@@ -236,6 +235,22 @@ export default function FileUploaderBase({
       return [];
     }
   }
+
+  useEffect(() => {
+    const parsedValue = safeParseJSON(value);
+    if (parsedValue) {
+      const loadImages = async () => {
+        const urls = await Promise.all(
+          parsedValue.map(async (element: any) => await getImage(element.imageUrl)),
+        );
+        if (urls) {
+          setImageUrls(urls);
+        }
+      };
+
+      void loadImages();
+    }
+  }, [value]);
 
   return (
     <>
@@ -279,8 +294,16 @@ export default function FileUploaderBase({
       )}
       <div>
         {/* PREVIEW */}
-        {safeParseJSON(value).map((data: any, i: any) => {
-          return <FileItemPreview key={i} {...data} />;
+        {!filesData.length && safeParseJSON(value).map((data: any, i: any) => {
+          return (
+            <FileItemPreview
+              key={i}
+              image={imageUrls[i]} // Pass the appropriate imageUrls object
+              altText={data.altText} // You can also pass other information as needed
+              index={i}
+              isDocument={isDocument}
+            />
+          );
         })}
 
         {filesData.map((data: any, index: any) => {

@@ -15,7 +15,7 @@ interface IRadio {
 const ImageRadio: React.FC<IRadio> = ({ name, items, isActive, onClick, onDelete }) => {
   const nameId: any = uuidv4();
 
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageUrls, setImageUrls] = useState<any>([]);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -44,7 +44,7 @@ const ImageRadio: React.FC<IRadio> = ({ name, items, isActive, onClick, onDelete
               />
               <div
                 className="w-32 h-32 bg-[#5E217C] bg-cover"
-                style={{ backgroundImage: `url(${imageUrls[index]})` }}></div>
+                style={{ backgroundImage: `url(${imageUrls[index]?.objectUrl})` }}></div>
             </label>
           ))}
         </div>

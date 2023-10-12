@@ -8,6 +8,7 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 import { copyArray } from '@/utils/logicHelper';
+// import { getImage } from '../../../services/Images/imageUtils';
 import { getImage } from '../../../utils/imageUtils';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 
@@ -298,7 +299,7 @@ export default function PreviewModal(props: any) {
               </label>
               <div className="w-full flex flex-col gap-4">
                 {items?.map(async (element: any, index: number) => {
-                  const imageUrl = await getImage(element.value);
+                  const imageUrl = await getImage(element?.value);
                   return (
                     <label
                       key={index}
@@ -310,7 +311,9 @@ export default function PreviewModal(props: any) {
                       />
                       <div
                         className="w-32 h-32 bg-[#5E217C] bg-cover"
-                        style={{ backgroundImage: `url(${imageUrl})})` }}></div>
+                        style={{
+                          backgroundImage: `url(${(imageUrl?.[index]?.objectUrl) || ''})`,
+                        }}></div>
                     </label>
                   );
                 })}
@@ -321,13 +324,16 @@ export default function PreviewModal(props: any) {
           return (
             <CheckBox
               containerStyle="w-full flex flex-row flex-start"
-              labelTitle={(
-                <>Ya. Saya telah membaca dan menyetujui <span className="text-[#2C89F5] font-bold">Syarat dan Ketentuan</span></>
-              )}
+              labelTitle={
+                <>
+                  Ya. Saya telah membaca dan menyetujui{' '}
+                  <span className="text-[#2C89F5] font-bold">Syarat dan Ketentuan</span>
+                </>
+              }
               labelStyle="max-w-[220px] font-normal"
               inputStyle="w-[20px] h-[20px]"
             />
-          );  
+          );
         default:
           return <div>err: {data.fieldType}</div>;
       }

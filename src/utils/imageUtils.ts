@@ -15,9 +15,18 @@ export const getImage = async (img: any) => {
 
     if (response.ok) {
       const blob = await response.blob();
-      if (blob.size > 0) {
+      const contentLengthHeader = response.headers.get('content-length');
+      const fileSize = contentLengthHeader ? parseInt(contentLengthHeader, 10) : 0;
+      const imageName: string = img
+        .replace('images/', '')
+        .replace('.jpg', '')
+        .replace('.jpeg', '')
+        .replace('.png', '')
+        .replace('.pdf', '');
+
+      if (fileSize > 0) {
         const objectUrl = URL.createObjectURL(blob);
-        return objectUrl;
+        return { objectUrl, fileSize, imageName };
       }
     }
   } catch (err) {
@@ -26,6 +35,8 @@ export const getImage = async (img: any) => {
 
   return '';
 };
+
+
 
 export const getImageAxios = async (img: any) => {
   try {
@@ -39,7 +50,12 @@ export const getImageAxios = async (img: any) => {
     });
 
     const fileSize = response?.headers?.['content-length'];
-    const imageName: string = img.replace('images/', '').replace('.jpg', '').replace('.jpeg', '').replace('.png', '').replace('.pdf', '');
+    const imageName: string = img
+      .replace('images/', '')
+      .replace('.jpg', '')
+      .replace('.jpeg', '')
+      .replace('.png', '')
+      .replace('.pdf', '');
 
     return {
       url: imageUrl,
