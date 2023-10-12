@@ -14,6 +14,7 @@ const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'))
 const Error403Page = React.lazy(async () => await import('../pages/Error/FourZeroThree'))
 const Error404Page = React.lazy(async () => await import('../pages/Error/FourZeroFour'));
 const ErrorInternalServerErrorPage = React.lazy(async () => await import('../pages/Error/InternalServerError'))
+const ErrorDataNotFoundErrorPage = React.lazy(async () => await import('../pages/Error/DataNotFoundError'))
 
 // IMPORT USERS PAGE
 const UserPage = React.lazy(async () => await import('../pages/Users'));
@@ -119,6 +120,8 @@ export default function RoutesComponent() {
           <Route path='403' element={<Error403Page />} />
           {/* INTERNAL SERVER ERROR */}
           <Route path='internal-server-error' element={<ErrorInternalServerErrorPage />} />
+          {/* NOT FOUND */}
+          <Route path='data-not-found' element={<ErrorDataNotFoundErrorPage />} />
           {/* USER PAGES ROUTE */}
           <Route element={<ProtectedPage permission="USER_READ" />}>
             <Route path="user" element={<UserPage />} />
