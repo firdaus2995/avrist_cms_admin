@@ -47,7 +47,7 @@ export default function GlobalConfigDataNew() {
   // RTK EDIT
   const [editGlobalConfig, { isLoading: isLoadingEdit }] = useUpdateGlobalConfigDataMutation();
   // RTK GET DATA DETAIL
-  const fetchGlobalConfigQuery = useGetGlobalConfigByIdQuery(params?.key);
+  const fetchGlobalConfigQuery = useGetGlobalConfigByIdQuery({id: params?.key});
   const { data: defaultGlobalConfig } = fetchGlobalConfigQuery;
 
   // SET DEFAULT PAGE MODE
@@ -71,7 +71,7 @@ export default function GlobalConfigDataNew() {
 
   // FILL DATA FOR DETAIL / EDIT
   useEffect(() => {
-    const data = defaultGlobalConfig?.getConfig;
+    const data = defaultGlobalConfig?.getDetail;
     if (data) {
       const defaultVariable = data?.variable || '';
       const defaultValue = data?.value || '';

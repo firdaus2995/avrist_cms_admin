@@ -157,7 +157,7 @@ export default function GlobalConfigDataList() {
       cell: (info: any) => (
         <div className="flex gap-3 w-20">
           {canEdit && (
-            <Link to={`edit/${info.row?.original?.variable}`}>
+            <Link to={`edit/${info.row?.original?.id}`}>
               <div className="tooltip" data-tip={t('user.global-config-data-list.action.edit')}>
                 <img
                   className={`cursor-pointer select-none flex items-center justify-center`}
