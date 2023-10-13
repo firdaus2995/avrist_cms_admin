@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useTranslation } from 'react-i18next';
 import { useGetPermissionHirarkyQuery, useRoleCreateMutation } from '../../services/Roles/rolesApi';
@@ -9,7 +10,6 @@ import PermissionList from '../../components/organisms/PermissionList';
 import PermissionForm from '../../components/organisms/PermissionForm';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
-import { useState } from 'react';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function RolesNew() {
@@ -22,6 +22,10 @@ export default function RolesNew() {
   const [showComfirm, setShowComfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setmessageConfirm] = useState('');
+
+  useEffect(() => {
+    dispatch(resetForm());
+  }, []);
 
   const onSave = () => {
     const payload = {

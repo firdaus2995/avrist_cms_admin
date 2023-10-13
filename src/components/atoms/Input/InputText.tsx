@@ -44,7 +44,7 @@ export const InputText: React.FC<IInputText> = ({
   onChange,
   inputStyle,
   direction,
-  roundStyle = '3xl',
+  roundStyle = 'xl',
   themeColor,
   inputWidth,
   inputHeight,
