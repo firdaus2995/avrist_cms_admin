@@ -755,10 +755,22 @@
         "pageTitle": "Page Title",
         "type": "Type",
         "page": "Page",
+        "link": "Link",
+        "noLandingPage": "No Landing Page",
         "urlLink": "URL Link",
         "openInNewTab": "Open in New Tab",
         "save": "Save",
-        "addPages": "Add Pages"
+        "takedown": "Takedown",
+        "takedownTitle": "Do you want to takedown this page?",
+        "takedownComment": "Takedown Comment",
+        "toastTakedownRequired": "Takedown Comment is required",
+        "takedownRequired": "This field is required",
+        "addPages": "Add Pages",
+        "menuIcon": "Menu Icon",
+        "optional": "Optional",
+        "description": "Short Description",
+        "descriptionPlaceholder": "Enter Description",
+        "maxDescription": "Max. {{maxChar}} Characters"
       }
     },
 
@@ -982,8 +994,7 @@
       "toast-failed-add": "Failed add Global Config"
     },
 
-
-    "roles-list":{
+    "roles-list": {
       "common": {
         "addNewRole": "Add New Role",
         "areYouSure": "Are you sure?",
@@ -1033,8 +1044,7 @@
       "toast-failed": "Failed!"
     },
 
-
-    "roles-new":{
+    "roles-new": {
       "roles": {
         "add": {
           "title": "Add Role",
@@ -1056,8 +1066,7 @@
       }
     },
 
-
-    "tabs-category":{
+    "tabs-category": {
       "categoryName": "Category Name",
       "categoryDescription": "Category Description",
       "action": {
@@ -1082,7 +1091,7 @@
       }
     },
 
-    "tabs-category-edit":{
+    "tabs-category-edit": {
       "toast-success": "Success",
       "toast-failed": "Failed",
       "content-manager": {
@@ -1104,8 +1113,7 @@
       }
     },
 
-
-    "tabs-category-new":{
+    "tabs-category-new": {
       "content-manager": {
         "category": {
           "add": {
@@ -1136,8 +1144,7 @@
       "loading": "Loading..."
     },
 
-
-    "tabs-mytask":{
+    "tabs-mytask": {
       "myTaskTab": {
         "tableHeaders": {
           "status": "",
@@ -1152,8 +1159,7 @@
       }
     },
 
-
-    "tabs-main":{
+    "tabs-main": {
       "common": {
         "yes": "Yes",
         "no": "No",
@@ -1181,14 +1187,6 @@
         "logApprovalTitle": "Log Approval - {{logTitle}}"
       }
     }
-    
-    
-    
-    
-
-
-
-
   },
 
   "action": {
@@ -1237,26 +1235,22 @@
   "no": "No",
   "yes": "Yes",
 
-
-
-
-
-  "components":{
-    "atoms":{
+  "components": {
+    "atoms": {
       "roles": "Roles",
       "create": "Create",
       "required": "This field is required",
       "close-modal": "Close Modal"
     },
-    "molecules":{
-      "response":"Response",
+    "molecules": {
+      "response": "Response",
       "approve": "Approve",
       "reject": "Reject",
-      "component-dropdown-error":"Component Dropdown Error",
+      "component-dropdown-error": "Component Dropdown Error",
       "component-radio-error": "Component Radio Error",
-      "file":{
+      "file": {
         "too-large": "File Size Too Large",
-        "max": "Please upload a file that is no larger than 5MB.",
+        "max": "Please upload a file that is no larger than {{max}}MB.",
         "duplicated": "Duplicate File",
         "already-uploded": "File already uploaded",
         "failed": "Failed Upload",
@@ -1266,7 +1260,7 @@
         "drag": "Drag and Drop Files or upload image",
         "support": "Only Support format .jpg, .jpeg, .png"
       },
-      "filter-button":{
+      "filter-button": {
         "filterButton": {
           "filter": "Filter",
           "resetFilter": "Reset Filter"
@@ -1290,7 +1284,7 @@
       "not-found": "Data not found",
       "no-data": "No data"
     },
-    "organism":{
+    "organism": {
       "back": "Back",
       "notification": "Notification",
       "content": "Content",

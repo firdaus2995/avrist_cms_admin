@@ -419,9 +419,16 @@ export const contentManagerApi = createApi({
     getEligibleAutoApprove: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query isUserEligibleAutoApprove{
-            isUserEligibleAutoApprove {    
-                isUserEligible
+          query isUserEligibleAutoApprove(
+            $actionType: String!
+            $dataType: String!
+            ){
+            isUserEligibleAutoApprove(
+              request: {
+                actionType: $actionType
+                dataType: $dataType
+            }) {    
+                result
             }
         }
         `,

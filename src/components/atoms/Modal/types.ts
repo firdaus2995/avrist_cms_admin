@@ -3,8 +3,8 @@ export interface IModal {
   open: boolean;
   footer?: React.ReactNode;
   children?: React.ReactNode;
-  width?: number;
-  height?: number;
+  width?: number | string;
+  height?: number | string;
   title?: React.ReactNode;
   fullscreen?: boolean;
 }

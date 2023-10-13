@@ -123,6 +123,7 @@ export const userApi: any = createApi({
             $profilePicture: String!
             $statusActive: Boolean!
             $roleId: Int!
+            $departmentId: Int!
           ) {
             userCreate(
               request: {
@@ -136,6 +137,7 @@ export const userApi: any = createApi({
                 profilePicture: $profilePicture
                 statusActive: $statusActive
                 roleId: $roleId
+                departmentId: $departmentId
               }
             ) {
               id
@@ -169,6 +171,7 @@ export const userApi: any = createApi({
             $profilePicture: String!
             $statusActive: Boolean!
             $roleId: Int!
+            $departmentId: Int!
           ) {
             userUpdate(
               id: $id
@@ -181,6 +184,7 @@ export const userApi: any = createApi({
                 profilePicture: $profilePicture
                 statusActive: $statusActive
                 roleId: $roleId
+                departmentId: $$departmentId
               }
             ) {
               id

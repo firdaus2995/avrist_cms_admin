@@ -96,7 +96,10 @@ export default function ContentManagerDetailData() {
   const fetchGetContentDataDetail = useGetContentDataDetailQuery({ id });
   const { data: contentDataDetail } = fetchGetContentDataDetail;
 
-  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
+    actionType: 'edit',
+    dataType: 'content'
+  });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   // AUTO APPROVE MODAL STATE
@@ -220,7 +223,7 @@ export default function ContentManagerDetailData() {
   };
 
   function onSubmitData() {
-    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
       setShowModalAutoApprove(true);
     } else {
       saveData();
