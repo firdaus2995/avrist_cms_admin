@@ -9,6 +9,8 @@ import {
 import type { ColumnDef, SortingState } from '@tanstack/react-table';
 
 import TableChevron from '../../../assets/table-chevron.png';
+import TableChevronUp from '../../../assets/table-chevron-up.png';
+import TableChevronDown from '../../../assets/table-chevron-down.png';
 import NoResultIcon from '../../../assets/no-result.svg';
 import './style.css';
 import Skeleton from './skeleton';
@@ -40,7 +42,7 @@ const Table: React.FC<IDataGrid> = props => {
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    enableSortingRemoval: false,
+    enableSortingRemoval: true,
   });
   React.useEffect(() => {
     if (manualSorting) if (onSortModelChange) onSortModelChange(sorting);
@@ -70,8 +72,11 @@ const Table: React.FC<IDataGrid> = props => {
                           onClick: header.column.getToggleSortingHandler(),
                         }}>
                           {flexRender(header.column.columnDef.header, header.getContext())}
-                          {canSorted && (isSorted === 'asc' || isSorted === 'desc') && (
-                            <img src={TableChevron} alt="TableChevron" />
+                          {canSorted && (isSorted === 'asc') && (
+                            <img src={TableChevronUp} alt="TableChevronUp" />
+                          )}
+                          {canSorted && (isSorted === 'desc') && (
+                            <img src={TableChevronDown} alt="TableChevronDown" />
                           )}
                           {canSorted && !isSorted && (
                             <img src={TableChevron} alt="TableChevron" />

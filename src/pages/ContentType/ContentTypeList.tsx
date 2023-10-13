@@ -76,7 +76,7 @@ export default function ContentTypeList() {
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
-  const [direction, setDirection] = useState('asc');
+  const [direction, setDirection] = useState('desc');
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('id');
 
@@ -114,6 +114,9 @@ export default function ContentTypeList() {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    }else{
+      setSortBy('id');
+      setDirection('desc');
     }
   }, []);
 

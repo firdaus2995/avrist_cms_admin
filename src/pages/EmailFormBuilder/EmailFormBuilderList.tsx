@@ -171,12 +171,12 @@ export default function EmailFormBuilderList() {
   const [totalEFB, setTotalEFB] = useState(0);
   const [pageIndexEFB, setPageIndexEFB] = useState(0);
   const [pageLimitEFB, setPageLimitEFB] = useState(10);
-  const [directionEFB, setDirectionEFB] = useState('asc');
+  const [directionEFB, setDirectionEFB] = useState('desc');
   const [sortByEFB, setSortByEFB] = useState('id');
   const [totalEB, setTotalEB] = useState(0);
   const [pageIndexEB, setPageIndexEB] = useState(0);
   const [pageLimitEB, setPageLimitEB] = useState(10);
-  const [directionEB, setDirectionEB] = useState('asc');
+  const [directionEB, setDirectionEB] = useState('desc');
   const [sortByEB, setSortByEB] = useState('id');
 
   const [openDeleteModalEFB, setOpenDeleteModalEFB] = useState(false);
@@ -264,6 +264,9 @@ export default function EmailFormBuilderList() {
     if (sortModel.length) {
       setSortByEFB(sortModel[0].id);
       setDirectionEFB(sortModel[0].desc ? 'desc' : 'asc');
+    }else{
+      setSortByEFB('id');
+      setDirectionEFB('desc');
     }
   }, []);
 
@@ -271,6 +274,9 @@ export default function EmailFormBuilderList() {
     if (sortModel.length) {
       setSortByEB(sortModel[0].id);
       setDirectionEB(sortModel[0].desc ? 'desc' : 'asc');
+    }else{
+      setSortByEB('id');
+      setDirectionEB('desc');
     }
   }, []);
 
