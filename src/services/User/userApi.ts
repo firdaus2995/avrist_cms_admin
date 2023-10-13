@@ -67,6 +67,9 @@ export const userApi: any = createApi({
                   id
                   name
                 }
+                department {
+                  name
+                }
               }
             }
           }
@@ -184,7 +187,7 @@ export const userApi: any = createApi({
                 profilePicture: $profilePicture
                 statusActive: $statusActive
                 roleId: $roleId
-                departmentId: $$departmentId
+                departmentId: $departmentId
               }
             ) {
               id

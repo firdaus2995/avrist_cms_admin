@@ -833,15 +833,16 @@
           "placeholder-user-password": "Password",
           "placeholder-user-fullname": "Full Name",
           "placeholder-user-email": "Email",
-          "leave-confirmation": "Are you sure you want to leave this page?",
-          "success-msg": "User {{name}} updated successfully!"
-        }
-      },
-      "toast-success": "Success",
-      "toast-failed": "Failed",
-      "roles": {
-        "edit": {
-          "failed-msg": "Failed to edit role for {name}"
+          "leave-confirmation": "Are you sure you want to leave this page?"
+        },
+        "toast-success": "Success",
+        "toast-failed": "Failed",
+        "success-msg": "User {{name}} updated successfully!",
+        "failed-msg": "Failed to update user '{{name}}'!",
+        "roles": {
+          "edit": {
+            "failed-msg": "Failed to edit role for {name}"
+          }
         }
       }
     },
