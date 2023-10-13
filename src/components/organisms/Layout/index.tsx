@@ -53,6 +53,8 @@ const Layout: React.FC<any> = props => {
   useEffect(() => {
     if (eventTriggered === 'INTERNAL_ERROR') {
       navigate('internal-server-error');
+    } else if (eventTriggered  === 'NOT_FOUND') {
+      navigate('data-not-found');
     };
     dispatch(setEventTriggered(false));
   }, [eventTriggered])
@@ -69,7 +71,7 @@ const Layout: React.FC<any> = props => {
         if (backendData) {
           setTotal(backendData?.data?.notificationList.total);
           setNotifications(backendData?.data?.notificationList?.notifications);
-        };    
+        };
       } catch (error) {
         console.error("Error while fetching data:", error);
       };

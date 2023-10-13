@@ -83,6 +83,8 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
     }
   } else if (result?.error?.message.includes('INTERNAL_ERROR')) {
     store.dispatch(setEventTriggered('INTERNAL_ERROR'));
+  } else if (result?.error?.message.includes('NotFoundException')) {
+    store.dispatch(setEventTriggered('NOT_FOUND'));
   };
   return result;
 };
