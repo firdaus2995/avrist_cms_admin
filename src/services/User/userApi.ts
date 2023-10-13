@@ -67,6 +67,9 @@ export const userApi: any = createApi({
                   id
                   name
                 }
+                department {
+                  name
+                }
               }
             }
           }

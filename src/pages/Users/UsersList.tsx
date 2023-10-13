@@ -126,7 +126,7 @@ export default function UsersList() {
     },
     {
       header: () => <span className="text-[14px]">Department</span>,
-      accessorKey: 'department',
+      accessorKey: 'department.name',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
