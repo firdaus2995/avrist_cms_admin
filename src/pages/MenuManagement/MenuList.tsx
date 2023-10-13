@@ -27,11 +27,13 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import dayjs from 'dayjs';
 
 export default function MenuList() {
   // const params = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const now = dayjs().format('YYYY-MM-DD');
 
   const {
     control,
@@ -82,14 +84,20 @@ export default function MenuList() {
   const [search] = useState('');
   const [sortBy] = useState('id');
   const [listPage, setListPage] = useState([]);
+  const [filterBy] = useState('CREATED_AT');
+  const [startDate] = useState(now);
+  const [endDate] = useState(now);
 
   // RTK GET DATA
   const fetchQueryPage = useGetPageManagementListQuery({
     pageIndex,
     limit: pageLimit,
+    sortBy,
     direction,
     search,
-    sortBy,
+    filterBy,
+    startDate,
+    endDate,
     isArchive: false,
   });
 
