@@ -26,7 +26,11 @@ export default function PermissionCollapse(props: IPermissionCollase) {
                 strokeWidth={1.5}
                 stroke="currentColor"
                 className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
               </svg>
             ) : (
               <svg
@@ -46,7 +50,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
                 <SubCollapse
                   key={i}
                   subcollapse={content}
-                  disabled={disabled}
+                  disabled={disabled} // tidak digunakan
                   onChange={onChange}
                   allPermission={allPermission}
                 />
@@ -70,7 +74,11 @@ export default function PermissionCollapse(props: IPermissionCollase) {
                 strokeWidth={1.5}
                 stroke="currentColor"
                 className="w-6 h-6">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                />
               </svg>
             ) : (
               <svg
@@ -107,7 +115,7 @@ export default function PermissionCollapse(props: IPermissionCollase) {
 }
 
 const SubCollapse = (props: ISubCollapse) => {
-  const { subcollapse, disabled, onChange, allPermission } = props;
+  const { subcollapse, onChange, allPermission } = props;
   const [open, setOpen] = useState(false);
 
   return (
@@ -148,7 +156,7 @@ const SubCollapse = (props: ISubCollapse) => {
               updateType={d.permission}
               labelTitle={d.permissionTitleLabel}
               defaultValue={allPermission?.includes(d.permission)}
-              disabled={disabled ?? shouldDisableCheckBox(d.permission, allPermission)}
+              disabled={shouldDisableCheckBox(d.permission, allPermission)}
               updateFormValue={() => {
                 onChange(d.permission);
               }}
