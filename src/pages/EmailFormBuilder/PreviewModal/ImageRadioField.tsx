@@ -20,7 +20,9 @@ function ImageRadioField({ name, required, items, nameId }: ImageRadioFieldProps
             return await getImageOld(element.value);
           }),
         );
-        setImageUrls(urls);
+        if (urls) {
+          setImageUrls(urls);
+        }
       } catch (error) {
         console.error('Error fetching images:', error);
       } finally {
