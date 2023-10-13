@@ -21,8 +21,8 @@ import { useNavigate } from 'react-router-dom';
 import { t } from 'i18next';
 import Modal from '../../components/atoms/Modal';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
-import WarningIcon from '../../assets/warning.png';
 import CancelIcon from '../../assets/cancel.png';
+import PaperIcon from '../../assets/paper.svg';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
@@ -43,11 +43,9 @@ export default function MenuList() {
 
   const [isAddClick, setIsAddClicked] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
+  const [openTakedownModal, setOpenTakedownModal] = useState(false);
 
-  const [showComfirm, setShowComfirm] = useState(false);
   const [showCancel, setShowCancel] = useState(false);
-  const [titleConfirm, setTitleConfirm] = useState('');
-  const [messageConfirm, setmessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState('');
 
   const [title, setTitle] = useState('');
@@ -58,6 +56,8 @@ export default function MenuList() {
   const [urlLink, setUrlLink] = useState('');
   const [, setImageUrl] = useState('');
   const [description, setDescription] = useState('');
+  const [takedownNote, setTakedownNote] = useState('');
+  const [isTakedown, setIsTakedown] = useState(false);
 
   const fetchQuery = useGetMenuListQuery(
     {},
@@ -123,18 +123,12 @@ export default function MenuList() {
     }
   }, [data]);
 
-  const onConfirm = (id: string) => {
-    setIdDelete(id);
-    setTitleConfirm(t('user.menu-list.menuList.confirmDeleteTitle') ?? '');
-    setmessageConfirm(t('user.menu-list.menuList.confirmDeleteMessage', { id }) ?? '');
-    setShowComfirm(true);
-  };
-
   const onDelete = () => {
-    deleteMenu({ id: idDelete })
+    deleteMenu({ id: idDelete, takedownNote })
       .unwrap()
       .then(async d => {
-        setShowComfirm(false);
+        setOpenTakedownModal(false);
+        setTakedownNote('');
         setIsOpenModal(false);
         dispatch(
           openToast({
@@ -146,15 +140,14 @@ export default function MenuList() {
         navigate(0);
       })
       .catch(err => {
-        setShowComfirm(false);
-        setIsOpenModal(false);
-
         console.log(err);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.menu-list.menuList.failedDelete'),
-            message: t('user.menu-list.menuList.toastFailed'),
+            message: !takedownNote
+              ? t('user.menu-list.menuList.toastTakedownRequired')
+              : t('user.menu-list.menuList.toastFailed'),
           }),
         );
       });
@@ -174,6 +167,7 @@ export default function MenuList() {
     setUrlLink(data.node.externalUrl);
     setPage(data.node.pageId);
     setIsOpenTab(data.node.isNewTab);
+    setIdDelete(data.node.pageId);
 
     setIsOpenModal(true);
     modalEdit();
@@ -267,32 +261,24 @@ export default function MenuList() {
               updateType={''}
             />
           </div>
-          <div className="place-self-end flex flex-row items-center gap-5 transition ease-in-out hover:-translate-y-1 delay-150">
-            <svg
+          <div className="place-self-end flex flex-row items-center gap-5">
+            <div
               role="button"
+              aria-disabled
               onClick={() => {
-                onConfirm(editedTitle);
+                setOpenTakedownModal(true);
+                setIsTakedown(false);
               }}
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6 text-red-500">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-              />
-            </svg>
-
+              className="py-2 w-30 px-10 bg-white border border-primary rounded-xl flex flex-row gap-2 font-semibold text-primary transition ease-in-out hover:-translate-y-1 delay-150">
+              {t('user.menu-list.menuList.takedown')}
+            </div>
             <div
               role="button"
               aria-disabled
               onClick={() => {
                 onEditMenu();
               }}
-              className="py-2 w-28  px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
+              className="py-2 w-28 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white transition ease-in-out hover:-translate-y-1 delay-150">
               {t('user.menu-list.menuList.save')}
             </div>
           </div>
@@ -336,36 +322,40 @@ export default function MenuList() {
   };
 
   function onEditMenu() {
-    const payload = {
-      title,
-      editedTitle,
-      menuType: type,
-      externalUrl: urlLink,
-      isNewTab: isOpenTab,
-      pageId: page,
-    };
-    editMenu(payload)
-      .unwrap()
-      .then(async () => {
-        console.log('edited');
-        setIsOpenModal(false);
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-          }),
-        );
-        navigate(0);
-      })
-      .catch(() => {
-        setIsOpenModal(false);
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-          }),
-        );
-      });
+    if (!isTakedown) {
+      const payload = {
+        title,
+        editedTitle,
+        menuType: type,
+        externalUrl: urlLink,
+        isNewTab: isOpenTab,
+        pageId: page,
+      };
+      editMenu(payload)
+        .unwrap()
+        .then(async () => {
+          console.log('edited');
+          setIsOpenModal(false);
+          dispatch(
+            openToast({
+              type: 'success',
+              title: t('toast-success'),
+            }),
+          );
+          navigate(0);
+        })
+        .catch(() => {
+          setIsOpenModal(false);
+          dispatch(
+            openToast({
+              type: 'error',
+              title: t('toast-failed'),
+            }),
+          );
+        });
+    } else {
+      onDelete();
+    }
   }
 
   const renderAddButtons = () => {
@@ -580,14 +570,16 @@ export default function MenuList() {
         </div>
 
         <div className="w-full flex justify-end my-10">
-          <div
-            role="button"
-            aria-disabled
-            onClick={() => {
-              onCreate();
-            }}
-            className="py-4 w-28 place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-            {t('user.menu-list.menuList.save')}
+          <div className="flex flex-row gap-2">
+            <div
+              role="button"
+              aria-disabled
+              onClick={() => {
+                onCreate();
+              }}
+              className="py-4 w-28 h-[55px] place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
+              {t('user.menu-list.menuList.save')}
+            </div>
           </div>
         </div>
       </div>
@@ -676,21 +668,7 @@ export default function MenuList() {
               </button>
             </div>
           </div>
-
           {modalEdit()}
-          <ModalConfirm
-            open={showComfirm}
-            cancelAction={() => {
-              setShowComfirm(false);
-            }}
-            title={titleConfirm}
-            cancelTitle={t('user.menu-list.menuList.no')}
-            message={messageConfirm}
-            submitAction={onDelete}
-            submitTitle={t('user.menu-list.menuList.yes')}
-            icon={WarningIcon}
-            btnSubmitStyle={''}
-          />
           <ModalConfirm
             open={showCancel}
             cancelAction={() => {
@@ -706,6 +684,52 @@ export default function MenuList() {
             icon={CancelIcon}
             btnSubmitStyle={'btn-warning'}
           />
+          <ModalConfirm
+            open={openTakedownModal}
+            cancelAction={() => {
+              setOpenTakedownModal(false);
+              setIsTakedown(false);
+              setTakedownNote('');
+            }}
+            modalWidth={600}
+            modalHeight={'100%'}
+            title={t('user.menu-list.menuList.takedownTitle')}
+            titleSize={18}
+            cancelTitle={t('user.menu-list.menuList.cancel')}
+            submitAction={() => {
+              if (takedownNote.length > 0) {
+                setIsTakedown(true);
+                setOpenTakedownModal(false);
+              } else {
+                dispatch(
+                  openToast({
+                    type: 'error',
+                    title: t('user.menu-list.menuList.failedDelete'),
+                    message: t('user.menu-list.menuList.toastTakedownRequired'),
+                  }),
+                );
+                setIsTakedown(false);
+              }
+            }}
+            submitTitle={t('user.menu-list.menuList.submit')}
+            icon={PaperIcon}
+            iconSize={26}
+            btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}>
+            <div className="w-full px-10">
+              <TextArea
+                name="TakedownComment"
+                labelTitle={t('user.menu-list.menuList.takedownComment')}
+                labelRequired
+                value={takedownNote}
+                containerStyle="rounded-3xl"
+                isError={!takedownNote}
+                errorText={!takedownNote ? t('user.menu-list.menuList.takedownRequired') || '' : ''}
+                onChange={e => {
+                  setTakedownNote(e.target.value);
+                }}
+              />
+            </div>
+          </ModalConfirm>
         </TitleCard>
       </RoleRenderer>
     </>

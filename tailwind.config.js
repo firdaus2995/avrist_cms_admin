@@ -22,13 +22,14 @@ export default {
         error: '#EC2247',
         'error-stroke': '#AE1D1D',
         'secondary-warning': '#FF8E3C',
+        'tertiary-warning': '#D96C1E',
         reddist: '#DB3838',
         'dark-reddist': '#AE1D1D',
-        'lumut': '#DFEEEC',
+        lumut: '#DFEEEC',
         'toast-error': '#FFF6F6',
         'toast-error-border': '#EBD2CE',
         'form-disabled-bg': '#E9EEF4',
-        'white': '#FFFFFF',
+        white: '#FFFFFF',
       },
       // Custom fonts
       fontFamily: {

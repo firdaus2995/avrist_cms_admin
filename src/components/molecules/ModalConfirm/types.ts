@@ -1,11 +1,12 @@
 export interface IModalConfirm {
-  modalHeight?: number;
-  modalWidth?: number;
+  modalHeight?: number | string;
+  modalWidth?: number | string;
   open: boolean;
   submitTitle: string;
   cancelTitle: string;
   message?: string;
   title: string;
+  titleSize?: number;
   loading?: boolean;
   icon: any;
   iconSize?: number;
