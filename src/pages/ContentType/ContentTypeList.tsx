@@ -21,6 +21,7 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import Typography from '@/components/atoms/Typography';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 const TopRightButton = () => {
   return (
@@ -169,7 +170,7 @@ export default function ContentTypeList() {
             )}
             <RoleRenderer allowedRoles={['CONTENT_TYPE_EDIT']}>
               <Link to={`edit/${info.getValue()}`}>
-                <div className="tooltip" data-tip={t('user.content-type-list.action.edit')}>
+                <div className="tooltip" data-tip={t('user.content-type-list.edit')}>
                   <img
                     className={`cursor-pointer select-none flex items-center justify-center`}
                     src={TableEdit}
@@ -178,7 +179,7 @@ export default function ContentTypeList() {
               </Link>
             </RoleRenderer>
             <RoleRenderer allowedRoles={['CONTENT_TYPE_DELETE']}>
-              <div className="tooltip" data-tip={t('user.content-type-list.action.delete')}>
+              <div className="tooltip" data-tip={t('user.content-type-list.delete')}>
                 <img
                   className={`cursor-pointer select-none flex items-center justify-center`}
                   src={TableDelete}
@@ -219,19 +220,19 @@ export default function ContentTypeList() {
         dispatch(
           openToast({
             type: 'success',
-            title: t('user.content-type-list.success-delete-content-type'), // Use translation key for success title
+            title: t('user.content-type-list.success-delete-content-type'),
             message: d.postTypeDelete.message,
           }),
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setShowConfirm(false);
         dispatch(
           openToast({
             type: 'error',
-            title: t('user.content-type-list.failed-delete-content-type'), // Use translation key for error title
-            message: t('user.content-type-list.something-went-wrong'), // Use translation key for error message
+            title: t('user.content-type-list.failed-delete-content-type'),
+            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
