@@ -120,7 +120,10 @@ export default function ContentManagerNew() {
   });
   const { data: postTypeDetailData } = fetchGetPostTypeDetail;
 
-  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
+    actionType: 'create',
+    dataType: 'content'
+  });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
@@ -218,7 +221,7 @@ export default function ContentManagerNew() {
   }
 
   function onSubmitData() {
-    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
       setShowModalAutoApprove(true);
     } else {
       saveData();

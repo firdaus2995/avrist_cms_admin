@@ -90,7 +90,10 @@ export default function PageManagementNew() {
   const { data: dataContents } = fetchContentsQuery;
 
   // RTK GET ELIGIBLE AUTO APPROVE
-  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
+    actionType: 'create',
+    dataType: 'page'
+  });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
@@ -112,7 +115,7 @@ export default function PageManagementNew() {
   }, [dataContents, dataPageTemplates]);
 
   const handlerSubmit = (type?: string) => {
-    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
       setShowModalAutoApprove(true);
     } else {
       saveData(type);
