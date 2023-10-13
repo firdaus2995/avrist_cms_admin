@@ -68,7 +68,10 @@ export default function PageManagementDetail() {
   const fetchDataById = useGetPageByIdQuery({ id });
   const { data: pageDataDetail } = fetchDataById;
 
-  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({});
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
+    actionType: 'edit',
+    dataType: 'page'
+  });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
@@ -215,7 +218,7 @@ export default function PageManagementDetail() {
   };
 
   const handlerSubmit = () => {
-    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.isUserEligible) {
+    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
       setShowModalAutoApprove(true);
     } else {
       saveData();

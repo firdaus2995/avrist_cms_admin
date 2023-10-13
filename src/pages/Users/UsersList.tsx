@@ -203,6 +203,10 @@ export default function UsersList() {
   const [deletedUser, { isLoading }] = useDeleteUserMutation();
 
   useEffect(() => {
+    setPageIndex(0);
+  }, [search])
+
+  useEffect(() => {
     if (data) {
       setListData(data?.userList?.users);
       setTotal(data?.userList?.total);
