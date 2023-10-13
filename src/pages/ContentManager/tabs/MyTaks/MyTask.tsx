@@ -16,7 +16,7 @@ export default function MyTaskTab(props: { id: any }) {
   const [total, setTotal] = useState(0);
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
-  const [direction, setDirection] = useState('asc');
+  const [direction, setDirection] = useState('desc');
   const [sortBy, setSortBy] = useState('id');
 
   // RTK GET DATA
@@ -45,6 +45,9 @@ export default function MyTaskTab(props: { id: any }) {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    }else{
+      setSortBy('id');
+      setDirection('desc');
     }
   }, []);
 

@@ -100,8 +100,8 @@ export default function PageManagementList() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit, setPageLimit] = useState(10);
 
-  const [directionPageList, setDirectionPageList] = useState('asc');
-  const [directionMyTask, setDirectionMyTask] = useState('asc');
+  const [directionPageList, setDirectionPageList] = useState('desc');
+  const [directionMyTask, setDirectionMyTask] = useState('desc');
 
   const [searchPageList, setSearchPageList] = useState('');
   const [searchMyTask, setSearchMyTask] = useState('');
@@ -174,6 +174,14 @@ export default function PageManagementList() {
         } else {
           setSortByMyTask(sortBy);
           setDirectionMyTask(direction);
+        }
+      }else{
+        if (isPageListActive) {
+          setSortByPageList('id');
+          setDirectionPageList('desc');
+        } else {
+          setSortByMyTask('id');
+          setDirectionMyTask('desc');
         }
       }
     },
