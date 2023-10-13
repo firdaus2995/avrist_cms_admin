@@ -98,4 +98,6 @@ TextArea.propTypes = {
   name: PropTypes.string,
   inputWidth: PropTypes.number,
   inputHeight: PropTypes.number,
+  isError: PropTypes.bool,
+  errorText: PropTypes.string,
 };

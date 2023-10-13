@@ -8,8 +8,8 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 import { copyArray } from '@/utils/logicHelper';
-import { getImage } from '../../../services/Images/imageUtils';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
+import ImageRadioField from './ImageRadioField';
 
 export default function PreviewModal(props: any) {
   const { open, toggle, id } = props;
@@ -37,7 +37,7 @@ export default function PreviewModal(props: any) {
   }, [open]);
 
   const renderFormList = () => {
-    return listData.map(({ name, fieldType, config, value }: any) => {
+    return listData.map(({ name, fieldType, config, value }: any, index: any) => {
       const dataConfig: any = config ? JSON.parse(config) : {};
       const { required, placeholder, position, size, ALLOW_OTHER_VALUE } = dataConfig;
 
@@ -55,6 +55,7 @@ export default function PreviewModal(props: any) {
         case 'EMAIL':
           return (
             <InputText
+              key={index}
               disabled
               labelTitle={name}
               labelStyle="font-bold"
@@ -65,7 +66,7 @@ export default function PreviewModal(props: any) {
           );
         case 'IMAGE':
           return (
-            <div className="mb-1">
+            <div key={index} className="mb-1">
               <label className={`label font-bold`}>
                 <span className={`label-text text-base-content`}>
                   {name}
@@ -82,7 +83,7 @@ export default function PreviewModal(props: any) {
           );
         case 'DOCUMENT':
           return (
-            <div className="mb-1">
+            <div key={index} className="mb-1">
               <label className={`label font-bold`}>
                 <span className={`label-text text-base-content`}>
                   {name}
@@ -99,7 +100,7 @@ export default function PreviewModal(props: any) {
           );
         case 'TEXT_AREA':
           return (
-            <div className="mb-1">
+            <div key={index} className="mb-1">
               <label className={`label font-bold`}>
                 <span className={`label-text text-base-content`}>
                   {name}
@@ -120,6 +121,7 @@ export default function PreviewModal(props: any) {
         case 'LABEL':
           return (
             <div
+              key={index}
               className={`flex flex-1 ${
                 position[0] === 'left'
                   ? 'justify-start'
@@ -142,6 +144,7 @@ export default function PreviewModal(props: any) {
         case 'NUMBER':
           return (
             <InputText
+              key={index}
               disabled
               labelTitle={name}
               labelStyle="font-bold	"
@@ -154,6 +157,7 @@ export default function PreviewModal(props: any) {
         case 'TEXT_FIELD':
           return (
             <InputText
+              key={index}
               disabled
               labelTitle={name}
               labelStyle="font-bold	"
@@ -165,7 +169,7 @@ export default function PreviewModal(props: any) {
           );
         case 'RADIO_BUTTON':
           return (
-            <div className="my-2">
+            <div key={index} className="my-2">
               <label className={`label font-bold`}>
                 <span className={`label-text text-base-content`}>
                   {name}
@@ -202,7 +206,7 @@ export default function PreviewModal(props: any) {
           );
         case 'CHECKBOX':
           return (
-            <div className="my-2">
+            <div key={index} className="my-2">
               <label className={`label font-bold`}>
                 <span className={`label-text text-base-content`}>
                   {name}
@@ -240,31 +244,25 @@ export default function PreviewModal(props: any) {
         case 'DROPDOWN':
           return (
             <DropDown
+              key={index}
               labelTitle={name}
               labelStyle="font-bold	"
               labelRequired={required}
               defaultValue="item1"
-              items={[
-                {
-                  value: 'item1',
-                  label: 'Item 1',
-                },
-                {
-                  value: 'item2',
-                  label: 'Item 2',
-                },
-              ]}
+              items={items}
             />
           );
         case 'LINE_BREAK':
           return (
-            <div className="flex my-5">
+            <div key={index} className="flex my-5">
               <div className="w-full flex justify-center items-center border-[1px] border-[#D6D6D6]" />
             </div>
           );
         case 'RATING':
           return (
-            <div className="w-full h-[120px] flex flex-row items-center rounded-lg bg-white p-2 overflow-auto">
+            <div
+              key={index}
+              className="w-full h-[120px] flex flex-row items-center rounded-lg bg-white p-2 overflow-auto">
               {items.map((element: any, keyIndex: number) => {
                 return (
                   <div key={keyIndex} className={`min-w-[20%] flex flex-col items-center`}>
@@ -289,47 +287,31 @@ export default function PreviewModal(props: any) {
           );
         case 'IMAGE_RADIO':
           return (
-            <div className="my-2">
-              <label className={`label font-bold`}>
-                <span className={`label-text text-base-content`}>
-                  {name}
-                  {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
-                </span>
-              </label>
-              <div className="w-full flex flex-col gap-4">
-                {items?.map(async (element: any, index: number) => {
-                  const imageUrl = await getImage(element.value);
-                  return (
-                    <label
-                      key={index}
-                      className="label cursor-pointer justify-start flex gap-2 p-0">
-                      <input
-                        type="radio"
-                        name={nameId}
-                        className="radio radio-primary h-[22px] w-[22px] bg-white"
-                      />
-                      <div
-                        className="w-32 h-32 bg-[#5E217C] bg-cover"
-                        style={{ backgroundImage: `url(${imageUrl})})` }}></div>
-                    </label>
-                  );
-                })}
-              </div>
-            </div>
+            <ImageRadioField
+              key={index}
+              name={name}
+              required={required}
+              items={items}
+              nameId={nameId}
+            />
           );
         case 'TNC':
           return (
             <CheckBox
+              key={index}
               containerStyle="w-full flex flex-row flex-start"
-              labelTitle={(
-                <>Ya. Saya telah membaca dan menyetujui <span className="text-[#2C89F5] font-bold">Syarat dan Ketentuan</span></>
-              )}
+              labelTitle={
+                <>
+                  Ya. Saya telah membaca dan menyetujui{' '}
+                  <span className="text-[#2C89F5] font-bold">Syarat dan Ketentuan</span>
+                </>
+              }
               labelStyle="max-w-[220px] font-normal"
               inputStyle="w-[20px] h-[20px]"
             />
-          );  
+          );
         default:
-          return <div>err: {data.fieldType}</div>;
+          return <div key={index}>err: {JSON.stringify(data.postTypeDetail.postTypeGroup)}</div>;
       }
     });
   };

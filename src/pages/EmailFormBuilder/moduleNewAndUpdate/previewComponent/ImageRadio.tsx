@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import DeleteComponentIcon from '../../../../assets/efb/preview-delete.svg';
-import { getImage } from '../../../../services/Images/imageUtils';
+import { getImage } from '../../../../utils/imageUtils';
 
 interface IRadio {
   name: string;
@@ -15,7 +15,7 @@ interface IRadio {
 const ImageRadio: React.FC<IRadio> = ({ name, items, isActive, onClick, onDelete }) => {
   const nameId: any = uuidv4();
 
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageUrls, setImageUrls] = useState<any>([]);
 
   useEffect(() => {
     const loadImages = async () => {
@@ -44,7 +44,7 @@ const ImageRadio: React.FC<IRadio> = ({ name, items, isActive, onClick, onDelete
               />
               <div
                 className="w-32 h-32 bg-[#5E217C] bg-cover"
-                style={{ backgroundImage: `url(${imageUrls[index]})` }}></div>
+                style={{ backgroundImage: `url(${imageUrls[index]?.objectUrl})` }}></div>
             </label>
           ))}
         </div>

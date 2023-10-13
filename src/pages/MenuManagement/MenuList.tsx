@@ -731,7 +731,7 @@ export default function MenuList() {
                 value={takedownNote}
                 containerStyle="rounded-3xl"
                 isError={!takedownNote}
-                errorText={!takedownNote ? t('user.menu-list.menuList.takedownRequired') || '' : ''}
+                errorText={!takedownNote ? t('user.menu-list.menuList.takedownRequired') ?? '' : ''}
                 onChange={e => {
                   setTakedownNote(e.target.value);
                 }}

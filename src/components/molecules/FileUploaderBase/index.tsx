@@ -8,7 +8,8 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { t } from 'i18next';
-// import FormList from '../FormList';
+import AdobePdfIcon from '@/assets/adobe-pdf.svg';
+import { getImage } from '../../../utils/imageUtils';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
@@ -55,6 +56,37 @@ const FileItem = (props: any) => {
   );
 };
 
+const FileItemPreview = (props: any) => {
+  const { image, isDocument } = props;
+  return (
+    <>
+      <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
+        {isDocument ? (
+          <img className="object-cover h-12 w-12 rounded-lg mr-3 border" src={AdobePdfIcon} />
+        ) : (
+          <div
+            className="h-12 w-12 rounded-lg bg-[#5E217C] bg-cover"
+            style={{ backgroundImage: `url(${image?.objectUrl})` }}></div>
+        )}
+        <div className="flex flex-1 h-14 justify-center flex-col ml-3">
+          <p className="truncate w-52">{image?.imageName ?? ''}</p>
+          <p className="text-body-text-3 text-xs">
+            {image?.fileSize ? bytesToSize(image?.fileSize) : ''}
+          </p>
+        </div>
+        <div className="h-11">
+          {/* <div
+            data-tip={'Delete'}
+            className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
+            onClick={onDeletePress}>
+            <img src={Close} className="w-5 h-5" />
+          </div> */}
+        </div>
+      </div>
+    </>
+  );
+};
+
 export default function FileUploaderBase({
   isDocument,
   multiple,
@@ -65,7 +97,7 @@ export default function FileUploaderBase({
   onFilesChange,
   onAltTextChange,
   onCombineDataChange,
-  // value,
+  value,
   showMaxSize,
 }: any) {
   const dispatch = useAppDispatch();
@@ -73,6 +105,7 @@ export default function FileUploaderBase({
   const [isUploadLoading, setIsUploadLoading] = useState<any>(false);
   const [altTexts, setAltTexts] = useState<string[]>([]);
   const inputRef = useRef<any>(null);
+  const [imageUrls, setImageUrls] = useState<any>([]);
 
   const formatData = () => {
     const formattedData = filesData.map((data: any, index: any) => {
@@ -195,6 +228,31 @@ export default function FileUploaderBase({
     setIsUploadLoading(false);
   };
 
+  function safeParseJSON(jsonString: any) {
+    try {
+      return JSON.parse(jsonString);
+    } catch (e) {
+      console.error('Error parsing JSON:', e);
+      return [];
+    }
+  }
+
+  useEffect(() => {
+    const parsedValue = safeParseJSON(value);
+    if (parsedValue) {
+      const loadImages = async () => {
+        const urls = await Promise.all(
+          parsedValue.map(async (element: any) => await getImage(element.imageUrl)),
+        );
+        if (urls) {
+          setImageUrls(urls);
+        }
+      };
+
+      void loadImages();
+    }
+  }, [value]);
+
   return (
     <>
       {(!filesData.length || multiple) && (
@@ -244,12 +302,17 @@ export default function FileUploaderBase({
       )}
       <div>
         {/* PREVIEW */}
-        {/* <p>{value}</p>
-        {JSON.parse(value ?? '')?.map((x,i)=> {
+        {!filesData.length && safeParseJSON(value).map((data: any, i: any) => {
           return (
-            <p>Hai</p>
-          )
-        })} */}
+            <FileItemPreview
+              key={i}
+              image={imageUrls[i]} // Pass the appropriate imageUrls object
+              altText={data.altText} // You can also pass other information as needed
+              index={i}
+              isDocument={isDocument}
+            />
+          );
+        })}
 
         {filesData.map((data: any, index: any) => {
           return (
