@@ -155,8 +155,8 @@ export default function UsersEdit() {
         dispatch(
           openToast({
             type: 'success',
-            title: t('user.users-edit.users.toast-success'),
-            message: t('user.users-edit.user.edit.edit.success-msg', {
+            title: t('user.users-edit.user.toast-success'),
+            message: t('user.users-edit.user.success-msg', {
               name: d.userUpdate.fullName,
             }),
           }),
@@ -167,8 +167,8 @@ export default function UsersEdit() {
         dispatch(
           openToast({
             type: 'error',
-            title: t('user.users-edit.users.toast-failed'),
-            message: t('roles.edit.failed-msg', { name: payload.fullName }),
+            title: t('user.users-edit.user.toast-failed'),
+            message: t('user.users-edit.user.failed-msg', { name: payload.fullName }),
           }),
         );
       });
@@ -479,15 +479,15 @@ export default function UsersEdit() {
               setShowLeaveModal(true);
             }}>
             {isLoading
-              ? t('user.users-edit.user.edit.edit.btn.loading')
-              : t('user.users-edit.user.edit.edit.btn.cancel')}
+              ? t('user.users-edit.user.edit.btn.loading')
+              : t('user.users-edit.user.edit.btn.cancel')}
           </button>
           <button
             className="btn btn-success btn-md text-white"
             type='submit'>
             {isLoading
-              ? t('user.users-edit.user.edit.edit.btn.loading')
-              : t('user.users-edit.user.edit.edit.btn.save')}
+              ? t('user.users-edit.user.edit.btn.loading')
+              : t('user.users-edit.user.edit.btn.save')}
           </button>
         </div>
       </form>
