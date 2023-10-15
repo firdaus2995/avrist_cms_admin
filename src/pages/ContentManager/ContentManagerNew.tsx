@@ -624,6 +624,7 @@ export default function ContentManagerNew() {
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
                     onChange={onChange}
+                    editMode={true}
                   />
                 );
               }}
@@ -677,6 +678,7 @@ export default function ContentManagerNew() {
                     error={!!errors?.[id]}
                     helperText={errors?.[id]?.message}
                     onChange={onChange}
+                    editMode={true}
                   />
                 );
               }}
@@ -964,6 +966,7 @@ export default function ContentManagerNew() {
                                 error={!!errors?.[val.id]?.message}
                                 helperText={errors?.[val.id]?.message}
                                 onChange={onChange}
+                                editMode={true}
                               />
                             );
                           }}
@@ -999,6 +1002,7 @@ export default function ContentManagerNew() {
                                 error={!!errors?.[val.id]?.message}
                                 helperText={errors?.[val.id]?.message}
                                 onChange={onChange}
+                                editMode={true}
                               />
                             );
                           }}

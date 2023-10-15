@@ -765,6 +765,7 @@ export default function PageTemplatesNew() {
                   onChange={onChange}
                   border={false}
                   disabled={mode === 'detail'}
+                  editMode={mode !== 'detail'}
                 />
               );
             }}
