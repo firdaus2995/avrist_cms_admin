@@ -9,21 +9,17 @@ import CancelIcon from '../../assets/cancel.png';
 import Radio from '../../components/molecules/Radio';
 import DropDown from '../../components/molecules/DropDown';
 import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
+import Typography from '@/components/atoms/Typography';
+import FormList from '@/components/molecules/FormList';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '../../store';
 import { InputText } from '../../components/atoms/Input/InputText';
 import { InputPassword } from '../../components/atoms/Input/InputPassword';
 import { InputDate } from '../../components/atoms/Input/InputDate';
-import {
-  useEditUserMutation,
-  useGetRoleQuery,
-  useGetUserDetailQuery,
-} from '../../services/User/userApi';
+import { useEditUserMutation, useGetRoleQuery, useGetUserDetailQuery } from '../../services/User/userApi';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
-import Typography from '@/components/atoms/Typography';
 import { useForm, Controller } from 'react-hook-form';
-import FormList from '@/components/molecules/FormList';
 
 export default function UsersEdit() {
   const navigate = useNavigate();
@@ -192,11 +188,11 @@ export default function UsersEdit() {
           setShowChangeStatusModal(false);
           setIsActive(true);
         }}
-        title={t('user.users-edit.user.edit.edit.modal.inactive-user')}
-        cancelTitle={t('user.users-edit.user.edit.edit.btn.cancel')}
-        message={t('user.users-edit.user.edit.edit.modal.leave-message') ?? ''}
+        title={t('user.users-edit.user.edit.modal.inactive-user')}
+        cancelTitle={t('user.users-edit.user.edit.btn.cancel')}
+        message={t('user.users-edit.user.edit.modal.leave-message') ?? ''}
         submitAction={changeStatusSubmit}
-        submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
+        submitTitle={t('user.users-edit.user.edit.btn.save')}
         icon={UserOrange}
         btnSubmitStyle="btn-warning"
       />

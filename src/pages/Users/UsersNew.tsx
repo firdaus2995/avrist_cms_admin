@@ -8,6 +8,9 @@ import ModalConfirm from '../../components/molecules/ModalConfirm';
 import Radio from '../../components/molecules/Radio';
 import CancelIcon from '../../assets/cancel.png';
 import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
+import FormList from '../../components/molecules/FormList';
+import Typography from '../../components/atoms/Typography';
+import DropDown from '@/components/molecules/DropDown';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { InputText } from '../../components/atoms/Input/InputText';
 import { InputPassword } from '../../components/atoms/Input/InputPassword';
@@ -16,11 +19,8 @@ import { InputDate } from '../../components/atoms/Input/InputDate';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
-import FormList from '../../components/molecules/FormList';
-import Typography from '../../components/atoms/Typography';
 import { useForm, Controller } from 'react-hook-form';
 import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
-import DropDown from '@/components/molecules/DropDown';
 
 export default function UsersNew() {
   const dispatch = useAppDispatch();
