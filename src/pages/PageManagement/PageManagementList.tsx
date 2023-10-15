@@ -19,7 +19,7 @@ import WarningIcon from '@/assets/warning.png';
 
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
-import StatusBadge from './components/StatusBadge';
+import StatusBadge from '@/components/atoms/StatusBadge';
 import ModalLog from './components/ModalLog';
 import dayjs from 'dayjs';
 import { FilterButton } from '@/components/molecules/FilterButton/index.';

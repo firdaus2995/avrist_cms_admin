@@ -41,6 +41,9 @@ export const menuApi = createApi({
         document: gql`
           query {
             menuList {
+              lastPublishedBy
+              lastPublishedAt
+              status
               menus {
                 title
                 menuType

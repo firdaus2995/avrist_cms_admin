@@ -28,7 +28,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
 
   return (
     <div className="mt-10">
-      <div className="w-full py-10 h-[50vh] overflow-auto">
+      <div className="w-full h-[50vh] overflow-auto">
         <SortableTree
           theme={TreeTheme}
           treeData={treeData}
