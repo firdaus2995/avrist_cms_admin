@@ -287,6 +287,14 @@ export default function PageTemplatesNew() {
       }));
       setAttributesData(combineAttributes);
       setConfigData(data?.configs);
+
+      if (mode === 'edit') {
+        setValue('pageName', defaultPageName);
+        setValue('pageDescription', defaultPageDescription);
+        setValue('pageFileName', defaultPageFileName);
+        setValue('pageId', defaultPageId);
+        setValue('imagePreview', defaultImageUrl);
+      }
     }
   }, [pageTemplate, listAttributes]);
 
@@ -614,7 +622,7 @@ export default function PageTemplatesNew() {
             key="pageName"
             name="pageName"
             control={control}
-            defaultValue=""
+            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.name || '') : ''}
             rules={{
               required: {
                 value: true,
@@ -646,7 +654,7 @@ export default function PageTemplatesNew() {
             key="pageDescription"
             name="pageDescription"
             control={control}
-            defaultValue=""
+            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.shortDesc || '') : ''}
             rules={{
               required: {
                 value: true,
@@ -678,7 +686,7 @@ export default function PageTemplatesNew() {
             key="pageFileName"
             name="pageFileName"
             control={control}
-            defaultValue=""
+            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.filenameCode || '') : ''}
             rules={{
               required: {
                 value: true,
@@ -713,12 +721,7 @@ export default function PageTemplatesNew() {
             key="imagePreview"
             name="imagePreview"
             control={control}
-            // rules={{
-            //   required: {
-            //     value: false,
-            //     message: t('user.page-template-new.form.imagePreview.required-message'),
-            //   },
-            // }}
+            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.imageUrl || '') : ''}
             rules={{
               required: `${t('user.page-template-new.form.imagePreview.required-message')}`,
               validate: value => {

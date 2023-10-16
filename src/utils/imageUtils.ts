@@ -65,6 +65,42 @@ export const getImage = async (img: any, single = false) => {
   return '';
 };
 
+export const getImageEditable = async (img: any, single = false) => {
+  try {
+    const token = getCredential().accessToken;
+    const response = await fetch(`${baseUrl}/files/get/${img}`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (response.ok) {
+      const blob = await response.blob();
+      const contentLengthHeader = response.headers.get('content-length');
+      const fileSize = contentLengthHeader ? parseInt(contentLengthHeader, 10) : 0;
+      const imageName: string = img
+        .replace('images/', '')
+        .replace('.jpg', '')
+        .replace('.jpeg', '')
+        .replace('.png', '')
+        .replace('.pdf', '');
+
+      if (fileSize > 0) {
+        const objectUrl = URL.createObjectURL(blob);
+        if (single) {
+          return objectUrl;
+        }
+        return { name: imageName, response: img, value: blob };
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+
+  return '';
+};
+
 export const getImageAxios = async (img: any) => {
   try {
     const token = getCredential().refreshToken;

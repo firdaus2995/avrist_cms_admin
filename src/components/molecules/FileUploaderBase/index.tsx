@@ -8,8 +8,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { t } from 'i18next';
-import AdobePdfIcon from '@/assets/adobe-pdf.svg';
-import { getImage } from '../../../utils/imageUtils';
+import { getImageEditable } from '../../../utils/imageUtils';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
@@ -23,7 +22,7 @@ function bytesToSize(bytes: number): string {
 }
 
 const FileItem = (props: any) => {
-  const { name, value, onDeletePress } = props;
+  const { name, value, onDeletePress, editMode } = props;
 
   return (
     <>
@@ -44,12 +43,14 @@ const FileItem = (props: any) => {
           <p className="text-body-text-3 text-xs">{value ? bytesToSize(value?.size) : ''}</p>
         </div>
         <div className="h-11">
-          <div
-            data-tip={'Delete'}
-            className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
-            onClick={onDeletePress}>
-            <img src={Close} className="w-5 h-5" />
-          </div>
+          {editMode && (
+            <div
+              data-tip={'Delete'}
+              className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
+              onClick={onDeletePress}>
+              <img src={Close} className="w-5 h-5" />
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -68,14 +69,13 @@ export default function FileUploaderBase({
   onCombineDataChange,
   value,
   showMaxSize,
-}: // editMode= false,
-any) {
+  editMode = false,
+}: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
   const [isUploadLoading, setIsUploadLoading] = useState<any>(false);
   const [altTexts, setAltTexts] = useState<string[]>([]);
   const inputRef = useRef<any>(null);
-  const [imageUrls, setImageUrls] = useState<any>([]);
 
   const formatData = () => {
     const formattedData = filesData.map((data: any, index: any) => {
@@ -210,69 +210,24 @@ any) {
   useEffect(() => {
     const parsedValue = safeParseJSON(value);
     if (parsedValue) {
-      const loadImages = async () => {
+      if (altTexts.length === 0) {
+        // Only set the altTexts if it's empty
+        const defaultAltText = parsedValue?.map((item: any) => item?.altText);
+        if (defaultAltText) {
+          setAltTexts(defaultAltText);
+        }
+      }
+
+      const loadDefaultValue = async () => {
         const urls = await Promise.all(
-          parsedValue.map(async (element: any) => await getImage(element.imageUrl)),
+          parsedValue.map(async (element: any) => await getImageEditable(element.imageUrl)),
         );
         if (urls) {
-          setImageUrls(urls);
+          setFilesData(urls);
         }
       };
 
-      void loadImages();
-    }
-  }, [value]);
-
-  const FileItemPreview = (props: any) => {
-    const { image, altText, onDeletePress, onAltTextChange, isDocument } = props;
-    return (
-      <>
-        <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
-          {isDocument ? (
-            <img
-              className="object-cover h-12 w-12 rounded-lg mr-3 border"
-              src={AdobePdfIcon}
-              alt={altText}
-            />
-          ) : (
-            <div
-              className="h-12 w-12 rounded-lg bg-[#5E217C] bg-cover"
-              style={{ backgroundImage: `url(${image?.objectUrl})` }}></div>
-          )}
-          <div className="flex flex-1 h-14 justify-center flex-col ml-3">
-            <p className="truncate w-52">{image?.imageName}</p>
-            <p className="text-body-text-3 text-xs">
-              {image?.fileSize ? bytesToSize(image?.fileSize) : ''}
-            </p>
-          </div>
-          <div className="h-11">
-            <div
-              data-tip={'Delete'}
-              className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
-              onClick={onDeletePress}>
-              <img src={Close} className="w-5 h-5" />
-            </div>
-          </div>
-        </div>
-        <input
-          type="text"
-          className="input input-bordered input-xs"
-          onChange={e => {
-            // Update the alt text for this item
-            onAltTextChange(e.target.value);
-          }}
-          value={altText || ''}
-        />
-      </>
-    );
-  };
-
-  const [defaultValue, setDefaultValue] = useState([]);
-
-  useEffect(() => {
-    if (value) {
-      const parsedValue = safeParseJSON(value);
-      setDefaultValue(parsedValue);
+      void loadDefaultValue();
     }
   }, [value]);
 
@@ -324,76 +279,12 @@ any) {
         </>
       )}
       <div>
-        {/* PREVIEW */}
-        {defaultValue.map((data: any, i: any) => {
-          return (
-            <div key={i}>
-              <FileItemPreview
-                key={i}
-                image={imageUrls[i]}
-                altText={data.altText}
-                onDeletePress={() => {
-                  const newAltTexts = [...altTexts];
-                  newAltTexts.splice(i, 1);
-
-                  const newData = filesData.filter((_: any, idx: number) => idx !== i);
-                  setFilesData(newData);
-                  setAltTexts(newAltTexts);
-                  onFilesChange(newData);
-                  onAltTextChange(newAltTexts);
-                }}
-                onAltTextChange={(newAltText: any) => {
-                  const newAltTexts = [...altTexts];
-                  newAltTexts[i] = newAltText;
-                  setAltTexts(newAltTexts);
-                  onAltTextChange(newAltTexts);
-                }}
-                isDocument={isDocument}
-              />
-              {!isDocument && (
-                <div className="flex flex-row my-2 items-center">
-                  <label htmlFor={i} className="w-16 mr-2">
-                    <p className="text-xs font-semibold">Alt Text</p>
-                  </label>
-                  <input
-                    type="text"
-                    id={i}
-                    name={i}
-                    className="input input-bordered input-xs"
-                    onChange={e => {
-                      // Update the altTexts array with the new alt text
-                      const newAltTexts = [...altTexts];
-                      newAltTexts[i] = e.target.value;
-                      setAltTexts(newAltTexts);
-
-                      // Call the onAltTextChange function with the updated altTexts array
-                      onAltTextChange(newAltTexts);
-                    }}
-                    value={altTexts[i] || ''}
-                  />
-                  {i === 0 && filesData?.length > 1 && (
-                    <div
-                      className="cursor-pointer ml-4"
-                      onClick={() => {
-                        // Apply alt text to all files
-                        const newAltTexts = new Array(filesData.length).fill(altTexts[0] || '');
-                        setAltTexts(newAltTexts);
-                        onAltTextChange(newAltTexts);
-                      }}>
-                      <p className="text-xs font-semibold w-19 text-primary">Apply to All</p>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          );
-        })}
-
         {filesData.map((data: any, index: any) => {
           return (
             <div key={index}>
               <FileItem
                 {...data}
+                editMode={editMode}
                 onDeletePress={() => {
                   const newData = filesData.filter((_: any, idx: number) => idx !== index);
                   const newAltTexts = [...altTexts];
@@ -420,12 +311,11 @@ any) {
                       const newAltTexts = [...altTexts];
                       newAltTexts[index] = e.target.value;
                       setAltTexts(newAltTexts);
-
-                      // Call the onAltTextChange function with the updated altTexts array
-                      onAltTextChange(newAltTexts);
                     }}
                     value={altTexts[index] || ''}
+                    disabled={!editMode}
                   />
+
                   {index === 0 && filesData?.length > 1 && (
                     <div
                       className="cursor-pointer ml-4"
