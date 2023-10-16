@@ -220,7 +220,7 @@ export default function FileUploaderBase({
 
       const loadDefaultValue = async () => {
         const urls = await Promise.all(
-          parsedValue.map(async (element: any) => await getImageEditable(element.imageUrl)),
+          parsedValue.map(async (element: any) => await getImageEditable(element?.imageUrl)),
         );
         if (urls) {
           setFilesData(urls);

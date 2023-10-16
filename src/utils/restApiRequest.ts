@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from 'axios'; // Import AxiosResponse for explicit return type annotation
+import axios, { AxiosResponse } from 'axios';
 import { Mutex } from 'async-mutex';
 import { store } from '../store';
 import { getCredential, removeCredential } from './Credential';
@@ -8,7 +8,7 @@ import { openToast } from '../components/atoms/Toast/slice';
 import { setEventTriggered } from '@/services/Event/eventErrorSlice';
 import { setRefreshToken, setAccessToken, setRoles } from '../services/Login/slice';
 
-const baseUrl = import.meta.env.VITE_BASE_URL;
+const baseUrl = import.meta.env.VITE_API_URL;
 const mutex = new Mutex();
 
 const axiosInstance = axios.create({
@@ -28,79 +28,75 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-const restApiRequest = async (method: string, url: string, data: any = null): Promise<any> => {
+const restApiRequest = async (method: string, url: string, data: any = null, responseType: 'json' | 'blob' = 'json'): Promise<any> => {
   try {
-    const response: AxiosResponse = await axiosInstance.request({
+    const requestConfig = {
       method,
       url,
-      data,
-    });
-    return response.data;
+      responseType, // set tipe data yg ingin diambil
+      data: responseType === 'blob' ? null : data, // ini untuk post payload
+    };
+
+    const response: AxiosResponse = await axiosInstance.request(requestConfig);
+    if (response.status === 200) {
+      return response;
+    } else {
+      console.log(response.status);
+    }
   } catch (error: any) {
     if (error.response) {
-      if (error.response.status === 401) {
+      const statusCode = error.response.status;
+      if (statusCode === 401) {
         if (!mutex.isLocked()) {
           const release = await mutex.acquire();
           try {
             const token = getCredential().refreshToken;
-
             const refreshResult = await store
               .dispatch(loginApi.endpoints.refreshToken.initiate({ token }))
               .unwrap();
-
             if (refreshResult?.refreshToken) {
-              store.dispatch(setAccessToken(refreshResult?.refreshToken.accessToken));
-              store.dispatch(setRefreshToken(refreshResult?.refreshToken.refreshToken));
-              store.dispatch(setRoles(refreshResult?.refreshToken.roles));
-              storeDataStorage('accessToken', refreshResult?.refreshToken.accessToken);
-              storeDataStorage('refreshToken', refreshResult?.refreshToken.refreshToken);
-              storeDataStorage('roles', refreshResult?.refreshToken.roles);
+              store.dispatch(setAccessToken(refreshResult.refreshToken.accessToken));
+              store.dispatch(setRefreshToken(refreshResult.refreshToken.refreshToken));
+              store.dispatch(setRoles(refreshResult.refreshToken.roles));
+              storeDataStorage('accessToken', refreshResult.refreshToken.accessToken);
+              storeDataStorage('refreshToken', refreshResult.refreshToken.refreshToken);
+              storeDataStorage('roles', refreshResult.refreshToken.roles);
               return await restApiRequest(method, url, data); // Retry the original request after token refresh
             } else {
-              store.dispatch(setAccessToken(''));
-              store.dispatch(setRefreshToken(''));
-              store.dispatch(setRoles([]));
-              removeCredential();
-              store.dispatch(
-                openToast({
-                  type: 'error',
-                  title: 'Oops',
-                  message: 'Failed to renew token',
-                }),
-              );
-              window.location.assign('/login');
+              handleTokenRefreshFailure();
             }
           } catch (err) {
-            store.dispatch(setAccessToken(''));
-            store.dispatch(setRefreshToken(''));
-            store.dispatch(setRoles([]));
-            removeCredential();
-            store.dispatch(
-              openToast({
-                type: 'error',
-                title: 'Oops',
-                message: 'Failed to renew token',
-              }),
-            );
-            window.location.assign('/login');
+            handleTokenRefreshFailure();
           } finally {
             release();
           }
         } else {
-          // Wait until the mutex is available without locking it
           await mutex.waitForUnlock();
           return await restApiRequest(method, url, data); // Retry the original request after token refresh
         }
-      } else if (error.response.status === 500) {
-        // Handle specific server errors as needed
+      } else if (statusCode === 500) {
         store.dispatch(setEventTriggered('INTERNAL_ERROR'));
-      } else if (error.response.status === 404) {
-        // Handle specific "Not Found" errors as needed
+      } else if (statusCode === 404) {
         store.dispatch(setEventTriggered('NOT_FOUND'));
       }
     }
-    throw error; // Rethrow other errors
+    throw new Error(`API request failed: ${error.message}`);
   }
+};
+
+const handleTokenRefreshFailure = () => {
+  store.dispatch(setAccessToken(''));
+  store.dispatch(setRefreshToken(''));
+  store.dispatch(setRoles([]));
+  removeCredential();
+  store.dispatch(
+    openToast({
+      type: 'error',
+      title: 'Oops',
+      message: 'Failed to renew token',
+    }),
+  );
+  window.location.assign('/login');
 };
 
 export default restApiRequest;
