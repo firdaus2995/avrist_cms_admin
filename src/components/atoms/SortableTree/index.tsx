@@ -19,7 +19,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
       return treeDataNew;
     } else {
       return []
-    }
+    };
   });
 
   function updateTreeData(treeData: any) {
@@ -34,7 +34,9 @@ export default function SortableTreeComponent(props: ISortableTree) {
           treeData={treeData}
           onChange={treeData => {
             updateTreeData(treeData);
-            onChange(treeData);
+          }}
+          onMoveNode={data => {
+            onChange(data?.node, data?.treeData);
           }}
           canDrag={({ node }) => !node.noDragging}
           maxDepth={3}

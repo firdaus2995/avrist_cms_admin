@@ -45,23 +45,29 @@ export const menuApi = createApi({
               lastPublishedAt
               status
               menus {
+                id
                 title
                 menuType
                 externalUrl
                 isNewTab
                 pageId
+                parentId
                 child {
+                  id
                   title
                   menuType
                   externalUrl
                   isNewTab
                   pageId
+                  parentId
                   child {
+                    id
                     title
                     menuType
                     externalUrl
                     isNewTab
                     pageId
+                    parentId
                   }
                 }
               }
@@ -118,15 +124,35 @@ export const menuApi = createApi({
     updateMenuStructure: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuStructureUpdate($menuList: [Menu]!) {
-            menuStructureUpdate(request: { menuList: $menuList }) {
-              message
+          mutation menuStructureUpdate(
+            $menu: Menu!
+            $menuList: [Menu]!
+          ) {
+            menuStructureUpdate(
+              request: {
+                menu: $menu
+                menuList: $menuList
+              }
+            ) {
+              status
             }
           }
         `,
         variables: payload,
       }),
     }),
+    publishMenu: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation menuPublish {
+            menuPublish {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      })
+    })
   }),
 });
 
@@ -136,4 +162,5 @@ export const {
   useEditMenuMutation,
   useDeleteMenuMutation,
   useUpdateMenuStructureMutation,
+  usePublishMenuMutation,
 } = menuApi;

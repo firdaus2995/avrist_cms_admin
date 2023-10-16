@@ -15,7 +15,7 @@ import PaperIcon from '../../assets/paper.svg';
 import { InputText } from '../../components/atoms/Input/InputText';
 import { CheckBox } from '../../components/atoms/Input/CheckBox';
 import { useForm, Controller } from 'react-hook-form';
-import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
+import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, usePublishMenuMutation, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
@@ -60,7 +60,6 @@ export default function MenuList() {
 
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [dataScructure, setDataStructure] = useState<any>([]);
-  const [dataScructureInit, setDataStructureInit] = useState<any>([]);
 
   // PAGE TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
@@ -107,6 +106,9 @@ export default function MenuList() {
   // RTK UPDATE STRUCTURE
   const [updateStructure] = useUpdateMenuStructureMutation();
 
+  // RTK PUBLISH MENU
+  const [publishMenu] =usePublishMenuMutation();
+
   useEffect(() => {
     watch(['status', 'lastPublishedBy', 'lastPublishedAt']);
   }, [watch])
@@ -135,7 +137,6 @@ export default function MenuList() {
       const result = listData.map((e: any, i: any) => ({ ...e, children: listData[i].child }));
       
       setDataStructure(result);
-      setDataStructureInit(result);
 
       setValue('status', data?.menuList.status);
       setValue('lastPublishedBy', data?.menuList?.lastPublishedBy);
@@ -606,18 +607,58 @@ export default function MenuList() {
     );
   };
 
-  const onUpdateDataStructure = () => {
-    const data = dataScructure;
+  const handlerUpdateMenuStructure = (node: any, data: any) => {    
+    function recursiveAction (recurData: any, recurParentId: any): any {
+      const masterPayload: any = [];
 
-    data.forEach(function (obj: { [x: string]: any; child: any; children: any }) {
-      if (obj.children) {
-        obj.child = obj.children;
-        delete obj.children;
-      }
-      delete obj.expanded;
-    });
+      for (let i = 0; i < recurData.length; i++) {
+        if (payloadMenu.id === recurData[i].id) {
+          payloadMenu.order = i;
+          payloadMenu.parentId = recurParentId;
+        };
+  
+        masterPayload.push({
+          id: recurData[i].id,
+          title: recurData[i].title ?? null,
+          menuType: recurData[i].menuType ?? null,
+          externalUrl: recurData[i].externalUrl ?? null,
+          isNewTab: recurData[i].isNewTab ?? false,
+          pageId:recurData[i].pageId ?? null,
+          order: i,
+          parentId: recurParentId,
+          child: recurData[i]?.children?.length > 0 ? recursiveAction(recurData[i].children, recurData[i].id) : null,
+        });
+      };
 
-    updateStructure({ menuList: data })
+      return masterPayload;
+    };
+
+    const payloadMenu: any = {
+      id: node.id,
+      title: node.title ?? null,
+      menuType: node.menuType ?? null,
+      externalUrl: node.externalUrl ?? null,
+    };
+    
+    const payloadMenuList: any = recursiveAction(data, null);
+    
+    updateStructure({ menuList: payloadMenuList, menu: payloadMenu })
+      .unwrap()
+      .then((res: any) => {
+        setValue('status', res.menuStructureUpdate.status);
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+          }),
+        );
+      });
+  };
+
+  const handlerPublishMenu = () => {
+    publishMenu({})
       .unwrap()
       .then(() => {
         dispatch(
@@ -626,7 +667,7 @@ export default function MenuList() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu');
+        setValue('status', 'PUBLISHED')
       })
       .catch(() => {
         dispatch(
@@ -733,8 +774,8 @@ export default function MenuList() {
                     onClick={(data: any) => {
                       onEdit(data);
                     }}
-                    onChange={function (_data: any): void {
-                      setDataStructure(_data);
+                    onChange={function (node: any, data: any): void {
+                      handlerUpdateMenuStructure(node, data);
                     }}
                   />
                 )}
@@ -744,18 +785,19 @@ export default function MenuList() {
             <div className="mt-[200px] flex justify-end items-center">
               <div className="flex flex-row p-2 gap-2">
                 <button
+                  className="btn btn-outline text-xs btn-sm w-28 h-10"
                   onClick={() => {
                     setShowCancel(true);
                   }}
-                  className="btn btn-outline text-xs btn-sm w-28 h-10">
+                >
                   {t('user.menu-list.menuList.cancel')}
                 </button>
                 <button
-                  disabled={dataScructure === dataScructureInit}
+                  className="btn btn-success text-xs btn-sm w-28 h-10"
                   onClick={() => {
-                    onUpdateDataStructure();
+                    handlerPublishMenu();
                   }}
-                  className="btn btn-success text-xs btn-sm w-28 h-10">
+                >
                   {t('user.menu-list.menuList.submit')}
                 </button>
               </div>
