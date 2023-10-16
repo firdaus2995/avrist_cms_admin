@@ -172,7 +172,7 @@ export const contentManagerApi = createApi({
             $isAutoApprove: Boolean!
             $postTypeId: Int!
             $categoryName: String!
-            $contentData: [PostMetaTemplateRequest]!
+            $contentData: [ContentDataAttributeRequest]!
           ) {
             contentDataCreate(
               request: {
