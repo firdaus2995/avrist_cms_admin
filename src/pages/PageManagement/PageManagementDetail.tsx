@@ -90,6 +90,10 @@ export default function PageManagementDetail() {
   );
   const { data: dataPageTemplates } = fetchPageTemplatesQuery;
 
+  useEffect(() => {
+    void fetchDataById.refetch();
+  }, []);
+
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'edit',
     dataType: 'page'

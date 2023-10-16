@@ -91,9 +91,9 @@ export default function PageManagementList() {
   const [idLog, setIdLog] = useState(null);
   const [logTitle, setLogTitle] = useState(null);
 
-  const [filterBy, setFilterBy] = useState('CREATED_AT');
-  const [startDate, setStartDate] = useState(now);
-  const [endDate, setEndDate] = useState(now);
+  const [filterBy, setFilterBy] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
 
   // TABLE PAGINATION STATE - PAGE LIST
   const [total, setTotal] = useState(0);
@@ -105,8 +105,8 @@ export default function PageManagementList() {
 
   const [searchPageList, setSearchPageList] = useState('');
   const [searchMyTask, setSearchMyTask] = useState('');
-  const [sortByPageList, setSortByPageList] = useState('id');
-  const [sortByMyTask, setSortByMyTask] = useState('id');
+  const [sortByPageList, setSortByPageList] = useState('createdAt');
+  const [sortByMyTask, setSortByMyTask] = useState('createdAt');
 
   const sortBy = isPageListActive ? sortByPageList : sortByMyTask;
   const direction = isPageListActive ? directionPageList : directionMyTask;
