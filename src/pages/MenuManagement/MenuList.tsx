@@ -15,10 +15,19 @@ import PaperIcon from '../../assets/paper.svg';
 import { InputText } from '../../components/atoms/Input/InputText';
 import { CheckBox } from '../../components/atoms/Input/CheckBox';
 import { useForm, Controller } from 'react-hook-form';
-import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, usePublishMenuMutation, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
+import {
+  useCreateMenuMutation,
+  useDeleteMenuMutation,
+  useEditMenuMutation,
+  useGetMenuListQuery,
+  usePublishMenuMutation,
+  useUpdateMenuStructureMutation,
+} from '../../services/Menu/menuApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
+import TimelineLog from '@/assets/timeline-log.svg';
+import ModalLog from './components/ModalLog';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
@@ -43,9 +52,10 @@ export default function MenuList() {
   const [isAddClick, setIsAddClicked] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [openTakedownModal, setOpenTakedownModal] = useState(false);
+  const [openLogModal, setOpenLogModal] = useState(false);
 
   const [showCancel, setShowCancel] = useState(false);
-  const [idDelete, setIdDelete] = useState('');
+  const [idDelete, setIdDelete] = useState(0);
 
   const [title, setTitle] = useState('');
   const [editedTitle, setEditedTitle] = useState('');
@@ -70,7 +80,7 @@ export default function MenuList() {
   const [listPage, setListPage] = useState([]);
   const [filterBy] = useState('CREATED_AT');
   const [startDate] = useState(now);
-  const [endDate] = useState(now);  
+  const [endDate] = useState(now);
 
   // RTK GET MENU
   const fetchQuery = useGetMenuListQuery(
@@ -92,7 +102,7 @@ export default function MenuList() {
     startDate,
     endDate,
     isArchive: false,
-  });  
+  });
 
   // RTK CREATE MENU
   const [createMenu] = useCreateMenuMutation();
@@ -107,11 +117,11 @@ export default function MenuList() {
   const [updateStructure] = useUpdateMenuStructureMutation();
 
   // RTK PUBLISH MENU
-  const [publishMenu] =usePublishMenuMutation();
+  const [publishMenu] = usePublishMenuMutation();
 
   useEffect(() => {
     watch(['status', 'lastPublishedBy', 'lastPublishedAt']);
-  }, [watch])
+  }, [watch]);
 
   useEffect(() => {
     const data = fetchQueryPage?.data?.pageList?.pages;
@@ -135,13 +145,13 @@ export default function MenuList() {
     if (data) {
       const listData = data?.menuList?.menus;
       const result = listData.map((e: any, i: any) => ({ ...e, children: listData[i].child }));
-      
+
       setDataStructure(result);
 
       setValue('status', data?.menuList.status);
       setValue('lastPublishedBy', data?.menuList?.lastPublishedBy);
       setValue('lastPublishedAt', data?.menuList?.lastPublishedAt);
-    };
+    }
   }, [data]);
 
   const onDelete = () => {
@@ -179,7 +189,7 @@ export default function MenuList() {
     setPage('');
     setType('');
     setIsOpenTab(false);
-  };
+  }
 
   const onEdit = (data: any) => {
     setTitle(data.node.title);
@@ -188,7 +198,7 @@ export default function MenuList() {
     setUrlLink(data.node.externalUrl);
     setPage(data.node.pageId);
     setIsOpenTab(data.node.isNewTab);
-    setIdDelete(data.node.pageId);
+    setIdDelete(data.node.id);
 
     setIsOpenModal(true);
     modalEdit();
@@ -607,31 +617,34 @@ export default function MenuList() {
     );
   };
 
-  const handlerUpdateMenuStructure = (node: any, data: any) => {    
-    function recursiveAction (recurData: any, recurParentId: any): any {
+  const handlerUpdateMenuStructure = (node: any, data: any) => {
+    function recursiveAction(recurData: any, recurParentId: any): any {
       const masterPayload: any = [];
 
       for (let i = 0; i < recurData.length; i++) {
         if (payloadMenu.id === recurData[i].id) {
           payloadMenu.order = i;
           payloadMenu.parentId = recurParentId;
-        };
-  
+        }
+
         masterPayload.push({
           id: recurData[i].id,
           title: recurData[i].title ?? null,
           menuType: recurData[i].menuType ?? null,
           externalUrl: recurData[i].externalUrl ?? null,
           isNewTab: recurData[i].isNewTab ?? false,
-          pageId:recurData[i].pageId ?? null,
+          pageId: recurData[i].pageId ?? null,
           order: i,
           parentId: recurParentId,
-          child: recurData[i]?.children?.length > 0 ? recursiveAction(recurData[i].children, recurData[i].id) : null,
+          child:
+            recurData[i]?.children?.length > 0
+              ? recursiveAction(recurData[i].children, recurData[i].id)
+              : null,
         });
-      };
+      }
 
       return masterPayload;
-    };
+    }
 
     const payloadMenu: any = {
       id: node.id,
@@ -639,9 +652,9 @@ export default function MenuList() {
       menuType: node.menuType ?? null,
       externalUrl: node.externalUrl ?? null,
     };
-    
+
     const payloadMenuList: any = recursiveAction(data, null);
-    
+
     updateStructure({ menuList: payloadMenuList, menu: payloadMenu })
       .unwrap()
       .then((res: any) => {
@@ -667,7 +680,7 @@ export default function MenuList() {
             title: t('toast-success'),
           }),
         );
-        setValue('status', 'PUBLISHED')
+        setValue('status', 'PUBLISHED');
       })
       .catch(() => {
         dispatch(
@@ -698,74 +711,40 @@ export default function MenuList() {
             icon={CancelIcon}
             btnSubmitStyle={'btn-warning'}
           />
-          <ModalConfirm
-            open={openTakedownModal}
-            cancelAction={() => {
-              setOpenTakedownModal(false);
-              setIsTakedown(false);
-              setTakedownNote('');
-            }}
-            modalWidth={600}
-            modalHeight={'100%'}
-            title={t('user.menu-list.menuList.takedownTitle')}
-            titleSize={18}
-            cancelTitle={t('user.menu-list.menuList.cancel')}
-            submitAction={() => {
-              if (takedownNote.length > 0) {
-                setIsTakedown(true);
-                setOpenTakedownModal(false);
-              } else {
-                dispatch(
-                  openToast({
-                    type: 'error',
-                    title: t('user.menu-list.menuList.failedDelete'),
-                    message: t('user.menu-list.menuList.toastTakedownRequired'),
-                  }),
-                );
-                setIsTakedown(false);
-              }
-            }}
-            submitTitle={t('user.menu-list.menuList.submit')}
-            icon={PaperIcon}
-            iconSize={26}
-            btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}
-          >
-            <div className="w-full px-10">
-              <TextArea
-                name="TakedownComment"
-                labelTitle={t('user.menu-list.menuList.takedownComment')}
-                labelRequired
-                value={takedownNote}
-                containerStyle="rounded-3xl"
-                isError={!takedownNote}
-                errorText={!takedownNote ? t('user.menu-list.menuList.takedownRequired') ?? '' : ''}
-                onChange={e => {
-                  setTakedownNote(e.target.value);
-                }}
-              />
-            </div>
-          </ModalConfirm>
 
-          <div className='flex flex-col gap-10'>
+          <div className="flex flex-col gap-10">
             <div className="text-2xl font-bold gap-2 text-primary flex flex-row">
               <img src={LifeInsurance} className="w-8" />
               {t('user.menu-list.menuList.avristLifeInsurance')}
             </div>
-            <div className='flex flex-col gap-4'>
-              <div className="flex flex-row gap-5 items-center">
-                <div className='text-2xl font-semibold '>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-row gap-3 items-center">
+                <div className="text-2xl font-semibold ">
                   {t('user.menu-list.menuList.menuStructure')}
+                </div>
+                <div
+                  className="cursor-pointer tooltip"
+                  data-tip="Log"
+                  onClick={() => {
+                    setOpenLogModal(true);
+                  }}>
+                  <img src={TimelineLog} className="w-6 h-6" />
                 </div>
                 <StatusBadge status={getValues('status') ?? ''} />
               </div>
               <hr />
-              <div className='flex'>
-                <div className='text-sm'>Last Published by <span className='font-bold'>{getValues('lastPublishedBy')}</span> at <span className='font-bold'>{dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} - {dayjs(getValues('lastPublishedAt')).format('HH:mm')}</span></div>
+              <div className="flex">
+                <div className="text-sm">
+                  Last Published by{' '}
+                  <span className="font-bold">{getValues('lastPublishedBy')}</span> at{' '}
+                  <span className="font-bold">
+                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
+                    {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
+                  </span>
+                </div>
               </div>
             </div>
-            {isOpenForm && (
-              renderForm()
-            )}
+            {isOpenForm && renderForm()}
             {!isOpenForm && (
               <>
                 {dataScructure?.length > 0 && (
@@ -788,22 +767,76 @@ export default function MenuList() {
                   className="btn btn-outline text-xs btn-sm w-28 h-10"
                   onClick={() => {
                     setShowCancel(true);
-                  }}
-                >
+                  }}>
                   {t('user.menu-list.menuList.cancel')}
                 </button>
                 <button
                   className="btn btn-success text-xs btn-sm w-28 h-10"
                   onClick={() => {
                     handlerPublishMenu();
-                  }}
-                >
+                  }}>
                   {t('user.menu-list.menuList.submit')}
                 </button>
               </div>
             </div>
             {modalEdit()}
+            <ModalConfirm
+              open={openTakedownModal}
+              cancelAction={() => {
+                setOpenTakedownModal(false);
+                setIsTakedown(false);
+                setTakedownNote('');
+              }}
+              modalWidth={600}
+              modalHeight={'100%'}
+              title={t('user.menu-list.menuList.takedownTitle')}
+              titleSize={18}
+              cancelTitle={t('user.menu-list.menuList.cancel')}
+              submitAction={() => {
+                if (takedownNote.length > 0) {
+                  setIsTakedown(true);
+                  setOpenTakedownModal(false);
+                } else {
+                  dispatch(
+                    openToast({
+                      type: 'error',
+                      title: t('user.menu-list.menuList.failedDelete'),
+                      message: t('user.menu-list.menuList.toastTakedownRequired'),
+                    }),
+                  );
+                  setIsTakedown(false);
+                }
+              }}
+              submitTitle={t('user.menu-list.menuList.submit')}
+              icon={PaperIcon}
+              iconSize={26}
+              btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}>
+              <div className="w-full px-10">
+                <TextArea
+                  name="TakedownComment"
+                  labelTitle={t('user.menu-list.menuList.takedownComment')}
+                  labelRequired
+                  value={takedownNote}
+                  containerStyle="rounded-3xl"
+                  isError={!takedownNote}
+                  errorText={
+                    !takedownNote ? t('user.menu-list.menuList.takedownRequired') ?? '' : ''
+                  }
+                  onChange={e => {
+                    setTakedownNote(e.target.value);
+                  }}
+                />
+              </div>
+            </ModalConfirm>
           </div>
+          <ModalLog
+            id={0}
+            open={openLogModal}
+            toggle={() => {
+              setOpenLogModal(!openLogModal);
+            }}
+            title={'Activity Log - Menu Management'}
+          />
         </TitleCard>
       </RoleRenderer>
     </>
