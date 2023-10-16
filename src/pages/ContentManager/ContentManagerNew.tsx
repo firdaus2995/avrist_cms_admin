@@ -1,12 +1,12 @@
 import { useEffect, useState, useCallback } from 'react';
 import { t } from 'i18next';
 import {
+  useCreateContentDataMutation,
   useGetCategoryListQuery,
   useGetEligibleAutoApproveQuery,
 } from '@/services/ContentManager/contentManagerApi';
 import {
   useGetPostTypeDetailQuery,
-  useCreateContentDataMutation,
 } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';

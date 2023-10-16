@@ -33,6 +33,8 @@ import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
 import PaperSubmit from '../../assets/paper-submit.png';
+import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
+import PaginationComponent from '@/components/molecules/Pagination';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -50,7 +52,7 @@ export default function PageManagementDetail() {
   const [idLog, setIdLog] = useState(null);
   const [logTitle, setLogTitle] = useState(null);
 
-  const [setSearch] = useState<any>('');
+  const [search, setSearch] = useState<any>('');
   const [isEdited, setIsEdited] = useState(false);
   const [isAlreadyReview, setIsAlreadyReview] = useState(false);
   const [showModalReview, setShowModalReview] = useState(false);
@@ -60,6 +62,11 @@ export default function PageManagementDetail() {
   const [rejectComments, setRejectComments] = useState('');
   const [showArchivedModal, setShowArchivedModal] = useState(false);
 
+  // PAGE TEMPLACE SELECTION STATE
+  const [total, setTotal] = useState<number>(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit] = useState(6);
+
   // AUTO APPROVE MODAL STATE
   const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
@@ -67,6 +74,21 @@ export default function PageManagementDetail() {
   // RTK GET DATA
   const fetchDataById = useGetPageByIdQuery({ id });
   const { data: pageDataDetail } = fetchDataById;
+
+  // RTK GET PAGE TEMPLATE
+  const fetchPageTemplatesQuery = useGetPageTemplateQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy: 'id',
+      direction: 'desc',
+      search,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataPageTemplates } = fetchPageTemplatesQuery;
 
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'edit',
@@ -82,6 +104,13 @@ export default function PageManagementDetail() {
     }
   }, [pageDataDetail]);
 
+  useEffect(() => {
+    if (dataPageTemplates) {
+      setPageTemplates(dataPageTemplates?.pageTemplateList?.templates);
+      setTotal(dataPageTemplates?.pageTemplateList?.total);
+    }
+  }, [dataPageTemplates]);
+
   const [updatePageData] = useUpdatePageDataMutation();
   const [updatePageStatus] = useUpdatePageStatusMutation();
   const [restorePage] = useRestorePageMutation();
@@ -94,49 +123,6 @@ export default function PageManagementDetail() {
 
   // FORM VALIDATION
   const { control, handleSubmit, getValues } = useForm();
-
-  useEffect(() => {
-    setTimeout(() => {
-      setPageTemplates([
-        {
-          id: 1,
-          name: 'Image 1',
-          image:
-            'https://w0.peakpx.com/wallpaper/677/326/HD-wallpaper-blue-landscape-aesthetic-blue-flowers-landscape-nature-trees-thumbnail.jpg',
-        },
-        {
-          id: 2,
-          name: 'Image 2',
-          image:
-            'https://w0.peakpx.com/wallpaper/677/326/HD-wallpaper-blue-landscape-aesthetic-blue-flowers-landscape-nature-trees-thumbnail.jpg',
-        },
-        {
-          id: 3,
-          name: 'Image 3',
-          image:
-            'https://w0.peakpx.com/wallpaper/677/326/HD-wallpaper-blue-landscape-aesthetic-blue-flowers-landscape-nature-trees-thumbnail.jpg',
-        },
-        {
-          id: 4,
-          name: 'Image 4',
-          image:
-            'https://w0.peakpx.com/wallpaper/677/326/HD-wallpaper-blue-landscape-aesthetic-blue-flowers-landscape-nature-trees-thumbnail.jpg',
-        },
-        {
-          id: 5,
-          name: 'Image 5',
-          image:
-            'https://w0.peakpx.com/wallpaper/677/326/HD-wallpaper-blue-landscape-aesthetic-blue-flowers-landscape-nature-trees-thumbnail.jpg',
-        },
-        {
-          id: 6,
-          name: 'Image 6',
-          image:
-            'https://w0.peakpx.com/wallpaper/677/326/HD-wallpaper-blue-landscape-aesthetic-blue-flowers-landscape-nature-trees-thumbnail.jpg',
-        },
-      ]);
-    }, 50);
-  }, []);
 
   const submitButton = () => {
     return (
@@ -577,6 +563,17 @@ export default function PageManagementDetail() {
                 </div>
               ))}
           </div>
+          <div className="w-full flex justify-center">
+            <PaginationComponent
+              total={total}
+              page={pageIndex}
+              pageSize={pageLimit}
+              setPageOnly={true}
+              setPage={(page: number) => {
+                setPageIndex(page);
+              }}
+            />
+          </div>
         </div>
         {/* CONTENT TYPE SECTION */}
         <div className="flex justify-center">
@@ -639,16 +636,16 @@ export default function PageManagementDetail() {
         }}>
         <div className="flex flex-col justify-center items-center">
           <img src={PaperSubmit} className="w-10" />
-          <p className="font-bold mt-3 text-xl">{t('user.page-management.detail.autoApproveTitle')}</p>
+          <p className="font-bold mt-3 text-xl">{t('user.page-management.detail.labels.autoApproveTitle')}</p>
           <p className="font-base mt-2 text-xl text-center">
-            {t('user.page-management.detail.autoApproveSubtitle')}
+            {t('user.page-management.detail.labels.autoApproveSubtitle')}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}
             updateFormValue={e => {
               setIsAutoApprove(e.value);
             }}
-            labelTitle={t('user.page-management.detail.autoApproveLabel')}
+            labelTitle={t('user.page-management.detail.labels.autoApproveLabel')}
             labelStyle="text-xl mt-2"
           />
         </div>
