@@ -28,7 +28,12 @@ axiosInstance.interceptors.request.use(
   },
 );
 
-const restApiRequest = async (method: string, url: string, data: any = null, responseType: 'json' | 'blob' = 'json'): Promise<any> => {
+const restApiRequest = async (
+  method: string,
+  url: string,
+  data: any = null,
+  responseType: 'json' | 'blob' = 'json',
+): Promise<any> => {
   try {
     const requestConfig = {
       method,
@@ -36,6 +41,13 @@ const restApiRequest = async (method: string, url: string, data: any = null, res
       responseType, // set tipe data yg ingin diambil
       data: responseType === 'blob' ? null : data, // ini untuk post payload
     };
+
+    // contoh get
+    // const jsonData = await restApiRequest('GET', '/api/endpoint', null, 'json');
+    // const blobData = await restApiRequest('GET', '/api/image', null, 'blob');
+    // contoh post
+    // const jsonResponse = await restApiRequest('POST', '/api/post-endpoint', postData, 'json');
+    // const blobResponse = await restApiRequest('POST', '/api/post-image', postData, 'blob');
 
     const response: AxiosResponse = await axiosInstance.request(requestConfig);
     if (response.status === 200) {

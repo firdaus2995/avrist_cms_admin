@@ -2,15 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import UploadDocumentIcon from '@/assets/upload-file-2.svg';
 import Document from '@/assets/modal/document-orange.svg';
 import Close from '@/assets/close.png';
-import { getCredential } from '@/utils/Credential';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { t } from 'i18next';
 import { getImageEditable } from '../../../utils/imageUtils';
+import restApiRequest from '../../../utils/restApiRequest';
 
-const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
 const maxImgSize = import.meta.env.VITE_MAX_FILE_IMG_SIZE;
 
@@ -102,18 +101,16 @@ export default function FileUploaderBase({
     const droppedFiles = Array.from(e.dataTransfer.files);
 
     const validFiles = droppedFiles.filter(file => allowedTypes.includes(file.type));
-    void handleUpload(validFiles);
+    void handleAxiosUpload(validFiles);
   };
 
   const handleChange = (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    void handleUpload([...e.target.files]);
+    void handleAxiosUpload([...e.target.files]);
   };
 
-  const handleUpload = async (files: File[]) => {
+  const handleAxiosUpload = async (files: File[]) => {
     setIsUploadLoading(true);
-    const token = getCredential().accessToken;
-    const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
     const defaultFileSize = isDocument ? maxDocSize : maxImgSize;
@@ -143,49 +140,31 @@ export default function FileUploaderBase({
       return;
     }
 
-    body.append('file', files[0]);
-    body.append('fileType', isDocument ? 'DOCUMENT' : 'IMAGE');
-    body.append('fileName', fileName);
+    const formData = new FormData();
+    formData.append('file', files[0]);
+    formData.append('fileType', isDocument ? 'DOCUMENT' : 'IMAGE');
+    formData.append('fileName', fileName);
 
     try {
-      const response = await fetch(`${baseUrl}/files/upload`, {
-        method: 'POST',
-        body,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await restApiRequest('POST', '/files/upload', formData); // Use restApiRequest here
 
-      if (response.ok) {
-        const responseData = await response.json();
-        const newFile = { name: fileName, value: files[0], response: responseData.data };
-        if (multiple) {
-          setFilesData((prevState: any) => {
-            const updatedFiles = [...prevState, newFile];
-            onFilesChange(updatedFiles);
-            return updatedFiles;
-          });
-          setAltTexts((prevState: string[]) => {
-            const updatedAltTexts = [...prevState, ''];
-            onAltTextChange(updatedAltTexts);
-            return updatedAltTexts;
-          });
-        } else {
-          setFilesData([newFile]);
-          onFilesChange([newFile]);
-          setAltTexts(['']);
-          onAltTextChange(['']);
-        }
+      const newFile = { name: fileName, value: response.data, response: response.data.data };
+      if (multiple) {
+        setFilesData((prevState: any) => {
+          const updatedFiles = [...prevState, newFile];
+          onFilesChange(updatedFiles);
+          return updatedFiles;
+        });
+        setAltTexts((prevState: string[]) => {
+          const updatedAltTexts = [...prevState, ''];
+          onAltTextChange(updatedAltTexts);
+          return updatedAltTexts;
+        });
       } else {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('components.molecules.file.failed'),
-          }),
-        );
-      }
-      if (inputRef.current) {
-        inputRef.current.value = '';
+        setFilesData([newFile]);
+        onFilesChange([newFile]);
+        setAltTexts(['']);
+        onAltTextChange(['']);
       }
     } catch (error) {
       dispatch(
@@ -195,6 +174,11 @@ export default function FileUploaderBase({
         }),
       );
     }
+
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+
     setIsUploadLoading(false);
   };
 
