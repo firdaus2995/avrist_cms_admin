@@ -24,8 +24,8 @@
     "sample": "This is GraphQL Sample",
     "shortcut": {
       "regist-template-page": {
-        "title": "Regist Page Template",
-        "subtitle": "Regist your new page template for Avrist Website",
+        "title": "Register Page Template",
+        "subtitle": "Register your new page template for Avrist Website",
         "button": "Page Template"
       },
       "add-content": {
