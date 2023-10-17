@@ -78,7 +78,7 @@ export default function PageManagementNew() {
   const fetchContentsQuery = useGetPostTypeListQuery(
     {
       pageIndex: 0,
-      limit: 999999,
+      limit: 9999,
       sortBy: 'name',
       direction: 'asc',
       search: '',

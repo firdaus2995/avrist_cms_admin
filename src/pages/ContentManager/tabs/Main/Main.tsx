@@ -12,7 +12,7 @@ import { SortingState } from '@tanstack/react-table';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { Link } from 'react-router-dom';
-import StatusBadge from '../../components/StatusBadge';
+import StatusBadge from '@/components/atoms/StatusBadge';
 
 export default function MainTab(props: { id: any, isUseCategory: any }) {
   const dispatch = useAppDispatch();

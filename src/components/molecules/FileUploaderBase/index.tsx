@@ -2,16 +2,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import UploadDocumentIcon from '@/assets/upload-file-2.svg';
 import Document from '@/assets/modal/document-orange.svg';
 import Close from '@/assets/close.png';
-import { getCredential } from '@/utils/Credential';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { t } from 'i18next';
-import AdobePdfIcon from '@/assets/adobe-pdf.svg';
-import { getImage } from '../../../utils/imageUtils';
+import { getImageEditable } from '../../../utils/imageUtils';
+import restApiRequest from '../../../utils/restApiRequest';
 
-const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
 const maxImgSize = import.meta.env.VITE_MAX_FILE_IMG_SIZE;
 
@@ -23,7 +21,7 @@ function bytesToSize(bytes: number): string {
 }
 
 const FileItem = (props: any) => {
-  const { name, value, onDeletePress } = props;
+  const { name, value, onDeletePress, editMode } = props;
 
   return (
     <>
@@ -44,43 +42,14 @@ const FileItem = (props: any) => {
           <p className="text-body-text-3 text-xs">{value ? bytesToSize(value?.size) : ''}</p>
         </div>
         <div className="h-11">
-          <div
-            data-tip={'Delete'}
-            className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
-            onClick={onDeletePress}>
-            <img src={Close} className="w-5 h-5" />
-          </div>
-        </div>
-      </div>
-    </>
-  );
-};
-
-const FileItemPreview = (props: any) => {
-  const { image, isDocument } = props;
-  return (
-    <>
-      <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
-        {isDocument ? (
-          <img className="object-cover h-12 w-12 rounded-lg mr-3 border" src={AdobePdfIcon} />
-        ) : (
-          <div
-            className="h-12 w-12 rounded-lg bg-[#5E217C] bg-cover"
-            style={{ backgroundImage: `url(${image?.objectUrl})` }}></div>
-        )}
-        <div className="flex flex-1 h-14 justify-center flex-col ml-3">
-          <p className="truncate w-52">{image?.imageName ?? ''}</p>
-          <p className="text-body-text-3 text-xs">
-            {image?.fileSize ? bytesToSize(image?.fileSize) : ''}
-          </p>
-        </div>
-        <div className="h-11">
-          {/* <div
-            data-tip={'Delete'}
-            className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
-            onClick={onDeletePress}>
-            <img src={Close} className="w-5 h-5" />
-          </div> */}
+          {editMode && (
+            <div
+              data-tip={'Delete'}
+              className="tooltip cursor-pointer w-6 h-6 rounded-full hover-bg-light-grey justify-center items-center flex"
+              onClick={onDeletePress}>
+              <img src={Close} className="w-5 h-5" />
+            </div>
+          )}
         </div>
       </div>
     </>
@@ -99,13 +68,13 @@ export default function FileUploaderBase({
   onCombineDataChange,
   value,
   showMaxSize,
+  editMode = false,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
   const [isUploadLoading, setIsUploadLoading] = useState<any>(false);
   const [altTexts, setAltTexts] = useState<string[]>([]);
   const inputRef = useRef<any>(null);
-  const [imageUrls, setImageUrls] = useState<any>([]);
 
   const formatData = () => {
     const formattedData = filesData.map((data: any, index: any) => {
@@ -132,18 +101,16 @@ export default function FileUploaderBase({
     const droppedFiles = Array.from(e.dataTransfer.files);
 
     const validFiles = droppedFiles.filter(file => allowedTypes.includes(file.type));
-    void handleUpload(validFiles);
+    void handleAxiosUpload(validFiles);
   };
 
   const handleChange = (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    void handleUpload([...e.target.files]);
+    void handleAxiosUpload([...e.target.files]);
   };
 
-  const handleUpload = async (files: File[]) => {
+  const handleAxiosUpload = async (files: File[]) => {
     setIsUploadLoading(true);
-    const token = getCredential().accessToken;
-    const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
     const defaultFileSize = isDocument ? maxDocSize : maxImgSize;
@@ -173,49 +140,31 @@ export default function FileUploaderBase({
       return;
     }
 
-    body.append('file', files[0]);
-    body.append('fileType', isDocument ? 'DOCUMENT' : 'IMAGE');
-    body.append('fileName', fileName);
+    const formData = new FormData();
+    formData.append('file', files[0]);
+    formData.append('fileType', isDocument ? 'DOCUMENT' : 'IMAGE');
+    formData.append('fileName', fileName);
 
     try {
-      const response = await fetch(`${baseUrl}/files/upload`, {
-        method: 'POST',
-        body,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const response = await restApiRequest('POST', '/files/upload', formData); // Use restApiRequest here
 
-      if (response.ok) {
-        const responseData = await response.json();
-        const newFile = { name: fileName, value: files[0], response: responseData.data };
-        if (multiple) {
-          setFilesData((prevState: any) => {
-            const updatedFiles = [...prevState, newFile];
-            onFilesChange(updatedFiles);
-            return updatedFiles;
-          });
-          setAltTexts((prevState: string[]) => {
-            const updatedAltTexts = [...prevState, ''];
-            onAltTextChange(updatedAltTexts);
-            return updatedAltTexts;
-          });
-        } else {
-          setFilesData([newFile]);
-          onFilesChange([newFile]);
-          setAltTexts(['']);
-          onAltTextChange(['']);
-        }
+      const newFile = { name: fileName, value: response.data, response: response.data.data };
+      if (multiple) {
+        setFilesData((prevState: any) => {
+          const updatedFiles = [...prevState, newFile];
+          onFilesChange(updatedFiles);
+          return updatedFiles;
+        });
+        setAltTexts((prevState: string[]) => {
+          const updatedAltTexts = [...prevState, ''];
+          onAltTextChange(updatedAltTexts);
+          return updatedAltTexts;
+        });
       } else {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('components.molecules.file.failed'),
-          }),
-        );
-      }
-      if (inputRef.current) {
-        inputRef.current.value = '';
+        setFilesData([newFile]);
+        onFilesChange([newFile]);
+        setAltTexts(['']);
+        onAltTextChange(['']);
       }
     } catch (error) {
       dispatch(
@@ -225,6 +174,11 @@ export default function FileUploaderBase({
         }),
       );
     }
+
+    if (inputRef.current) {
+      inputRef.current.value = '';
+    }
+
     setIsUploadLoading(false);
   };
 
@@ -240,16 +194,24 @@ export default function FileUploaderBase({
   useEffect(() => {
     const parsedValue = safeParseJSON(value);
     if (parsedValue) {
-      const loadImages = async () => {
+      if (altTexts.length === 0) {
+        // Only set the altTexts if it's empty
+        const defaultAltText = parsedValue?.map((item: any) => item?.altText);
+        if (defaultAltText) {
+          setAltTexts(defaultAltText);
+        }
+      }
+
+      const loadDefaultValue = async () => {
         const urls = await Promise.all(
-          parsedValue.map(async (element: any) => await getImage(element.imageUrl)),
+          parsedValue.map(async (element: any) => await getImageEditable(element?.imageUrl)),
         );
         if (urls) {
-          setImageUrls(urls);
+          setFilesData(urls);
         }
       };
 
-      void loadImages();
+      void loadDefaultValue();
     }
   }, [value]);
 
@@ -301,24 +263,12 @@ export default function FileUploaderBase({
         </>
       )}
       <div>
-        {/* PREVIEW */}
-        {!filesData.length && safeParseJSON(value).map((data: any, i: any) => {
-          return (
-            <FileItemPreview
-              key={i}
-              image={imageUrls[i]} // Pass the appropriate imageUrls object
-              altText={data.altText} // You can also pass other information as needed
-              index={i}
-              isDocument={isDocument}
-            />
-          );
-        })}
-
         {filesData.map((data: any, index: any) => {
           return (
             <div key={index}>
               <FileItem
                 {...data}
+                editMode={editMode}
                 onDeletePress={() => {
                   const newData = filesData.filter((_: any, idx: number) => idx !== index);
                   const newAltTexts = [...altTexts];
@@ -345,12 +295,11 @@ export default function FileUploaderBase({
                       const newAltTexts = [...altTexts];
                       newAltTexts[index] = e.target.value;
                       setAltTexts(newAltTexts);
-
-                      // Call the onAltTextChange function with the updated altTexts array
-                      onAltTextChange(newAltTexts);
                     }}
                     value={altTexts[index] || ''}
+                    disabled={!editMode}
                   />
+
                   {index === 0 && filesData?.length > 1 && (
                     <div
                       className="cursor-pointer ml-4"
@@ -376,6 +325,7 @@ export default function FileUploaderBase({
           </div>
         )}
       </div>
+
       {/* Combine onFilesChange and onAltTextChange into a single value */}
       {/* <pre>{JSON.stringify({ value: formatData() }, null, 2)}</pre> */}
     </>

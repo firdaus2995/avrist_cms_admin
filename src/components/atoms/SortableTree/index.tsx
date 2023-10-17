@@ -19,7 +19,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
       return treeDataNew;
     } else {
       return []
-    }
+    };
   });
 
   function updateTreeData(treeData: any) {
@@ -28,13 +28,15 @@ export default function SortableTreeComponent(props: ISortableTree) {
 
   return (
     <div className="mt-10">
-      <div className="w-full py-10 h-[50vh] overflow-auto">
+      <div className="w-full h-[50vh] overflow-auto">
         <SortableTree
           theme={TreeTheme}
           treeData={treeData}
           onChange={treeData => {
             updateTreeData(treeData);
-            onChange(treeData);
+          }}
+          onMoveNode={data => {
+            onChange(data?.node, data?.treeData);
           }}
           canDrag={({ node }) => !node.noDragging}
           maxDepth={3}

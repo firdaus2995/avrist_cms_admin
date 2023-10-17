@@ -1,5 +1,5 @@
 import React from 'react';
-import Typography from '../../../components/atoms/Typography';
+import Typography from '../Typography';
 
 interface StatusBadgeProps {
   status: string;
@@ -41,6 +41,14 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ status }) => {
     case 'delete_rejected':
       style = 'bg-[#EBD2CE] border-[#D09191]';
       title = 'Delete Rejected';
+      break;
+    case 'published':
+      style = 'bg-[#D9E7D6] border-[#8AA97C]';
+      title = 'Published';
+      break;
+    case 'unpublished':
+      style = 'bg-[#EBD2CE] border-[#D09191]';
+      title = 'Unpublish';
       break;
     default:
       style = 'bg-[#E4E4E4] border-[#A9AAB5]';
