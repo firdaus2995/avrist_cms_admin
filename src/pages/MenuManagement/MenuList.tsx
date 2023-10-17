@@ -735,11 +735,17 @@ export default function MenuList() {
               <hr />
               <div className="flex">
                 <div className="text-sm">
-                  Last Published by{' '}
-                  <span className="font-bold">{getValues('lastPublishedBy')}</span> at{' '}
+                  <span>
+                    {`Last Published by `}
+                  </span>
                   <span className="font-bold">
-                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
-                    {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
+                    {getValues('lastPublishedBy')}
+                  </span> 
+                  <span>
+                    {` at `}
+                  </span>
+                  <span className="font-bold">
+                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} - {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
                   </span>
                 </div>
               </div>
