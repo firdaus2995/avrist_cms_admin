@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useGetMyTaskListQuery } from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
 import { Link } from 'react-router-dom';
-import StatusBadge from '../../components/StatusBadge';
+import StatusBadge from '@/components/atoms/StatusBadge';
 
 export default function MyTaskTab(props: { id: any }) {
   const { t } = useTranslation();
