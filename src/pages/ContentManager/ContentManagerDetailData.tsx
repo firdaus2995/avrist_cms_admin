@@ -521,6 +521,7 @@ export default function ContentManagerDetailData() {
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
                     onChange={onChange}
+                    editMode={isEdited}
                   />
                 );
               }}
@@ -556,6 +557,7 @@ export default function ContentManagerDetailData() {
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
                     onChange={onChange}
+                    editMode={isEdited}
                   />
                 );
               }}

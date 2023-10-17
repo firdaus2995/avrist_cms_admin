@@ -567,6 +567,7 @@ export default function MenuList() {
                       disabled={false}
                       maxSize={maxImageSize}
                       showMaxSize={true}
+                      editMode={true}
                     />
                   );
                 }}
