@@ -28,7 +28,7 @@ export default function ModalLog(props: any) {
 
   useEffect(() => {
     if (data) {
-      setListData(data.data?.emailBodyList?.menuLogs);
+      setListData(data.menuLogList?.menuLogs);
     }
   }, [data]);
 
@@ -79,7 +79,7 @@ export default function ModalLog(props: any) {
               <div className="flex flex-row justify-between items-center">
                 <div className="flex flex-col gap-1">
                   {datas?.action !== 'PUBLISH' ? (
-                    <Typography type="body" size="m" weight="semi" className="truncate">
+                    <Typography type="body" size="m" weight="semi" className="truncate w-[300px]">
                       {`${actionType(datas?.action)[0]}: ${datas?.title}`}
                     </Typography>
                   ) : null}
@@ -158,28 +158,28 @@ export default function ModalLog(props: any) {
             </div>
           )}
           <div>
-            {!isError && data && (
+            {!isError && data ? (
               <InfiniteScroll
                 className="pr-3"
                 dataLength={listData.length}
                 next={handlerFetchMore}
                 loader={''}
-                hasMore={limit < data.data?.emailBodyList?.total}
+                hasMore={limit < data.menuLogList?.total}
                 height={500}>
                 {listData.length > 0 &&
                   listData.map((item: any, index: number) => {
-                    const prevDate = listData[index - 1]?.createdAt || '';
-
+                    const prevDate = listData[index - 1]?.createdAt.slice(0, 10) || '';
+                    const currentDate = item.createdAt.slice(0, 10);
                     return (
                       <Card
-                        date={item.createdAt !== prevDate ? item.createdAt : ''}
+                        date={currentDate !== prevDate ? item.createdAt : ''}
                         datas={item}
                         key={index}
                       />
                     );
                   })}
               </InfiniteScroll>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
