@@ -39,7 +39,7 @@ export const menuApi = createApi({
     getMenuList: builder.query({
       query: payload => ({
         document: gql`
-          query {
+          query{
             menuList {
               lastPublishedBy
               lastPublishedAt
@@ -112,7 +112,7 @@ export const menuApi = createApi({
     deleteMenu: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuDelete($id: String!, $takedownNote: String!) {
+          mutation menuDelete($id: Int!, $takedownNote: String!) {
             menuDelete(id: $id, takedownNote: $takedownNote) {
               message
             }
@@ -124,16 +124,8 @@ export const menuApi = createApi({
     updateMenuStructure: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuStructureUpdate(
-            $menu: Menu!
-            $menuList: [Menu]!
-          ) {
-            menuStructureUpdate(
-              request: {
-                menu: $menu
-                menuList: $menuList
-              }
-            ) {
+          mutation menuStructureUpdate($menu: Menu!, $menuList: [Menu]!) {
+            menuStructureUpdate(request: { menu: $menu, menuList: $menuList }) {
               status
             }
           }
@@ -151,8 +143,42 @@ export const menuApi = createApi({
           }
         `,
         variables: payload,
-      })
-    })
+      }),
+    }),
+    getMenuLogList: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query menuLogList(
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+            $search: String
+          ) {
+            menuLogList(
+              pageableRequest: { 
+                pageIndex: $pageIndex, 
+                limit: $limit, 
+                sortBy: $sortBy, 
+                direction: $direction, 
+                search: $search 
+              }
+            ) {
+              total
+              menuLogs {
+                id
+                title
+                action
+                createdBy
+                createdAt
+                takedownNote
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -163,4 +189,5 @@ export const {
   useDeleteMenuMutation,
   useUpdateMenuStructureMutation,
   usePublishMenuMutation,
+  useGetMenuLogListQuery,
 } = menuApi;
