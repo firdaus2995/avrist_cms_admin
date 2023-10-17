@@ -165,7 +165,7 @@ export default function MenuList() {
           openToast({
             type: 'success',
             title: t('user.menu-list.menuList.successDelete'),
-            message: d.roleDelete.message,
+            message: d.roleDelete?.message || '',
           }),
         );
         navigate(0);
@@ -736,17 +736,12 @@ export default function MenuList() {
               <hr />
               <div className="flex">
                 <div className="text-sm">
-                  <span>
-                    {`Last Published by `}
-                  </span>
+                  <span>{`Last Published by `}</span>
+                  <span className="font-bold">{getValues('lastPublishedBy')}</span>
+                  <span>{` at `}</span>
                   <span className="font-bold">
-                    {getValues('lastPublishedBy')}
-                  </span> 
-                  <span>
-                    {` at `}
-                  </span>
-                  <span className="font-bold">
-                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} - {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
+                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
+                    {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
                   </span>
                 </div>
               </div>
