@@ -2,7 +2,7 @@
   "errors": {
     "UnableToChangeOwnUserStatusException": "Failed to update data! You can't change your own data! Please contact another user with eligible role",
     "DataIsUsedException": "This data is been used, you can’t delete this data",
-    "DataHasBeenExistException" : "Email has been Exist"
+    "DataHasBeenExistException": "Email has been Exist"
   },
   "toast-success": "Success",
   "toast-failed": "Failed",
@@ -146,6 +146,12 @@
       "save": "Save",
       "success-msg": "Success change password Profile {{name}}",
       "failed-msg": "Failed change password Profile {{name}}"
+    },
+    "logout": {
+      "yes": "Yes",
+      "no": "No",
+      "title": "Are you sure?",
+      "message": "Do you want to logout from {{name}} - CMS?"
     },
     "notification": {
       "mark-all-as-read": "Mark all as read",
