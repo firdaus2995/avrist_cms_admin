@@ -3,12 +3,14 @@ import { useNavigate } from "react-router";
 import InternalServerErrorSVG from "@/assets/pages/ise.svg";
 import HomeIcon from '@/assets/home.svg';
 
-const InternalServerError = () => {
+const InternalServerError = ({error}: any) => {
   const navigate = useNavigate();
 
   const handlerNavigate = () => {
     navigate('/');
   };
+
+  console.log(error);
 
   return (
     <div className="flex flex-col justify-center items-center gap-5" style={{

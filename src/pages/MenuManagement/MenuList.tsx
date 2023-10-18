@@ -1,33 +1,36 @@
-// import { useParams } from 'react-router-dom';
-// import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import dayjs from 'dayjs';
 import { useEffect, useState, useCallback } from 'react';
-import { InputText } from '../../components/atoms/Input/InputText';
-import DropDown from '../../components/molecules/DropDown';
-import { CheckBox } from '../../components/atoms/Input/CheckBox';
-import { useForm, Controller } from 'react-hook-form';
+import { t } from 'i18next';
+
+import SortableTreeComponent from '../../components/atoms/SortableTree';
 import FormList from '@/components/molecules/FormList';
 import LifeInsurance from '../../assets/lifeInsurance.png';
-import SortableTreeComponent from '../../components/atoms/SortableTree';
+import DropDown from '../../components/molecules/DropDown';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
+import StatusBadge from '@/components/atoms/StatusBadge';
+import Modal from '../../components/atoms/Modal';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
+import CancelIcon from '../../assets/cancel.png';
+import PaperIcon from '../../assets/paper.svg';
+import { InputText } from '../../components/atoms/Input/InputText';
+import { CheckBox } from '../../components/atoms/Input/CheckBox';
+import { useForm, Controller } from 'react-hook-form';
 import {
   useCreateMenuMutation,
   useDeleteMenuMutation,
   useEditMenuMutation,
   useGetMenuListQuery,
+  usePublishMenuMutation,
   useUpdateMenuStructureMutation,
 } from '../../services/Menu/menuApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
-import { t } from 'i18next';
-import Modal from '../../components/atoms/Modal';
-import ModalConfirm from '../../components/molecules/ModalConfirm';
-import CancelIcon from '../../assets/cancel.png';
-import PaperIcon from '../../assets/paper.svg';
+import TimelineLog from '@/assets/timeline-log.svg';
+import ModalLog from './components/ModalLog';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import RoleRenderer from '../../components/atoms/RoleRenderer';
-import dayjs from 'dayjs';
 
 export default function MenuList() {
   // const params = useParams();
@@ -37,8 +40,11 @@ export default function MenuList() {
 
   const {
     control,
+    getValues,
+    setValue,
+    watch,
     formState: { errors },
-  } = useForm();
+  }: any = useForm();
 
   const maxImageSize = 2 * 1024 * 1024;
   const maxChar = 70;
@@ -46,9 +52,10 @@ export default function MenuList() {
   const [isAddClick, setIsAddClicked] = useState(false);
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [openTakedownModal, setOpenTakedownModal] = useState(false);
+  const [openLogModal, setOpenLogModal] = useState(false);
 
   const [showCancel, setShowCancel] = useState(false);
-  const [idDelete, setIdDelete] = useState('');
+  const [idDelete, setIdDelete] = useState(0);
 
   const [title, setTitle] = useState('');
   const [editedTitle, setEditedTitle] = useState('');
@@ -61,23 +68,10 @@ export default function MenuList() {
   const [takedownNote, setTakedownNote] = useState('');
   const [isTakedown, setIsTakedown] = useState(false);
 
-  const fetchQuery = useGetMenuListQuery(
-    {},
-    {
-      refetchOnMountOrArgChange: true,
-    },
-  );
-  const { data } = fetchQuery;
   const [isOpenForm, setIsOpenForm] = useState(false);
   const [dataScructure, setDataStructure] = useState<any>([]);
-  const [dataScructureInit, setDataStructureInit] = useState<any>([]);
 
-  const [createMenu] = useCreateMenuMutation();
-  const [editMenu] = useEditMenuMutation();
-  const [deleteMenu] = useDeleteMenuMutation();
-  const [updateStructure] = useUpdateMenuStructureMutation();
-
-  // TABLE PAGINATION STATE
+  // PAGE TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(10);
   const [direction] = useState('asc');
@@ -88,7 +82,16 @@ export default function MenuList() {
   const [startDate] = useState(now);
   const [endDate] = useState(now);
 
-  // RTK GET DATA
+  // RTK GET MENU
+  const fetchQuery = useGetMenuListQuery(
+    {},
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data } = fetchQuery;
+
+  // RTK GET PAGE
   const fetchQueryPage = useGetPageManagementListQuery({
     pageIndex,
     limit: pageLimit,
@@ -101,9 +104,27 @@ export default function MenuList() {
     isArchive: false,
   });
 
+  // RTK CREATE MENU
+  const [createMenu] = useCreateMenuMutation();
+
+  // RTK EDIT MENU
+  const [editMenu] = useEditMenuMutation();
+
+  // RTK DELETE MENU
+  const [deleteMenu] = useDeleteMenuMutation();
+
+  // RTK UPDATE STRUCTURE
+  const [updateStructure] = useUpdateMenuStructureMutation();
+
+  // RTK PUBLISH MENU
+  const [publishMenu] = usePublishMenuMutation();
+
+  useEffect(() => {
+    watch(['status', 'lastPublishedBy', 'lastPublishedAt']);
+  }, [watch]);
+
   useEffect(() => {
     const data = fetchQueryPage?.data?.pageList?.pages;
-
     const listData = data?.map((val: { id: any; title: any }) => {
       const list = {
         value: val.id,
@@ -123,11 +144,13 @@ export default function MenuList() {
   useEffect(() => {
     if (data) {
       const listData = data?.menuList?.menus;
-
       const result = listData.map((e: any, i: any) => ({ ...e, children: listData[i].child }));
 
       setDataStructure(result);
-      setDataStructureInit(result);
+
+      setValue('status', data?.menuList.status);
+      setValue('lastPublishedBy', data?.menuList?.lastPublishedBy);
+      setValue('lastPublishedAt', data?.menuList?.lastPublishedAt);
     }
   }, [data]);
 
@@ -142,7 +165,7 @@ export default function MenuList() {
           openToast({
             type: 'success',
             title: t('user.menu-list.menuList.successDelete'),
-            message: d.roleDelete.message,
+            message: d.roleDelete?.message || '',
           }),
         );
         navigate(0);
@@ -175,7 +198,7 @@ export default function MenuList() {
     setUrlLink(data.node.externalUrl);
     setPage(data.node.pageId);
     setIsOpenTab(data.node.isNewTab);
-    setIdDelete(data.node.pageId);
+    setIdDelete(data.node.id);
 
     setIsOpenModal(true);
     modalEdit();
@@ -368,7 +391,7 @@ export default function MenuList() {
 
   const renderAddButtons = () => {
     return (
-      <div className="flex flex-row items-center justify-center gap-4 mb-10">
+      <div className="flex flex-row items-center justify-center gap-4">
         {!isAddClick ? (
           <div
             role="button"
@@ -595,20 +618,61 @@ export default function MenuList() {
     );
   };
 
-  const onUpdateDataStructure = () => {
-    const data = dataScructure;
+  const handlerUpdateMenuStructure = (node: any, data: any) => {
+    function recursiveAction(recurData: any, recurParentId: any): any {
+      const masterPayload: any = [];
 
-    data.forEach(function (obj: { [x: string]: any; child: any; children: any }) {
-      if (obj.children) {
-        obj.child = obj.children;
-        delete obj.children;
+      for (let i = 0; i < recurData.length; i++) {
+        if (payloadMenu.id === recurData[i].id) {
+          payloadMenu.order = i;
+          payloadMenu.parentId = recurParentId;
+        }
+
+        masterPayload.push({
+          id: recurData[i].id,
+          title: recurData[i].title ?? null,
+          menuType: recurData[i].menuType ?? null,
+          externalUrl: recurData[i].externalUrl ?? null,
+          isNewTab: recurData[i].isNewTab ?? false,
+          pageId: recurData[i].pageId ?? null,
+          order: i,
+          parentId: recurParentId,
+          child:
+            recurData[i]?.children?.length > 0
+              ? recursiveAction(recurData[i].children, recurData[i].id)
+              : null,
+        });
       }
-      delete obj.expanded;
-    });
 
-    // console.log(JSON.stringify(data)); return
+      return masterPayload;
+    }
 
-    updateStructure({ menuList: data })
+    const payloadMenu: any = {
+      id: node.id,
+      title: node.title ?? null,
+      menuType: node.menuType ?? null,
+      externalUrl: node.externalUrl ?? null,
+    };
+
+    const payloadMenuList: any = recursiveAction(data, null);
+
+    updateStructure({ menuList: payloadMenuList, menu: payloadMenu })
+      .unwrap()
+      .then((res: any) => {
+        setValue('status', res.menuStructureUpdate.status);
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+          }),
+        );
+      });
+  };
+
+  const handlerPublishMenu = () => {
+    publishMenu({})
       .unwrap()
       .then(() => {
         dispatch(
@@ -617,7 +681,7 @@ export default function MenuList() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu');
+        setValue('status', 'PUBLISHED');
       })
       .catch(() => {
         dispatch(
@@ -633,51 +697,6 @@ export default function MenuList() {
     <>
       <RoleRenderer allowedRoles={['MENU_READ']}>
         <TitleCard title="">
-          <div className="p-5 text-2xl font-bold mb-5 gap-2 text-primary flex flex-row">
-            <img src={LifeInsurance} className="w-8" />
-            {t('user.menu-list.menuList.avristLifeInsurance')}
-          </div>
-          <div className="p-5 text-2xl font-semibold border-b-2 mb-10">
-            {t('user.menu-list.menuList.menuStructure')}
-          </div>
-          {isOpenForm && renderForm()}
-          {!isOpenForm && (
-            <>
-              {dataScructure?.length > 0 && (
-                <SortableTreeComponent
-                  data={dataScructure}
-                  onClick={(data: any) => {
-                    onEdit(data);
-                  }}
-                  onChange={function (_data: any): void {
-                    setDataStructure(_data);
-                  }}
-                />
-              )}
-              {renderAddButtons()}
-            </>
-          )}
-
-          <div className="flex justify-end absolute bottom-10 right-10">
-            <div className="flex flex-row p-2 gap-2">
-              <button
-                onClick={() => {
-                  setShowCancel(true);
-                }}
-                className="btn btn-outline text-xs btn-sm w-28 h-10">
-                {t('user.menu-list.menuList.cancel')}
-              </button>
-              <button
-                disabled={dataScructure === dataScructureInit}
-                onClick={() => {
-                  onUpdateDataStructure();
-                }}
-                className="btn btn-success text-xs btn-sm w-28 h-10">
-                {t('user.menu-list.menuList.submit')}
-              </button>
-            </div>
-          </div>
-          {modalEdit()}
           <ModalConfirm
             open={showCancel}
             cancelAction={() => {
@@ -693,52 +712,133 @@ export default function MenuList() {
             icon={CancelIcon}
             btnSubmitStyle={'btn-warning'}
           />
-          <ModalConfirm
-            open={openTakedownModal}
-            cancelAction={() => {
-              setOpenTakedownModal(false);
-              setIsTakedown(false);
-              setTakedownNote('');
-            }}
-            modalWidth={600}
-            modalHeight={'100%'}
-            title={t('user.menu-list.menuList.takedownTitle')}
-            titleSize={18}
-            cancelTitle={t('user.menu-list.menuList.cancel')}
-            submitAction={() => {
-              if (takedownNote.length > 0) {
-                setIsTakedown(true);
-                setOpenTakedownModal(false);
-              } else {
-                dispatch(
-                  openToast({
-                    type: 'error',
-                    title: t('user.menu-list.menuList.failedDelete'),
-                    message: t('user.menu-list.menuList.toastTakedownRequired'),
-                  }),
-                );
-                setIsTakedown(false);
-              }
-            }}
-            submitTitle={t('user.menu-list.menuList.submit')}
-            icon={PaperIcon}
-            iconSize={26}
-            btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}>
-            <div className="w-full px-10">
-              <TextArea
-                name="TakedownComment"
-                labelTitle={t('user.menu-list.menuList.takedownComment')}
-                labelRequired
-                value={takedownNote}
-                containerStyle="rounded-3xl"
-                isError={!takedownNote}
-                errorText={!takedownNote ? t('user.menu-list.menuList.takedownRequired') ?? '' : ''}
-                onChange={e => {
-                  setTakedownNote(e.target.value);
-                }}
-              />
+
+          <div className="flex flex-col gap-10">
+            <div className="text-2xl font-bold gap-2 text-primary flex flex-row">
+              <img src={LifeInsurance} className="w-8" />
+              {t('user.menu-list.menuList.avristLifeInsurance')}
             </div>
-          </ModalConfirm>
+            <div className="flex flex-col gap-4">
+              <div className="flex flex-row gap-3 items-center">
+                <div className="text-2xl font-semibold ">
+                  {t('user.menu-list.menuList.menuStructure')}
+                </div>
+                <div
+                  className="cursor-pointer tooltip"
+                  data-tip="Log"
+                  onClick={() => {
+                    setOpenLogModal(true);
+                  }}>
+                  <img src={TimelineLog} className="w-6 h-6" />
+                </div>
+                <StatusBadge status={getValues('status') ?? ''} />
+              </div>
+              <hr />
+              <div className="flex">
+                <div className="text-sm">
+                  <span>{`Last Published by `}</span>
+                  <span className="font-bold">{getValues('lastPublishedBy')}</span>
+                  <span>{` at `}</span>
+                  <span className="font-bold">
+                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
+                    {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
+                  </span>
+                </div>
+              </div>
+            </div>
+            {isOpenForm && renderForm()}
+            {!isOpenForm && (
+              <>
+                {dataScructure?.length > 0 && (
+                  <SortableTreeComponent
+                    data={dataScructure}
+                    onClick={(data: any) => {
+                      onEdit(data);
+                    }}
+                    onChange={function (node: any, data: any): void {
+                      handlerUpdateMenuStructure(node, data);
+                    }}
+                  />
+                )}
+                {renderAddButtons()}
+              </>
+            )}
+            <div className="mt-[200px] flex justify-end items-center">
+              <div className="flex flex-row p-2 gap-2">
+                <button
+                  className="btn btn-outline text-xs btn-sm w-28 h-10"
+                  onClick={() => {
+                    setShowCancel(true);
+                  }}>
+                  {t('user.menu-list.menuList.cancel')}
+                </button>
+                <button
+                  className="btn btn-success text-xs btn-sm w-28 h-10"
+                  onClick={() => {
+                    handlerPublishMenu();
+                  }}>
+                  {t('user.menu-list.menuList.submit')}
+                </button>
+              </div>
+            </div>
+            {modalEdit()}
+            <ModalConfirm
+              open={openTakedownModal}
+              cancelAction={() => {
+                setOpenTakedownModal(false);
+                setIsTakedown(false);
+                setTakedownNote('');
+              }}
+              modalWidth={600}
+              modalHeight={'100%'}
+              title={t('user.menu-list.menuList.takedownTitle')}
+              titleSize={18}
+              cancelTitle={t('user.menu-list.menuList.cancel')}
+              submitAction={() => {
+                if (takedownNote.length > 0) {
+                  setIsTakedown(true);
+                  setOpenTakedownModal(false);
+                } else {
+                  dispatch(
+                    openToast({
+                      type: 'error',
+                      title: t('user.menu-list.menuList.failedDelete'),
+                      message: t('user.menu-list.menuList.toastTakedownRequired'),
+                    }),
+                  );
+                  setIsTakedown(false);
+                }
+              }}
+              submitTitle={t('user.menu-list.menuList.submit')}
+              icon={PaperIcon}
+              iconSize={26}
+              btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}>
+              <div className="w-full px-10">
+                <TextArea
+                  name="TakedownComment"
+                  labelTitle={t('user.menu-list.menuList.takedownComment')}
+                  labelRequired
+                  value={takedownNote}
+                  containerStyle="rounded-3xl"
+                  isError={!takedownNote}
+                  errorText={
+                    !takedownNote ? t('user.menu-list.menuList.takedownRequired') ?? '' : ''
+                  }
+                  onChange={e => {
+                    setTakedownNote(e.target.value);
+                  }}
+                />
+              </div>
+            </ModalConfirm>
+          </div>
+          <ModalLog
+            id={0}
+            open={openLogModal}
+            toggle={() => {
+              setOpenLogModal(!openLogModal);
+            }}
+            title={'Activity Log - Menu Management'}
+          />
         </TitleCard>
       </RoleRenderer>
     </>

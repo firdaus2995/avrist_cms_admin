@@ -39,26 +39,35 @@ export const menuApi = createApi({
     getMenuList: builder.query({
       query: payload => ({
         document: gql`
-          query {
+          query{
             menuList {
+              lastPublishedBy
+              lastPublishedAt
+              status
               menus {
+                id
                 title
                 menuType
                 externalUrl
                 isNewTab
                 pageId
+                parentId
                 child {
+                  id
                   title
                   menuType
                   externalUrl
                   isNewTab
                   pageId
+                  parentId
                   child {
+                    id
                     title
                     menuType
                     externalUrl
                     isNewTab
                     pageId
+                    parentId
                   }
                 }
               }
@@ -103,7 +112,7 @@ export const menuApi = createApi({
     deleteMenu: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuDelete($id: String!, $takedownNote: String!) {
+          mutation menuDelete($id: Int!, $takedownNote: String!) {
             menuDelete(id: $id, takedownNote: $takedownNote) {
               message
             }
@@ -115,9 +124,55 @@ export const menuApi = createApi({
     updateMenuStructure: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuStructureUpdate($menuList: [Menu]!) {
-            menuStructureUpdate(request: { menuList: $menuList }) {
+          mutation menuStructureUpdate($menu: Menu!, $menuList: [Menu]!) {
+            menuStructureUpdate(request: { menu: $menu, menuList: $menuList }) {
+              status
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    publishMenu: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation menuPublish {
+            menuPublish {
               message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    getMenuLogList: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query menuLogList(
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+            $search: String
+          ) {
+            menuLogList(
+              pageableRequest: { 
+                pageIndex: $pageIndex, 
+                limit: $limit, 
+                sortBy: $sortBy, 
+                direction: $direction, 
+                search: $search 
+              }
+            ) {
+              total
+              menuLogs {
+                id
+                title
+                action
+                createdBy
+                createdAt
+                takedownNote
+              }
             }
           }
         `,
@@ -133,4 +188,6 @@ export const {
   useEditMenuMutation,
   useDeleteMenuMutation,
   useUpdateMenuStructureMutation,
+  usePublishMenuMutation,
+  useGetMenuLogListQuery,
 } = menuApi;

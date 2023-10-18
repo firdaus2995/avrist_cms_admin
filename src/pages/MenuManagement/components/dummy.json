@@ -1,0 +1,63 @@
+{
+  "data": {
+    "emailBodyList": {
+      "total": 6,
+      "menuLogs": [
+        {
+          "id": 1,
+          "title": "Home Page",
+          "action": "PUBLISH",
+          "createdBy": "Raffi",
+          "createdAt": "2023-10-12 12:11:21.858",
+          "takedownNote": null,
+          "role": "Head of Department"
+        },
+        {
+          "id": 2,
+          "title": "Home Page",
+          "action": "CREATE",
+          "createdBy": "Raffi",
+          "createdAt": "2023-10-12 12:11:21.858",
+          "takedownNote": null,
+          "role": "Head of Department"
+        },
+        {
+          "id": 3,
+          "title": "Home Page",
+          "action": "UPDATE",
+          "createdBy": "Raffi",
+          "createdAt": "2023-10-15 12:11:21.858",
+          "takedownNote": null,
+          "role": "Head of Department"
+        },
+        {
+          "id": 4,
+          "title": "Home Page",
+          "action": "TAKE_DOWN",
+          "createdBy": "Raffi",
+          "createdAt": "2023-10-15 12:11:21.858",
+          "takedownNote": "Pada Halaman ini tidak perlu menampilkan form asdsad asd asdasd asd asd asdsa das d",
+          "role": "Head of Department"
+        },
+        {
+          "id": 5,
+          "title": "Home Page",
+          "action": "CHANGE_STRUCTURE",
+          "createdBy": "Raffi",
+          "createdAt": "2023-10-16 12:11:21.858",
+          "takedownNote": null,
+          "role": "Head of Department"
+        },
+        {
+          "id": 6,
+          "title": "Home Page",
+          "action": "TAKE_DOWN",
+          "createdBy": "Raffi",
+          "createdAt": "2023-10-15 12:11:21.858",
+          "takedownNote": "Tes Takedown",
+          "role": "Head of Department"
+        }
+      ]
+    }
+  }
+}

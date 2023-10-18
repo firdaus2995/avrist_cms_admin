@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import StatusBadge from './components/StatusBadge';
+import StatusBadge from '@/components/atoms/StatusBadge';
 import Typography from '@/components/atoms/Typography';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { ButtonMenu } from '@/components/molecules/ButtonMenu';
