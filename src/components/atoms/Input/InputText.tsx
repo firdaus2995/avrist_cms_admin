@@ -25,6 +25,7 @@ interface IInputText {
   isError?: boolean;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name?: string;
+  helperText?: any;
   suffix?: React.ReactNode;
 }
 
@@ -50,6 +51,7 @@ export const InputText: React.FC<IInputText> = ({
   inputHeight,
   name,
   isError,
+  helperText,
   suffix,
 }) => {
   return (
@@ -64,7 +66,7 @@ export const InputText: React.FC<IInputText> = ({
       >
         <span className={`label-text text-base-content ${labelStyle}`}>
           {labelTitle} {labelTitleExtension && <span className={labelTitleExtensionStyle}>{labelTitleExtension}</span>}
-          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+          <span className={'text-reddist text-base-content'}>{labelRequired ? '*' : ''}</span>
         </span>
       </label>
       <div style={{
@@ -91,7 +93,7 @@ export const InputText: React.FC<IInputText> = ({
         isError && (
           <div className='flex flex-row px-1 py-2'>
             <img src={ErrorSmallIcon} className='mr-3' />
-            <p className='text-reddist text-sm'>{t('components.atoms.required')}</p>
+            <p className='text-reddist text-sm'>{helperText ?? t('components.atoms.required')}</p>
           </div>
         )
       }

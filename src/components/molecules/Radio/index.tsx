@@ -40,7 +40,7 @@ const Radio = ({
       <label className="label">
         <span className={`label-text text-base-content ${labelStyle}`}>
           {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+          <span className={'text-reddist text-base-content'}>{labelRequired ? '*' : ''}</span>
         </span>
       </label>
       <div

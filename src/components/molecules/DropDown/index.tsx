@@ -4,6 +4,7 @@ import React, {
   useState,
 } from "react";
 
+import ErrorSmallIcon from "../../../assets/error-small.svg";
 import CheckMark from "../../../assets/checkmark.png";
 import ChevronUp from "../../../assets/chevronup.png"
 import ChevronDown from "../../../assets/chevrondown.png";
@@ -23,6 +24,8 @@ const DropDown = ({
   direction,
   items,
   defaultValue,
+  error,
+  helperText,
   onSelect,
 }: IDropDown) => {
   const componentRef = useRef<any>(null);
@@ -78,7 +81,7 @@ const DropDown = ({
         }}
         className="label"
       >
-        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-lg ml-1'}>{labelRequired ? '*' : ''}</span></span>
+        <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-base-content ml-1'}>{labelRequired ? '*' : ''}</span></span>
       </label>
       <div
         style={{
@@ -93,7 +96,7 @@ const DropDown = ({
             setOpen(!open); 
           }} 
           tabIndex={0} 
-          className={`w-full flex flex-row justify-between items-center p-3 h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple ${!selected ? "text-body-text-1" : ""}`}
+          className={`w-full flex flex-row justify-between items-center p-3 h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple ${!selected ? "text-body-text-1" : ""} ${error && 'border-reddist'}`}
         >
           {selectedLabel}
           <img src={open ? ChevronUp : ChevronDown} className="w-6 h-6" />
@@ -147,6 +150,14 @@ const DropDown = ({
           }
         </ul>
       </div>
+      {
+        error && (
+          <div className='flex flex-row px-1 py-2'>
+            <img src={ErrorSmallIcon} className='mr-3' />
+            <p className='text-reddist text-sm'>{helperText ?? t('components.atoms.required')}</p>
+          </div>
+        )
+      }
     </div>
   )
 }
