@@ -801,6 +801,7 @@
       "confirmNewPasswordPlaceholder": "Confirm New Password",
       "newPasswordRequiredError": "This field is required",
       "passwordMismatchError": "Passwords do not match. Please try again.",
+      "invalidPassword": "Minimum length of the Password is 8 characters with minimum of 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character",
       "createNewPasswordButton": "Create New Password",
       "successToastTitle": "Success!",
       "successToastMessage": "Your new password has been successfully saved!",
