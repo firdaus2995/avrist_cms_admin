@@ -13,6 +13,7 @@ interface IInputDate {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   min?: any;
   max?: any;
+  roundStyle?: any;
   error?: any;
   helperText?: any;
 }
@@ -27,6 +28,7 @@ export const InputDate: React.FC<IInputDate> = ({
   onChange,
   min,
   max,
+  roundStyle = 'xl',
   helperText,
   error,
 }) => {
@@ -35,13 +37,11 @@ export const InputDate: React.FC<IInputDate> = ({
       <label className="label">
         <span className={`label-text text-base-content ${labelStyle}`}>
           {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+          <span className={'text-reddist text-base-content'}>{labelRequired ? '*' : ''}</span>
         </span>
       </label>
       <div
-        className={`relative rounded-3xl flex flex-row items-center justify-center input input-bordered w-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${
-          disabled ? 'bg-[#E9EEF4] ' : ''
-        }`}>
+        className={`relative rounded-${roundStyle} flex flex-row items-center justify-center input input-bordered w-full focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[#D2D4D7] ${disabled ? 'bg-[#E9EEF4] ' : ''} ${error && 'border-reddist'}`}>
         <input
           type="date"
           value={value}
@@ -51,7 +51,7 @@ export const InputDate: React.FC<IInputDate> = ({
           }}
           max={max}
           min={min}
-          className={`input-date rounded-3xl w-full h-full outline-0 ${
+          className={`input-date rounded-${roundStyle} w-full h-full outline-0 ${
             disabled ? 'text-[#637488]' : ''
           }`}
         />

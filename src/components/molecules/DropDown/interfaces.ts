@@ -12,6 +12,8 @@ export interface IDropDown {
     labelExtension? : string;
   }>;
   defaultValue?: string | number | boolean;
+  error?: any;
+  helperText?: any;
   onSelect?: (event: React.SyntheticEvent, value: string | number | boolean) => void;
 }
 

@@ -1,7 +1,8 @@
+import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import dayjs from 'dayjs';
+import { useForm, Controller } from 'react-hook-form';
 
 import UserOrange from '../../assets/user-orange.svg';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
@@ -9,8 +10,6 @@ import CancelIcon from '../../assets/cancel.png';
 import Radio from '../../components/molecules/Radio';
 import DropDown from '../../components/molecules/DropDown';
 import FileUploaderAvatar from '@/components/molecules/FileUploaderAvatar';
-import Typography from '@/components/atoms/Typography';
-import FormList from '@/components/molecules/FormList';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '../../store';
 import { InputText } from '../../components/atoms/Input/InputText';
@@ -19,12 +18,20 @@ import { InputDate } from '../../components/atoms/Input/InputDate';
 import { useEditUserMutation, useGetRoleQuery, useGetUserDetailQuery } from '../../services/User/userApi';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
-import { useForm, Controller } from 'react-hook-form';
 
 export default function UsersEdit() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
+  const {
+    control,
+    setValue,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
 
   // BACKEND STATE
   const [roleData, setRoleData] = useState([]);
@@ -32,15 +39,6 @@ export default function UsersEdit() {
   // FORM STATE
   const [id] = useState<any>(Number(params.id));
   const [isActive, setIsActive] = useState<any>(true);
-  const [userId, setUserId] = useState<string>('');
-  const [password] = useState<string>('XXXXXXXXXXXXXXXXXXXXXXXXXXXXX');
-  const [fullName, setFullName] = useState<string>('');
-  const [dob, setDob] = useState<any>('');
-  const [gender, setGender] = useState<string | number | boolean>('');
-  const [email, setEmail] = useState<string>('');
-  const [company] = useState<string>('Avrist Life Insurance');
-  const [roleId, setRoleId] = useState<string | number | boolean>(0);
-  const [departmentId, setDepartmentId] = useState<string | number | boolean>(0);
   const [avatar, setAvatar] = useState('');
   const now = dayjs().format('YYYY-MM-DD');
   // CHANGE STATUS MODAL
@@ -72,13 +70,6 @@ export default function UsersEdit() {
   // RTK EDIT USER
   const [editUser, { isLoading }] = useEditUserMutation();
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    reset,
-  } = useForm();
-
   useEffect(() => {
     if (dataRole) {
       const roleList = dataRole?.roleList?.roles.map((element: any) => {
@@ -88,7 +79,7 @@ export default function UsersEdit() {
         };
       });
       setRoleData(roleList);
-    }
+    };
   }, [dataRole]);
 
   useEffect(() => {
@@ -106,43 +97,35 @@ export default function UsersEdit() {
   useEffect(() => {
     if (data) {
       const userDetail = data?.userById;
-      setUserId(userDetail.userId);
-      setFullName(userDetail.fullName);
-      setDob(userDetail.dob);
-      setGender(userDetail.gender);
-      setEmail(userDetail.email);
-      setRoleId(userDetail.role.id);
-      setDepartmentId(userDetail.department.id);
+
       setIsActive(userDetail.statusActive);
 
-      const defaultValues = {
-        fullName: '',
-        dob: '',
-        email: '',
-        gender: '',
-        role: '',
-      };
+      const defaultValues: any = {};
+
+      defaultValues.userId= userDetail.userId;
       defaultValues.fullName= userDetail.fullName;
       defaultValues.dob= userDetail.dob;
-      defaultValues.email= userDetail.email;
       defaultValues.gender= userDetail.gender;
-      defaultValues.role= userDetail.role.id;
+      defaultValues.email= userDetail.email;
+      defaultValues.departmentId = userDetail.department.id;
+      defaultValues.roleId = userDetail.role.id;
+
       reset({ ...defaultValues });
-    }
+    };
   }, [data]);
 
-  const onSave = () => {
+  const onSubmit = (data: any) => {
     const payload = {
       id,
-      fullName,
-      dob: dayjs(dob).format('YYYY-MM-DD'),
-      gender: gender === 'FEMALE' ? false : gender === 'MALE' ? true : null,
-      email,
-      company,
+      fullName: data?.fullName,
+      dob: dayjs(data?.dob).format('YYYY-MM-DD'),
+      gender: data?.gender === 'FEMALE' ? false : data?.gender === 'MALE' ? true : null,
+      email: data?.email,
+      company: data?.company,
       profilePicture: avatar,
       statusActive: isActive,
-      roleId,
-      departmentId,
+      roleId: data?.roleId,
+      departmentId: data?.departmentId,
     };
 
     editUser(payload)
@@ -202,16 +185,14 @@ export default function UsersEdit() {
           setShowLeaveModal(false);
         }}
         title={titleLeaveModalShow ?? ''}
-        cancelTitle={t('user.users-edit.user.edit.edit.btn.cancel')}
+        cancelTitle={t('user.users-edit.user.edit.btn.cancel')}
         message={messageLeaveModalShow ?? ''}
         submitAction={onLeave}
-        submitTitle={t('user.users-edit.user.edit.edit.btn.save')}
+        submitTitle={t('user.users-edit.user.edit.btn.save')}
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-      <form className="flex flex-col w-100" onSubmit={handleSubmit((_data: any) => {
-          onSave();
-        })}>
+      <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center justify-center">
           <FileUploaderAvatar
             id={'edit_profile_picture'}
@@ -252,109 +233,122 @@ export default function UsersEdit() {
           />
           {/* ROW 2 */}
           <div className="flex flex-row gap-14">
-            <div className="flex flex-1">
-              <InputText
-                labelTitle={t('user.users-edit.user.edit.userId')}
-                labelStyle="font-bold	"
-                value={userId}
-                placeholder={t('user.users-edit.user.edit.placeholder-user-id')}
-                disabled
+            <div className='flex flex-1'>
+              <Controller
+                name='userId'
+                control={control}
+                defaultValue=''
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <InputText
+                    {...field}
+                    labelTitle={t('user.users-new.user.add.user-id')}
+                    labelStyle="font-semibold"
+                    roundStyle="xl"
+                    disabled
+                    placeholder={t('user.add.placeholder-user-id')}
+                    isError={!!errors?.userId}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-1">
-              <InputPassword
-                labelTitle={t('user.users-edit.user.edit.password')}
-                labelStyle="font-bold	"
-                value={password}
-                placeholder={t('user.users-edit.user.edit.placeholder-user-password')}
-                disabled
+              <Controller
+                name='password'
+                control={control}
+                defaultValue='Avrist01#'
+                render={({ field }) => (
+                  <InputPassword
+                    {...field}
+                    labelTitle={t('user.users-new.user.add.password')}
+                    labelStyle="font-semibold"
+                    placeholder={t('user.add.placeholder-user-password')}
+                    roundStyle="xl"
+                    disabled
+                  />
+                )}
               />
             </div>
             <div className="flex flex-1">{/* SPACES */}</div>
           </div>
           {/* ROW 3 */}
           <div className="flex flex-row gap-14">
-            <div className="max-w-[340px]">
-              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
-                {t('user.users-edit.user.edit.fullName')}
-                <span className={'text-reddist text-lg'}>{`*`}</span>
-              </Typography>
+            <div className='flex flex-1'>
               <Controller
-                name="fullName"
+                name='fullName'
                 control={control}
-                defaultValue={data?.userById?.fullName ?? ""}
+                defaultValue=''
                 rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
-                  <FormList.TextField
+                  <InputText
                     {...field}
-                    key="fullName"
-                    inputWidth={340}
-                    placeholder={t('user.users-edit.user.edit.placeholder-user-fullname')}
-                    error={!!errors?.fullName?.message}
-                    helperText={errors?.fullName?.message}
-                    roundStyle="3xl"
-                    border={false}
-                    value={fullName}
-                    onChange={(e: { target: { value: any } }) => {
-                      field.onChange(e.target.value);
-                      setFullName(e.target.value);
-                    }}
+                    labelTitle={t('user.users-new.user.add.fullname')}
+                    labelStyle="font-semibold"
+                    labelRequired
+                    roundStyle="xl"
+                    placeholder={t('user.add.placeholder-user-fullname')}
+                    isError={!!errors?.userId}
                   />
                 )}
               />
             </div>
-            <div className="max-w-[340px]">
+            <div className='flex flex-1'>
               <Controller
-                name="dob"
+                name='dob'
                 control={control}
-                defaultValue={dob}
-                rules={{ required: t('components.atoms.required') ?? '' }}
+                rules={{ 
+                  required: t('components.atoms.required') ?? '',
+                  validate: (value) => {
+                    if (value === 'DD-MM-YYYY') {
+                      return t('components.atoms.required') ?? '';
+                    };
+                  },
+                }}
                 render={({ field }) => (
                   <InputDate
                     {...field}
-                    labelTitle={t('user.users-edit.user.edit.dateOfBirth')}
-                    labelStyle="font-bold"
+                    labelTitle={t('user.users-new.user.add.date-of-birth')}
+                    labelStyle="font-semibold"
                     labelRequired
-                    containerStyle="w-[340px]"
-                    error={!!errors?.dob?.message && dob === 'DD-MM-YYYY'}
-                    helperText={errors?.dob?.message}
+                    roundStyle='xl'
+                    error={!!errors?.dob?.message}
+                    helperText={errors?.dob?.message ?? t('components.atoms.required')}
                     max={now}
-                    value={dob}
                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                      if (event.target.value === '') {
-                        setDob("DD-MM-YYYY")
-                      }else{
-                        setDob(event.target.value);
-                      }
                       field.onChange(event.target.value);
+                      if (event.target.value === '') {
+                        setValue("dob", "DD-MM-YYYY");
+                      } else {
+                        setValue("dob", event.target.value);
+                      };
                     }}
                   />
                 )}
               />
             </div>
-            <div className="max-w-[340px]">
+            <div className='flex flex-1'>
               <Controller
                 name="gender"
                 control={control}
-                defaultValue={gender}
+                defaultValue=""
                 rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <Radio
                     {...field}
-                    labelTitle={t('user.users-edit.user.edit.gender') ?? ''}
-                    labelStyle="font-bold"
+                    labelTitle={t('user.users-new.user.add.gender') ?? ''}
+                    labelStyle="font-semibold"
                     labelRequired
-                    defaultSelected={gender}
-                    error={!!errors?.gender?.message && gender === ''}
+                    error={!!errors?.gender?.message}
                     helperText={errors?.gender?.message}
+                    defaultSelected={field.value}
                     items={[
                       {
                         value: 'MALE',
-                        label: t('user.users-edit.user.edit.male'),
+                        label: t('user.users-new.user.add.male'),
                       },
                       {
                         value: 'FEMALE',
-                        label: t('user.users-edit.user.edit.female'),
+                        label: t('user.users-new.user.add.female'),
                       },
                     ]}
                     onSelect={(
@@ -362,9 +356,9 @@ export default function UsersEdit() {
                       value: string | number | boolean,
                     ) => {
                       if (event) {
-                        setGender(value);
+                        setValue('gender', value);
                         field.onChange(value);
-                      }
+                      };
                     }}
                   />
                 )}
@@ -373,15 +367,11 @@ export default function UsersEdit() {
           </div>
           {/* ROW 4 */}
           <div className="flex flex-row gap-14">
-          <div className="max-w-[340px]">
-              <Typography type="body" size="s" weight="bold" className="w-56 ml-1 mb-2">
-                {t('user.users-edit.user.edit.email')}
-                <span className={'text-reddist text-lg'}>{`*`}</span>
-              </Typography>
+            <div className='flex flex-1'>
               <Controller
-                name="email"
+                name='email'
                 control={control}
-                defaultValue=""
+                defaultValue=''
                 rules={{
                   required: t('components.atoms.required') ?? '',
                   pattern: {
@@ -391,51 +381,58 @@ export default function UsersEdit() {
                   },
                 }}
                 render={({ field }) => (
-                  <FormList.TextField
+                  <InputText
                     {...field}
-                    key="email"
-                    inputWidth={340}
-                    error={!!errors?.email?.message}
+                    labelTitle={t('user.users-new.user.add.user-email')}
+                    labelStyle="font-semibold"
+                    labelRequired
+                    roundStyle="xl"
+                    placeholder={t('user.add.placeholder-user-email')}
+                    isError={!!errors?.email}
                     helperText={errors?.email?.message}
-                    roundStyle="3xl"
-                    placeholder={t('user.users-edit.user.edit.placeholder-user-email')}
-                    border={false}
-                    value={email}
-                    onChange={(e: { target: { value: any } }) => {
-                      field.onChange(e.target.value);
-                      setEmail(e.target.value);
-                    }}
                   />
                 )}
               />
             </div>
-            <div className="flex flex-1">
-              <InputText
-                labelTitle={t('user.users-edit.user.edit.company')}
-                labelStyle="font-bold	"
-                value={company}
-                disabled
+            <div className='flex flex-1'>
+              <Controller
+                name='company'
+                control={control}
+                defaultValue='Avrist Life Insurance'
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <InputText
+                    {...field}
+                    labelTitle={t('user.users-new.user.add.company')}
+                    labelStyle="font-semibold"
+                    roundStyle="xl"
+                    disabled
+                  />
+                )}
               />
             </div>
-            <div className="max-w-[340px]">
+            <div className='flex flex-1'>
               <Controller
-                name="role"
+                name='roleId'
                 control={control}
-                defaultValue=""
+                defaultValue=''
                 rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <DropDown
                     {...field}
-                    labelTitle={t('user.users-edit.user.edit.role') ?? ''}
-                    labelStyle="font-bold	"
+                    labelTitle={t('user.users-new.user.add.role') ?? ''}
+                    labelStyle="font-semibold"
                     labelRequired
-                    defaultValue={roleId}
+                    labelEmpty={t('user.users-new.user.add.choose-role') ?? ''}
+                    defaultValue={field.value}
                     items={roleData}
+                    error={!!errors?.roleId?.message}
+                    helperText={errors?.roleId?.message}
                     onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                       if (event) {
+                        setValue('roleId', value);
                         field.onChange(value);
-                        setRoleId(value);
-                      }
+                      };
                     }}
                   />
                 )}
@@ -445,18 +442,30 @@ export default function UsersEdit() {
           {/* ROW 5 */}
           <div className="flex flex-row gap-14">
             <div className="flex flex-1">
-              <DropDown
-                labelTitle={t('user.users-new.user.add.department') ?? ''}
-                labelStyle="font-bold"
-                labelRequired
-                defaultValue={departmentId}
-                labelEmpty={t('user.users-new.user.add.choose-department') ?? ''}
-                items={departmentData}
-                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                  if (event) {
-                    setDepartmentId(value);
-                  }
-                }}
+              <Controller
+                name='departmentId'
+                control={control}
+                defaultValue=''
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <DropDown
+                    {...field}
+                    labelTitle={t('user.users-new.user.add.department') ?? ''}
+                    labelStyle="font-semibold"
+                    labelRequired
+                    labelEmpty={t('user.users-new.user.add.choose-department') ?? ''}
+                    defaultValue={field.value}
+                    items={departmentData}
+                    error={!!errors?.departmentId?.message}
+                    helperText={errors?.departmentId?.message}
+                    onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                      if (event) {
+                        setValue('departmentId', value);
+                        field.onChange(value);
+                      };
+                    }}
+                  />
+                )}
               />
             </div>
             <div className="flex flex-1">{/* SPACES */}</div>
@@ -468,9 +477,9 @@ export default function UsersEdit() {
             className="btn btn-outline btn-md"
             onClick={(event: any) => {
               event.preventDefault();
-              setLeaveTitleModalShow(t('user.users-edit.user.edit.edit.modal.confirmation'));
+              setLeaveTitleModalShow(t('user.users-edit.user.edit.modal.confirmation'));
               setMessageLeaveModalShow(
-                t('user.users-edit.user.edit.edit.modal.leave-confirmation'),
+                t('user.users-edit.user.edit.modal.leave-message'),
               );
               setShowLeaveModal(true);
             }}>
