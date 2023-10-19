@@ -1378,7 +1378,7 @@ export default function ContentTypeEdit() {
               onSaveContent();
             }}
             className="btn btn-success btn-md text-white">
-            {t('btn.create')}
+            {t('user.content-type-edit.btn.save')}
           </button>
         </div>
       </TitleCard>

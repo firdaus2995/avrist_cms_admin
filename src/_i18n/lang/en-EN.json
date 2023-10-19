@@ -465,7 +465,8 @@
       "btn": {
         "cancel": "Cancel",
         "create": "Create",
-        "edit": "Edit"
+        "edit": "Edit",
+        "save": "Save"
       },
       "modal": {
         "addAttribute": {
