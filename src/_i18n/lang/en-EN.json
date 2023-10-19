@@ -551,7 +551,8 @@
       "failed-duplicate-page": "Failed Duplicate Page",
       "search": "Search",
       "yes": "Yes",
-      "no": "No"
+      "no": "No",
+      "cancel": "Cancel"
     },
 
     "email-form-builder-new": {
