@@ -5,7 +5,6 @@ import { getCredential, removeCredential } from './Credential';
 import { loginApi } from '../services/Login/loginApi';
 import { storeDataStorage } from './SessionStorage';
 import { openToast } from '../components/atoms/Toast/slice';
-import { setEventTriggered } from '@/services/Event/eventErrorSlice';
 import { setRefreshToken, setAccessToken, setRoles } from '../services/Login/slice';
 
 const baseUrl = import.meta.env.VITE_API_URL;
