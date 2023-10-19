@@ -8,6 +8,7 @@ import MainTab from './tabs/Main/Main';
 import CategoryTab from './tabs/Category/Category';
 import { getCredential } from '@/utils/Credential';
 import { t } from 'i18next';
+import RoleRenderer from '@/components/atoms/RoleRenderer';
 
 const ArchiveButton = () => {
   return (
@@ -95,7 +96,9 @@ export default function ContentManagerDetail() {
   const TopRightButton = () => {
     return (
       <div className="flex flex-row">
-        <CreateButton />
+        <RoleRenderer allowedRoles={['CONTENT_MANAGER_CREATE']}>
+          <CreateButton />
+        </RoleRenderer>
       </div>
     );
   };
