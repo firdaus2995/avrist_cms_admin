@@ -13,6 +13,7 @@ import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { Link } from 'react-router-dom';
 import StatusBadge from '@/components/atoms/StatusBadge';
+import RoleRenderer from '@/components/atoms/RoleRenderer';
 
 export default function MainTab(props: { id: any, isUseCategory: any }) {
   const dispatch = useAppDispatch();
@@ -160,15 +161,17 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
               </div>
             </div>
           </Link>
-          <div className="tooltip" data-tip={t('user.tabs-main.common.action.delete')}>
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableDelete}
-              onClick={() => {
-                onClickPageDelete(info.getValue(), info?.row?.original?.title);
-              }}
-            />
-          </div>
+          <RoleRenderer allowedRoles={['CONTENT_MANAGER_DELETE']}>
+            <div className="tooltip" data-tip={t('user.tabs-main.common.action.delete')}>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                }}
+              />
+            </div>
+          </RoleRenderer>
         </div>
       ),
     },
