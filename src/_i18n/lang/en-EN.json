@@ -548,7 +548,9 @@
       "something-went-wrong": "Something went wrong!",
       "success-duplicate-page": "Success Duplicate Page",
       "failed-duplicate-page": "Failed Duplicate Page",
-      "search": "Search"
+      "search": "Search",
+      "yes": "Yes",
+      "no": "No"
     },
 
     "email-form-builder-new": {
