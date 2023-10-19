@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { Key, SetStateAction, useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
@@ -26,8 +27,6 @@ export default function ContentTypeNew() {
   const [messageConfirm, setmessageConfirm] = useState('');
   const [search, setSearch] = useState('');
 
-  const [name, setName] = useState('');
-  const [slug, setSlug] = useState('');
   const [isUseCategory, setIsUseCategory] = useState(false);
 
   const [isOpenModalAttribute, setIsOpenModalAttribute] = useState(false);
@@ -42,6 +41,14 @@ export default function ContentTypeNew() {
   const fetchConfigQuery = useGetConfigQuery<any>({});
   const { data } = fetchConfigQuery;
   const [postCreate] = usePostTypeCreateMutation();
+
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
 
   useEffect(() => {
     const refetch = async () => {
@@ -247,33 +254,46 @@ export default function ContentTypeNew() {
     return (
       <div className="flex flex-col border-b-2 pb-8">
         <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-10 text-lg font-bold">
-          <span className={`label-text text-base-content`}>
-            {t('user.content-type-edit.contentTypeColumnName')}<span className={'text-reddist text-lg'}>*</span>
-          </span>
-          <InputText
-            labelTitle=""
-            placeholder={'Enter your new content name'}
-            value={name}
-            inputStyle="rounded-3xl"
-            onChange={e => {
-              setName(e.target.value);
-            }}
+          <Controller
+            name='contentName'
+            control={control}
+            defaultValue=''
+            rules={{ required: t('components.atoms.required') ?? '' }}
+            render={({ field }) => (
+              <InputText
+                {...field}
+                labelTitle={t('user.content-type-edit.contentTypeColumnName')}
+                labelStyle="font-semibold"
+                direction='row'
+                containerStyle='mb-5'
+                labelRequired
+                roundStyle="xl"
+                placeholder={'Enter your new content name'}
+                isError={!!errors?.contentName}
+              />
+            )}
           />
         </div>
         <p></p>
         <div className="flex flex-row items-center">
           <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-24 text-lg font-bold">
-            <span className={`label-text text-base-content`}>
-              {t('user.content-type-edit.slugName')}<span className={'text-reddist text-lg'}>*</span>
-            </span>
-            <InputText
-              labelTitle=""
-              placeholder={t('user.content-type-edit.slugName-placeholder')}
-              value={slug}
-              inputStyle="rounded-3xl"
-              onChange={e => {
-                setSlug(e.target.value);
-              }}
+            <Controller
+              name='slugName'
+              control={control}
+              defaultValue=''
+              rules={{ required: t('components.atoms.required') ?? '' }}
+              render={({ field }) => (
+                <InputText
+                  {...field}
+                  labelTitle={t('user.content-type-edit.slugName')}
+                  labelStyle="font-semibold"
+                  direction='row'
+                  labelRequired
+                  roundStyle="xl"
+                  placeholder={t('user.content-type-edit.slugName-placeholder')}
+                  isError={!!errors?.slugName}
+                />
+              )}
             />
           </div>
           <div className="ml-10">
@@ -291,7 +311,7 @@ export default function ContentTypeNew() {
     );
   };
 
-  function onSaveContent() {
+  function onSubmit(data: any) {
     const transformedData = listItems.map((item: any) => {
       const newItem = { ...item };
 
@@ -334,8 +354,8 @@ export default function ContentTypeNew() {
     });
 
     const payload = {
-      name,
-      slug,
+      name: data?.contentName,
+      slug: data?.slugName,
       isUseCategory,
       attributeRequests: transformedData.filter((_element: any, index: number) => index >= 2),
     };
@@ -1278,26 +1298,28 @@ export default function ContentTypeNew() {
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
-        {renderForm()}
-        {renderListItems()}
-        <div className="flex float-right gap-3">
-          <button
-            className="btn btn-outline btn-md"
-            onClick={() => {
-              setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
-              setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
-              setShowComfirm(true);
-            }}>
-            {t('btn.cancel')}
-          </button>
-          <button
-            onClick={() => {
-              onSaveContent();
-            }}
-            className="btn btn-success btn-md text-white">
-            {t('btn.create')}
-          </button>
-        </div>
+        <form
+        className="flex flex-col w-100"
+        onSubmit={handleSubmit(onSubmit)}>
+          {renderForm()}
+          {renderListItems()}
+          <div className="flex absolute right-2 bottom-2 gap-3">
+            <button
+              className="btn btn-outline btn-md"
+              onClick={() => {
+                setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
+                setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
+                setShowComfirm(true);
+              }}>
+              {t('btn.cancel')}
+            </button>
+            <button
+              type='submit'
+              className="btn btn-success btn-md text-white">
+              {t('btn.create')}
+            </button>
+          </div>
+        </form>
       </TitleCard>
     </>
   );
