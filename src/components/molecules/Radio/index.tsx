@@ -19,8 +19,16 @@ const Radio = ({
   const [checked, setChecked] = useState<any>(null);
   const [name] = useState<string>(uuidv4());
 
-  useEffect(() => {
-    if (defaultSelected) setChecked(defaultSelected);
+  useEffect(() => {    
+    if (defaultSelected && typeof defaultSelected !== 'boolean') {
+      setChecked(defaultSelected);
+    } else {
+      if (defaultSelected === true) {
+        setChecked(true);
+      } else {
+        setChecked(false);
+      };
+    };
   }, [defaultSelected]);
 
   const handleSelect = (

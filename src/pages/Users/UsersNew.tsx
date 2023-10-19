@@ -23,7 +23,18 @@ import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
 export default function UsersNew() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const {
+    control,
+    setValue,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
 
+  // BACKEND STATE
+  const [roleData, setRoleData] = useState([]);
+  const [departmentData, setDepartmentData] = useState([]);  
   // FORM STATE
   const now = dayjs().format('YYYY-MM-DD');
   const [isActive, setIsActive] = useState<any>(true);
@@ -46,21 +57,6 @@ export default function UsersNew() {
   // RTK CREATE USER
   const [createUser, { isLoading }] = useCreateUserMutation();
 
-  const {
-    control,
-    watch,
-    getValues,
-    setValue,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    reValidateMode: 'onSubmit',
-  });
-
-  useEffect(() => {
-    watch(['roleData', 'departmentData']);
-  }, [watch]);
-
   useEffect(() => {
     if (dataRole) {
       const roleList = dataRole?.roleList?.roles.map((element: any) => {
@@ -69,7 +65,7 @@ export default function UsersNew() {
           label: element.name,
         };
       });
-      setValue('roleData', roleList);
+      setRoleData(roleList);
     }
   }, [dataRole]);
 
@@ -81,7 +77,7 @@ export default function UsersNew() {
           label: element.name,
         };
       });
-      setValue('departmentData', departmentList);
+      setDepartmentData(departmentList);
     };
   }, [dataDepartment]);
 
@@ -164,9 +160,7 @@ export default function UsersNew() {
       />
       <form
         className="flex flex-col w-100"
-        onSubmit={handleSubmit((data: any) => {
-          onSubmit(data);
-        })}>
+        onSubmit={handleSubmit(onSubmit)}>
         <div className="flex items-center justify-center">
           <FileUploaderAvatar
             id={'add_profile_picture'}
@@ -398,7 +392,7 @@ export default function UsersNew() {
                     labelStyle="font-semibold"
                     labelRequired
                     labelEmpty={t('user.users-new.user.add.choose-role') ?? ''}
-                    items={getValues('roleData') ?? []}
+                    items={roleData}
                     error={!!errors?.roleId?.message}
                     helperText={errors?.roleId?.message}
                     onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
@@ -427,7 +421,7 @@ export default function UsersNew() {
                     labelStyle="font-semibold"
                     labelRequired
                     labelEmpty={t('user.users-new.user.add.choose-department') ?? ''}
-                    items={getValues('departmentData') ?? []}
+                    items={departmentData}
                     error={!!errors?.departmentId?.message}
                     helperText={errors?.departmentId?.message}
                     onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
