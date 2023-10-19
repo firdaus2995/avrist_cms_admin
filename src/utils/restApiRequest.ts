@@ -5,7 +5,6 @@ import { getCredential, removeCredential } from './Credential';
 import { loginApi } from '../services/Login/loginApi';
 import { storeDataStorage } from './SessionStorage';
 import { openToast } from '../components/atoms/Toast/slice';
-import { setEventTriggered } from '@/services/Event/eventErrorSlice';
 import { setRefreshToken, setAccessToken, setRoles } from '../services/Login/slice';
 
 const baseUrl = import.meta.env.VITE_API_URL;
@@ -87,9 +86,9 @@ const restApiRequest = async (
           return await restApiRequest(method, url, data); // Retry the original request after token refresh
         }
       } else if (statusCode === 500) {
-        store.dispatch(setEventTriggered('INTERNAL_ERROR'));
+        console.log('REST_INTERNAL_ERROR');
       } else if (statusCode === 404) {
-        store.dispatch(setEventTriggered('NOT_FOUND'));
+        console.log('NOT_FOUND');
       }
     }
     throw new Error(`API request failed: ${error.message}`);
