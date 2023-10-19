@@ -1264,7 +1264,7 @@ export default function ContentTypeNew() {
       {modalListAttribute()}
       {modalAddAttribute()}
       {modalEditAttribute()}
-      <TitleCard title={t('user.content-type-edit.edit-content-type')} topMargin="mt-2">
+      <TitleCard title={t('user.content-type-edit.add-content-type')} topMargin="mt-2">
         <ModalConfirm
           open={showComfirm}
           cancelAction={() => {

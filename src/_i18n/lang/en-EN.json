@@ -502,6 +502,7 @@
       },
       "edit": "Edit",
       "edit-content-type": "Edit Content Type",
+      "add-content-type": "New Content Type",
       "contentTypeColumnName": "Content Type Name",
       "slugName": "Slug Name",
       "slugName-placeholder": "Enter Slug Name",
