@@ -1,7 +1,8 @@
+import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import dayjs from 'dayjs';
+import { useForm, Controller } from 'react-hook-form';
 
 import UserOrange from '../../assets/user-orange.svg';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
@@ -17,7 +18,6 @@ import { InputDate } from '../../components/atoms/Input/InputDate';
 import { useEditUserMutation, useGetRoleQuery, useGetUserDetailQuery } from '../../services/User/userApi';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
-import { useForm, Controller } from 'react-hook-form';
 
 export default function UsersEdit() {
   const navigate = useNavigate();

@@ -1,7 +1,8 @@
+import dayjs from 'dayjs';
 import { t } from 'i18next';
 import { useNavigate } from 'react-router-dom';
 import React, { useEffect, useState } from 'react';
-import dayjs from 'dayjs';
+import { useForm, Controller } from 'react-hook-form';
 
 import UserOrange from '../../assets/user-orange.svg';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
@@ -17,7 +18,6 @@ import { InputDate } from '../../components/atoms/Input/InputDate';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
-import { useForm, Controller } from 'react-hook-form';
 import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
 
 export default function UsersNew() {
