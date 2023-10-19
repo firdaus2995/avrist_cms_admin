@@ -87,9 +87,9 @@ const restApiRequest = async (
           return await restApiRequest(method, url, data); // Retry the original request after token refresh
         }
       } else if (statusCode === 500) {
-        store.dispatch(setEventTriggered('INTERNAL_ERROR'));
+        console.log('REST_INTERNAL_ERROR');
       } else if (statusCode === 404) {
-        store.dispatch(setEventTriggered('NOT_FOUND'));
+        console.log('NOT_FOUND');
       }
     }
     throw new Error(`API request failed: ${error.message}`);
