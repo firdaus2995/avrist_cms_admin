@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
-import ErrorSmIcon from '../../../assets/error-small.svg';
+import ErrorSmallIcon from '../../../assets/error-small.svg';
+import { t } from 'i18next';
 
 interface ITextArea {
   rows?: number;
@@ -11,14 +12,14 @@ interface ITextArea {
   containerStyle?: string;
   textAreaStyle?: string;
   value?: string;
-  placeholder?: string;
+  placeholder?: string | null;
   disabled?: boolean;
   inputWidth?: number;
   inputHeight?: number;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   name?: string;
   isError?: boolean;
-  errorText?: string;
+  helperText?: string;
 }
 
 export const TextArea: React.FC<ITextArea> = ({
@@ -38,46 +39,61 @@ export const TextArea: React.FC<ITextArea> = ({
   onChange,
   name,
   isError,
-  errorText,
+  helperText,
 }) => {
   return (
-    <div
-      className={`form-control w-full ${containerStyle} ${
-        direction === 'row' ? 'flex-row items-start' : ''
-      }`}>
-      <label
-        style={{
-          width: direction === 'row' ? labelWidth : '',
-        }}
-        className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>
-          {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
-        </span>
-      </label>
-      <textarea
-        name={name}
-        style={{
-          width: inputWidth ?? '',
-          height: inputHeight ?? '',
-        }}
-        rows={rows ?? 4}
-        value={value}
-        disabled={disabled}
-        placeholder={placeholder ?? ''}
-        onChange={e => {
-          onChange(e);
-        }}
-        className={`textarea ${
-          isError ? 'border-error' : 'textarea-bordered'
-        } w-full text-base py-3 rounded-xl ${textAreaStyle}`}
-      />
-      {errorText ? (
-        <div className="flex flex-row gap-2 h-full flex items-center">
-          <img src={ErrorSmIcon} />
-          <p className="text-error text-normal">{errorText}</p>
-        </div>
-      ) : null}
+    <div>
+      <div
+        className={`form-control w-full ${containerStyle} ${
+          direction === 'row' ? 'flex-row items-start' : ''
+        }`}>
+        <label
+          style={{
+            width: direction === 'row' ? labelWidth : '',
+            minWidth: direction === 'row' ? labelWidth : '',
+          }}
+          className="label">
+          <span className={`label-text text-base-content ${labelStyle}`}>
+            {labelTitle}
+            <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+          </span>
+        </label>
+        <textarea
+          name={name}
+          style={{
+            width: inputWidth ?? '',
+            height: inputHeight ?? '',
+          }}
+          rows={rows ?? 4}
+          value={value}
+          disabled={disabled}
+          placeholder={placeholder ?? ''}
+          onChange={e => {
+            onChange(e);
+          }}
+          className={`textarea ${
+            isError ? 'border-error' : 'textarea-bordered'
+          } w-full text-base py-3 rounded-xl ${textAreaStyle}`}
+        />
+        {
+          isError && (direction === 'column' || !direction) && (
+            <div className='flex flex-row px-1 py-2'>
+              <img src={ErrorSmallIcon} className='mr-3' />
+              <p className='text-reddist text-sm'>{helperText ?? t('components.atoms.required')}</p>
+            </div>
+          )
+        }
+      </div>
+      {
+        isError && direction === 'row' && (
+          <div className='flex flex-row px-1 py-2' style={{
+            marginLeft: labelWidth
+          }}>
+            <img src={ErrorSmallIcon} className='mr-3' />
+            <p className='text-reddist text-sm'>{helperText ?? t('components.atoms.required')}</p>
+          </div>
+        )
+      }
     </div>
   );
 };
@@ -99,5 +115,5 @@ TextArea.propTypes = {
   inputWidth: PropTypes.number,
   inputHeight: PropTypes.number,
   isError: PropTypes.bool,
-  errorText: PropTypes.string,
+  helperText: PropTypes.string,
 };

@@ -1,38 +1,41 @@
 import { useEffect, useState } from 'react';
-import { TitleCard } from '../../components/molecules/Cards/TitleCard';
-import { useTranslation } from 'react-i18next';
-import { useGetDetailRoleQuery, useRoleUpdateMutation } from '../../services/Roles/rolesApi';
-import {
-  setName,
-  setDescription,
-  setPermissions,
-  setId,
-  resetForm,
-} from '../../services/Roles/rolesSlice';
-import { useAppDispatch, useAppSelector } from '../../store';
 import { useNavigate, useParams } from 'react-router-dom';
-import { openToast } from '../../components/atoms/Toast/slice';
+import { t } from 'i18next';
 
-import PermissionForm from '../../components/organisms/PermissionForm';
 import PermissionList from '../../components/organisms/PermissionList';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import { useGetDetailRoleQuery, useRoleUpdateMutation } from '../../services/Roles/rolesApi';
+import { setName, setDescription, setPermissions, setId, resetForm } from '../../services/Roles/rolesSlice';
+import { useAppDispatch, useAppSelector } from '../../store';
+import { openToast } from '../../components/atoms/Toast/slice';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { TextArea } from '@/components/atoms/Input/TextArea';
 
 export default function RolesEdit() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
 
-  const { name, description, permissions, id } = useAppSelector(state => state.rolesSlice);
-  const { t } = useTranslation();
-  const fetchQuery = useGetDetailRoleQuery({ id: parseInt(params.id ?? '') });
-  const { data, isFetching } = fetchQuery;
-  const [roleUpdate, { isLoading: onUpdateLoading }] = useRoleUpdateMutation();
+  // STORE STATE
+  const { name, description, permissions, id } = useAppSelector((state) => {
+    return state.rolesSlice;
+  });
+
+  // USESTATE STATE
   const [editMode, setEditMode] = useState(true);
   const [showComfirm, setShowComfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setmessageConfirm] = useState('');
+
+  // RTK GET DETAIL ROLE
+  const fetchQuery = useGetDetailRoleQuery({ id: parseInt(params.id ?? '') });
+  const { data, isFetching } = fetchQuery;
+
+  // RTK ROLE UPDATE
+  const [roleUpdate, { isLoading: onUpdateLoading }] = useRoleUpdateMutation();
 
   useEffect(() => {
     dispatch(setId(parseInt(params.id ?? '')));
@@ -56,6 +59,7 @@ export default function RolesEdit() {
       description,
       permissions: permissions.join(','),
     };
+
     roleUpdate(payload)
       .unwrap()
       .then(d => {
@@ -88,63 +92,79 @@ export default function RolesEdit() {
   };
 
   return (
-    <>
-      <RoleRenderer allowedRoles={['ROLE_EDIT']}>
-        <TitleCard title={t('roles.edit.title')}>
-          {isFetching ? (
-            <h1 className="text-center py-9">{t('user.roles-edit.loading')}</h1>
-          ) : (
-            <PermissionForm disabled={!editMode} />
-          )}
-          <ModalConfirm
-            open={showComfirm}
-            cancelAction={() => {
-              setShowComfirm(false);
-            }}
-            title={titleConfirm}
-            cancelTitle={t('user.roles-edit.modal.confirm.cancelTitle')}
-            message={messageConfirm}
-            submitAction={onLeave}
-            submitTitle={t('user.roles-edit.modal.confirm.submitTitle')}
-            icon={CancelIcon}
-            btnSubmitStyle="btn-warning"
-          />
-
-          <PermissionList
-            permissionList={data?.roleById.permissionHierarchy ?? []}
-            loading={isFetching}
-            disabled={!editMode}
-          />
-          <div className="flex float-right gap-3">
-            <button
-              className="btn btn-outline btn-md"
-              onClick={() => {
-                setTitleConfirm(t('user.roles-edit.btn.cancelconfirm') ?? '');
-                setmessageConfirm(t('user.roles-edit.btn.cancelconfirmMessage') ?? '');
-                setShowComfirm(true);
-              }}>
-              {t('btn.cancel')}
-            </button>
-            {editMode ? (
-              <button
-                className="btn btn-success btn-md text-white"
-                onClick={() => {
-                  onSave();
-                }}>
-                {onUpdateLoading ? t('user.roles-edit.btn.saveloading') : t('btn.save')}
-              </button>
-            ) : (
-              <button
-                className="btn btn-success btn-md text-white"
-                onClick={() => {
-                  window.location.assign(`/roles/edit/${params.id}`);
-                }}>
-                {t('user.roles-edit.btn.editRoles')}
-              </button>
-            )}
+    <RoleRenderer allowedRoles={['ROLE_EDIT']}>
+      <TitleCard title={t('roles.edit.title')}>
+        <ModalConfirm
+          open={showComfirm}
+          cancelAction={() => {
+            setShowComfirm(false);
+          }}
+          title={titleConfirm}
+          cancelTitle={t('user.roles-edit.modal.confirm.cancelTitle')}
+          message={messageConfirm}
+          submitAction={onLeave}
+          submitTitle={t('user.roles-edit.modal.confirm.submitTitle')}
+          icon={CancelIcon}
+          btnSubmitStyle="btn-warning"
+        />
+        {isFetching ? (
+          <h1 className="text-center py-9">{t('user.roles-edit.loading')}</h1>
+        ) : (
+          <div className="w-[500px] mb-16">
+            <InputText
+              labelTitle={t('roles.role-name')}
+              placeholder={t('components.organism.content') ?? ''}
+              onChange={e => dispatch(setName(e.target.value))}
+              containerStyle="mb-[22px] flex flex-row"
+              labelStyle="font-bold w-[200px]"
+              value={name}
+              disabled={!editMode}
+            />
+            <TextArea
+              labelTitle={t('roles.role-description')}
+              placeholder={t('components.organism.content') ?? ''}
+              onChange={e => dispatch(setDescription(e.target.value))}
+              containerStyle=" flex flex-row"
+              labelStyle="font-bold w-[200px]"
+              value={description}
+              disabled={!editMode}
+            />
           </div>
-        </TitleCard>
-      </RoleRenderer>
-    </>
+        )}
+        <PermissionList
+          permissionList={data?.roleById.permissionHierarchy ?? []}
+          loading={isFetching}
+          disabled={!editMode}
+        />
+        <div className="flex float-right gap-3">
+          <button
+            className="btn btn-outline btn-md"
+            onClick={() => {
+              setTitleConfirm(t('user.roles-edit.btn.cancelconfirm') ?? '');
+              setmessageConfirm(t('user.roles-edit.btn.cancelconfirmMessage') ?? '');
+              setShowComfirm(true);
+            }}>
+            {t('btn.cancel')}
+          </button>
+          {editMode ? (
+            <button
+              className="btn btn-success btn-md text-white"
+              onClick={() => {
+                onSave();
+              }}>
+              {onUpdateLoading ? t('user.roles-edit.btn.saveloading') : t('btn.save')}
+            </button>
+          ) : (
+            <button
+              className="btn btn-success btn-md text-white"
+              onClick={() => {
+                window.location.assign(`/roles/edit/${params.id}`);
+              }}>
+              {t('user.roles-edit.btn.editRoles')}
+            </button>
+          )}
+        </div>
+      </TitleCard>
+    </RoleRenderer>
   );
 }

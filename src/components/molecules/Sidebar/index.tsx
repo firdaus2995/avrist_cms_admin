@@ -568,7 +568,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           handeLogout();
         }}
         icon={WarningOrange}
-        message={t('user.logout.message', { name: fullName }) || ''}
+        message={t('user.logout.message', { name: fullName }) ?? ''}
         btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}
       />
       <div

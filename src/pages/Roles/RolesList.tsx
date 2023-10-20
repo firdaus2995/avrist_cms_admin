@@ -47,7 +47,7 @@ export default function RolesList() {
   const [messageConfirm, setmessageConfirm] = useState('');
   const [idDelete, setIdDelete] = useState(0);
 
-  const [hapusRole, { isLoading: hapusLoading }] = useRoleHapusMutation();
+  const [deleteRole, { isLoading: deleteRoleLoading }] = useRoleHapusMutation();
   const [search, setSearch] = useState('');
   const [listData, setListData] = useState<any>([]);
   const [total, setTotal] = useState(0);
@@ -78,7 +78,7 @@ export default function RolesList() {
   };
 
   const onDelete = () => {
-    hapusRole({ id: idDelete })
+    deleteRole({ id: idDelete })
       .unwrap()
       .then(async d => {
         setShowComfirm(false);
@@ -91,10 +91,8 @@ export default function RolesList() {
         );
         await fetchQuery.refetch();
       })
-      .catch(err => {
+      .catch(() => {
         setShowComfirm(false);
-
-        console.log(err);
         dispatch(
           openToast({
             type: 'error',
@@ -209,7 +207,7 @@ export default function RolesList() {
           message={messageConfirm}
           submitAction={onDelete}
           submitTitle={t('user.roles-list.common.yes')}
-          loading={hapusLoading}
+          loading={deleteRoleLoading}
           icon={WarningIcon}
           btnSubmitStyle={''}
         />
