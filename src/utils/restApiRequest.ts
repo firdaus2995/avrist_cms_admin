@@ -55,9 +55,10 @@ const restApiRequest = async (
       console.log(response.status);
     }
   } catch (error: any) {
+    console.log(error)
     if (error.response) {
       const statusCode = error.response.status;
-      if (statusCode === 401) {
+      if (statusCode === 401 || statusCode === 403) {
         if (!mutex.isLocked()) {
           const release = await mutex.acquire();
           try {

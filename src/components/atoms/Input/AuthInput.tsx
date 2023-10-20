@@ -13,6 +13,7 @@ interface IAuthInputProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   passwordMode?: boolean;
   labelWidth?: string;
+  isStatic?: boolean;
 }
 
 interface IPasswordInputProps {
@@ -45,7 +46,7 @@ export function PasswordInput({ id, onChange, placeholder, value }: IPasswordInp
         px-4
         py-2
         text-base
-        border-2 
+        border-2
         border-gray-300
         rounded-2xl
         outline-none"
@@ -102,16 +103,21 @@ const AuthInput: React.FC<IAuthInputProps> = ({
   value,
   passwordMode,
   labelWidth,
+  isStatic,
 }) => {
   const hasError = !!error;
   const classNames = `flex justify-between ${styleClass}`;
 
   return (
     <div className={classNames}>
-      <Typography type="body" size="normal" weight="medium" className={`mt-2 mr-5 ${labelWidth ?? 'basis-1/4'}`}>
+      <Typography
+        type="body"
+        size="normal"
+        weight="medium"
+        className={`mt-2 mr-5 ${labelWidth ?? 'basis-1/4'}`}>
         {label}
       </Typography>
-      <div className="flex flex-col flex-grow flex-2">
+      <div className={`flex flex-col ${isStatic ? 'w-[65%]' : 'flex-grow'} flex-2`}>
         {passwordMode ? (
           <PasswordInput
             id={label}
@@ -131,7 +137,7 @@ const AuthInput: React.FC<IAuthInputProps> = ({
             px-4
             py-2
             text-base
-            border-2 
+            border-2
             border-gray-300
             rounded-2xl
             outline-none`}

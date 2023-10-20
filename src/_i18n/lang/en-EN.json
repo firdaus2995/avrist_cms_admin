@@ -2,7 +2,7 @@
   "errors": {
     "UnableToChangeOwnUserStatusException": "Failed to update data! You can't change your own data! Please contact another user with eligible role",
     "DataIsUsedException": "This data is been used, you can’t delete this data",
-    "DataHasBeenExistException" : "Email has been Exist"
+    "DataHasBeenExistException": "Email has been Exist"
   },
   "toast-success": "Success",
   "toast-failed": "Failed",
@@ -24,8 +24,8 @@
     "sample": "This is GraphQL Sample",
     "shortcut": {
       "regist-template-page": {
-        "title": "Regist Page Template",
-        "subtitle": "Regist your new page template for Avrist Website",
+        "title": "Register Page Template",
+        "subtitle": "Register your new page template for Avrist Website",
         "button": "Page Template"
       },
       "add-content": {
@@ -146,6 +146,12 @@
       "save": "Save",
       "success-msg": "Success change password Profile {{name}}",
       "failed-msg": "Failed change password Profile {{name}}"
+    },
+    "logout": {
+      "yes": "Yes",
+      "no": "No",
+      "title": "Are you sure?",
+      "message": "Do you want to logout from {{name}} - CMS?"
     },
     "notification": {
       "mark-all-as-read": "Mark all as read",
@@ -800,6 +806,7 @@
       "confirmNewPasswordPlaceholder": "Confirm New Password",
       "newPasswordRequiredError": "This field is required",
       "passwordMismatchError": "Passwords do not match. Please try again.",
+      "invalidPassword": "Minimum length of the Password is 8 characters with minimum of 1 uppercase letter, 1 lowercase letter, 1 number, and 1 special character",
       "createNewPasswordButton": "Create New Password",
       "successToastTitle": "Success!",
       "successToastMessage": "Your new password has been successfully saved!",

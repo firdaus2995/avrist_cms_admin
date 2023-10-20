@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { To, useLocation, useNavigate } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-
 import Menu from '@/assets/menu.png';
 import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
 import EditIcon from '@/assets/sidebar/Edit-user.png';
 import ProfilePhoto from '@/assets/Profile-photo.png';
+import WarningOrange from '@/assets/warning-orange.svg';
 import ModalForm from '../ModalForm';
 import FileUploaderAvatar from '../FileUploaderAvatar';
 import { clearAuth } from '@/services/Login/slice';
@@ -20,7 +19,8 @@ import {
 import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { t } from 'i18next';
-import { getCredential } from '@/utils/Credential';
+import { getCredential, removeCredential } from '@/utils/Credential';
+import ModalConfirm from '../ModalConfirm';
 
 interface ISidebar {
   open: boolean;
@@ -94,6 +94,8 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
+  // LOGOUT
+  const [openLogoutModal, setOpenLogoutModal] = useState(false);
 
   // RTK USER PROFILE
   const fetchUserDetailQuery = useGetUserProfileQuery({});
@@ -260,6 +262,13 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     }
   };
 
+  const handeLogout = () => {
+    // LOGOUT
+    setActiveTab(99);
+    removeCredential();
+    dispatch(clearAuth());
+  };
+
   const renderHeader = () => {
     return (
       <div className={`flex flex-col items-center justify-center my-5 ${open ? 'w-[95%]' : ''}`}>
@@ -283,7 +292,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
       </div>
     );
   };
-  
+
   const renderListMenu = () => {
     return (
       <div className="border-b pb-5">
@@ -291,141 +300,135 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           const hasRole = val.role && roles?.includes(val.role);
 
           // Periksa apakah elemen memiliki list dan elemen-elemen dalam listnya memiliki role yang sesuai
-          const hasList =
-            val.list?.some((item: { role: any; }) => item.role && roles?.includes(item.role));
-          
+          const hasList = val.list?.some(
+            (item: { role: any }) => item.role && roles?.includes(item.role),
+          );
+
           if (hasRole || hasList) {
             return (
               <div key={val.id}>
-              <div
-                role="button"
-                onMouseOver={() => {
-                  handleMouseOver(val);
-                }}
-                onClick={() => {
-                  val.list ? listTabHandler(`Tab_${val.id}`) : setActiveTab(val.id);
-                  if (val.path) navigate(val.path);
-                }}
-                className={`${activeTab === val.id ? 'bg-[#9B86BA]' : ''} ${
-                  open ? 'justify-between m-2 w-[95%]' : 'justify-center m-3'
-                } flex flex-row p-2 rounded-xl items-center hover:bg-[#9B86BA]`}>
-                <div className="flex flex-row">
-                  <img src={val.icon} alt={`Menu_${val.id}`} className="w-4 h-4" />
-                  {open && (
-                    <p
-                      className={`${
-                        activeTab === val.id ? 'font-bold' : 'font-base'
-                      } text-white text-sm ml-4`}>
-                      {val.title}
-                    </p>
-                  )}
+                <div
+                  role="button"
+                  onMouseOver={() => {
+                    handleMouseOver(val);
+                  }}
+                  onClick={() => {
+                    val.list ? listTabHandler(`Tab_${val.id}`) : setActiveTab(val.id);
+                    if (val.path) navigate(val.path);
+                  }}
+                  className={`${activeTab === val.id ? 'bg-[#9B86BA]' : ''} ${
+                    open ? 'justify-between m-2 w-[95%]' : 'justify-center m-3'
+                  } flex flex-row p-2 rounded-xl items-center hover:bg-[#9B86BA]`}>
+                  <div className="flex flex-row">
+                    <img src={val.icon} alt={`Menu_${val.id}`} className="w-4 h-4" />
+                    {open && (
+                      <p
+                        className={`${
+                          activeTab === val.id ? 'font-bold' : 'font-base'
+                        } text-white text-sm ml-4`}>
+                        {val.title}
+                      </p>
+                    )}
+                  </div>
+                  {val.list && open ? (
+                    openedTab.includes(`Tab_${val.id}`) ? (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6 text-white">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 15.75l7.5-7.5 7.5 7.5"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        strokeWidth={1.5}
+                        stroke="currentColor"
+                        className="w-6 h-6 text-white">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M19.5 8.25l-7.5 7.5-7.5-7.5"
+                        />
+                      </svg>
+                    )
+                  ) : null}
                 </div>
-                {val.list && open ? (
-                  openedTab.includes(`Tab_${val.id}`) ? (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-6 h-6 text-white">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M4.5 15.75l7.5-7.5 7.5 7.5"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      strokeWidth={1.5}
-                      stroke="currentColor"
-                      className="w-6 h-6 text-white">
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        d="M19.5 8.25l-7.5 7.5-7.5-7.5"
-                      />
-                    </svg>
-                  )
-                ) : null}
-              </div>
-              {!open && isHovering && val.list && dataHover.id === val.id && (
-                <div className="p-4 w-[25vh] flex flex-col gap-4 bg-light-purple absolute ml-[100%] mt-[-75%] rounded-lg">
-                  {dataHover?.list.map(
-                    (value: {
-                      role: any;
-                      path: To;
-                      id: React.Key | null | undefined;
-                      title:
-                        | string
-                        | number
-                        | boolean
-                        | React.ReactElement<any, string | React.JSXElementConstructor<any>>
-                        | React.ReactFragment
-                        | React.ReactPortal
-                        | null
-                        | undefined;
-                    }) =>
-                      roles?.includes(value?.role) && (
-                        <div
-                          role="button"
-                          onClick={() => {
-                            setIsHovering(false);
-                            navigate(value.path);
-                          }}
-                          key={value.id}
-                          className="text-xs font-bold text-bright-purple">
-                          {value.title}
-                        </div>
-                      ),
-                  )}
-                </div>
-              )}
-              {openedTab.includes(`Tab_${val.id}`) && open
-                ? val.list?.map(
-                    (e: any) =>
-                      roles?.includes(e.role) && (
-                        <div
-                          key={e.id}
-                          className={`${
-                            activeTab === e.id ? 'bg-[#9B86BA]' : ''
-                          } flex flex-row p-2 m-2 rounded-xl items-center justify-between hover:bg-[#9B86BA]`}
-                          role="button"
-                          onClick={() => {
-                            setActiveTab(e.id);
-                            if (e.path) navigate(e.path);
-                          }}>
-                          <p
+                {!open && isHovering && val.list && dataHover.id === val.id && (
+                  <div className="p-4 w-[25vh] flex flex-col gap-4 bg-light-purple absolute ml-[100%] mt-[-75%] rounded-lg">
+                    {dataHover?.list.map(
+                      (value: {
+                        role: any;
+                        path: To;
+                        id: React.Key | null | undefined;
+                        title:
+                          | string
+                          | number
+                          | boolean
+                          | React.ReactElement<any, string | React.JSXElementConstructor<any>>
+                          | React.ReactFragment
+                          | React.ReactPortal
+                          | null
+                          | undefined;
+                      }) =>
+                        roles?.includes(value?.role) && (
+                          <div
+                            role="button"
+                            onClick={() => {
+                              setIsHovering(false);
+                              navigate(value.path);
+                            }}
+                            key={value.id}
+                            className="text-xs font-bold text-bright-purple">
+                            {value.title}
+                          </div>
+                        ),
+                    )}
+                  </div>
+                )}
+                {openedTab.includes(`Tab_${val.id}`) && open
+                  ? val.list?.map(
+                      (e: any) =>
+                        roles?.includes(e.role) && (
+                          <div
+                            key={e.id}
                             className={`${
-                              activeTab === e.id ? 'font-bold' : 'font-base'
-                            } text-white text-sm ml-8`}>
-                            {e.title}
-                          </p>
-                        </div>
-                      ),
-                  )
-                : null}
-            </div>
-            )
+                              activeTab === e.id ? 'bg-[#9B86BA]' : ''
+                            } flex flex-row p-2 m-2 rounded-xl items-center justify-between hover:bg-[#9B86BA]`}
+                            role="button"
+                            onClick={() => {
+                              setActiveTab(e.id);
+                              if (e.path) navigate(e.path);
+                            }}>
+                            <p
+                              className={`${
+                                activeTab === e.id ? 'font-bold' : 'font-base'
+                              } text-white text-sm ml-8`}>
+                              {e.title}
+                            </p>
+                          </div>
+                        ),
+                    )
+                  : null}
+              </div>
+            );
           }
 
           return null;
-                          })}
+        })}
       </div>
     );
   };
 
   const renderFooter = () => {
-    // LOGOUT
-    const dispatch = useDispatch();
-
-    const handleLogout = () => {
-      dispatch(clearAuth());
-    };
-
     return (
       <div className={`flex flex-col items-center justify-center my-10 ${open ? 'w-[95%]' : ''}`}>
         {footerList.map(val => (
@@ -434,16 +437,15 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
             role="button"
             onClick={() => {
               if (val.id === 99) {
-                setActiveTab(val.id);
-                handleLogout();
+                setOpenLogoutModal(true);
               } else if (val.id === 98) {
                 setOpenEditProfileModal(true);
               }
             }}
             className={`
-                ${activeTab === val.id ? 'bg-[#9B86BA] font-bold' : ''} 
+                ${activeTab === val.id ? 'bg-[#9B86BA] font-bold' : ''}
                 ${val.bordered && open && ' border border-white'}
-                ${open ? 'w-40' : 'p-2'} 
+                ${open ? 'w-40' : 'p-2'}
                 p-2 text-white rounded-2xl mb-2 text-center flex items-center justify-center
               `}>
             {val.icon && (
@@ -471,7 +473,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
         submitType=""
         additionalButton={
           <button className="btn btn-outline btn-primary" onClick={handlerActionLink}>
-          {t('user.edit-profile.change-password')}
+            {t('user.edit-profile.change-password')}
           </button>
         }>
         <FileUploaderAvatar
@@ -554,6 +556,21 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           }}
         />
       </ModalForm>
+      <ModalConfirm
+        open={openLogoutModal}
+        title={t('user.logout.title')}
+        cancelTitle={t('user.logout.no')}
+        cancelAction={() => {
+          setOpenLogoutModal(false);
+        }}
+        submitTitle={t('user.logout.yes')}
+        submitAction={() => {
+          handeLogout();
+        }}
+        icon={WarningOrange}
+        message={t('user.logout.message', { name: fullName }) || ''}
+        btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}
+      />
       <div
         className={`${
           open

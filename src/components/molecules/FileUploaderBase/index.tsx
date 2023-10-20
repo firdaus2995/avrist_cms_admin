@@ -97,19 +97,21 @@ export default function FileUploaderBase({
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const allowedTypes = isDocument ? ['application/pdf'] : ['image/jpeg', 'image/png'];
+    const allowedTypes = isDocument
+      ? ['application/pdf']
+      : ['image/jpeg', 'image/png', 'image/jpg'];
     const droppedFiles = Array.from(e.dataTransfer.files);
 
     const validFiles = droppedFiles.filter(file => allowedTypes.includes(file.type));
-    void handleAxiosUpload(validFiles);
+    void handleUpload(validFiles);
   };
 
   const handleChange = (e: React.ChangeEvent<any>) => {
     e.preventDefault();
-    void handleAxiosUpload([...e.target.files]);
+    void handleUpload([...e.target.files]);
   };
 
-  const handleAxiosUpload = async (files: File[]) => {
+  const handleUpload = async (files: File[]) => {
     setIsUploadLoading(true);
     const fileName = formatFilename(files[0].name);
 
@@ -149,6 +151,7 @@ export default function FileUploaderBase({
       const response = await restApiRequest('POST', '/files/upload', formData); // Use restApiRequest here
 
       const newFile = { name: fileName, value: response.data, response: response.data.data };
+
       if (multiple) {
         setFilesData((prevState: any) => {
           const updatedFiles = [...prevState, newFile];

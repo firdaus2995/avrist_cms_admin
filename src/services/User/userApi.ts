@@ -235,16 +235,8 @@ export const userApi: any = createApi({
     editUserProfile: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation userUpdateProfile(
-            $fullName: String!
-            $profilePicture: String!
-          ) {
-            userUpdateProfile(
-              request: {
-                fullName: $fullName
-                profilePicture: $profilePicture
-              }
-            ) {
+          mutation userUpdateProfile($fullName: String!, $profilePicture: String!) {
+            userUpdateProfile(request: { fullName: $fullName, profilePicture: $profilePicture }) {
               id
               userId
               fullName
@@ -266,15 +258,9 @@ export const userApi: any = createApi({
     changePasswordUserProfile: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation userChangeOwnPassword(
-            $oldPassword: String!
-            $newPassword: String!
-          ) {
+          mutation userChangeOwnPassword($oldPassword: String!, $newPassword: String!) {
             userChangeOwnPassword(
-              request: {
-                oldPassword: $oldPassword
-                newPassword: $newPassword
-              }
+              request: { oldPassword: $oldPassword, newPassword: $newPassword }
             ) {
               message
             }
@@ -307,6 +293,18 @@ export const userApi: any = createApi({
         variables: payload,
       }),
     }),
+    checkResetPasswordUrl: builder.query<any, { requestId: string }>({
+      query: payload => ({
+        document: gql`
+          query validateResetPasswordUrl($requestId: String!) {
+            validateResetPasswordUrl(request: { requestId: $requestId }) {
+              result
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -322,4 +320,5 @@ export const {
   useChangePasswordUserProfileMutation,
   useGetForgotPasswordMutation,
   useSetNewPasswordMutation,
+  useCheckResetPasswordUrlQuery,
 } = userApi;
