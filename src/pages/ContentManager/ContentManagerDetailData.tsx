@@ -69,6 +69,7 @@ export default function ContentManagerDetailData() {
   const {
     control,
     handleSubmit,
+    getValues,
     formState: { errors },
   } = useForm();
 
@@ -115,12 +116,6 @@ export default function ContentManagerDetailData() {
   useEffect(() => {
     void fetchGetContentDataDetail.refetch();
   }, []);
-
-  const [mainForm] = useState<any>({
-    title: '',
-    shortDesc: '',
-    categoryName: '',
-  });
 
   const handleFormChange = (
     id: string | number,
@@ -231,13 +226,14 @@ export default function ContentManagerDetailData() {
   }
 
   const saveData = () => {
+    const value = getValues();
     const payload = {
       title: contentDataDetailList?.title,
       shortDesc: contentDataDetailList?.shortDesc,
       isDraft: false,
       isAutoApprove,
       postTypeId: id,
-      categoryName: contentDataDetailList?.isUseCategory ? mainForm.categoryName : '',
+      categoryName: value?.category || '',
       contentData: convertContentData(contentTempData),
     };
 
@@ -364,6 +360,18 @@ export default function ContentManagerDetailData() {
     }
   };
 
+  function transformText(text: string) {
+    const words = text.split('_');
+  
+    const capitalizedWords = words.map((word: string) => {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+  
+    const result = capitalizedWords.join(' ').replace('Url', 'URL');
+  
+    return result;
+  }
+
   const renderFormList = () => {
     // DEFAULT VALUE
 
@@ -401,9 +409,9 @@ export default function ContentManagerDetailData() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel="TEXT_FIELD"
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     disabled={!isEdited}
-                    labelTitle={name}
                     placeholder=""
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
@@ -443,8 +451,8 @@ export default function ContentManagerDetailData() {
                   <FormList.TextAreaField
                     {...field}
                     key={id}
-                    fieldTypeLabel="TEXT_AREA"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     disabled={!isEdited}
                     placeholder=""
                     error={!!errors?.[id]?.message}
@@ -478,9 +486,9 @@ export default function ContentManagerDetailData() {
                     {...field}
                     key={id}
                     type="email"
-                    fieldTypeLabel="EMAIL"
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     disabled={!isEdited}
-                    labelTitle={name}
                     placeholder=""
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
@@ -513,8 +521,8 @@ export default function ContentManagerDetailData() {
                     {...field}
                     key={id}
                     id={id}
-                    fieldTypeLabel="DOCUMENT"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     disabled={!isEdited}
                     isDocument={true}
                     multiple={configs?.media_type === 'multiple_media'}
@@ -549,9 +557,9 @@ export default function ContentManagerDetailData() {
                   <FormList.FileUploaderV2
                     {...field}
                     key={id}
-                    fieldTypeLabel="IMAGE"
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     disabled={!isEdited}
-                    labelTitle={name}
                     isDocument={false}
                     multiple={configs?.media_type === 'multiple_media'}
                     error={!!errors?.[id]?.message}
@@ -591,8 +599,8 @@ export default function ContentManagerDetailData() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel="PHONE_NUMBER"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     disabled={!isEdited}
                     placeholder=""
                     error={!!errors?.[id]?.message}
@@ -630,8 +638,8 @@ export default function ContentManagerDetailData() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel="YOUTUBE_URL"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     disabled={!isEdited}
                     placeholder=""
                     error={!!errors?.[id]?.message}
@@ -676,8 +684,8 @@ export default function ContentManagerDetailData() {
                       {...field}
                       key={id}
                       value={value}
+                      fieldTypeLabel={transformText(name)}
                       disabled={!isEdited}
-                      fieldTypeLabel="EMAIL_FORM"
                       placeholder=""
                       error={!!errors?.[id]?.message}
                       helperText={errors?.[id]?.message}
@@ -751,9 +759,9 @@ export default function ContentManagerDetailData() {
                                     <FormList.TextField
                                       {...field}
                                       key={val.id}
-                                      fieldTypeLabel="TEXT_FIELD"
-                                      labelTitle={val.name}
-                                      disabled={!isEdited}
+                                      fieldTypeLabel={transformText(val?.name)}
+                                      labelTitle={transformText(val?.name)}
+                                      disabled={!isEdited}          
                                       placeholder=""
                                       error={!!errors?.[val.id]?.message}
                                       helperText={errors?.[val.id]?.message}
@@ -797,9 +805,9 @@ export default function ContentManagerDetailData() {
                                     <FormList.TextField
                                       {...field}
                                       key={val.id}
-                                      fieldTypeLabel="YOUTUBE_URL"
-                                      labelTitle={val.name}
-                                      disabled={!isEdited}
+                                      fieldTypeLabel={transformText(val?.name)}
+                                      labelTitle={transformText(val?.name)}
+                                      disabled={!isEdited}   
                                       placeholder=""
                                       error={!!errors?.[val.id]?.message}
                                       helperText={errors?.[val.id]?.message}
@@ -1220,9 +1228,9 @@ export default function ContentManagerDetailData() {
                   }}
                 />
               </div>
-              {contentDataDetailList?.isUseCategory && (
+              {contentDataDetailList?.categoryName !== "" && (
                 <div className="flex flex-row">
-                  <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                  <Typography type="body" size="m" weight="bold" className="w-48 ml-1">
                   {t('user.content-manager-detail-data.category')}
                   </Typography>
                   <Controller
@@ -1246,6 +1254,7 @@ export default function ContentManagerDetailData() {
                           placeholder={t('user.content-manager-detail-data.title')}
                           error={!!errors?.category?.message}
                           helperText={errors?.category?.message}
+                          disabled={!isEdited}
                           items={categoryList}
                           onChange={onChange}
                         />

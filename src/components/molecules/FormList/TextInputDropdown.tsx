@@ -72,6 +72,7 @@ const TextInputDropDown = ({
           placeholder="Search, select or create an option..."
           value={searchTerm}
           onChange={handleInputChange}
+          disabled={disabled}
           onFocus={() => {
             setIsOpen(true);
           }}
