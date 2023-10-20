@@ -169,7 +169,7 @@ export const contentManagerApi = createApi({
             $title: String!
             $shortDesc: String!
             $isDraft: Boolean!
-            $isAutoApprove: Boolean!
+            $isAutoApprove: Boolean
             $postTypeId: Int!
             $categoryName: String!
             $contentData: [ContentDataAttributeRequest]!

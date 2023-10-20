@@ -409,7 +409,7 @@ export default function ContentManagerNew() {
       shortDesc: value.shortDesc,
       isDraft: true,
       postTypeId: id,
-      categoryName: postTypeDetail?.isUseCategory ? value.category : '',
+      categoryName: value?.category || '',
       contentData: stringifyData,
     };
     createContentData(payload)
@@ -463,6 +463,18 @@ export default function ContentManagerNew() {
     }
   };
 
+  function transformText(text: string) {
+    const words = text.split('_');
+  
+    const capitalizedWords = words.map((word: string) => {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+  
+    const result = capitalizedWords.join(' ').replace('Url', 'URL');
+  
+    return result;
+  }
+
   const renderFormList = () => {
     // DEFAULT VALUE
     return postTypeDetail?.attributeList.map((props: any, _index: number) => {
@@ -508,8 +520,8 @@ export default function ContentManagerNew() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel="TEXT_FIELD"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     placeholder=""
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
@@ -549,8 +561,8 @@ export default function ContentManagerNew() {
                   <FormList.TextAreaField
                     {...field}
                     key={id}
-                    fieldTypeLabel="TEXT_AREA"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     placeholder=""
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
@@ -583,8 +595,8 @@ export default function ContentManagerNew() {
                     {...field}
                     key={id}
                     type="email"
-                    fieldTypeLabel="EMAIL"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     placeholder=""
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
@@ -617,8 +629,8 @@ export default function ContentManagerNew() {
                     {...field}
                     key={id}
                     id={id}
-                    fieldTypeLabel="DOCUMENT"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     isDocument={true}
                     multiple={configs?.media_type === 'multiple_media'}
                     error={!!errors?.[id]?.message}
@@ -671,8 +683,8 @@ export default function ContentManagerNew() {
                     {...field}
                     key={id}
                     id={id}
-                    fieldTypeLabel="IMAGE"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     isDocument={false}
                     multiple={configs?.media_type === 'multiple_media'}
                     error={!!errors?.[id]}
@@ -712,8 +724,8 @@ export default function ContentManagerNew() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel="PHONE_NUMBER"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     placeholder=""
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
@@ -750,8 +762,8 @@ export default function ContentManagerNew() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel="YOUTUBE_URL"
-                    labelTitle={name}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
                     placeholder=""
                     error={!!errors?.[id]?.message}
                     helperText={errors?.[id]?.message}
@@ -794,7 +806,7 @@ export default function ContentManagerNew() {
                     <FormList.EmailForm
                       {...field}
                       key={id}
-                      fieldTypeLabel="EMAIL_FORM"
+                      fieldTypeLabel={transformText(name)}
                       placeholder=""
                       error={!!errors?.[id]?.message}
                       helperText={errors?.[id]?.message}
@@ -810,7 +822,7 @@ export default function ContentManagerNew() {
           return (
             <div key={id}>
               <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
-                {name}
+                {transformText(name)}
               </Typography>
               <div className="card w-full shadow-md p-5">
                 <div className="p-2 flex items-end justify-end">
@@ -853,8 +865,8 @@ export default function ContentManagerNew() {
                               <FormList.TextField
                                 {...field}
                                 key={val.id}
-                                fieldTypeLabel="TEXT_FIELD"
-                                labelTitle={val.name}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
                                 placeholder=""
                                 error={!!errors?.[val.id]?.message}
                                 helperText={errors?.[val.id]?.message}
@@ -893,8 +905,8 @@ export default function ContentManagerNew() {
                               <FormList.TextAreaField
                                 {...field}
                                 key={val.id}
-                                fieldTypeLabel="TEXT_AREA"
-                                labelTitle={val.name}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
                                 placeholder=""
                                 error={!!errors?.[val.id]?.message}
                                 helperText={errors?.[val.id]?.message}
@@ -925,8 +937,8 @@ export default function ContentManagerNew() {
                                 {...field}
                                 key={val.id}
                                 type="email"
-                                fieldTypeLabel="EMAIL"
-                                labelTitle={val.name}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
                                 placeholder=""
                                 error={!!errors?.[val.id]?.message}
                                 helperText={errors?.[val.id]?.message}
@@ -959,8 +971,8 @@ export default function ContentManagerNew() {
                                 {...field}
                                 key={val.id}
                                 id={val.id}
-                                fieldTypeLabel="DOCUMENT"
-                                labelTitle={val.name}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
                                 isDocument={true}
                                 multiple={configs?.media_type === 'multiple_media'}
                                 error={!!errors?.[val.id]?.message}
@@ -995,8 +1007,8 @@ export default function ContentManagerNew() {
                                 {...field}
                                 key={val.id}
                                 id={val.id}
-                                fieldTypeLabel="IMAGE"
-                                labelTitle={val.name}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
                                 isDocument={false}
                                 multiple={configs?.media_type === 'multiple_media'}
                                 error={!!errors?.[val.id]?.message}
@@ -1036,8 +1048,8 @@ export default function ContentManagerNew() {
                               <FormList.TextField
                                 {...field}
                                 key={val.id}
-                                fieldTypeLabel="PHONE_NUMBER"
-                                labelTitle={val.name}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
                                 placeholder=""
                                 error={!!errors?.[val.id]?.message}
                                 helperText={errors?.[val.id]?.message}
@@ -1073,8 +1085,8 @@ export default function ContentManagerNew() {
                               <FormList.TextField
                                 {...field}
                                 key={val.id}
-                                fieldTypeLabel="YOUTUBE_URL"
-                                labelTitle={val.name}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
                                 placeholder=""
                                 error={!!errors?.[val.id]?.message}
                                 helperText={errors?.[val.id]?.message}
@@ -1117,7 +1129,7 @@ export default function ContentManagerNew() {
                                 <FormList.EmailForm
                                   {...field}
                                   key={val.id}
-                                  fieldTypeLabel="EMAIL_FORM"
+                                  fieldTypeLabel={transformText(val.name)}
                                   placeholder=""
                                   error={!!errors?.[val.id]?.message}
                                   helperText={errors?.[val.id]?.message}
