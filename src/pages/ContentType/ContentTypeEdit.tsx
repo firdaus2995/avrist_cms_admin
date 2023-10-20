@@ -496,9 +496,9 @@ export default function ContentTypeEdit() {
                 role="button"
                 onClick={() => {
                   if (val.code === 'text_field' || val.code === 'text_area') {
-                    val.config = '{"min_length":[],"max_length":[]}';
+                    val.config = '{"min_length":"","max_length":""}';
                   } else if (val.code === 'image' || val.code === 'document') {
-                    val.config = '{"media_type":"[]"}';
+                    val.config = '{"media_type":""}';
                   }
 
                   openAddModal(val, false);
@@ -547,9 +547,9 @@ export default function ContentTypeEdit() {
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
-                      data.config = '{"min_length":[],"max_length":[]}';
+                      data.config = '{"min_length":"","max_length":""}';
                     } else if (val.code === 'image' || val.code === 'document') {
-                      data.config = '{"media_type":"[]"}';
+                      data.config = '{"media_type":""}';
                     }
 
                     const updatedAttributeList = [...openedAttribute.attributeList, data];
@@ -569,9 +569,9 @@ export default function ContentTypeEdit() {
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
-                      data.config = '{"min_length":[],"max_length":[]}';
+                      data.config = '{"min_length":"","max_length":""}';
                     } else if (val.code === 'image' || val.code === 'document') {
-                      data.config = '{"media_type":"[]"}';
+                      data.config = '{"media_type":""}';
                     }
 
                     setOpenedAttribute({
