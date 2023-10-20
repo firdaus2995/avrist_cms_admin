@@ -11,15 +11,6 @@ export default function PermissionList(props: IPermisionList) {
   const dispatch = useAppDispatch();
   const { permissions } = useAppSelector(state => state.rolesSlice);
   const [existingPermission, setExistingPermission] = useState<any>([]);
-  // const onChangePermission = (d: string) => {
-  //   const checkIfExist = permissions.find((p: string) => p === d);
-  //   if (checkIfExist) {
-  //     const filter = permissions.filter((f: any) => f !== checkIfExist);
-  //     dispatch(setPermissions(filter));
-  //   } else {
-  //     dispatch(setPermissions([...permissions, d, 'MENU_READ']));
-  //   }
-  // };
 
   const onChangePermission = (d: string) => {
     const checkIfExist = permissions.find((p: string) => p === d);
