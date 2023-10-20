@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Key, SetStateAction, useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
 
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
@@ -48,6 +49,15 @@ export default function ContentTypeEdit() {
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(-1);
 
+  const {
+    control,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
+
   const [defaultItems] = useState<any>([
     {
       fieldType: 'TEXT_FIELD',
@@ -81,6 +91,13 @@ export default function ContentTypeEdit() {
       setName(data?.postTypeDetail?.name);
       setSlug(data?.postTypeDetail?.slug);
       setListItems(data?.postTypeDetail?.attributeList);
+
+      const defaultValues: any = {};
+
+      defaultValues.contentName= data?.postTypeDetail?.name;
+      defaultValues.slugName= data?.postTypeDetail?.slug;
+
+      reset({ ...defaultValues });
     }
   }, [data]);
 
@@ -282,34 +299,57 @@ export default function ContentTypeEdit() {
     return (
       <div className="flex flex-col border-b-2 pb-8">
         <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-10 text-lg font-bold">
-          <span className={`label-text text-base-content`}>
-            {t('user.content-type-edit.contentTypeColumnName')}<span className={'text-reddist text-lg'}>*</span>
-          </span>
-          <InputText
-            labelTitle=""
-            placeholder={'Enter your new content name'}
-            value={name}
-            inputStyle="rounded-3xl"
-            onChange={e => {
-              setName(e.target.value);
-            }}
+          <Controller
+            name='contentName'
+            control={control}
+            defaultValue=''
+            rules={{ required: t('components.atoms.required') ?? '' }}
+            render={({ field }) => (
+              <InputText
+                {...field}
+                labelTitle={t('user.content-type-edit.contentTypeColumnName')}
+                labelStyle="font-semibold"
+                direction='row'
+                labelRequired
+                containerStyle='mb-5'
+                value={name}
+                roundStyle="xl"
+                placeholder={'Enter your new content name'}
+                isError={!!errors?.contentName}
+                onChange={e => {
+                  setName(e.target.value);
+                  field.onChange(e.target.value);
+                }}
+              />
+            )}
           />
         </div>
         <p></p>
         <div className="flex flex-row items-center">
           <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-24 text-lg font-bold">
-            <span className={`label-text text-base-content`}>
-              {t('user.content-type-edit.slugName')}<span className={'text-reddist text-lg'}>*</span>
-            </span>
-            <InputText
-              labelTitle=""
-              placeholder={t('user.content-type-edit.slugName-placeholder')}
-              value={slug}
-              inputStyle="rounded-3xl"
-              onChange={e => {
-                setSlug(e.target.value);
-              }}
-            />
+          <Controller
+            name='slugName'
+            control={control}
+            defaultValue=''
+            rules={{ required: t('components.atoms.required') ?? '' }}
+            render={({ field }) => (
+              <InputText
+                {...field}
+                labelTitle={t('user.content-type-edit.slugName')}
+                labelStyle="font-semibold"
+                direction='row'
+                labelRequired
+                value={slug}
+                roundStyle="xl"
+                placeholder={t('user.content-type-edit.slugName-placeholder')}
+                isError={!!errors?.slugName}
+                onChange={e => {
+                  setSlug(e.target.value);
+                  field.onChange(e.target.value);
+                }}
+              />
+            )}
+          />
           </div>
           <div className="ml-10">
             <CheckBox
@@ -326,7 +366,7 @@ export default function ContentTypeEdit() {
     );
   };
 
-  function onSaveContent() {
+  function onSubmit() {
     const updatedData = listItems.map(
       (item: { [x: string]: any; id: any; parentId: any; attributeList: any }) => {
         const { id, parentId, attributeList, ...rest } = item;
@@ -456,9 +496,9 @@ export default function ContentTypeEdit() {
                 role="button"
                 onClick={() => {
                   if (val.code === 'text_field' || val.code === 'text_area') {
-                    val.config = '{"min_length":[],"max_length":[]}';
+                    val.config = '{"min_length":"","max_length":""}';
                   } else if (val.code === 'image' || val.code === 'document') {
-                    val.config = '{"media_type":"[]"}';
+                    val.config = '{"media_type":""}';
                   }
 
                   openAddModal(val, false);
@@ -507,9 +547,9 @@ export default function ContentTypeEdit() {
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
-                      data.config = '{"min_length":[],"max_length":[]}';
+                      data.config = '{"min_length":"","max_length":""}';
                     } else if (val.code === 'image' || val.code === 'document') {
-                      data.config = '{"media_type":"[]"}';
+                      data.config = '{"media_type":""}';
                     }
 
                     const updatedAttributeList = [...openedAttribute.attributeList, data];
@@ -529,9 +569,9 @@ export default function ContentTypeEdit() {
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
-                      data.config = '{"min_length":[],"max_length":[]}';
+                      data.config = '{"min_length":"","max_length":""}';
                     } else if (val.code === 'image' || val.code === 'document') {
-                      data.config = '{"media_type":"[]"}';
+                      data.config = '{"media_type":""}';
                     }
 
                     setOpenedAttribute({
@@ -1360,27 +1400,29 @@ export default function ContentTypeEdit() {
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
-        {renderForm()}
-        {renderListItems()}
-        <div className="flex float-right gap-3">
-          <button
-            className="btn btn-outline btn-md"
-            onClick={() => {
-              setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
-              setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
-              setShowComfirm(true);
-            }}>
-            {t('btn.cancel')}
-          </button>
-          <button
-            disabled={listItems.length === 0}
-            onClick={() => {
-              onSaveContent();
-            }}
-            className="btn btn-success btn-md text-white">
-            {t('btn.create')}
-          </button>
-        </div>
+        <form
+          className="flex flex-col w-100"
+          onSubmit={handleSubmit(onSubmit)}>
+          {renderForm()}
+          {renderListItems()}
+          <div className="flex absolute right-2 bottom-2 gap-3">
+            <button
+              className="btn btn-outline btn-md"
+              onClick={() => {
+                setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
+                setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
+                setShowComfirm(true);
+              }}>
+              {t('btn.cancel')}
+            </button>
+            <button
+              disabled={listItems.length === 0}
+              type='submit'
+              className="btn btn-success btn-md text-white">
+              {t('user.content-type-edit.btn.save')}
+            </button>
+          </div>
+        </form>
       </TitleCard>
     </>
   );

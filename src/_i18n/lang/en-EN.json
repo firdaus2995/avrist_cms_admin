@@ -471,7 +471,8 @@
       "btn": {
         "cancel": "Cancel",
         "create": "Create",
-        "edit": "Edit"
+        "edit": "Edit",
+        "save": "Save"
       },
       "modal": {
         "addAttribute": {
@@ -508,6 +509,7 @@
       },
       "edit": "Edit",
       "edit-content-type": "Edit Content Type",
+      "add-content-type": "New Content Type",
       "contentTypeColumnName": "Content Type Name",
       "slugName": "Slug Name",
       "slugName-placeholder": "Enter Slug Name",
@@ -553,7 +555,10 @@
       "something-went-wrong": "Something went wrong!",
       "success-duplicate-page": "Success Duplicate Page",
       "failed-duplicate-page": "Failed Duplicate Page",
-      "search": "Search"
+      "search": "Search",
+      "yes": "Yes",
+      "no": "No",
+      "cancel": "Cancel"
     },
 
     "email-form-builder-new": {

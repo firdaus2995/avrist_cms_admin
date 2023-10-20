@@ -72,7 +72,7 @@ export const InputText: React.FC<IInputText> = ({
       <div style={{
         width: inputWidth ?? '100%',
         height: inputHeight ?? '',
-      }} className={`input input-bordered rounded-${roundStyle} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''} ${isError && 'border-reddist'}`}>
+      }} className={`input input-bordered rounded-${roundStyle} ${themeColor ? `border-${themeColor}` : ''} focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-${themeColor ?? '[#D2D4D7]'} ${disabled ? 'bg-[#E9EEF4] ' : ''} ${isError && 'border-reddist mb-5'}`}>
         <input
           name={name}
           type={type ?? 'text'}
@@ -88,15 +88,15 @@ export const InputText: React.FC<IInputText> = ({
           className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${disabled ? 'text-[#637488]' : ''}`}
         />
         <div className="relative right-8">{suffix ?? ''}</div>
+        {
+          isError && (
+            <div className='flex flex-row px-1 py-2'>
+              <img src={ErrorSmallIcon} className='mr-3' />
+              <p className='text-reddist text-sm'>{helperText ?? t('components.atoms.required')}</p>
+            </div>
+          )
+        }
       </div>
-      {
-        isError && (
-          <div className='flex flex-row px-1 py-2'>
-            <img src={ErrorSmallIcon} className='mr-3' />
-            <p className='text-reddist text-sm'>{helperText ?? t('components.atoms.required')}</p>
-          </div>
-        )
-      }
     </div>
   );
 };
