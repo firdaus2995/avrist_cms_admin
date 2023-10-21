@@ -129,7 +129,7 @@
     },
     "edit-profile": {
       "title": "Edit Profile",
-      "fullname": "Fullname",
+      "fullname": "Full Name",
       "email": "Email",
       "change-password": "Change Password",
       "cancel": "Cancel",
@@ -139,7 +139,7 @@
     },
     "change-password": {
       "title": "Change Password",
-      "recent-password": "Recent Password",
+      "recent-password": "Current Password",
       "new-password": "New Password",
       "confirm-password": "Confirm New Password",
       "cancel": "Cancel",
