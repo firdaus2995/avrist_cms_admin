@@ -18,17 +18,20 @@ export default function EmailBodyEdit() {
   const {
     control,
     handleSubmit,
-    // eslint-disable-next-line no-empty-pattern
-    formState: {},
-  } = useForm();
+    reset,
+    setValue,
+    getValues,
+    watch,
+    formState: { errors },
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const params = useParams();
 
   // FORM STATE
   const [id] = useState<number>(Number(params.id));
-  const [value, setValue] = useState<any>([]);
-  const [emailBodyDetail, setEmailBodyDetail] = useState<any>({});
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
@@ -44,22 +47,28 @@ export default function EmailBodyEdit() {
   const [updateEmailBody] = useUpdateEmailBodyMutation();
 
   useEffect(() => {
+    watch('value');
+  }, [watch]);
+
+  useEffect(() => {
     if (data) {
-      setEmailBodyDetail({
-        title: data?.emailBodyDetail?.title,
-        shortDesc: data?.emailBodyDetail?.shortDesc,
-      })
-      setValue(data?.emailBodyDetail?.value);
+      const defaultValues: any = {};
+      
+      defaultValues.title = data?.emailBodyDetail?.title;
+      defaultValues.shortDesc = data?.emailBodyDetail?.shortDesc;
+
+      reset({ ...defaultValues });
+
+      setValue('value', data?.emailBodyDetail?.value);
     };
   }, [data]);  
-
   
   const handlerSubmit = (formData: any) => {
     const payload = {
       id,
       title: formData.title,
       shortDesc: formData.shortDesc,
-      value,
+      value: formData.value,
     };
 
     updateEmailBody(payload)
@@ -117,9 +126,11 @@ export default function EmailBodyEdit() {
         <Controller
           name="title"
           control={control}
-          defaultValue={emailBodyDetail?.title ?? ""}
+          defaultValue=""
+          rules={{ required: t('components.atoms.required') ?? ''}}
           render={({ field }) => (
             <InputText
+              {...field}
               labelTitle="Title"
               labelStyle="font-semibold"
               labelWidth={200}
@@ -129,16 +140,18 @@ export default function EmailBodyEdit() {
               placeholder="Enter your title"
               inputWidth={400}
               maxLength={30}
-              {...field}
+              isError={!!errors?.title}
             />
           )}
         />
         <Controller
           name="shortDesc"
           control={control}
-          defaultValue={emailBodyDetail?.shortDesc ?? ""}
+          defaultValue=""
+          rules={{ required: t('components.atoms.required') ?? ''}}
           render={({ field }) => (
             <TextArea
+              {...field}
               labelTitle="Short Description"
               labelStyle="font-semibold"
               labelWidth={200}
@@ -146,7 +159,7 @@ export default function EmailBodyEdit() {
               direction="row"
               placeholder="Enter description"
               inputWidth={400}
-              {...field}
+              isError={!!errors?.shortDesc}
             />
           )}
         />
@@ -154,11 +167,20 @@ export default function EmailBodyEdit() {
           <Typography size="m" weight="semi">
             Value<span className="text-reddist">*</span>
           </Typography>
-          <CkEditor 
-            data={value ?? ""}
-            onChange={(data: string) => {
-              setValue(data);
-            }}
+          <Controller
+            name="value"
+            control={control}
+            rules={{ required: t('components.atoms.required') ?? ''}}
+            render={({ field }) => (
+              <CkEditor 
+                {...field}
+                data={getValues('value') ?? ''}
+                onChange={(data: string) => {
+                  setValue('value', data);
+                }}
+                isError={!!errors?.value}
+              />
+            )}
           />
         </div>
         {/* BUTTONS SECTION */}

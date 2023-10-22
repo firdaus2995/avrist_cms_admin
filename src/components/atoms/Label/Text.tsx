@@ -8,6 +8,7 @@ interface ILabelText {
   value: string;
   valueWidth?: number | string;
   valueStyle?: string;
+  rawValueHTML?: boolean;
 }
 
 export const LabelText: React.FC<ILabelText> = ({
@@ -18,6 +19,7 @@ export const LabelText: React.FC<ILabelText> = ({
   value,
   valueWidth = '100%',
   valueStyle,
+  rawValueHTML,
 }) => {
   return (
     <div className={`flex flex-row`}>
@@ -36,7 +38,13 @@ export const LabelText: React.FC<ILabelText> = ({
           width: valueWidth,
         }}
       >
-        {value}
+        {
+          rawValueHTML ? (
+            <div dangerouslySetInnerHTML={{ __html: value}} />
+          ) : (
+            value
+          )
+        }
       </div>
     </div>
   );
