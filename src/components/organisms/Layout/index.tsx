@@ -21,6 +21,8 @@ import { setActivatedNotificationPage } from '@/services/Notification/notificati
 import { useDeleteNotificationMutation, useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
 import { setEventTriggered } from '@/services/Event/eventErrorSlice';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import WarningIcon from '@/assets/warning.png';
 
 const Layout: React.FC<any> = props => {
   const location = useLocation();
@@ -35,6 +37,7 @@ const Layout: React.FC<any> = props => {
   const [selected, setSelected] = useState<any>(0);
   const [limit, setLimit] = useState<number>(10);
   const [total, setTotal] = useState<any>(0);
+  const [showModalDelete, setShowModalDelete] = useState<any>(false);
 
   // RTK SEE NOTIFICATION
   const [ seeNotification ] = useSeeNotificationMutation();
@@ -235,6 +238,22 @@ const Layout: React.FC<any> = props => {
           dispatch(setOpen(!open));
         }}
       />
+      <ModalConfirm
+        open={showModalDelete}
+        title={t('user.notification.delete-selected-title')}
+        cancelTitle={t('user.content-manager-detail-data.no')}
+        message={t('user.notification.delete-selected-subtitle') ?? ''}
+        submitTitle={t('user.content-manager-detail-data.yes')}
+        icon={WarningIcon}
+        submitAction={() => {
+          setShowModalDelete(false);
+          void handlerDeleteNotificationSelected();
+        }}
+        btnSubmitStyle="btn-error"
+        cancelAction={() => {
+          setShowModalDelete(false);
+        }}
+      />
       <div
         className={`${open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'} pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full ease-in-out duration-300`}
       >
@@ -265,7 +284,7 @@ const Layout: React.FC<any> = props => {
                         <p 
                           className="text-[14px] text-body-text-2"
                           onClick={() => {
-                            void handlerDeleteNotificationSelected();
+                            setShowModalDelete(true);
                           }}
                         >
                           {t('user.notification.delete')} {t('user.notification.selected')}
