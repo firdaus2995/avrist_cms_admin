@@ -38,6 +38,7 @@ const Layout: React.FC<any> = props => {
   const [limit, setLimit] = useState<number>(10);
   const [total, setTotal] = useState<any>(0);
   const [showModalDelete, setShowModalDelete] = useState<any>(false);
+  const [isSingle, setIsSingle] = useState<any>(false);
 
   // RTK SEE NOTIFICATION
   const [ seeNotification ] = useSeeNotificationMutation();
@@ -246,8 +247,12 @@ const Layout: React.FC<any> = props => {
         submitTitle={t('user.content-manager-detail-data.yes')}
         icon={WarningIcon}
         submitAction={() => {
+          if (isSingle) {
+            void handlerDeleteNotificationSingle(selected[0]?.id);
+          }else{
+            void handlerDeleteNotificationSelected();
+          }
           setShowModalDelete(false);
-          void handlerDeleteNotificationSelected();
         }}
         btnSubmitStyle="btn-error"
         cancelAction={() => {
@@ -284,6 +289,7 @@ const Layout: React.FC<any> = props => {
                         <p 
                           className="text-[14px] text-body-text-2"
                           onClick={() => {
+                            setIsSingle(false);
                             setShowModalDelete(true);
                           }}
                         >
@@ -334,7 +340,8 @@ const Layout: React.FC<any> = props => {
                                   <div 
                                     className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer"
                                     onClick={() => {
-                                      void handlerDeleteNotificationSingle(element.id);
+                                      setIsSingle(true);
+                                      setShowModalDelete(true);
                                     }}
                                   >
                                     <img className="w-[18px] h-[18px]" src={DeleteSmall} />
