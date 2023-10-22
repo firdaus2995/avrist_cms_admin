@@ -11,39 +11,39 @@ import * as yup from 'yup';
 import { t } from 'i18next';
 import { useEffect } from 'react';
 
-const schema = yup.object().shape({
-  newPassword: yup
-    .string()
-    .required(t('user.new-password-form.newPasswordRequiredError') || '')
-    .test(
-      'empty-check',
-      t('user.new-password-form.invalidPassword') || '',
-      newPassword => newPassword.length > 0,
-    )
-    .matches(
-      /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
-      t('user.new-password-form.invalidPassword') || '',
-    ),
-  confirmNewPassword: yup
-    .string()
-    .required(t('user.new-password-form.newPasswordRequiredError') || '')
-    .test(
-      'empty-check',
-      t('user.new-password-form.invalidPassword') || '',
-      confirmNewPassword => confirmNewPassword.length > 0,
-    )
-    .matches(
-      /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/,
-      t('user.new-password-form.invalidPassword') || '',
-    )
-    .oneOf([yup.ref('newPassword')], t('user.new-password-form.passwordMismatchError') || ''),
-});
-
 const NewPasswordForm = () => {
   const dispatch = useAppDispatch();
   const { token } = useParams();
 
   const navigate = useNavigate();
+
+  const schema = yup.object().shape({
+    newPassword: yup
+      .string()
+      .required(t('user.new-password-form.newPasswordRequiredError') ?? '')
+      .test(
+        'empty-check',
+        t('user.new-password-form.invalidPassword') ?? '',
+        newPassword => newPassword.length > 0,
+      )
+      .matches(
+        /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-={};':"/|,.<>?~[\]`])/,
+        t('user.new-password-form.invalidPassword') ?? '',
+      ),
+    confirmNewPassword: yup
+      .string()
+      .required(t('user.new-password-form.newPasswordRequiredError') ?? '')
+      .test(
+        'empty-check',
+        t('user.new-password-form.invalidPassword') ?? '',
+        confirmNewPassword => confirmNewPassword.length > 0,
+      )
+      .matches(
+        /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-={};':"/|,.<>?~[\]`])/,
+        t('user.new-password-form.invalidPassword') ?? '',
+      )
+      .oneOf([yup.ref('newPassword')], t('user.new-password-form.passwordMismatchError') ?? ''),
+  });
 
   const {
     control,
@@ -63,11 +63,8 @@ const NewPasswordForm = () => {
 
   useEffect(() => {
     if (urlResponse && !isError) {
-      urlResponse.validateResetPasswordUrl.result
-        ? null
-        : navigate('/forgot-password', { replace: true, state: { resetFailed: true } });
-    } else {
-      navigate('/forgot-password', { replace: true, state: { resetFailed: true } });
+      if (!urlResponse.validateResetPasswordUrl.result)
+        navigate('/forgot-password', { replace: true, state: { resetFailed: true } });
     }
   }, [urlResponse, isError]);
 

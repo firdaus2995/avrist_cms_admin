@@ -5,7 +5,7 @@ import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
 import EditIcon from '@/assets/sidebar/Edit-user.png';
 import ProfilePhoto from '@/assets/Profile-photo.png';
 import WarningOrange from '@/assets/warning-orange.svg';
-import ModalForm from '../ModalForm';
+import CloseIcon from '@/assets/close.png';
 import FileUploaderAvatar from '../FileUploaderAvatar';
 import { clearAuth } from '@/services/Login/slice';
 import { sidebarList } from './list';
@@ -20,6 +20,10 @@ import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { t } from 'i18next';
 import { getCredential, removeCredential } from '@/utils/Credential';
+import Modal from '@/components/atoms/Modal';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import ModalConfirm from '../ModalConfirm';
 
 interface ISidebar {
@@ -73,6 +77,58 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     },
   ];
 
+  const schema = yup.object().shape({
+    currentPassword: yup
+      .string()
+      .required(t('user.new-password-form.newPasswordRequiredError') ?? ''),
+    newPassword: yup
+      .string()
+      .required(t('user.new-password-form.newPasswordRequiredError') ?? '')
+      .test(
+        'empty-check',
+        t('user.new-password-form.invalidPassword') ?? '',
+        newPassword => newPassword.length > 0,
+      )
+      .matches(
+        /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-={};':"/|,.<>?~[\]`])/,
+        t('user.new-password-form.invalidPassword') ?? '',
+      ),
+    confirmNewPassword: yup
+      .string()
+      .required(t('user.new-password-form.newPasswordRequiredError') ?? '')
+      .test(
+        'empty-check',
+        t('user.new-password-form.invalidPassword') ?? '',
+        confirmNewPassword => confirmNewPassword.length > 0,
+      )
+      .matches(
+        /(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-={};':"/|,.<>?~[\]`])/,
+        t('user.new-password-form.invalidPassword') ?? '',
+      ),
+  });
+
+  const {
+    control,
+    setValue,
+    getValues,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
+
+  const {
+    control: controlYup,
+    setValue: setValueYup,
+    getValues: getValuesYup,
+    handleSubmit: handleSubmitYup,
+    reset: resetYup,
+    formState: { errors: errorsYup },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useAppDispatch();
@@ -84,15 +140,9 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   const [sidebarAvatar, setSidebarAvatar] = useState(null);
   // EDIT PROFILE
   const [openEditProfileModal, setOpenEditProfileModal] = useState(false);
-  const [avatar, setAvatar] = useState('');
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
   const [role, setRole] = useState('');
   // CHANGE PASSWORD
   const [openChangePasswordModal, setOpenChangePasswordModal] = useState(false);
-  const [recentPassword, setRecentPassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [confirmNewPasswordError, setConfirmNewPasswordError] = useState(false);
   // LOGOUT
   const [openLogoutModal, setOpenLogoutModal] = useState(false);
@@ -136,6 +186,12 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   };
 
   useEffect(() => {
+    if (!errorsYup?.currentPassword) {
+      setConfirmNewPasswordError(false);
+    }
+  }, [getValuesYup().confirmNewPassword]);
+
+  useEffect(() => {
     const pathName = location.pathname;
 
     for (const parentItem of sidebarList) {
@@ -158,10 +214,10 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
 
   useEffect(() => {
     if (dataProfile) {
-      setFullName(dataProfile?.userProfile?.fullName);
-      setEmail(dataProfile?.userProfile?.email);
+      setValue('fullName', dataProfile?.userProfile?.fullName);
+      setValue('avatar', dataProfile?.userProfile?.profilePicture);
+      setValue('email', dataProfile?.userProfile?.email);
       setRole(dataProfile?.userProfile?.role?.name);
-      setAvatar(dataProfile?.userProfile?.profilePicture);
       if (
         dataProfile?.userProfile?.profilePicture !== null ||
         dataProfile?.userProfile?.profilePicture !== ''
@@ -184,15 +240,16 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
     setOpenEditProfileModal(false);
     setOpenChangePasswordModal(false);
     setConfirmNewPasswordError(false);
-    setRecentPassword('');
-    setNewPassword('');
-    setConfirmNewPassword('');
-    setAvatar(dataProfile?.userProfile?.profilePicture);
-    setFullName(dataProfile?.userProfile?.fullName);
-    setEmail(dataProfile?.userProfile?.email);
+    setValueYup('currentPassword', '');
+    setValueYup('newPassword', '');
+    setValueYup('confirmNewPassword', '');
+    setValue('avatar', dataProfile?.userProfile?.profilePicture);
+    setValue('fullName', dataProfile?.userProfile?.fullName);
+    setValue('email', dataProfile?.userProfile?.email);
   };
 
-  const handlerActionLink = () => {
+  const handlerActionLink = (e: any) => {
+    e.preventDefault();
     setOpenEditProfileModal(false);
     setTimeout(() => {
       setOpenChangePasswordModal(true);
@@ -200,9 +257,11 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   };
 
   const submitEditProfile = () => {
+    const formData = getValues();
+
     const payload = {
-      profilePicture: avatar,
-      fullName,
+      profilePicture: formData.avatar,
+      fullName: formData.fullName,
     };
     editProfile(payload)
       .unwrap()
@@ -229,14 +288,14 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
   };
 
   const submitChangePassword = () => {
-    if (confirmNewPassword !== newPassword) {
+    if (getValuesYup().confirmNewPassword !== getValuesYup().newPassword) {
       setConfirmNewPasswordError(true);
     } else {
       setConfirmNewPasswordError(false);
 
       const payload = {
-        oldPassword: recentPassword,
-        newPassword,
+        oldPassword: getValuesYup().currentPassword,
+        newPassword: getValuesYup().newPassword,
       };
       changePassword(payload)
         .unwrap()
@@ -245,7 +304,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
             openToast({
               type: 'success',
               title: t('toast-success'),
-              message: t('user.change-password.success-msg', { name: fullName }),
+              message: t('user.change-password.success-msg', { name: getValues().fullName }),
             }),
           );
           handlerCancel();
@@ -255,7 +314,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
             openToast({
               type: 'error',
               title: t('toast-failed'),
-              message: t('user.change-password.failed-msg', { name: fullName }),
+              message: t('user.change-password.failed-msg', { name: getValues().fullName }),
             }),
           );
         });
@@ -285,7 +344,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
         </div>
         {open && (
           <div className="text-white flex flex-col mt-2 items-center justify-center">
-            <p className="font-bold">{fullName}</p>
+            <p className="font-bold">{getValues().fullName}</p>
             <p>{role}</p>
           </div>
         )}
@@ -460,102 +519,196 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
 
   return (
     <React.Fragment>
-      <ModalForm
-        height={700}
-        width={600}
-        open={openEditProfileModal}
-        loading={isLoadingEditProfileModal}
-        formTitle={t('user.edit-profile.title')}
-        submitTitle={t('user.edit-profile.save')}
-        cancelTitle={t('user.edit-profile.cancel')}
-        cancelAction={handlerCancel}
-        submitAction={submitEditProfile}
-        submitType=""
-        additionalButton={
-          <button className="btn btn-outline btn-primary" onClick={handlerActionLink}>
-            {t('user.edit-profile.change-password')}
-          </button>
-        }>
-        <FileUploaderAvatar
-          image={avatar}
-          imageChanged={(image: any) => {
-            setAvatar(image);
-          }}
-        />
-        <InputText
-          labelTitle={t('user.edit-profile.fullname')}
-          labelStyle="font-bold	"
-          labelWidth={125}
-          value={fullName}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setFullName(event.target.value);
-          }}
-        />
-        <InputText
-          labelTitle={t('user.edit-profile.email')}
-          labelStyle="font-bold	"
-          labelWidth={125}
-          value={email}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          disabled
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setEmail(event.target.value);
-          }}
-        />
-      </ModalForm>
-      <ModalForm
-        width={600}
-        open={openChangePasswordModal}
-        loading={isLoadingChangePasswordProfileModal}
-        formTitle={t('user.change-password.title')}
-        submitTitle={t('user.change-password.save')}
-        cancelTitle={t('user.change-password.cancel')}
-        cancelAction={handlerCancel}
-        submitAction={submitChangePassword}>
-        <InputPassword
-          labelTitle={t('user.change-password.recent-password')}
-          labelStyle="font-bold	"
-          labelWidth={175}
-          value={recentPassword}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setRecentPassword(event.target.value);
-          }}
-        />
-        <InputPassword
-          labelTitle={t('components.molecules.new-password')}
-          labelStyle="font-bold	"
-          labelWidth={175}
-          value={newPassword}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setNewPassword(event.target.value);
-          }}
-        />
-        <InputPassword
-          labelTitle={t('user.change-password.confirm-password')}
-          labelStyle="font-bold	"
-          labelWidth={175}
-          value={confirmNewPassword}
-          direction="row"
-          themeColor="lavender"
-          roundStyle="xl"
-          isError={confirmNewPasswordError}
-          errorMessage={t('form.user.change-password.confirm-password-not-match') ?? ''}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-            setConfirmNewPassword(event.target.value);
-          }}
-        />
-      </ModalForm>
+      <Modal open={openEditProfileModal} width={600} toggle={() => null}>
+        <div className="flex justify-between">
+          <p className="text-2xl font-bold">{t('user.edit-profile.title')}</p>
+          <img
+            src={CloseIcon}
+            className="cursor-pointer w-[18px] h-[18px]"
+            onClick={() => {
+              setOpenEditProfileModal(false);
+              reset();
+              handlerCancel();
+            }}
+          />
+        </div>
+        <form
+          className="w-full flex flex-col items-center gap-4"
+          onSubmit={handleSubmit(submitEditProfile)}>
+          <Controller
+            name="avatar"
+            control={control}
+            render={() => (
+              <FileUploaderAvatar
+                image={getValues().avatar}
+                imageChanged={(image: any) => {
+                  setValue('avatar', image);
+                }}
+              />
+            )}
+          />
+
+          <Controller
+            name="fullName"
+            control={control}
+            defaultValue={getValues().fullName}
+            rules={{ required: t('components.atoms.required') ?? '' }}
+            render={({ field }) => (
+              <div className="w-full">
+                <InputText
+                  labelTitle={t('user.edit-profile.fullname')}
+                  labelStyle="font-bold"
+                  labelWidth={125}
+                  direction="row"
+                  themeColor="lavender"
+                  roundStyle="xl"
+                  isError={!!errors?.fullName}
+                  helperText={errors?.fullName?.message}
+                  {...field}
+                />
+              </div>
+            )}
+          />
+
+          <Controller
+            name="email"
+            control={control}
+            defaultValue={getValues().email}
+            render={({ field }) => (
+              <div className="w-full">
+                <InputText
+                  labelTitle={t('user.edit-profile.email')}
+                  labelStyle="font-bold"
+                  labelWidth={125}
+                  direction="row"
+                  themeColor="lavender"
+                  roundStyle="xl"
+                  disabled
+                  {...field}
+                />
+              </div>
+            )}
+          />
+          <div className={`w-full flex gap-3 justify-between`}>
+            <button
+              className="btn btn-outline btn-primary"
+              onClick={e => {
+                handlerActionLink(e);
+              }}>
+              {t('user.edit-profile.change-password')}
+            </button>
+            <div className="flex flex-row gap-3">
+              <button
+                type="reset"
+                className="btn btn-outline w-[105px]"
+                onClick={() => {
+                  setOpenEditProfileModal(false);
+                  reset();
+                  handlerCancel();
+                }}>
+                {t('user.edit-profile.cancel')}
+              </button>
+              <button className={`btn btn-success w-[105px]`} type="submit">
+                {isLoadingEditProfileModal ? t('loading') + '...' : t('user.edit-profile.save')}
+              </button>
+            </div>
+          </div>
+        </form>
+      </Modal>
+
+      <Modal open={openChangePasswordModal} width={600} toggle={() => null}>
+        <div className="flex justify-between">
+          <p className="text-2xl font-bold">{t('user.change-password.title')}</p>
+          <img
+            src={CloseIcon}
+            className="cursor-pointer w-[18px] h-[18px]"
+            onClick={() => {
+              setOpenChangePasswordModal(false);
+              resetYup();
+              handlerCancel();
+            }}
+          />
+        </div>
+        <form
+          className="w-full flex flex-col items-center gap-4"
+          onSubmit={handleSubmitYup(submitChangePassword)}>
+          <Controller
+            control={controlYup}
+            name="currentPassword"
+            defaultValue={getValuesYup().currentPassword}
+            render={({ field }) => (
+              <InputPassword
+                labelTitle={t('user.change-password.recent-password')}
+                labelStyle="font-bold"
+                labelWidth={175}
+                direction="row"
+                themeColor="lavender"
+                isError={!!errorsYup?.currentPassword}
+                errorMessage={errorsYup?.currentPassword?.message}
+                roundStyle="xl"
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            control={controlYup}
+            name="newPassword"
+            defaultValue={getValuesYup().newPassword}
+            render={({ field }) => (
+              <InputPassword
+                labelTitle={t('components.molecules.new-password')}
+                labelStyle="font-bold"
+                labelWidth={175}
+                direction="row"
+                themeColor="lavender"
+                isError={!!errorsYup?.newPassword}
+                errorMessage={errorsYup?.newPassword?.message}
+                roundStyle="xl"
+                {...field}
+              />
+            )}
+          />
+          <Controller
+            control={controlYup}
+            name="confirmNewPassword"
+            defaultValue={getValuesYup().confirmNewPassword}
+            render={({ field }) => (
+              <InputPassword
+                labelTitle={t('user.change-password.confirm-password')}
+                labelStyle="font-bold"
+                labelWidth={175}
+                direction="row"
+                themeColor="lavender"
+                isError={!!errorsYup?.confirmNewPassword || confirmNewPasswordError}
+                errorMessage={
+                  confirmNewPasswordError
+                    ? t('form.user.change-password.confirm-password-not-match') ?? ''
+                    : errorsYup?.confirmNewPassword?.message
+                }
+                roundStyle="xl"
+                {...field}
+              />
+            )}
+          />
+          <div className="w-full flex flex-row justify-end gap-3">
+            <button
+              type="reset"
+              className="btn btn-outline w-[105px]"
+              onClick={() => {
+                setOpenChangePasswordModal(false);
+                reset();
+                handlerCancel();
+              }}>
+              {t('user.edit-profile.cancel')}
+            </button>
+            <button className={`btn w-[105px]`} type="submit">
+              {isLoadingChangePasswordProfileModal
+                ? t('loading') + '...'
+                : t('user.edit-profile.save')}
+            </button>
+          </div>
+        </form>
+      </Modal>
       <ModalConfirm
         open={openLogoutModal}
         title={t('user.logout.title')}
@@ -568,7 +721,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           handeLogout();
         }}
         icon={WarningOrange}
-        message={t('user.logout.message', { name: fullName }) || ''}
+        message={t('user.logout.message', { name: getValues().fullName }) ?? ''}
         btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}
       />
       <div
