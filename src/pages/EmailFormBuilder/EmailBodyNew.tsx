@@ -99,6 +99,7 @@ export default function EmailBodyNew() {
           defaultValue=""
           render={({ field }) => (
             <InputText
+              {...field}
               labelTitle="Title"
               labelStyle="font-semibold"
               labelWidth={200}
@@ -108,7 +109,6 @@ export default function EmailBodyNew() {
               placeholder="Enter your title"
               inputWidth={400}
               maxLength={30}
-              {...field}
             />
           )}
         />
@@ -118,6 +118,7 @@ export default function EmailBodyNew() {
           defaultValue=""
           render={({ field }) => (
             <TextArea
+              {...field}
               labelTitle="Short Description"
               labelStyle="font-semibold"
               labelWidth={200}
@@ -125,7 +126,6 @@ export default function EmailBodyNew() {
               direction="row"
               placeholder="Enter description"
               inputWidth={400}
-              {...field}
             />
           )}
         />

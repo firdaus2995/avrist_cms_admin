@@ -18,6 +18,7 @@ export default function EmailBodyEdit() {
   const {
     control,
     handleSubmit,
+    reset,
     // eslint-disable-next-line no-empty-pattern
     formState: {},
   } = useForm();
@@ -28,7 +29,6 @@ export default function EmailBodyEdit() {
   // FORM STATE
   const [id] = useState<number>(Number(params.id));
   const [value, setValue] = useState<any>([]);
-  const [emailBodyDetail, setEmailBodyDetail] = useState<any>({});
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
@@ -45,11 +45,14 @@ export default function EmailBodyEdit() {
 
   useEffect(() => {
     if (data) {
-      setEmailBodyDetail({
-        title: data?.emailBodyDetail?.title,
-        shortDesc: data?.emailBodyDetail?.shortDesc,
-      })
       setValue(data?.emailBodyDetail?.value);
+
+      const defaultValues: any = {};
+      
+      defaultValues.title = data?.emailBodyDetail?.title;
+      defaultValues.shortDesc = data?.emailBodyDetail?.shortDesc;
+
+      reset({ ...defaultValues });
     };
   }, [data]);  
 
@@ -117,9 +120,10 @@ export default function EmailBodyEdit() {
         <Controller
           name="title"
           control={control}
-          defaultValue={emailBodyDetail?.title ?? ""}
+          defaultValue=""
           render={({ field }) => (
             <InputText
+              {...field}
               labelTitle="Title"
               labelStyle="font-semibold"
               labelWidth={200}
@@ -129,16 +133,16 @@ export default function EmailBodyEdit() {
               placeholder="Enter your title"
               inputWidth={400}
               maxLength={30}
-              {...field}
             />
           )}
         />
         <Controller
           name="shortDesc"
           control={control}
-          defaultValue={emailBodyDetail?.shortDesc ?? ""}
+          defaultValue=""
           render={({ field }) => (
             <TextArea
+              {...field}
               labelTitle="Short Description"
               labelStyle="font-semibold"
               labelWidth={200}
@@ -146,7 +150,6 @@ export default function EmailBodyEdit() {
               direction="row"
               placeholder="Enter description"
               inputWidth={400}
-              {...field}
             />
           )}
         />
