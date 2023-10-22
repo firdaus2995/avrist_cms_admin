@@ -14,10 +14,12 @@ import { Link, To } from 'react-router-dom';
 import { useGetUserGuideQuery } from '@/services/Config/configApi';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import { store } from '@/store';
 
 export default function Dashboard() {
   const [url, setUrl] = useState('');
   const fetchUserGuideQuery = useGetUserGuideQuery({});
+  const roles = store.getState().loginSlice.roles;
   const { data: userGuide } = fetchUserGuideQuery;
 
   useEffect(() => {
@@ -32,6 +34,7 @@ export default function Dashboard() {
       subtitle: t('dashboard.shortcut.regist-template-page.subtitle'),
       btnText: t('dashboard.shortcut.regist-template-page.button'),
       path: '/page-template/new',
+      role: 'PAGE_TEMPLATE_REGISTRATION',
       image: content1,
     },
     {
@@ -39,6 +42,7 @@ export default function Dashboard() {
       subtitle: t('dashboard.shortcut.add-content.subtitle'),
       btnText: t('dashboard.shortcut.add-content.button'),
       path: '/content-manager',
+      role: 'CONTENT_MANAGER_READ',
       image: content2,
     },
     {
@@ -46,6 +50,7 @@ export default function Dashboard() {
       subtitle: t('dashboard.shortcut.build-your-component-structure.subtitle'),
       btnText: t('dashboard.shortcut.build-your-component-structure.button'),
       path: '/content-type/new',
+      role: 'CONTENT_TYPE_CREATE',
       image: content3,
     },
   ];
@@ -80,8 +85,9 @@ export default function Dashboard() {
       | ReactPortal
       | null
       | undefined;
+    role: string | null | undefined;
   }) => {
-    return (
+    return roles?.includes(data.role) ? (
       <div className="w-full flex flex-row xl:h-[35vh] lg:h-[20vh] rounded-xl shadow-md mt-5 bg-white">
         <div className="flex w-1/3 p-10">
           <img className="w-full" src={data.image} />
@@ -111,7 +117,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    );
+    ) : null;
   };
 
   return (
