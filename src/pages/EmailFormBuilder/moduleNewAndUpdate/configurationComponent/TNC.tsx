@@ -38,6 +38,7 @@ const TNC: React.FC<ITNC> = ({ data, configList, valueChange }) => {
         border={false}
         parentData={data}
         error={data?.mandatory?.items}
+        items={data?.items}
         helperText="This field is required"
         onChange={(e: any) => {
           valueChange('items', e);

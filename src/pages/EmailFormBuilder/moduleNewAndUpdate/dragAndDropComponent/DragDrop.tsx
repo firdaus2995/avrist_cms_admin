@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useRef } from "react";
 import { useDrag, useDrop } from "react-dnd";
 
 interface IDragDrop {
@@ -61,10 +61,6 @@ const DragDrop: React.FC<IDragDrop> = ({
 
   const opacity = isDragging ? 0 : 1;
   drag(drop(ref));
-
-  useEffect(() => {
-    console.log(index);
-  }, [index]);
 
   return (
     <div 

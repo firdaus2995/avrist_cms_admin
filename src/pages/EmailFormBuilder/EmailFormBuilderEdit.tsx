@@ -184,58 +184,62 @@ export default function EmailFormBuilderEdit() {
           uuid: uuidv4(),
           type: submmiterEmail ? 'SUBMITTEREMAIL' : element?.fieldType.replaceAll('_', ''),
           name: element?.name,
-          ...(!!Object.getOwnPropertyDescriptor(config, 'placeholder') && {
-            placeholder: config?.placeholder,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_input') && {
-            multipleInput: config?.multiple_input === 'true' ?? false,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_select') && {
-            multipleSelect: config?.multiple_select === 'true' ?? false,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_upload') && {
-            multipleUpload: config?.multiple_upload === 'true' ?? false,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'required') && {
-            required: config?.required === 'true' ?? false,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'use_decimal') && {
-            useDecimal: config?.required === "true" ?? false,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'min_length') && {
-            minLength: config?.min_length,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'max_length') && {
-            maxLength: config?.max_length,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'allow_other_value') && {
-            allowOtherValue: config?.allow_other_value === 'true' ?? false,
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'size') && {
-            size: config?.size[0].toUpperCase(),
-          }),
-          ...(!!Object.getOwnPropertyDescriptor(config, 'position') && {
-            position: config?.position[0].toUpperCase(),
-          }),
-
-          ...((element?.fieldType === 'CHECKBOX' ||
-            element?.fieldType === 'RADIO_BUTTON' ||
-            element?.fieldType === 'DROPDOWN' || 
-            element?.fieldType === 'RATING' ||
-            element?.fieldType === 'IMAGE_RADIO') && {
-            items: value ? value.split(';') : [],
-          }),
-
-          mandatory: {
-            name: false,
+          ...(!!config && {
+            ...(!!Object.getOwnPropertyDescriptor(config, 'placeholder') && {
+              placeholder: config?.placeholder,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_input') && {
+              multipleInput: config?.multiple_input === 'true' ?? false,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_select') && {
+              multipleSelect: config?.multiple_select === 'true' ?? false,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'multiple_upload') && {
+              multipleUpload: config?.multiple_upload === 'true' ?? false,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'required') && {
+              required: config?.required === 'true' ?? false,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'use_decimal') && {
+              useDecimal: config?.required === "true" ?? false,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'min_length') && {
+              minLength: config?.min_length,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'max_length') && {
+              maxLength: config?.max_length,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'allow_other_value') && {
+              allowOtherValue: config?.allow_other_value === 'true' ?? false,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'size') && {
+              size: config?.size[0].toUpperCase(),
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'position') && {
+              position: config?.position[0].toUpperCase(),
+            }),
+  
             ...((element?.fieldType === 'CHECKBOX' ||
               element?.fieldType === 'RADIO_BUTTON' ||
-              element?.fieldType === 'DROPDOWN' ||
+              element?.fieldType === 'DROPDOWN' || 
               element?.fieldType === 'RATING' ||
-              element?.fieldType === 'IMAGE_RADIO') && {
-              items: false,
+              element?.fieldType === 'IMAGE_RADIO' ||
+              element?.fieldType === 'TNC') && {
+              items: value ? value.split(';') : [],
             }),
-          },
+  
+            mandatory: {
+              name: false,
+              ...((element?.fieldType === 'CHECKBOX' ||
+                element?.fieldType === 'RADIO_BUTTON' ||
+                element?.fieldType === 'DROPDOWN' ||
+                element?.fieldType === 'RATING' ||
+                element?.fieldType === 'IMAGE_RADIO' ||
+                element?.fieldType === 'TNC') && {
+                items: false,
+              }),
+            },
+          })
         };
       });
 

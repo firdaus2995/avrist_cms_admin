@@ -12,22 +12,15 @@ import Modal from '../../components/atoms/Modal';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import PaperIcon from '../../assets/paper.svg';
+import TimelineLog from '@/assets/timeline-log.svg';
+import ModalLog from './components/ModalLog';
 import { InputText } from '../../components/atoms/Input/InputText';
 import { CheckBox } from '../../components/atoms/Input/CheckBox';
 import { useForm, Controller } from 'react-hook-form';
-import {
-  useCreateMenuMutation,
-  useDeleteMenuMutation,
-  useEditMenuMutation,
-  useGetMenuListQuery,
-  usePublishMenuMutation,
-  useUpdateMenuStructureMutation,
-} from '../../services/Menu/menuApi';
+import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, usePublishMenuMutation, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
-import TimelineLog from '@/assets/timeline-log.svg';
-import ModalLog from './components/ModalLog';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useGetPageManagementListQuery } from '../../services/PageManagement/pageManagementApi';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
@@ -746,37 +739,40 @@ export default function MenuList() {
                 </div>
               </div>
             </div>
-            {isOpenForm && renderForm()}
-            {!isOpenForm && (
-              <>
-                {dataScructure?.length > 0 && (
-                  <SortableTreeComponent
-                    data={dataScructure}
-                    onClick={(data: any) => {
-                      onEdit(data);
-                    }}
-                    onChange={function (node: any, data: any): void {
-                      handlerUpdateMenuStructure(node, data);
-                    }}
-                  />
-                )}
-                {renderAddButtons()}
-              </>
-            )}
+            {
+              isOpenForm && renderForm()
+            }
+            {
+              !isOpenForm && (
+                <>
+                  {
+                    dataScructure?.length > 0 && (
+                      <SortableTreeComponent
+                        data={dataScructure}
+                        onClick={(data: any) => {
+                          onEdit(data);
+                        }}
+                        onChange={function (node: any, data: any): void {
+                          handlerUpdateMenuStructure(node, data);
+                        }}
+                      />
+                    )
+                  }
+                  {
+                    renderAddButtons()
+                  }
+                </>
+              )
+            }
             <div className="mt-[200px] flex justify-end items-center">
               <div className="flex flex-row p-2 gap-2">
-                <button
-                  className="btn btn-outline text-xs btn-sm w-28 h-10"
-                  onClick={() => {
-                    setShowCancel(true);
-                  }}>
-                  {t('user.menu-list.menuList.cancel')}
-                </button>
                 <button
                   className="btn btn-success text-xs btn-sm w-28 h-10"
                   onClick={() => {
                     handlerPublishMenu();
-                  }}>
+                  }}
+                  disabled={getValues('status') === 'UNPUBLISHED' && true}
+                >
                   {t('user.menu-list.menuList.submit')}
                 </button>
               </div>
@@ -821,7 +817,7 @@ export default function MenuList() {
                   value={takedownNote}
                   containerStyle="rounded-3xl"
                   isError={!takedownNote}
-                  errorText={
+                  helperText={
                     !takedownNote ? t('user.menu-list.menuList.takedownRequired') ?? '' : ''
                   }
                   onChange={e => {
