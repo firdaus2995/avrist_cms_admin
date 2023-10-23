@@ -91,8 +91,22 @@ const Layout: React.FC<any> = props => {
       try {
         const backendData: any = await fetchNotification.refetch();
         if (backendData) {
+          const updatedNotifications = [...notifications];
+
+          // Iterasi melalui notifikasi dari backendData
+          backendData?.data?.notificationList?.notifications.forEach((backendNotification: { id: any; }) => {
+            // Cari notifikasi dengan ID yang sama dalam array updatedNotifications
+            const existingNotification = updatedNotifications.find(
+              notification => notification.id === backendNotification.id
+            );
+
+            if (!existingNotification) {
+              // Jika notifikasi dengan ID yang sama tidak ditemukan, tambahkan notifikasi ini
+              updatedNotifications.push({ ...backendNotification });
+            }
+          });
           setTotal(backendData?.data?.notificationList.total);
-          setNotifications(backendData?.data?.notificationList?.notifications);
+          setNotifications(updatedNotifications);
         };    
       } catch (error) {
         console.error("Error while fetching data:", error);
