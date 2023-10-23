@@ -3,17 +3,36 @@ import { useForm, Controller } from 'react-hook-form';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import FormList from '@/components/molecules/FormList';
+import {
+  useCreateMenuMutation,
+  // useDeleteMenuMutation,
+  // useEditMenuMutation,
+  // useGetMenuListQuery,
+  // usePublishMenuMutation,
+  // useUpdateMenuStructureMutation,
+} from '../../services/Menu/menuApi';
+import { useAppDispatch } from '../../store';
+import { openToast } from '../../components/atoms/Toast/slice';
+import { t } from 'i18next';
+import { useNavigate } from 'react-router-dom';
 
 // OTHER GET DATA
 import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
 const maxImageSize = 2 * 1024 * 1024;
 
 export default function MenuNew() {
+  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   const {
     control,
     handleSubmit,
     formState: { errors },
   } = useForm();
+
+  const [selectedType, setSelectedType] = useState<any>({
+    value: 'PAGE',
+    label: 'Page',
+  });
 
   const [listPage, setListPage] = useState([]);
   const [pageIndex] = useState(0);
@@ -50,7 +69,6 @@ export default function MenuNew() {
 
         return list;
       });
-      console.log(pagesTemp);
       setListPage(filteredListPageData);
     }
   }, [listPageData]);
@@ -60,15 +78,35 @@ export default function MenuNew() {
     onCreate(e);
   };
 
+  const [createMenu] = useCreateMenuMutation();
+
   const onCreate = (e: any) => {
     const payload = {
       title: e.title,
-      menuType: e.menuType,
-      externalUrl: e.externalUrl,
-      isNewTab: e.isNewTab,
+      menuType: selectedType.value,
+      externalUrl: e.externalUrl || '',
+      isNewTab: e.isNewTab || false,
       pageId: e.pageId,
     };
-    console.log(payload);
+    createMenu(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+          }),
+        );
+        navigate('/menu', { replace: true });
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+          }),
+        );
+      });
   };
 
   return (
@@ -100,39 +138,27 @@ export default function MenuNew() {
                 <Typography type="body" size="m" weight="bold" className="w-40 ml-1">
                   Type
                 </Typography>
-                <Controller
-                  name="menuType"
-                  control={control}
-                  rules={{ required: 'Type is required' }}
-                  render={({ field }) => {
-                    const onChange = useCallback((e: any) => {
-                      field.onChange({ target: { value: e.value } });
-                    }, []);
-                    return (
-                      <FormList.DropDown
-                        {...field}
-                        labelTitle="Type"
-                        error={!!errors?.menuType?.message}
-                        helperText={errors?.menuType?.message}
-                        items={[
-                          {
-                            value: 'PAGE',
-                            label: 'Page',
-                          },
-                          {
-                            value: 'LINK',
-                            label: 'Link',
-                          },
-                          {
-                            value: 'NO_LANDING_PAGE',
-                            label: 'No Landing Page',
-                          },
-                        ]}
-                        onChange={onChange}
-                        inputWidth={350}
-                      />
-                    );
+                <FormList.DropDown
+                  defaultValue={selectedType.label}
+                  labelTitle="Type"
+                  items={[
+                    {
+                      value: 'PAGE',
+                      label: 'Page',
+                    },
+                    {
+                      value: 'LINK',
+                      label: 'Link',
+                    },
+                    {
+                      value: 'NO_LANDING_PAGE',
+                      label: 'No Landing Page',
+                    },
+                  ]}
+                  onChange={(e: any) => {
+                    setSelectedType(e);
                   }}
+                  inputWidth={350}
                 />
               </div>
             </div>
@@ -143,7 +169,7 @@ export default function MenuNew() {
                   <span className={'text-reddist text-lg'}>{`*`}</span>
                 </Typography>
                 <Controller
-                  name="page"
+                  name="pageId"
                   control={control}
                   rules={{ required: 'Page is required' }}
                   render={({ field }) => {
@@ -169,7 +195,27 @@ export default function MenuNew() {
                 key="menuIcon"
                 name="menuIcon"
                 control={control}
-                rules={{ required: 'Alt text is required' }}
+                rules={{
+                  required: `${t('user.page-template-new.form.imagePreview.required-message')}`,
+                  validate: value => {
+                    if (value && value.length > 0) {
+                      // Parse the input value as JSON
+                      const parsedValue = JSON.parse(value);
+
+                      // Check if parsedValue is an array and every item has imageUrl and altText properties
+                      if (
+                        Array.isArray(parsedValue) &&
+                        parsedValue.every(item => item.imageUrl && item.altText)
+                      ) {
+                        return true; // Validation passed
+                      } else {
+                        return 'All items must have Image and Alt Text'; // Validation failed
+                      }
+                    } else {
+                      return `${t('user.page-template-new.form.imagePreview.required-message')}`; // Validation failed for empty value
+                    }
+                  },
+                }}
                 render={({ field }) => {
                   const onChange = useCallback((e: any) => {
                     field.onChange({ target: { value: e } });

@@ -69,7 +69,6 @@ const DropDown = ({
           type="text"
           placeholder="Search or select an option..."
           value={searchTerm}
-          // onChange={handleInputChange}
           onClick={() => {
             setIsOpen(!isOpen);
           }}
@@ -126,7 +125,9 @@ const DropDown = ({
               ))}
             </ul>
           ) : (
-            <p className="px-4 py-2 text-gray-500">{t('components.molecules.no-matching-option')}</p>
+            <p className="px-4 py-2 text-gray-500">
+              {t('components.molecules.no-matching-option')}
+            </p>
           )}
         </div>
       )}
