@@ -11,6 +11,7 @@ import { setActivatedNotificationPage } from '@/services/Notification/notificati
 import { getCredential } from '@/utils/Credential';
 import {
   useGetNotificationQuery,
+  useReadNotificationMutation,
   useSeeNotificationMutation,
 } from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
@@ -22,6 +23,9 @@ const NotificationBell: React.FC = () => {
   const token = getCredential().accessToken;
   const ref = useRef(null);
   const dispatch = useAppDispatch();
+
+  // RTK READ NOTIFICATION
+  const [ readNotification ] = useReadNotificationMutation();
 
   const [notifications, setNotifications] = useState<any>([]);
   const [count, setCount] = useState(0);
@@ -126,8 +130,20 @@ const NotificationBell: React.FC = () => {
     setLimit(limit + 5);
   };
 
-  const handlerReadAll = (event: any) => {
-    console.log(event);
+  const handlerReadAll = async (event: any) => {
+    const payload = {
+      notificationId: "all",
+    };
+    try {
+      void await readNotification(payload);
+      const backendData: any = await fetchQuery.refetch();
+      if (backendData) {
+        setTotal(backendData?.data?.notificationList.total);
+        setNotifications(backendData?.data?.notificationList?.notifications);
+      };
+    } catch (error) {
+      console.log(error);
+    };
   };
 
   return (
