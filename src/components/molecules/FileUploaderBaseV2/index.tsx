@@ -3,13 +3,13 @@ import { useState, useRef, useEffect } from 'react';
 import UploadDocumentIcon from '@/assets/upload-file-2.svg';
 import AdobePdfIcon from '@/assets/adobe-pdf.svg';
 import Close from '@/assets/close.png';
-import { getCredential } from '@/utils/Credential';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { copyArray, formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { getImageAxios } from '../../../utils/imageUtils';
 import { t } from 'i18next';
+import restApiRequest from '@/utils/restApiRequest';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
@@ -69,9 +69,6 @@ export default function FileUploaderBaseV2({
   };
 
   const handleUpload = async (files: File[]) => {
-    const token = getCredential().accessToken;
-    // const refreshToken = getCredential().refreshToken;
-
     const body = new FormData();
     const fileName = formatFilename(files[0].name);
 
@@ -106,33 +103,22 @@ export default function FileUploaderBaseV2({
 
     try {
       setIsLoading(true);
-      const response = await fetch(`${baseUrl}/files/upload`, {
-        method: 'POST',
-        body,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
 
-      if (response.ok) {
-        const responseData = await response.json();
-        const newFile = { name: fileName, value: files[0], response: responseData.data };
-        if (multiple) {
-          const newData: any = copyArray(items);
-          newData.push(newFile.response);
-          onFilesChange(newData);
-        } else {
-          const newData: any = [newFile.response];
-          onFilesChange(newData);
-        };
+      const response = await restApiRequest('POST', '/files/upload', body)
+      const newFile = { name: fileName, value: files[0], response: response.data.data };
+
+      console.log(newFile);
+      
+
+      if (multiple) {
+        const newData: any = copyArray(items);
+        newData.push(newFile.response);
+        onFilesChange(newData);
       } else {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('components.molecules.file.failed'),
-          }),
-        );
-      }
+        const newData: any = [newFile.response];
+        onFilesChange(newData);
+      };
+
       if (inputRef.current) {
         inputRef.current.value = '';
       }

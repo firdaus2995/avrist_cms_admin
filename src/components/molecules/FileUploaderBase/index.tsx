@@ -149,7 +149,6 @@ export default function FileUploaderBase({
 
     try {
       const response = await restApiRequest('POST', '/files/upload', formData); // Use restApiRequest here
-
       const newFile = { name: fileName, value: response.data, response: response.data.data };
 
       if (multiple) {
