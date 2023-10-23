@@ -130,7 +130,7 @@ const NotificationBell: React.FC = () => {
     setLimit(limit + 5);
   };
 
-  const handlerReadAll = async (event: any) => {
+  const handlerReadAll = async () => {
     const payload = {
       notificationId: "all",
     };
