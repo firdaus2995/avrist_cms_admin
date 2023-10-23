@@ -159,7 +159,9 @@
       "view-all-notification": "View All Notification",
       "selected": "Selected",
       "delete": "Delete",
-      "selected-all": "Selected All"
+      "selected-all": "Selected All",
+      "delete-selected-title": "Are you sure?",
+      "delete-selected-subtitle": "Do you want to delete selected notification? Deleted notifications cannot be recovered"
     },
     "page-management": {
       "list": {
