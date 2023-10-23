@@ -77,6 +77,8 @@ export default function PageTemplatesNew() {
     fieldId: '',
     description: '',
   });
+  // IMAGE ERROR VALIDATION
+  const [imageRequiredError, setImageRequiredError] = useState(false);
 
   const [configErrors, setConfigErrors] = useState({
     key: '',
@@ -161,10 +163,14 @@ export default function PageTemplatesNew() {
   const { data } = fetchConfigQuery;
 
   const onSubmit = (e: any) => {
-    if (e.pageId) {
-      onSubmitEdit(e);
+    if (e.imagePreview === '[]') {
+      setImageRequiredError(true);
     } else {
-      onSubmitNew(e);
+      if (e.pageId) {
+        onSubmitEdit(e);
+      } else {
+        onSubmitNew(e);
+      }
     }
   };
 
@@ -260,6 +266,7 @@ export default function PageTemplatesNew() {
       };
       void refetch();
     }
+    setImageRequiredError(false);
   }, [mode]);
 
   // FILL DATA FOR DETAIL / EDIT
@@ -622,7 +629,7 @@ export default function PageTemplatesNew() {
             key="pageName"
             name="pageName"
             control={control}
-            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.name || '') : ''}
+            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.name || '' : ''}
             rules={{
               required: {
                 value: true,
@@ -654,7 +661,7 @@ export default function PageTemplatesNew() {
             key="pageDescription"
             name="pageDescription"
             control={control}
-            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.shortDesc || '') : ''}
+            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.shortDesc || '' : ''}
             rules={{
               required: {
                 value: true,
@@ -686,7 +693,7 @@ export default function PageTemplatesNew() {
             key="pageFileName"
             name="pageFileName"
             control={control}
-            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.filenameCode || '') : ''}
+            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.filenameCode || '' : ''}
             rules={{
               required: {
                 value: true,
@@ -721,7 +728,7 @@ export default function PageTemplatesNew() {
             key="imagePreview"
             name="imagePreview"
             control={control}
-            defaultValue={mode === 'edit' ? (pageTemplate?.pageTemplateById?.imageUrl || '') : ''}
+            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.imageUrl || '' : ''}
             rules={{
               required: `${t('user.page-template-new.form.imagePreview.required-message')}`,
               validate: value => {
@@ -763,9 +770,16 @@ export default function PageTemplatesNew() {
                   }
                   isDocument={false}
                   multiple={false}
-                  error={!!errors?.imagePreview?.message}
-                  helperText={errors?.imagePreview?.message}
-                  onChange={onChange}
+                  error={!!errors?.imagePreview?.message || imageRequiredError}
+                  helperText={
+                    imageRequiredError
+                      ? t('user.page-template-new.form.imagePreview.required-message')
+                      : errors?.imagePreview?.message
+                  }
+                  onChange={(e: any) => {
+                    onChange(e);
+                    setImageRequiredError(false);
+                  }}
                   border={false}
                   disabled={mode === 'detail'}
                   editMode={mode !== 'detail'}

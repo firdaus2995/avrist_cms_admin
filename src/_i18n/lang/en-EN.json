@@ -129,7 +129,7 @@
     },
     "edit-profile": {
       "title": "Edit Profile",
-      "fullname": "Fullname",
+      "fullname": "Full Name",
       "email": "Email",
       "change-password": "Change Password",
       "cancel": "Cancel",
@@ -139,7 +139,7 @@
     },
     "change-password": {
       "title": "Change Password",
-      "recent-password": "Recent Password",
+      "recent-password": "Current Password",
       "new-password": "New Password",
       "confirm-password": "Confirm New Password",
       "cancel": "Cancel",
@@ -753,6 +753,7 @@
       "menuList": {
         "avristLifeInsurance": "Avrist Life Insurance",
         "menuStructure": "Menu Structure",
+        "menuEdit": "Edit Menu",
         "successDelete": "Success delete",
         "failedDelete": "Failed delete",
         "toastSuccess": "Success",
@@ -772,6 +773,7 @@
         "urlLink": "URL Link",
         "openInNewTab": "Open in New Tab",
         "save": "Save",
+        "edit": "Edit",
         "takedown": "Takedown",
         "takedownTitle": "Do you want to takedown this page?",
         "takedownComment": "Takedown Comment",

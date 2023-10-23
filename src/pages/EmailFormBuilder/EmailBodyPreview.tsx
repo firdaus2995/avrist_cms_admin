@@ -74,6 +74,7 @@ export default function EmailBodyPreview() {
           labelWidth={200}
           labelRequired
           value={value}
+          rawValueHTML={true}
         />
         <div className="mt-[10%]">
 
