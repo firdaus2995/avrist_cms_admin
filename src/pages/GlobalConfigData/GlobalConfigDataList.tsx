@@ -223,13 +223,12 @@ export default function GlobalConfigDataList() {
   const submitDeleteData = () => {
     deleteData({ id: idDelete })
       .unwrap()
-      .then(async d => {
+      .then(async () => {
         setShowConfirm(false);
         dispatch(
           openToast({
             type: 'success',
             title: t('user.global-config-data-list.toast.successDeletePage'),
-            message: d.pageDelete.message,
           }),
         );
         await fetchQuery.refetch();
