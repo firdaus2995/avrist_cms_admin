@@ -107,12 +107,12 @@ export default function GlobalConfigDataNew() {
     };
     editGlobalConfig(payload)
       .unwrap()
-      .then((d: any) => {
+      .then(() => {
         dispatch(
           openToast({
             type: 'success',
             title: t('toast-success'),
-            message: `${t('user.global-config-data-new.toast-success-edit')} ${d.configCreate.value}`,
+            message: `${t('user.global-config-data-new.toast-success-edit')}`,
           }),
         );
         navigate('/global-config-data');

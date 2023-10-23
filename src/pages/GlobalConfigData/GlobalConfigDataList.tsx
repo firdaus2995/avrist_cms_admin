@@ -261,7 +261,7 @@ export default function GlobalConfigDataList() {
           submitTitle={t('user.global-config-data-list.modalConfirm.submitTitle')}
           loading={deleteDataLoading}
           icon={WarningIcon}
-          btnSubmitStyle={''}
+          btnSubmitStyle={'btn-error'}
         />
         <TitleCard
           title={t('user.global-config-data-list.title')}
