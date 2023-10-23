@@ -92,7 +92,7 @@ const DropDown = ({
         </div>
       </div>
       {isOpen && (
-        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto">
+        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto z-50">
           {filteredOptions.length > 0 ? (
             <ul>
               {filteredOptions.map((option: any, index: any) => (

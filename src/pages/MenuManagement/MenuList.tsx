@@ -133,7 +133,7 @@ export default function MenuList() {
 
       return list;
     });
-
+    console.log(data)
     setListPage(listData);
   }, [fetchQueryPage]);
 
