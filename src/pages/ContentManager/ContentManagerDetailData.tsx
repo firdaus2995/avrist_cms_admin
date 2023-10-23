@@ -161,7 +161,7 @@ export default function ContentManagerDetailData() {
     direction,
     search,
     sortBy,
-  });
+  }, {skip: contentDataDetailList?.categoryName === ""});
   const { data: categoryListData } = fetchGetCategoryList;
 
   useEffect(() => {
