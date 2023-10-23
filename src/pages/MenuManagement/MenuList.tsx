@@ -8,7 +8,7 @@ import LifeInsurance from '../../assets/lifeInsurance.png';
 import DropDown from '../../components/molecules/DropDown';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import StatusBadge from '@/components/atoms/StatusBadge';
-import Modal from '../../components/atoms/Modal';
+// import Modal from '../../components/atoms/Modal';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import PaperIcon from '../../assets/paper.svg';
@@ -17,7 +17,14 @@ import ModalLog from './components/ModalLog';
 import { InputText } from '../../components/atoms/Input/InputText';
 import { CheckBox } from '../../components/atoms/Input/CheckBox';
 import { useForm, Controller } from 'react-hook-form';
-import { useCreateMenuMutation, useDeleteMenuMutation, useEditMenuMutation, useGetMenuListQuery, usePublishMenuMutation, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
+import {
+  useCreateMenuMutation,
+  useDeleteMenuMutation,
+  useEditMenuMutation,
+  useGetMenuListQuery,
+  usePublishMenuMutation,
+  useUpdateMenuStructureMutation,
+} from '../../services/Menu/menuApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate } from 'react-router-dom';
@@ -43,7 +50,7 @@ export default function MenuList() {
   const maxChar = 70;
 
   const [isAddClick, setIsAddClicked] = useState(false);
-  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [openTakedownModal, setOpenTakedownModal] = useState(false);
   const [openLogModal, setOpenLogModal] = useState(false);
 
@@ -153,7 +160,7 @@ export default function MenuList() {
       .then(async d => {
         setOpenTakedownModal(false);
         setTakedownNote('');
-        setIsOpenModal(false);
+        setIsEdit(false);
         dispatch(
           openToast({
             type: 'success',
@@ -184,131 +191,22 @@ export default function MenuList() {
     setIsOpenTab(false);
   }
 
-  const onEdit = (data: any) => {
-    setTitle(data.node.title);
-    setEditedTitle(data.node.title);
-    setType(data.node.menuType);
-    setUrlLink(data.node.externalUrl);
-    setPage(data.node.pageId);
-    setIsOpenTab(data.node.isNewTab);
-    setIdDelete(data.node.id);
+  const onEdit = (data: any, action: string | undefined) => {
+    setTitle(data?.node?.title);
+    setEditedTitle(data?.node?.title);
+    setType(data?.node?.menuType);
+    setUrlLink(data?.node?.externalUrl);
+    setPage(data?.node?.pageId);
+    setIsOpenTab(data?.node?.isNewTab);
+    setIdDelete(data?.node?.id);
 
-    setIsOpenModal(true);
-    modalEdit();
-  };
-
-  const modalEdit = () => {
-    return (
-      <Modal open={isOpenModal} toggle={() => null} title="" width={840} height={480}>
-        <div className="grid grid-cols-2 gap-10 p-4 border-b-2">
-          <div className="p-2 absolute right-5 top-5">
-            <svg
-              role="button"
-              onClick={() => {
-                setIsOpenModal(false);
-              }}
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </div>
-          <div className="flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold">
-            {t('user.menu-list.menuList.pageTitle')}
-            <InputText
-              labelTitle=""
-              value={title}
-              inputStyle="rounded-3xl"
-              onChange={e => {
-                setTitle(e.target.value);
-              }}
-            />
-          </div>
-          <div className="flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold">
-            {t('user.menu-list.menuList.type')}
-            <DropDown
-              defaultValue={type}
-              items={[
-                {
-                  value: 'PAGE',
-                  label: 'Page',
-                },
-                {
-                  value: 'LINK',
-                  label: 'Link',
-                },
-                {
-                  value: 'NO_LANDING_PAGE',
-                  label: 'No Landing Page',
-                },
-              ]}
-              onSelect={(_e, val) => {
-                setType(val);
-              }}
-            />
-          </div>
-          {type === 'PAGE' ? (
-            <div className="flex flex-row whitespace-nowrap items-center gap-20 text-lg font-bold">
-              {t('user.menu-list.menuList.page')}
-              <DropDown
-                defaultValue={page}
-                items={listPage}
-                onSelect={(_e, val) => {
-                  setPage(val);
-                }}
-              />
-            </div>
-          ) : (
-            <div className="flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold">
-              {t('user.menu-list.menuList.urlLink')}
-              <InputText
-                labelTitle=""
-                value={urlLink}
-                inputStyle="rounded-3xl"
-                onChange={e => {
-                  setUrlLink(e.target.value);
-                }}
-              />
-            </div>
-          )}
-          <p></p>
-          <div className="w-40 ml-28">
-            <CheckBox
-              defaultValue={isOpenTab}
-              updateFormValue={e => {
-                setIsOpenTab(e.value);
-              }}
-              labelTitle={t('user.menu-list.menuList.openInNewTab')}
-              updateType={''}
-            />
-          </div>
-          <div className="place-self-end flex flex-row items-center gap-5">
-            <div
-              role="button"
-              aria-disabled
-              onClick={() => {
-                setOpenTakedownModal(true);
-                setIsTakedown(false);
-              }}
-              className="py-2 w-30 px-10 bg-white border border-primary rounded-xl flex flex-row gap-2 font-semibold text-primary transition ease-in-out hover:-translate-y-1 delay-150">
-              {t('user.menu-list.menuList.takedown')}
-            </div>
-            <div
-              role="button"
-              aria-disabled
-              onClick={() => {
-                onEditMenu();
-              }}
-              className="py-2 w-28 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white transition ease-in-out hover:-translate-y-1 delay-150">
-              {t('user.menu-list.menuList.save')}
-            </div>
-          </div>
-        </div>
-      </Modal>
-    );
+    if (action === 'EDIT') {
+      setIsEdit(true);
+      setIsOpenForm(true);
+    }
+    if (action === 'TAKEDOWN') {
+      setOpenTakedownModal(true);
+    }
   };
 
   const onCreate = () => {
@@ -359,7 +257,7 @@ export default function MenuList() {
         .unwrap()
         .then(async () => {
           console.log('edited');
-          setIsOpenModal(false);
+          setIsEdit(false);
           dispatch(
             openToast({
               type: 'success',
@@ -369,7 +267,7 @@ export default function MenuList() {
           navigate(0);
         })
         .catch(() => {
-          setIsOpenModal(false);
+          setIsEdit(false);
           dispatch(
             openToast({
               type: 'error',
@@ -410,7 +308,7 @@ export default function MenuList() {
               role="button"
               onClick={() => {
                 // setFormData({...formData, type: 'Page'});
-                setType('Page');
+                setType('PAGE');
                 setIsOpenForm(true);
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
@@ -420,7 +318,7 @@ export default function MenuList() {
               role="button"
               onClick={() => {
                 // setFormData({...formData, type: 'Link'});
-                setType('Link');
+                setType('LINK');
                 setIsOpenForm(true);
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
@@ -430,7 +328,7 @@ export default function MenuList() {
               role="button"
               onClick={() => {
                 // setFormData({...formData, type: 'No Landing Page'});
-                setType('No Landing Page');
+                setType('NO_LANDING_PAGE');
                 setIsOpenForm(true);
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
@@ -465,15 +363,15 @@ export default function MenuList() {
             defaultValue={type}
             items={[
               {
-                value: 'Page',
+                value: 'PAGE',
                 label: 'Page',
               },
               {
-                value: 'Link',
+                value: 'LINK',
                 label: 'Link',
               },
               {
-                value: 'No Landing Page',
+                value: 'NO_LANDING_PAGE',
                 label: 'No Landing Page',
               },
             ]}
@@ -482,7 +380,7 @@ export default function MenuList() {
             }}
           />
         </div>
-        {type === 'Page' ? (
+        {type === 'PAGE' ? (
           <div className="flex flex-row whitespace-nowrap items-center gap-20 text-lg font-bold">
             <span className={`label-text text-base-content`}>
               {t('user.menu-list.menuList.page')}
@@ -496,7 +394,7 @@ export default function MenuList() {
               }}
             />
           </div>
-        ) : type === 'Link' ? (
+        ) : type === 'LINK' ? (
           <div>
             <div className="flex flex-row whitespace-nowrap items-center gap-10 text-lg font-bold">
               {t('user.menu-list.menuList.urlLink')}
@@ -596,11 +494,24 @@ export default function MenuList() {
 
         <div className="w-full flex justify-end my-10">
           <div className="flex flex-row gap-2">
+            {isEdit ? (
+              <div
+                role="button"
+                aria-disabled
+                onClick={() => {
+                  setOpenTakedownModal(true);
+                  setIsTakedown(false);
+                }}
+                className="py-4 w-30 h-[55px] place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-white rounded-xl flex flex-row gap-2 font-semibold text-primary border border-primary">
+                {t('user.menu-list.menuList.takedown')}
+              </div>
+            ) : null}
+
             <div
               role="button"
               aria-disabled
               onClick={() => {
-                onCreate();
+                isEdit ? onEditMenu() : onCreate();
               }}
               className="py-4 w-28 h-[55px] place-self-end transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
               {t('user.menu-list.menuList.save')}
@@ -707,63 +618,66 @@ export default function MenuList() {
           />
 
           <div className="flex flex-col gap-10">
-            <div className="text-2xl font-bold gap-2 text-primary flex flex-row">
-              <img src={LifeInsurance} className="w-8" />
-              {t('user.menu-list.menuList.avristLifeInsurance')}
-            </div>
+            {!isEdit ? (
+              <div className="text-2xl font-bold gap-2 text-primary flex flex-row">
+                <img src={LifeInsurance} className="w-8" />
+                {t('user.menu-list.menuList.avristLifeInsurance')}
+              </div>
+            ) : null}
             <div className="flex flex-col gap-4">
-              <div className="flex flex-row gap-3 items-center">
+              {!isEdit ? (
+                <div className="flex flex-row gap-3 items-center">
+                  <div className="text-2xl font-semibold ">
+                    {t('user.menu-list.menuList.menuStructure')}
+                  </div>
+                  <div
+                    className="cursor-pointer tooltip"
+                    data-tip="Log"
+                    onClick={() => {
+                      setOpenLogModal(true);
+                    }}>
+                    <img src={TimelineLog} className="w-6 h-6" />
+                  </div>
+                  <StatusBadge status={getValues('status') ?? ''} />
+                </div>
+              ) : (
                 <div className="text-2xl font-semibold ">
-                  {t('user.menu-list.menuList.menuStructure')}
+                  {t('user.menu-list.menuList.menuEdit')}
                 </div>
-                <div
-                  className="cursor-pointer tooltip"
-                  data-tip="Log"
-                  onClick={() => {
-                    setOpenLogModal(true);
-                  }}>
-                  <img src={TimelineLog} className="w-6 h-6" />
-                </div>
-                <StatusBadge status={getValues('status') ?? ''} />
-              </div>
+              )}
+
               <hr />
-              <div className="flex">
-                <div className="text-sm">
-                  <span>{`Last Published by `}</span>
-                  <span className="font-bold">{getValues('lastPublishedBy')}</span>
-                  <span>{` at `}</span>
-                  <span className="font-bold">
-                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
-                    {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
-                  </span>
+              {!isEdit ? (
+                <div className="flex">
+                  <div className="text-sm">
+                    <span>{`Last Published by `}</span>
+                    <span className="font-bold">{getValues('lastPublishedBy')}</span>
+                    <span>{` at `}</span>
+                    <span className="font-bold">
+                      {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
+                      {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
+                    </span>
+                  </div>
                 </div>
-              </div>
+              ) : null}
             </div>
-            {
-              isOpenForm && renderForm()
-            }
-            {
-              !isOpenForm && (
-                <>
-                  {
-                    dataScructure?.length > 0 && (
-                      <SortableTreeComponent
-                        data={dataScructure}
-                        onClick={(data: any) => {
-                          onEdit(data);
-                        }}
-                        onChange={function (node: any, data: any): void {
-                          handlerUpdateMenuStructure(node, data);
-                        }}
-                      />
-                    )
-                  }
-                  {
-                    renderAddButtons()
-                  }
-                </>
-              )
-            }
+            {isOpenForm && renderForm()}
+            {!isOpenForm && (
+              <>
+                {dataScructure?.length > 0 && (
+                  <SortableTreeComponent
+                    data={dataScructure}
+                    onClick={(data: any, action: string | undefined) => {
+                      onEdit(data, action);
+                    }}
+                    onChange={function (node: any, data: any): void {
+                      handlerUpdateMenuStructure(node, data);
+                    }}
+                  />
+                )}
+                {renderAddButtons()}
+              </>
+            )}
             <div className="mt-[200px] flex justify-end items-center">
               <div className="flex flex-row p-2 gap-2">
                 <button
@@ -771,13 +685,12 @@ export default function MenuList() {
                   onClick={() => {
                     handlerPublishMenu();
                   }}
-                  disabled={getValues('status') === 'UNPUBLISHED' && true}
-                >
+                  disabled={getValues('status') === 'UNPUBLISHED' && true}>
                   {t('user.menu-list.menuList.submit')}
                 </button>
               </div>
             </div>
-            {modalEdit()}
+            {/* {modalEdit()} */}
             <ModalConfirm
               open={openTakedownModal}
               cancelAction={() => {
@@ -792,8 +705,12 @@ export default function MenuList() {
               cancelTitle={t('user.menu-list.menuList.cancel')}
               submitAction={() => {
                 if (takedownNote.length > 0) {
-                  setIsTakedown(true);
-                  setOpenTakedownModal(false);
+                  if (isEdit) {
+                    setIsTakedown(true);
+                    setOpenTakedownModal(false);
+                  } else {
+                    onDelete();
+                  }
                 } else {
                   dispatch(
                     openToast({

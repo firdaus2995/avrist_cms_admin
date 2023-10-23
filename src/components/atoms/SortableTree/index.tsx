@@ -1,34 +1,104 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import SortableTree from '@nosferatu500/react-sortable-tree';
 import '@nosferatu500/react-sortable-tree/style.css';
 import { ISortableTree } from './types';
-import TreeTheme from "react-sortable-tree-theme-full-node-drag";
-import "./style.css";
-import DotsThreeCircle from "@/assets/dots-three-circle.svg";
+import TreeTheme from 'react-sortable-tree-theme-full-node-drag';
+import './style.css';
+import DotsThreeCircle from '@/assets/dots-three-circle.svg';
+import EditYellow from '@/assets/edit-yellow.svg';
+import TakedownIcon from '@/assets/paper-x.svg';
+import { t } from 'i18next';
 
 <style>.button {}</style>;
 
 export default function SortableTreeComponent(props: ISortableTree) {
   const { data, onChange, onClick } = props;
+  const ref: any = useRef(null);
+  const refParent: any = useRef(null);
+
   const [treeData, setTreeData] = useState(() => {
     if (data.length > 0) {
       const treeDataNew = data.map((node: any) => ({
         ...node,
         expanded: true,
-      }))
+      }));
       return treeDataNew;
     } else {
-      return []
-    };
+      return [];
+    }
   });
+  const [rowData, setRowData] = useState<any>(null);
+  const [openMore, setOpenMore] = useState(false);
+  const [action, setAction] = useState('');
+  const [selectedTree, setSelectedTree] = useState(0);
+  const [offsetLeft, setOffsetLeft] = useState(0);
+  const [offsetTop, setOffsetTop] = useState(300);
 
   function updateTreeData(treeData: any) {
     setTreeData(treeData);
   }
 
+  function getOffsetTop(el: any) {
+    const position = el.getBoundingClientRect();
+    return { top: parseInt(position.top) + window.scrollY };
+  }
+
+  useEffect(() => {
+    const handleOutsideClick = (e: any): void => {
+      if (!refParent?.current?.contains(e.target)) {
+        setOpenMore(false);
+      }
+    };
+
+    if (openMore) {
+      setAction('');
+    }
+
+    document.addEventListener('click', handleOutsideClick, false);
+    return () => {
+      document.removeEventListener('click', handleOutsideClick, false);
+    };
+  }, [openMore]);
+
+  useEffect(() => {
+    onClick(rowData, action);
+  }, [action]);
+
+  const MoreIcon = () => {
+    return (
+      <div
+        className="absolute bg-white rounded-xl border border-primary px-4 py-2 z-10"
+        style={{ left: offsetLeft, top: offsetTop }}>
+        <div className="flex flex-col gap-2 w-full">
+          <button
+            className="btn btn-outline text-xs btn-sm w-28 h-10 text-left"
+            onClick={() => {
+              setAction('EDIT');
+            }}>
+            <div className="w-full flex flex-row items-center gap-3">
+              <img src={EditYellow} />
+              {t('user.menu-list.menuList.edit')}
+            </div>
+          </button>
+          <button
+            className="btn btn-primary text-xs btn-sm w-28 h-10"
+            onClick={() => {
+              setAction('TAKEDOWN');
+            }}>
+            <div className="w-full flex flex-row items-center gap-3">
+              <img src={TakedownIcon} />
+              {t('user.menu-list.menuList.takedown')}
+            </div>
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
-    <div className="mt-10">
+    <div className="mt-10" ref={refParent}>
       <div className="w-full h-[50vh] overflow-auto">
+        {openMore && MoreIcon()}
         <SortableTree
           theme={TreeTheme}
           treeData={treeData}
@@ -46,11 +116,26 @@ export default function SortableTreeComponent(props: ISortableTree) {
             children: rowInfo.node.child,
             buttons: [
               <div key={1}>
-                <div className='p-2'>
-                  <img src={DotsThreeCircle} 
-                    className='w-[24px] h-[24px] cursor-pointer'
+                <div className="p-2">
+                  <img
+                    id={rowInfo.treeIndex.toString()}
+                    ref={ref}
+                    src={DotsThreeCircle}
+                    className="w-[24px] h-[24px] cursor-pointer"
                     onClick={() => {
-                      onClick(rowInfo);
+                      setRowData(rowInfo);
+                      setOffsetLeft(ref?.current?.offsetLeft - 39);
+                      setOffsetTop(
+                        getOffsetTop(document.getElementById(rowInfo.treeIndex.toString())).top -
+                          103,
+                      );
+                      setSelectedTree(rowInfo.treeIndex);
+
+                      if (openMore && rowInfo.treeIndex === selectedTree) {
+                        setOpenMore(false);
+                      } else {
+                        setOpenMore(true);
+                      }
                     }}
                   />
                 </div>
