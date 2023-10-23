@@ -111,7 +111,7 @@
     },
     "add": {
       "title": "Add New User",
-      "success-msg": "Success add User {{name}}",
+      "success-msg": "Your New User has been successfully added!",
       "failed-msg": "Failed add User {{name}}",
       "placeholder-user-id": "Enter User ID",
       "placeholder-user-password": "Enter Password",
@@ -837,6 +837,7 @@
           "role": "Role",
           "modal": {
             "inactive-user": "Inactive User",
+            "inactive-user-message": "Do you want to make this user inactive?",
             "leave-message": "Do you want to leave this page?",
             "confirmation": "Confirmation"
           },
@@ -849,11 +850,11 @@
           "placeholder-user-password": "Password",
           "placeholder-user-fullname": "Full Name",
           "placeholder-user-email": "Email",
-          "leave-confirmation": "Are you sure you want to leave this page?"
+          "leave-confirmation": "Do you want to cancel all of the process?"
         },
         "toast-success": "Success",
         "toast-failed": "Failed",
-        "success-msg": "User {{name}} updated successfully!",
+        "success-msg": "Your User Update has been successfully saved!",
         "failed-msg": "Failed to update user '{{name}}'!",
         "roles": {
           "edit": {
@@ -925,7 +926,7 @@
           "inactive-user": "Inactive User",
           "inactive-user-message": "Do you want to make this user inactive?",
           "confirmation": "Confirmation",
-          "leave-confirmation": "Are you sure you want to leave this page?"
+          "leave-confirmation": "Do you want to cancel all of the process?"
         },
         "btn": {
           "cancel": "Cancel",
