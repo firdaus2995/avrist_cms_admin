@@ -1229,7 +1229,7 @@ export default function EmailFormBuilderNew() {
                 getValues('emailBody') && (
                   <button 
                     type='button' 
-                    className='w-[48px] flex items-center justify-center border-[1px] border-[#9B86BA] rounded-xl'
+                    className='w-[48px] h-[48px] flex items-center justify-center border-[1px] border-[#9B86BA] rounded-xl'
                     onClick={handlerPreviewEmailBody}
                   >
                     <img src={EyeIcon} />

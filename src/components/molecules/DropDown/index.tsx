@@ -73,7 +73,7 @@ const DropDown = ({
   }
 
   return (
-    <div className='w-full'>
+    <div className={`${direction === "row" ? "" : "w-full"}`}>
       <div className={`max-w-full flex ${direction === "row" ? "flex-row" : "flex-col w-full"}`}>
         <label 
           style={{

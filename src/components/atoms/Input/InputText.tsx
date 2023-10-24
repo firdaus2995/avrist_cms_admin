@@ -55,7 +55,7 @@ export const InputText: React.FC<IInputText> = ({
   suffix,
 }) => {
   return (
-    <div className='w-full'>
+    <div className={`${direction === "row" ? "" : "w-full"}`}>
       <div
         className={`form-control w-full ${containerStyle} ${direction === 'row' ? 'flex-row' : ''}`}>
         <label
