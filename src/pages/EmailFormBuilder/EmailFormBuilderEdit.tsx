@@ -5,6 +5,7 @@ import { t } from 'i18next';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { v4 as uuidv4 } from 'uuid';
+import { useForm, Controller } from 'react-hook-form';
 
 import Drag from './moduleNewAndUpdate/dragAndDropComponent/Drag';
 import Drop from './moduleNewAndUpdate/dragAndDropComponent/Drop';
@@ -34,13 +35,22 @@ export default function EmailFormBuilderEdit() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { id } = useParams();
+  const {
+    control,
+    watch,
+    setValue,
+    getValues,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
+
   // BACKEND STATE
   const [formAttribute, setFormAttribute] = useState<any>([]);
   const [objectFormAttribute, setObjectFormAttribute] = useState<any>({});
   // FORM STATE
-  const [formName, setFormName] = useState<any>('');
-  const [formTemplate, setFormTemplate] = useState<any>(null);
-  const [emailBody, setEmailBody] = useState<any>(null);
   const [checkSubmitterEmail, setCheckSubmitterEmail] = useState<any>(false);
   const [checkCaptcha, setCheckCaptcha] = useState<any>(true);
   const [pics, setPics] = useState<any>([]);
@@ -97,7 +107,7 @@ export default function EmailFormBuilderEdit() {
   // RTK GET EMAIL BODY DETAIL
   const fetchEmailBodyDetail = useGetEmailBodyDetailQuery(
     {
-      id: emailBody
+      id: getValues('emailBody'),
     }, 
     {
       refetchOnMountOrArgChange: true,
@@ -121,6 +131,10 @@ export default function EmailFormBuilderEdit() {
   const [updateEmailFormBuilder, { 
     isLoading,
   }] = useUpdateEmailFormBuilderMutation();
+
+  useEffect(() => {
+    watch('emailBody');
+  }, [watch]);
 
   useEffect(() => {
     if (dataAttribute?.getConfig) {
@@ -243,12 +257,15 @@ export default function EmailFormBuilderEdit() {
         };
       });
 
-      setFormName(name);
       setPics(pic);
       setCheckCaptcha(captcha);
       setComponents(attributeList);
-      setFormTemplate(formTemplateId);
-      setEmailBody(emailBodyId);
+
+      const defaultValues: any = {};
+      defaultValues.formName= name;
+      defaultValues.formTemplate= formTemplateId;
+      defaultValues.emailBody= emailBodyId;
+      reset({ ...defaultValues });
     };
   }, [dataDetail]);
 
@@ -260,7 +277,7 @@ export default function EmailFormBuilderEdit() {
     };
   }, [dataEBDetail]);
 
-  const onSave = () => {
+  const onSave = (data: any) => {
     // ALL COMPONENTS
     let frontendError: boolean = false;
 
@@ -425,12 +442,12 @@ export default function EmailFormBuilderEdit() {
       value: checkCaptcha ? 'true' : 'false',
     });
 
-    if (emailBody) {
+    if (data?.emailBody) {
       backendComponents.unshift({
         fieldType: 'EMAIL_BODY',
         name: 'EMAIL_BODY',
         fieldId: 'EMAIL_BODY',
-        value: emailBody.toString(),
+        value: data?.emailBody.toString(),
       });
     };
 
@@ -445,9 +462,9 @@ export default function EmailFormBuilderEdit() {
 
     const payload = {
       id,
-      name: formName,
+      name: data?.formName,
       attributeRequests: backendComponents,
-      formResult: formTemplate,
+      formResult: data?.formTemplate,
     };
 
     updateEmailFormBuilder(payload)
@@ -493,7 +510,7 @@ export default function EmailFormBuilderEdit() {
   };
   
   const handlerPreviewEmailBody = () => {
-    if (emailBody) {
+    if (getValues('emailBody')) {
       setShowPreviewEmailBodyModal(true);
     };
   };
@@ -1245,55 +1262,85 @@ export default function EmailFormBuilderEdit() {
           icon={Recaptcha}
           btnSubmitStyle="btn-warning"
         />
-        <form className="flex flex-col w-100 mt-[35px] gap-5">
+        <form className="flex flex-col w-100 mt-[35px] gap-5" onSubmit={handleSubmit(onSave)}>
           {/* TOP SECTION */}
           <div className="flex flex-col gap-3">
-            <InputText
-              labelTitle={t('user.email-form-builder-new.email-form-builder.add.form-name-label')}
-              labelStyle="font-bold"
-              labelRequired
-              direction="row"
-              roundStyle="xl"
-              placeholder={t('user.email-form-builder-new.email-form-builder.add.form-name-placeholder')}
-              inputWidth={400}
-              value={formName}
-              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
-                setFormName(event.target.value);
-              }}
+          <Controller
+              name="formName"
+              control={control}
+              defaultValue=''
+              rules={{ required: t('components.atoms.required') ?? '' }}
+              render={({ field }) => (
+                <InputText
+                  {...field}
+                  labelTitle={t('user.email-form-builder-new.email-form-builder.add.form-name-label')}
+                  labelStyle="font-bold"
+                  labelRequired
+                  direction="row"
+                  roundStyle="xl"
+                  placeholder={t('user.email-form-builder-new.email-form-builder.add.form-name-placeholder')}
+                  inputWidth={400}
+                  isError={!!errors?.formName}
+                />
+              )}
             />
-            <DropDown
-              labelTitle={t('user.email-form-builder-new.email-form-builder.add.form-template-label') ?? ''}
-              labelStyle="font-bold"
-              direction="row"
-              inputWidth={400}
-              labelEmpty={t('user.email-form-builder-new.email-form-builder.add.form-template-empty') ?? ''}
-              labelRequired={true}
-              defaultValue={formTemplate}
-              items={listFormTemplate}
-              onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                if (event) {
-                  setFormTemplate(value);
-                }
-              }}
+            <Controller
+              name="formTemplate"
+              control={control}
+              defaultValue=''
+              rules={{ required: t('components.atoms.required') ?? '' }}
+              render={({ field }) => (
+                <DropDown
+                  {...field}
+                  direction="row"
+                  inputWidth={400}
+                  labelTitle={t('user.email-form-builder-new.email-form-builder.add.form-template-label') ?? ''}
+                  labelStyle="font-bold"
+                  labelRequired
+                  labelEmpty={t('user.email-form-builder-new.email-form-builder.add.form-template-empty') ?? ''}
+                  defaultValue={field.value}
+                  items={listFormTemplate}
+                  error={!!errors?.formTemplate?.message}
+                  helperText={errors?.formTemplate?.message}
+                  onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                    if (event) {
+                      setValue('formTemplate', value);
+                      field.onChange(value);
+                    };
+                  }}
+                />
+              )}
             />
             <div className='flex flex-row gap-5'>
-              <DropDown
-                labelTitle="Email Body"
-                labelStyle="font-bold	"
-                direction='row'
-                inputWidth={400}
-                labelEmpty="Choose Email Body"
-                labelRequired={true}
-                defaultValue={emailBody}
-                items={listEmailBody}
-                onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                  if (event) {
-                    setEmailBody(value);
-                  };
-                }}
+              <Controller
+                name="emailBody"
+                control={control}
+                defaultValue=''
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <DropDown
+                    {...field}
+                    direction='row'
+                    inputWidth={400}
+                    labelTitle="Email Body"
+                    labelStyle="font-bold	"
+                    labelRequired
+                    labelEmpty="Choose Email Body"
+                    defaultValue={field.value}
+                    items={listEmailBody}
+                    error={!!errors?.emailBody?.message}
+                    helperText={errors?.emailBody?.message}  
+                    onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                      if (event) {
+                        setValue('emailBody', value);
+                        field.onChange(value);  
+                      };
+                    }}
+                  />
+                )}
               />
               {
-                emailBody && (
+                getValues('emailBody') && (
                   <button 
                     type='button' 
                     className='w-[48px] flex items-center justify-center border-[1px] border-[#9B86BA] rounded-xl'
@@ -1373,21 +1420,21 @@ export default function EmailFormBuilderEdit() {
           {/* BUTTONS SECTION */}
           <div className="mt-[50px] flex justify-end items-end gap-2">
             <button
+              type='button'
               className="btn btn-outline btn-md"
               onClick={(event: any) => {
                 event.preventDefault();
                 setLeaveTitleModalShow(t('modal.confirmation'));
                 setMessageLeaveModalShow(t('modal.leave-confirmation'));
                 setShowLeaveModal(true);
-              }}>
+              }}
+            >
               {isLoading ? 'Loading...' : t('btn.cancel')}
             </button>
             <button
+              type='submit'
               className="btn btn-success btn-md text-white"
-              onClick={(event: any) => {
-                event.preventDefault();
-                onSave();
-              }}>
+            >
               {isLoading ? 'Loading...' : t('btn.save')}
             </button>
           </div>
