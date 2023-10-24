@@ -1284,6 +1284,7 @@ export default function EmailFormBuilderEdit() {
                 inputWidth={400}
                 labelEmpty="Choose Email Body"
                 labelRequired={true}
+                defaultValue={emailBody}
                 items={listEmailBody}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                   if (event) {
