@@ -35,6 +35,7 @@ import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/conten
 import PaperSubmit from '../../assets/paper-submit.png';
 import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
 import PaginationComponent from '@/components/molecules/Pagination';
+import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -67,6 +68,9 @@ export default function PageManagementDetail() {
   const [pageIndex, setPageIndex] = useState(0);
   const [pageLimit] = useState(6);
 
+  // CONTENT SELECTION STATE
+  const [listContents, setListContents] = useState<any>([]);
+
   // AUTO APPROVE MODAL STATE
   const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
@@ -90,6 +94,21 @@ export default function PageManagementDetail() {
   );
   const { data: dataPageTemplates } = fetchPageTemplatesQuery;
 
+  // RTK GET CONTENT
+  const fetchContentsQuery = useGetPostTypeListQuery(
+    {
+      pageIndex: 0,
+      limit: 9999,
+      sortBy: 'name',
+      direction: 'asc',
+      search: '',
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataContents } = fetchContentsQuery;
+
   useEffect(() => {
     void fetchDataById.refetch();
   }, []);
@@ -109,11 +128,22 @@ export default function PageManagementDetail() {
   }, [pageDataDetail]);
 
   useEffect(() => {
+    if (dataContents) {
+      setListContents(
+        dataContents?.postTypeList?.postTypeList.map((element: any) => {
+          return {
+            value: element.id,
+            label: element.name,
+          };
+        }),
+      );
+    }
+
     if (dataPageTemplates) {
       setPageTemplates(dataPageTemplates?.pageTemplateList?.templates);
       setTotal(dataPageTemplates?.pageTemplateList?.total);
     }
-  }, [dataPageTemplates]);
+  }, [dataContents, dataPageTemplates]);
 
   const [updatePageData] = useUpdatePageDataMutation();
   const [updatePageStatus] = useUpdatePageStatusMutation();
@@ -586,18 +616,9 @@ export default function PageManagementDetail() {
               labelTitle={t('user.page-management.detail.labels.chooseContentType') ?? ''}
               labelStyle="font-bold	"
               labelRequired
-              defaultValue={pageDetailList?.postType?.name}
+              defaultValue={pageDetailList?.postType?.id}
               labelEmpty=""
-              items={[
-                {
-                  value: 1,
-                  label: 'Content Type 1',
-                },
-                {
-                  value: 2,
-                  label: 'Content Type 2',
-                },
-              ]}
+              items={listContents}
               onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                 if (event) {
                   setContentTypeId(value);
