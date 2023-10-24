@@ -179,8 +179,8 @@ export default function MenuNew() {
                     return (
                       <FormList.DropDown
                         {...field}
-                        error={!!errors?.page?.message}
-                        helperText={errors?.page?.message}
+                        error={!!errors?.pageId?.message}
+                        helperText={errors?.pageId?.message}
                         items={listPage}
                         onChange={onChange}
                         inputWidth={350}
