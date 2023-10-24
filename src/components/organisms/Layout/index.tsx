@@ -21,6 +21,8 @@ import { setActivatedNotificationPage } from '@/services/Notification/notificati
 import { useDeleteNotificationMutation, useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
 import { setEventTriggered } from '@/services/Event/eventErrorSlice';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import WarningIcon from '@/assets/warning.png';
 
 const Layout: React.FC<any> = props => {
   const location = useLocation();
@@ -35,6 +37,8 @@ const Layout: React.FC<any> = props => {
   const [selected, setSelected] = useState<any>(0);
   const [limit, setLimit] = useState<number>(10);
   const [total, setTotal] = useState<any>(0);
+  const [showModalDelete, setShowModalDelete] = useState<any>(false);
+  const [isSingle, setIsSingle] = useState<any>(false);
 
   // RTK SEE NOTIFICATION
   const [ seeNotification ] = useSeeNotificationMutation();
@@ -87,8 +91,22 @@ const Layout: React.FC<any> = props => {
       try {
         const backendData: any = await fetchNotification.refetch();
         if (backendData) {
+          const updatedNotifications = [...notifications];
+
+          // Iterasi melalui notifikasi dari backendData
+          backendData?.data?.notificationList?.notifications.forEach((backendNotification: { id: any; }) => {
+            // Cari notifikasi dengan ID yang sama dalam array updatedNotifications
+            const existingNotification = updatedNotifications.find(
+              notification => notification.id === backendNotification.id
+            );
+
+            if (!existingNotification) {
+              // Jika notifikasi dengan ID yang sama tidak ditemukan, tambahkan notifikasi ini
+              updatedNotifications.push({ ...backendNotification });
+            }
+          });
           setTotal(backendData?.data?.notificationList.total);
-          setNotifications(backendData?.data?.notificationList?.notifications);
+          setNotifications(updatedNotifications);
         };    
       } catch (error) {
         console.error("Error while fetching data:", error);
@@ -235,6 +253,26 @@ const Layout: React.FC<any> = props => {
           dispatch(setOpen(!open));
         }}
       />
+      <ModalConfirm
+        open={showModalDelete}
+        title={t('user.notification.delete-selected-title')}
+        cancelTitle={t('user.content-manager-detail-data.no')}
+        message={t('user.notification.delete-selected-subtitle') ?? ''}
+        submitTitle={t('user.content-manager-detail-data.yes')}
+        icon={WarningIcon}
+        submitAction={() => {
+          if (isSingle) {
+            void handlerDeleteNotificationSingle(selected[0]?.id);
+          }else{
+            void handlerDeleteNotificationSelected();
+          }
+          setShowModalDelete(false);
+        }}
+        btnSubmitStyle="btn-error"
+        cancelAction={() => {
+          setShowModalDelete(false);
+        }}
+      />
       <div
         className={`${open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'} pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full ease-in-out duration-300`}
       >
@@ -265,7 +303,8 @@ const Layout: React.FC<any> = props => {
                         <p 
                           className="text-[14px] text-body-text-2"
                           onClick={() => {
-                            void handlerDeleteNotificationSelected();
+                            setIsSingle(false);
+                            setShowModalDelete(true);
                           }}
                         >
                           {t('user.notification.delete')} {t('user.notification.selected')}
@@ -315,7 +354,8 @@ const Layout: React.FC<any> = props => {
                                   <div 
                                     className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer"
                                     onClick={() => {
-                                      void handlerDeleteNotificationSingle(element.id);
+                                      setIsSingle(true);
+                                      setShowModalDelete(true);
                                     }}
                                   >
                                     <img className="w-[18px] h-[18px]" src={DeleteSmall} />
