@@ -45,6 +45,7 @@ export const globalConfigDataApi = createApi({
                 id
                 variable
                 value
+                description
               }
             }
           }
