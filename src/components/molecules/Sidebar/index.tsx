@@ -616,7 +616,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
         </form>
       </Modal>
 
-      <Modal open={openChangePasswordModal} width={600} toggle={() => null}>
+      <Modal open={openChangePasswordModal} width={600} height={'100%'} toggle={() => null}>
         <div className="flex justify-between">
           <p className="text-2xl font-bold">{t('user.change-password.title')}</p>
           <img

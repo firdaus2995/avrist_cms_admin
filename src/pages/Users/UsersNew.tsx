@@ -98,12 +98,12 @@ export default function UsersNew() {
     
     createUser(payload)
       .unwrap()
-      .then((d: any) => {
+      .then(() => {
         dispatch(
           openToast({
             type: 'success',
             title: t('toast-success'),
-            message: t('user.add.success-msg', { name: d.userCreate.fullName }),
+            message: t('user.add.success-msg'),
           }),
         );
         navigate('/user');

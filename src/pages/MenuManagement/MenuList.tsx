@@ -143,10 +143,30 @@ export default function MenuList() {
 
   useEffect(() => {
     if (data) {
-      const listData = data?.menuList?.menus;
-      const result = listData.map((e: any, i: any) => ({ ...e, children: listData[i].child }));
+      function recursiveMenuGet (recurData: any) {
+        const masterPayload: any = [];
 
-      setDataStructure(result);
+        for (let i = 0; i < recurData.length; i++) {
+          masterPayload.push({
+            ...recurData[i],
+            ...(recurData[i].child ? {
+              child: recursiveMenuGet(recurData[i].child),
+              children: recursiveMenuGet(recurData[i].child),
+              expanded: true,
+            } : {
+              child: null,
+              children: null,
+              expanded: false,
+            }),
+          });
+        };
+
+        return masterPayload;
+      };
+      
+      const listData = data?.menuList?.menus;
+      
+      setDataStructure(recursiveMenuGet(listData));
 
       setValue('status', data?.menuList.status);
       setValue('lastPublishedBy', data?.menuList?.lastPublishedBy);
@@ -524,7 +544,7 @@ export default function MenuList() {
   };
 
   const handlerUpdateMenuStructure = (node: any, data: any) => {
-    function recursiveAction(recurData: any, recurParentId: any): any {
+    function recursiveMenuGenerator(recurData: any, recurParentId: any): any {
       const masterPayload: any = [];
 
       for (let i = 0; i < recurData.length; i++) {
@@ -544,7 +564,7 @@ export default function MenuList() {
           parentId: recurParentId,
           child:
             recurData[i]?.children?.length > 0
-              ? recursiveAction(recurData[i].children, recurData[i].id)
+              ? recursiveMenuGenerator(recurData[i].children, recurData[i].id)
               : null,
         });
       }
@@ -559,7 +579,7 @@ export default function MenuList() {
       externalUrl: node.externalUrl ?? null,
     };
 
-    const payloadMenuList: any = recursiveAction(data, null);
+    const payloadMenuList: any = recursiveMenuGenerator(data, null);
 
     updateStructure({ menuList: payloadMenuList, menu: payloadMenu })
       .unwrap()
@@ -686,7 +706,7 @@ export default function MenuList() {
                   onClick={() => {
                     handlerPublishMenu();
                   }}
-                  disabled={getValues('status') === 'UNPUBLISHED' && true}>
+                  disabled={getValues('status') === 'PUBLISHED' && true}>
                   {t('user.menu-list.menuList.submit')}
                 </button>
               </div>
