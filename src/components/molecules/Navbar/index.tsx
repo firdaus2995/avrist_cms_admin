@@ -4,7 +4,8 @@ import NotificationBell from './NotificationBell';
 import { useAppSelector } from '../../../store';
 import { useGetUserProfileQuery } from '../../../services/User/userApi';
 import { useGetCmsEntityLogoQuery } from '@/services/Config/configApi';
-
+import { getCredential } from '@/utils/Credential';
+const baseUrl = import.meta.env.VITE_API_URL;
 interface INavbar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -16,6 +17,8 @@ export const Navbar: React.FC<INavbar> = ({
 }) => {
   const { title } = useAppSelector(s => s.navbarSlice);
   const [logo, setLogo] = useState("");
+  const [count, setCount] = useState(0);
+  const token = getCredential().accessToken;
  
   // RTK USER PROFILE
   const fetchUserDetailQuery = useGetUserProfileQuery({});
@@ -25,11 +28,32 @@ export const Navbar: React.FC<INavbar> = ({
   const fetchLogoQuery = useGetCmsEntityLogoQuery({});
   const { data: dataLogo } = fetchLogoQuery;
 
+  // GET COUNT NOTIFICATION
+  const getCount = async () => {
+    await fetch(`${baseUrl}/notifications/count`, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+      .then(async response => await response.json())
+      .then(data => {
+        setCount(data?.data?.result);
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+
   useEffect(() => {
     if (dataLogo?.getConfig) {
       setLogo(dataLogo?.getConfig?.value);
     };
   }, [dataLogo])
+
+  useEffect(() => {
+    void getCount();
+  }, [])
 
   return (
     <div
@@ -58,7 +82,7 @@ export const Navbar: React.FC<INavbar> = ({
         className="w-24 absolute right-0 left-0 mx-auto" 
       />
       <div className="flex gap-[22px] items-center">
-        <NotificationBell />
+        <NotificationBell notificationCount={count} />
       </div>
     </div>
   );

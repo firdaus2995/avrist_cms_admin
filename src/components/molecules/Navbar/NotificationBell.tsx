@@ -19,10 +19,11 @@ import { t } from 'i18next';
 const baseUrl = import.meta.env.VITE_API_URL;
 const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
 
-const NotificationBell: React.FC = () => {
+const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
   const token = getCredential().accessToken;
   const ref = useRef(null);
   const dispatch = useAppDispatch();
+  const {notificationCount} = props;
 
   // RTK READ NOTIFICATION
   const [ readNotification ] = useReadNotificationMutation();
@@ -33,6 +34,7 @@ const NotificationBell: React.FC = () => {
   const [total, setTotal] = useState<any>(0);
   const [isShow, setIsShow] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
+  
   const getCount = async () => {
     setIsFetching(true);
     await fetch(`${baseUrl}/notifications/count`, {
@@ -89,6 +91,10 @@ const NotificationBell: React.FC = () => {
       };
     }
   }, [isShow]);
+
+  useEffect(() => {
+    setCount(notificationCount);
+  },[])
 
   useEffect(() => {
     const loadMore = async () => {
