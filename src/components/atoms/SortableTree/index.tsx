@@ -13,7 +13,6 @@ import { t } from 'i18next';
 
 export default function SortableTreeComponent(props: ISortableTree) {
   const { data, onChange, onClick } = props;
-  const ref: any = useRef(null);
   const refParent: any = useRef(null);
 
   const [treeData, setTreeData] = useState(data ?? []);
@@ -28,9 +27,12 @@ export default function SortableTreeComponent(props: ISortableTree) {
     setTreeData(treeData);
   }
 
-  function getOffsetTop(el: any) {
+  function getOffset(el: any) {
     const position = el.getBoundingClientRect();
-    return { top: parseInt(position.top) + window.scrollY };
+    return {
+      top: parseInt(position.top) + window.scrollY,
+      left: parseInt(position.left) + window.scrollX,
+    };
   }
 
   useEffect(() => {
@@ -109,15 +111,15 @@ export default function SortableTreeComponent(props: ISortableTree) {
                 <div className="p-2">
                   <img
                     id={rowInfo.treeIndex.toString()}
-                    ref={ref}
                     src={DotsThreeCircle}
                     className="w-[24px] h-[24px] cursor-pointer"
                     onClick={() => {
                       setRowData(rowInfo);
-                      setOffsetLeft(ref?.current?.offsetLeft - 39);
+                      setOffsetLeft(
+                        getOffset(document.getElementById(rowInfo.treeIndex.toString())).left - 408,
+                      );
                       setOffsetTop(
-                        getOffsetTop(document.getElementById(rowInfo.treeIndex.toString())).top -
-                          103,
+                        getOffset(document.getElementById(rowInfo.treeIndex.toString())).top - 103,
                       );
                       setSelectedTree(rowInfo.treeIndex);
 
