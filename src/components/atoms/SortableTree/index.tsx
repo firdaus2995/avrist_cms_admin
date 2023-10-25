@@ -16,17 +16,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
   const ref: any = useRef(null);
   const refParent: any = useRef(null);
 
-  const [treeData, setTreeData] = useState(() => {
-    if (data.length > 0) {
-      const treeDataNew = data.map((node: any) => ({
-        ...node,
-        expanded: true,
-      }));
-      return treeDataNew;
-    } else {
-      return [];
-    }
-  });
+  const [treeData, setTreeData] = useState(data ?? []);
   const [rowData, setRowData] = useState<any>(null);
   const [openMore, setOpenMore] = useState(false);
   const [action, setAction] = useState('');
