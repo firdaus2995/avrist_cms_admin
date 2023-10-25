@@ -31,6 +31,7 @@ export default function MenuNew() {
     formState: { errors },
     setValue,
     getValues,
+    reset,
   } = useForm();
 
   const screenType = [
@@ -60,6 +61,14 @@ export default function MenuNew() {
   const [filterBy] = useState('');
   const [startDate] = useState('');
   const [endDate] = useState('');
+
+  const resetValue = () => {
+    reset();
+    setSelectedPageId(screenType[0]);
+    setSelectedPageId(null);
+    setOpenTakedownModal(false);
+    navigate('/menu', { replace: true });
+  };
 
   // GET LIST DATA
   const fetchPageListQuery = useGetPageManagementListQuery({
@@ -143,7 +152,6 @@ export default function MenuNew() {
 
   const [createMenu] = useCreateMenuMutation();
   const [editMenu] = useEditMenuMutation();
-  // const [deleteMenu] = useDeleteMenuMutation();
 
   const onPostCreate = (e: any) => {
     const payload = {
@@ -251,20 +259,7 @@ export default function MenuNew() {
                   <FormList.DropDown
                     defaultValue={selectedType.label}
                     labelTitle="Type"
-                    items={[
-                      {
-                        value: 'PAGE',
-                        label: 'Page',
-                      },
-                      {
-                        value: 'LINK',
-                        label: 'Link',
-                      },
-                      {
-                        value: 'NO_LANDING_PAGE',
-                        label: 'No Landing Page',
-                      },
-                    ]}
+                    items={screenType}
                     onChange={(e: any) => {
                       setSelectedType(e);
                     }}
@@ -425,7 +420,11 @@ export default function MenuNew() {
                   className="btn btn-outline text-xs btn-sm w-28 h-10"
                   onClick={e => {
                     e.preventDefault();
-                    setOpenTakedownModal(true);
+                    if (isEditMode) {
+                      setOpenTakedownModal(true);
+                    } else {
+                      resetValue();
+                    }
                   }}>
                   {isEditMode ? 'Takedown' : 'Cancel'}
                 </button>
