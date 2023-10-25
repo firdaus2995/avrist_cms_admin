@@ -130,14 +130,12 @@ export default function UsersEdit() {
 
     editUser(payload)
       .unwrap()
-      .then((d: any) => {
+      .then(() => {
         dispatch(
           openToast({
             type: 'success',
             title: t('user.users-edit.user.toast-success'),
-            message: t('user.users-edit.user.success-msg', {
-              name: d.userUpdate.fullName,
-            }),
+            message: t('user.users-edit.user.success-msg'),
           }),
         );
         navigate('/user');
@@ -173,7 +171,7 @@ export default function UsersEdit() {
         }}
         title={t('user.users-edit.user.edit.modal.inactive-user')}
         cancelTitle={t('user.users-edit.user.edit.btn.cancel')}
-        message={t('user.users-edit.user.edit.modal.leave-message') ?? ''}
+        message={t('user.users-edit.user.edit.modal.inactive-user-message') ?? ''}
         submitAction={changeStatusSubmit}
         submitTitle={t('user.users-edit.user.edit.btn.save')}
         icon={UserOrange}
