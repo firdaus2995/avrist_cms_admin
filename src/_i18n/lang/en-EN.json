@@ -837,8 +837,8 @@
           "role": "Role",
           "modal": {
             "inactive-user": "Inactive User",
-            "inactive-user-message": "Do you want to make this user inactive?",
-            "leave-message": "Do you want to leave this page?",
+            "inactive-user-message": "Do you want to inactive this user?",
+            "leave-message": "Do you want to cancel all of the process?",
             "confirmation": "Confirmation"
           },
           "btn": {
@@ -924,7 +924,7 @@
         },
         "modal": {
           "inactive-user": "Inactive User",
-          "inactive-user-message": "Do you want to make this user inactive?",
+          "inactive-user-message": "Do you want to inactive this user?",
           "confirmation": "Confirmation",
           "leave-confirmation": "Do you want to cancel all of the process?"
         },

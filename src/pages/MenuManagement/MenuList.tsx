@@ -705,7 +705,7 @@ export default function MenuList() {
                   onClick={() => {
                     handlerPublishMenu();
                   }}
-                  disabled={getValues('status') === 'UNPUBLISHED' && true}>
+                  disabled={getValues('status') === 'PUBLISHED' && true}>
                   {t('user.menu-list.menuList.submit')}
                 </button>
               </div>
