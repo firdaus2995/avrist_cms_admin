@@ -34,6 +34,7 @@ export default function RolesEdit() {
   });
 
   // USESTATE STATE
+  const [initialRoleName, setInitialRoleName] = useState("");
   const [editMode, setEditMode] = useState(true);
   const [showComfirm, setShowComfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -51,17 +52,17 @@ export default function RolesEdit() {
   useEffect(() => {
     if (data) {
       const defaultValues: any = {};
-
       defaultValues.roleName = data?.roleById?.name;
       defaultValues.roleDescription = data?.roleById?.description;
-
       reset({ ...defaultValues });
 
       dispatch(setId(parseInt(params.id ?? '')));
       dispatch(setPermissions(data.roleById.permissions.split(',')));
 
       const findDetail = window.location.pathname.includes('detail');
+
       setEditMode(!findDetail);
+      setInitialRoleName(data?.roleById?.name);
     }
   }, [data]);
 
@@ -106,7 +107,7 @@ export default function RolesEdit() {
 
   return (
     <RoleRenderer allowedRoles={editMode ? ['ROLE_EDIT'] : ['ROLE_READ']}>
-      <TitleCard title={t('roles.edit.title')}>
+      <TitleCard title={`${t('roles.edit.title')} ${initialRoleName}`}>
         <ModalConfirm
           open={showComfirm}
           cancelAction={() => {
@@ -188,7 +189,7 @@ export default function RolesEdit() {
                   type='submit'
                   className="btn btn-success btn-md text-white"
                 >
-                  {onUpdateLoading ? t('user.roles-edit.btn.saveloading') : t('btn.save')}
+                  {onUpdateLoading ? t('user.roles-edit.btn.saveloading') : t('btn.save-alternate')}
                 </button>
               ) : (
                 <button
