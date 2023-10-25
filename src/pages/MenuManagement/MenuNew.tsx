@@ -17,7 +17,9 @@ import TakedownModal from './components/TakedownModal';
 
 // OTHER GET DATA
 import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
+
 const maxImageSize = 2 * 1024 * 1024;
+const maxChar = 70;
 
 export default function MenuNew() {
   const navigate = useNavigate();
@@ -218,6 +220,13 @@ export default function MenuNew() {
 
   const isEditMode = location.pathname.includes('edit');
 
+  useEffect(() => {
+    const pageType = location?.state?.pageType;
+    if (pageType) {
+      setSelectedType(screenType.find(item => item.value === pageType) ?? screenType[0]);
+    }
+  }, [location?.state]);
+
   return (
     <>
       <TakedownModal
@@ -395,7 +404,7 @@ export default function MenuNew() {
                   }}
                 />
               </div>
-              <div className="flex flex-row justify-start">
+              <div className="flex flex-col justify-start">
                 <Controller
                   name="shortDesc"
                   control={control}
@@ -408,9 +417,15 @@ export default function MenuNew() {
                       helperText={errors?.shortDesc?.message}
                       border={false}
                       inputWidth={350}
+                      maxLength={maxChar}
                     />
                   )}
                 />
+                <div className="w-[35rem] flex justify-end">
+                  <p className="text-body-text-3 text-xs mt-2">
+                    {t('user.menu-list.menuList.maxDescription', { maxChar })}
+                  </p>
+                </div>
               </div>
             </div>
             <div className="mt-16 flex justify-end items-center">

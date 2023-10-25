@@ -133,7 +133,7 @@ export default function MenuList() {
 
       return list;
     });
-    console.log(data)
+    console.log(data);
     setListPage(listData);
   }, [fetchQueryPage]);
 
@@ -143,29 +143,31 @@ export default function MenuList() {
 
   useEffect(() => {
     if (data) {
-      function recursiveMenuGet (recurData: any) {
+      function recursiveMenuGet(recurData: any) {
         const masterPayload: any = [];
 
         for (let i = 0; i < recurData.length; i++) {
           masterPayload.push({
             ...recurData[i],
-            ...(recurData[i].child ? {
-              child: recursiveMenuGet(recurData[i].child),
-              children: recursiveMenuGet(recurData[i].child),
-              expanded: true,
-            } : {
-              child: null,
-              children: null,
-              expanded: false,
-            }),
+            ...(recurData[i].child
+              ? {
+                  child: recursiveMenuGet(recurData[i].child),
+                  children: recursiveMenuGet(recurData[i].child),
+                  expanded: true,
+                }
+              : {
+                  child: null,
+                  children: null,
+                  expanded: false,
+                }),
           });
-        };
+        }
 
         return masterPayload;
-      };
-      
+      }
+
       const listData = data?.menuList?.menus;
-      
+
       setDataStructure(recursiveMenuGet(listData));
 
       setValue('status', data?.menuList.status);
@@ -221,7 +223,7 @@ export default function MenuList() {
     setIdDelete(data?.node?.id);
 
     if (action === 'EDIT') {
-      navigate(`edit/${data?.node?.id}`)
+      navigate(`edit/${data?.node?.id}`);
       setIsEdit(true);
       setIsOpenForm(true);
     }
@@ -329,8 +331,9 @@ export default function MenuList() {
               role="button"
               onClick={() => {
                 // setFormData({...formData, type: 'Page'});
-                setType('PAGE');
-                setIsOpenForm(true);
+                // setType('PAGE');
+                // setIsOpenForm(true);
+                navigate('new', { state: { pageType: 'PAGE' } });
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
               {t('user.menu-list.menuList.page')}
@@ -339,8 +342,9 @@ export default function MenuList() {
               role="button"
               onClick={() => {
                 // setFormData({...formData, type: 'Link'});
-                setType('LINK');
-                setIsOpenForm(true);
+                // setType('LINK');
+                // setIsOpenForm(true);
+                navigate('new', { state: { pageType: 'LINK' } });
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
               {t('user.menu-list.menuList.link')}
@@ -349,8 +353,9 @@ export default function MenuList() {
               role="button"
               onClick={() => {
                 // setFormData({...formData, type: 'No Landing Page'});
-                setType('NO_LANDING_PAGE');
-                setIsOpenForm(true);
+                // setType('NO_LANDING_PAGE');
+                // setIsOpenForm(true);
+                navigate('new', { state: { pageType: 'NO_LANDING_PAGE' } });
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
               {t('user.menu-list.menuList.noLandingPage')}

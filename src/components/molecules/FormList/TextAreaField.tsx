@@ -22,6 +22,7 @@ export default function TextAreaField({
   fieldTypeLabel = '',
   border = true,
   labelRequired = false,
+  maxLength,
 }: any) {
   return (
     <div>
@@ -48,6 +49,7 @@ export default function TextAreaField({
               width: inputWidth ?? '100%',
               height: inputHeight ?? '',
             }}
+            maxLength={maxLength}
             rows={rows ?? 4}
             value={value}
             disabled={disabled}
