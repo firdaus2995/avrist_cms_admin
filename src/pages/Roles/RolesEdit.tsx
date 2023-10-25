@@ -71,7 +71,7 @@ export default function RolesEdit() {
       id,
       name: data?.roleName,
       description: data?.roleDescription,
-      permissions: permissions.join(','),
+      permissions: permissions.join(',') === 'HOME_READ' ? '' : permissions.join(','),
     };
 
     roleUpdate(payload)
@@ -88,8 +88,7 @@ export default function RolesEdit() {
         dispatch(resetForm());
         navigate('/roles');
       })
-      .catch(err => {
-        console.log(err);
+      .catch(() => {
         dispatch(
           openToast({
             type: 'error',
