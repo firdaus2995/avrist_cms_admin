@@ -201,6 +201,7 @@ export default function MenuList() {
     setIdDelete(data?.node?.id);
 
     if (action === 'EDIT') {
+      navigate(`edit/${data?.node?.id}`)
       setIsEdit(true);
       setIsOpenForm(true);
     }

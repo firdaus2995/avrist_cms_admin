@@ -158,6 +158,7 @@ export default function RoutesComponent() {
           <Route element={<ProtectedPage permission="MENU_READ" />}>
             <Route path="menu" element={<MenuManagementPage />} />
             <Route path="menu/new" element={<MenuManagementNewPage />} />
+            <Route path="menu/edit/:id" element={<MenuManagementNewPage />} />
           </Route>
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
