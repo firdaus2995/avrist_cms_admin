@@ -195,7 +195,6 @@ export default function MenuNew() {
       shortDesc: e.shortDesc || '',
       icon: e.menuIcon || '',
     };
-    console.log(payload);
     editMenu(payload)
       .unwrap()
       .then(() => {
