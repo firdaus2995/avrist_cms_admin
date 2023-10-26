@@ -1,6 +1,28 @@
+import dayjs from 'dayjs';
 import { Key, useCallback, useEffect, useState } from 'react';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { t } from 'i18next';
+
+import Plus from '@/assets/plus-purple.svg';
+import Edit from '@/assets/edit-purple.svg';
+import Restore from '@/assets/restore.svg';
+import RestoreOrange from '@/assets/restore-orange.svg';
+import CheckOrange from '@/assets/check-orange.svg';
+import FormList from '@/components/molecules/FormList';
 import Typography from '@/components/atoms/Typography';
+import StatusBadge from '@/components/atoms/StatusBadge';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import PaperIcon from '../../assets/paper.png';
+import WarningIcon from '@/assets/warning.png';
+import ModalForm from '@/components/molecules/ModalForm';
+import ModalLog from './components/ModalLog';
+import TimelineLog from '@/assets/timeline-log.svg';
+import TableDelete from '@/assets/table-delete.svg';
+import PaperSubmit from '../../assets/paper-submit.png';
+import CancelIcon from '@/assets/cancel.png';
+import { store, useAppDispatch } from '@/store';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useGetCategoryListQuery,
   useGetContentDataDetailQuery,
@@ -9,33 +31,11 @@ import {
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
-import { useNavigate, useParams } from 'react-router-dom';
-import FormList from '@/components/molecules/FormList';
-
-import { store, useAppDispatch } from '@/store';
-import { Controller, useForm } from 'react-hook-form';
-import Plus from '@/assets/plus-purple.svg';
-import Edit from '@/assets/edit-purple.svg';
-import Restore from '@/assets/restore.svg';
-import RestoreOrange from '@/assets/restore-orange.svg';
-import CheckOrange from '@/assets/check-orange.svg';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
-import StatusBadge from '@/components/atoms/StatusBadge';
 import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import ModalConfirm from '@/components/molecules/ModalConfirm';
-import PaperIcon from '../../assets/paper.png';
-import WarningIcon from '@/assets/warning.png';
 import { openToast } from '@/components/atoms/Toast/slice';
-import ModalForm from '@/components/molecules/ModalForm';
-import ModalLog from './components/ModalLog';
-import TimelineLog from '@/assets/timeline-log.svg';
-import dayjs from 'dayjs';
-import TableDelete from '@/assets/table-delete.svg';
-import { t } from 'i18next';
-import PaperSubmit from '../../assets/paper-submit.png';
-import CancelIcon from '@/assets/cancel.png';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
