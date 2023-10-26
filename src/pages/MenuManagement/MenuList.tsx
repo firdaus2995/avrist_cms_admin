@@ -191,7 +191,7 @@ export default function MenuList() {
         );
         navigate(0);
       })
-      .catch(err => {
+      .catch(_err => {
         // console.log(err);
         dispatch(
           openToast({
