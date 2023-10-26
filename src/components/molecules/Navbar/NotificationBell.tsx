@@ -93,8 +93,10 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
   }, [isShow]);
 
   useEffect(() => {
-    setCount(notificationCount);
-  },[])
+    if (notificationCount > 0) {
+      setCount(notificationCount);
+    }
+  },[notificationCount])
 
   useEffect(() => {
     const loadMore = async () => {

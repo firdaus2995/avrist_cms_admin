@@ -36,6 +36,7 @@ import PaperSubmit from '../../assets/paper-submit.png';
 import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
 import PaginationComponent from '@/components/molecules/Pagination';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
+import CancelIcon from '@/assets/cancel.png';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -74,6 +75,11 @@ export default function PageManagementDetail() {
   // AUTO APPROVE MODAL STATE
   const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
+
+  // LEAVE MODAL STATE
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
   // RTK GET DATA
   const fetchDataById = useGetPageByIdQuery({ id });
@@ -124,6 +130,7 @@ export default function PageManagementDetail() {
       setPageDetailList(pageDataDetail?.pageById);
       setSelected(pageDataDetail?.pageById?.pageTemplate?.id);
       setContent(pageDataDetail?.pageById?.content);
+      setContentTypeId(pageDataDetail?.pageById?.postType?.id);
     }
   }, [pageDataDetail]);
 
@@ -318,8 +325,11 @@ export default function PageManagementDetail() {
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
           <button
-            onClick={() => {
-              goBack();
+            onClick={e => {
+              e.preventDefault();
+              setLeaveTitleModalShow(t('modal.confirmation'));
+              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setShowLeaveModal(true);
             }}
             className="btn btn-outline text-xs btn-sm w-28 h-10">
             {t('user.page-management.detail.labels.cancel')}
@@ -820,6 +830,21 @@ export default function PageManagementDetail() {
             />
           </div>
         </ModalForm>
+
+        <ModalConfirm
+          open={showLeaveModal}
+          cancelAction={() => {
+            setShowLeaveModal(false);
+          }}
+          title={titleLeaveModalShow ?? ''}
+          cancelTitle={t('no')}
+          message={messageLeaveModalShow ?? ''}
+          submitAction={() => { goBack(); }}
+          submitTitle={t('yes')}
+          icon={CancelIcon}
+          btnSubmitStyle="btn-warning"
+        />
+
         {pageDetailList?.lastEdited && (
           <div>
             {t('user.page-management.detail.labels.lastEditedBy')}{' '}
