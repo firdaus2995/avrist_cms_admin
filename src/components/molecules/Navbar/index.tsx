@@ -82,7 +82,7 @@ export const Navbar: React.FC<INavbar> = ({
         className="w-24 absolute right-0 left-0 mx-auto" 
       />
       <div className="flex gap-[22px] items-center">
-        <NotificationBell notificationCount={count} />
+        <NotificationBell notificationCount={count > 0 ? count : ''} />
       </div>
     </div>
   );
