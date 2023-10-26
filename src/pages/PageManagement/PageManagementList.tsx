@@ -75,7 +75,7 @@ export default function PageManagementList() {
       isActive: 2,
     },
   ];
-  const now = dayjs().format('YYYY-MM-DD');
+  // const now = dayjs().format('YYYY-MM-DD');
   const [filterOpen, setFilterOpen] = useState(false);
 
   const [activeTab, setActiveTab] = useState(1);
@@ -113,28 +113,38 @@ export default function PageManagementList() {
   const searchQuery = isPageListActive ? searchPageList : searchMyTask;
 
   // RTK GET DATA
-  const fetchQuery = useGetPageManagementListQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search: searchQuery,
-    filterBy,
-    startDate,
-    endDate,
-    isArchive: false,
-  });
-  const { data } = fetchQuery;
+  const fetchQuery = useGetPageManagementListQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search: searchQuery,
+      filterBy,
+      startDate,
+      endDate,
+      isArchive: false,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data, isFetching: isFetchingListData } = fetchQuery;
 
-  const fetchQueryMyTask = useGetPageMyTaskListQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search: searchQuery,
-    isArchive: false,
-  });
-  const { data: dataMyTask } = fetchQueryMyTask;
+  const fetchQueryMyTask = useGetPageMyTaskListQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search: searchQuery,
+      isArchive: false,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataMyTask, isFetching: isFetchingMyTask } = fetchQueryMyTask;
 
   // RTK DELETE
   const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
@@ -150,17 +160,6 @@ export default function PageManagementList() {
     }
   }, [data, dataMyTask, isPageListActive]);
 
-  useEffect(() => {
-    const refetchData = async () => {
-      if (isPageListActive) {
-        await fetchQuery.refetch();
-      } else {
-        await fetchQueryMyTask.refetch();
-      }
-    };
-    void refetchData();
-  }, [isPageListActive]);
-
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback(
     (sortModel: SortingState) => {
@@ -175,7 +174,7 @@ export default function PageManagementList() {
           setSortByMyTask(sortBy);
           setDirectionMyTask(direction);
         }
-      }else{
+      } else {
         if (isPageListActive) {
           setSortByPageList('id');
           setDirectionPageList('desc');
@@ -232,7 +231,11 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.created-by')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-management.list.page-list.row.created-by')}
+        </span>
+      ),
       accessorKey: 'createdBy',
       enableSorting: true,
       cell: (info: any) => (
@@ -339,9 +342,9 @@ export default function PageManagementList() {
   };
 
   const resetState = () => {
-    setFilterBy('CREATED_AT');
-    setStartDate(now);
-    setEndDate(now);
+    setFilterBy('');
+    setStartDate('');
+    setEndDate('');
   };
 
   const TopRightButton = () => {
@@ -399,7 +402,7 @@ export default function PageManagementList() {
           submitTitle={t('user.page-management.list.submit-title')}
           loading={deletePageLoading}
           icon={WarningIcon}
-          btnSubmitStyle={''}
+          btnSubmitStyle={'btn-error'}
         />
         <TitleCard
           title={t('user.page-management.list.page-list.title') ?? ''}
@@ -412,6 +415,7 @@ export default function PageManagementList() {
                 } else {
                   setSearchMyTask(e.target.value);
                 }
+                setPageIndex(0);
               }}
               placeholder={t('user.page-management.list.page-list.search-placeholder') ?? ''}
             />
@@ -441,7 +445,7 @@ export default function PageManagementList() {
               <Table
                 rows={listData}
                 columns={COLUMNS}
-                loading={false}
+                loading={isFetchingListData}
                 error={false}
                 manualPagination={true}
                 manualSorting={true}
@@ -451,7 +455,7 @@ export default function PageManagementList() {
               <Table
                 rows={listDataMyTask}
                 columns={COLUMNS}
-                loading={false}
+                loading={isFetchingMyTask}
                 error={false}
                 manualPagination={true}
                 manualSorting={true}

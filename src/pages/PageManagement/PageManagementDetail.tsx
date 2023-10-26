@@ -109,14 +109,11 @@ export default function PageManagementDetail() {
   );
   const { data: dataContents } = fetchContentsQuery;
 
-  useEffect(() => {
-    void fetchDataById.refetch();
-  }, []);
-
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'edit',
     dataType: 'page'
   });
+  
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {

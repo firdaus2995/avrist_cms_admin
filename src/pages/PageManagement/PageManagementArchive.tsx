@@ -4,6 +4,7 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useGetPageManagementListQuery,
   useRestorePageMutation,
+  useDeletePageMutation,
 } from '@/services/PageManagement/pageManagementApi';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
@@ -46,21 +47,33 @@ export default function PageManagementArchive() {
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
   const [messageConfirm, setMessageConfirm] = useState('');
-  const [, setIdDelete] = useState(0);
+  const [idDelete, setIdDelete] = useState(0);
 
   // RTK GET DATA
-  const fetchQuery = useGetPageManagementListQuery({
-    pageIndex,
-    limit: pageLimit,
-    direction,
-    search,
-    sortBy,
-    isArchive: true,
-  });
+  const fetchQuery = useGetPageManagementListQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search,
+      filterBy: '',
+      startDate: '',
+      endDate: '',
+      isArchive: true,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+
   const { data } = fetchQuery;
 
   // RTK RESTORE
   const [restorePage, { isLoading }] = useRestorePageMutation();
+
+  // RTK DELETE
+  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
 
   useEffect(() => {
     if (data) {
@@ -69,19 +82,12 @@ export default function PageManagementArchive() {
     }
   }, [data]);
 
-  useEffect(() => {
-    const refetch = async () => {
-      await fetchQuery.refetch();
-    };
-    void refetch();
-  }, []);
-
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
@@ -125,7 +131,9 @@ export default function PageManagementArchive() {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.page-name')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-management.archive.row.page-name')}</span>
+      ),
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -137,7 +145,9 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.created-by')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-management.archive.row.created-by')}</span>
+      ),
       accessorKey: 'createdBy.name',
       enableSorting: true,
       cell: (info: any) => (
@@ -149,7 +159,9 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.created-date')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-management.archive.row.created-date')}</span>
+      ),
       accessorKey: 'createdAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -161,7 +173,9 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.updated-date')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-management.archive.row.updated-date')}</span>
+      ),
       accessorKey: 'updatedAt',
       enableSorting: true,
       cell: (info: any) => (
@@ -173,7 +187,9 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.archive.row.action')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.page-management.archive.row.action')}</span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -183,7 +199,7 @@ export default function PageManagementArchive() {
               onClickPageRestore(info.getValue(), info?.row?.original?.title);
             }}
             className="btn btn-primary text-xs btn-sm w-28">
-          {t('user.page-management.archive.row.restore')}
+            {t('user.page-management.archive.row.restore')}
           </button>
           {canDelete && (
             <div className="tooltip" data-tip={t('action.delete')}>
@@ -217,6 +233,33 @@ export default function PageManagementArchive() {
     setShowConfirm(true);
   };
 
+  // FUNCTION FOR DELETE PAGE
+  const submitDeletePage = () => {
+    deletePage({ id: idDelete })
+      .unwrap()
+      .then(async d => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('user.page-management.list.delete.success'),
+            message: d.pageDelete.message,
+          }),
+        );
+        await fetchQuery.refetch();
+      })
+      .catch(() => {
+        setShowConfirm(false);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('user.page-management.list.delete.failed'),
+            message: t('user.page-management.list.delete.failed-message'),
+          }),
+        );
+      });
+  };
+
   return (
     <>
       <ModalConfirm
@@ -241,11 +284,9 @@ export default function PageManagementArchive() {
         title={titleConfirm}
         cancelTitle={t('user.page-management.archive.cancel')}
         message={messageConfirm}
-        submitAction={() => {
-          setShowConfirm(false);
-        }}
+        submitAction={submitDeletePage}
         submitTitle={t('user.page-management.archive.submit-title')}
-        // loading={deleteContentManagerLoading}
+        loading={deletePageLoading}
         icon={WarningIcon}
         btnSubmitStyle={'btn-error'}
       />
@@ -256,6 +297,7 @@ export default function PageManagementArchive() {
           <InputSearch
             onBlur={(e: any) => {
               setSearch(e.target.value);
+              setPageIndex(0);
             }}
             placeholder={t('user.page-management.archive.search-placeholder') ?? ''}
           />
