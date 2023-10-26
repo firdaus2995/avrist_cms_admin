@@ -21,6 +21,8 @@ export default function FileUploaderV2({
   value,
   showMaxSize,
   editMode,
+  inputWidth,
+  inputHeight,
 }: any) {
   function convertToArr(arr: any[], key: string | number | undefined) {
     if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
@@ -64,7 +66,7 @@ export default function FileUploaderV2({
             ${direction === 'row' ? 'flex-row' : ''}
             `}
           style={{ flex: '1' }}>
-          <div>
+          <div style={{ width: inputWidth ?? '100%', height: inputHeight ?? '' }}>
             <FileUploaderBase
               id={id}
               isDocument={isDocument}

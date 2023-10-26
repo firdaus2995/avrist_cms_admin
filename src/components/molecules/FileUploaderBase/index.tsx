@@ -15,7 +15,7 @@ const maxImgSize = import.meta.env.VITE_MAX_FILE_IMG_SIZE;
 
 function bytesToSize(bytes: number): string {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
-  if (bytes === 0) return '0 Byte';
+  if (bytes === 0 || !bytes) return '0 Byte';
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return (bytes / Math.pow(1024, i)).toFixed(2).toString() + ' ' + sizes[i];
 }
@@ -252,14 +252,14 @@ export default function FileUploaderBase({
               </div>
             </label>
           </div>
-          <div className="w-full flex flex-row justify-between">
+          <div className="w-full">
             <p className="text-body-text-3 text-xs mt-2">{`Only Support format ${
               isDocument ? '.pdf' : '.jpg, .jpeg, .png'
             }`}</p>
             {showMaxSize ? (
-              <p className="text-body-text-3 text-xs mt-2">{`Max. ${maxSize
-                .toString()
-                .slice(0, 1)} MB`}</p>
+              <p className="text-body-text-3 text-xs">{`Max. ${maxSize
+                ?.toString()
+                ?.slice(0, 1)} MB`}</p>
             ) : null}
           </div>
         </>

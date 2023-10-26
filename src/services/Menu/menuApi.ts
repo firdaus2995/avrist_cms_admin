@@ -15,6 +15,8 @@ export const menuApi = createApi({
             $externalUrl: String!
             $isNewTab: Boolean!
             $pageId: Int!
+            $shortDesc: String!
+            $icon: String!
           ) {
             menuCreate(
               request: {
@@ -23,6 +25,8 @@ export const menuApi = createApi({
                 externalUrl: $externalUrl
                 isNewTab: $isNewTab
                 pageId: $pageId
+                shortDesc: $shortDesc
+                icon: $icon
               }
             ) {
               title
@@ -30,6 +34,8 @@ export const menuApi = createApi({
               externalUrl
               isNewTab
               pageId
+              shortDesc
+              icon
             }
           }
         `,
@@ -81,28 +87,35 @@ export const menuApi = createApi({
       query: payload => ({
         document: gql`
           mutation menuUpdate(
+            $id: Int!
             $title: String!
-            $editedTitle: String!
             $menuType: String!
             $externalUrl: String!
             $isNewTab: Boolean!
-            $pageId: Int!
+            $pageId: Int
+            $shortDesc: String
+            $icon: String
           ) {
             menuUpdate(
+              id: $id
               request: {
                 title: $title
                 menuType: $menuType
                 externalUrl: $externalUrl
                 isNewTab: $isNewTab
                 pageId: $pageId
+                shortDesc: $shortDesc
+                icon: $icon
               }
-              id: $editedTitle
             ) {
+              id
               title
               menuType
               externalUrl
               isNewTab
               pageId
+              shortDesc
+              icon
             }
           }
         `,
@@ -179,6 +192,25 @@ export const menuApi = createApi({
         variables: payload,
       }),
     }),
+    getMenuById: builder.query<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          query menuById($id: Int!) {
+            menuById(id: $id) {
+              id
+              title
+              menuType
+              externalUrl
+              isNewTab
+              pageId
+              shortDesc
+              icon
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -190,4 +222,5 @@ export const {
   useUpdateMenuStructureMutation,
   usePublishMenuMutation,
   useGetMenuLogListQuery,
+  useGetMenuByIdQuery,
 } = menuApi;

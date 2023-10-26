@@ -69,7 +69,6 @@ const DropDown = ({
           type="text"
           placeholder="Search or select an option..."
           value={searchTerm}
-          // onChange={handleInputChange}
           onClick={() => {
             setIsOpen(!isOpen);
           }}
@@ -92,7 +91,7 @@ const DropDown = ({
         </div>
       </div>
       {isOpen && (
-        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto">
+        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto z-50">
           {filteredOptions.length > 0 ? (
             <ul>
               {filteredOptions.map((option: any, index: any) => (
@@ -126,7 +125,9 @@ const DropDown = ({
               ))}
             </ul>
           ) : (
-            <p className="px-4 py-2 text-gray-500">{t('components.molecules.no-matching-option')}</p>
+            <p className="px-4 py-2 text-gray-500">
+              {t('components.molecules.no-matching-option')}
+            </p>
           )}
         </div>
       )}
