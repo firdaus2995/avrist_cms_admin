@@ -133,7 +133,6 @@ export default function MenuList() {
 
       return list;
     });
-    console.log(data);
     setListPage(listData);
   }, [fetchQueryPage]);
 
@@ -193,7 +192,7 @@ export default function MenuList() {
         navigate(0);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         dispatch(
           openToast({
             type: 'error',
@@ -243,7 +242,7 @@ export default function MenuList() {
     createMenu(payload)
       .unwrap()
       .then(() => {
-        console.log('edited');
+        // console.log('edited');
         setIsOpenForm(false);
         setIsAddClicked(false);
         dispatch(
@@ -279,7 +278,7 @@ export default function MenuList() {
       editMenu(payload)
         .unwrap()
         .then(async () => {
-          console.log('edited');
+          // console.log('edited');
           setIsEdit(false);
           dispatch(
             openToast({
