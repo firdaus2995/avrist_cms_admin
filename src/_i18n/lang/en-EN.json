@@ -839,7 +839,7 @@
             "inactive-user": "Inactive User",
             "inactive-user-message": "Do you want to inactive this user?",
             "leave-message": "Do you want to cancel all of the process?",
-            "confirmation": "Confirmation"
+            "confirmation": "Are you sure?"
           },
           "btn": {
             "cancel": "Cancel",
@@ -854,7 +854,7 @@
         },
         "toast-success": "Success",
         "toast-failed": "Failed",
-        "success-msg": "Your User Update has been successfully saved!",
+        "success-msg": "Your user update has been successfully saved!",
         "failed-msg": "Failed to update user '{{name}}'!",
         "roles": {
           "edit": {
@@ -925,7 +925,7 @@
         "modal": {
           "inactive-user": "Inactive User",
           "inactive-user-message": "Do you want to inactive this user?",
-          "confirmation": "Confirmation",
+          "confirmation": "Are you sure?",
           "leave-confirmation": "Do you want to cancel all of the process?"
         },
         "btn": {
