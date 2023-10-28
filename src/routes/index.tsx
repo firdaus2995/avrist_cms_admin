@@ -4,17 +4,21 @@ import React, { Suspense } from 'react';
 import Layout from '../components/organisms/Layout';
 import Loading from '../components/atoms/Loading';
 import { useAppSelector } from '../store';
-import { getCredential } from '@/utils/Credential'; 
+import { getCredential } from '@/utils/Credential';
 
 const LoginPage = React.lazy(async () => await import('../pages/Login'));
 const LoginPortal = React.lazy(async () => await import('../pages/LoginPortal'));
 const DashboardPage = React.lazy(async () => await import('../pages/Dashboard'));
 
 // ERROR PAGE
-const Error403Page = React.lazy(async () => await import('../pages/Error/FourZeroThree'))
+const Error403Page = React.lazy(async () => await import('../pages/Error/FourZeroThree'));
 const Error404Page = React.lazy(async () => await import('../pages/Error/FourZeroFour'));
-const ErrorInternalServerErrorPage = React.lazy(async () => await import('../pages/Error/InternalServerError'))
-const ErrorDataNotFoundErrorPage = React.lazy(async () => await import('../pages/Error/DataNotFoundError'))
+const ErrorInternalServerErrorPage = React.lazy(
+  async () => await import('../pages/Error/InternalServerError'),
+);
+const ErrorDataNotFoundErrorPage = React.lazy(
+  async () => await import('../pages/Error/DataNotFoundError'),
+);
 
 // IMPORT USERS PAGE
 const UserPage = React.lazy(async () => await import('../pages/Users'));
@@ -26,6 +30,9 @@ const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNe
 const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
 
 const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
+const MenuManagementNewPage = React.lazy(
+  async () => await import('../pages/MenuManagement/MenuNew'),
+);
 
 // IMPORT PAGE TEMPLATES PAGE
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
@@ -43,13 +50,13 @@ const EmailFormBuilderEditPage = React.lazy(
 );
 const EmailBodyNewPage = React.lazy(
   async () => await import('../pages/EmailFormBuilder/EmailBodyNew'),
-)
+);
 const EmailBodyPreviewPage = React.lazy(
   async () => await import('../pages/EmailFormBuilder/EmailBodyPreview'),
-)
+);
 const EmailBodyEditPage = React.lazy(
   async () => await import('../pages/EmailFormBuilder/EmailBodyEdit'),
-)
+);
 
 const PageManagementPage = React.lazy(async () => await import('../pages/PageManagement'));
 const PageManagementArchivePage = React.lazy(
@@ -95,7 +102,9 @@ const ContentManagerDetailDataPage = React.lazy(
 );
 
 const GlobalConfigDataPage = React.lazy(async () => await import('@/pages/GlobalConfigData'));
-const GlobalConfigDataNewPage = React.lazy(async () => await import('@/pages/GlobalConfigData/GlobalConfigDataNew'));
+const GlobalConfigDataNewPage = React.lazy(
+  async () => await import('@/pages/GlobalConfigData/GlobalConfigDataNew'),
+);
 
 export default function RoutesComponent() {
   const { accessToken } = useAppSelector(state => state.loginSlice);
@@ -117,11 +126,11 @@ export default function RoutesComponent() {
           }>
           <Route index element={<DashboardPage />} />
           {/* FORBIDDEN */}
-          <Route path='403' element={<Error403Page />} />
+          <Route path="403" element={<Error403Page />} />
           {/* INTERNAL SERVER ERROR */}
-          <Route path='internal-server-error' element={<ErrorInternalServerErrorPage />} />
+          <Route path="internal-server-error" element={<ErrorInternalServerErrorPage />} />
           {/* NOT FOUND */}
-          <Route path='data-not-found' element={<ErrorDataNotFoundErrorPage />} />
+          <Route path="data-not-found" element={<ErrorDataNotFoundErrorPage />} />
           {/* USER PAGES ROUTE */}
           <Route element={<ProtectedPage permission="USER_READ" />}>
             <Route path="user" element={<UserPage />} />
@@ -148,6 +157,8 @@ export default function RoutesComponent() {
           {/* MENU MANAGEMENT PAGES ROUTE */}
           <Route element={<ProtectedPage permission="MENU_READ" />}>
             <Route path="menu" element={<MenuManagementPage />} />
+            <Route path="menu/new" element={<MenuManagementNewPage />} />
+            <Route path="menu/edit/:id" element={<MenuManagementNewPage />} />
           </Route>
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
@@ -218,7 +229,10 @@ export default function RoutesComponent() {
             <Route path="content-manager/:id/category/new" element={<CategoryNew />} />
           </Route>
           <Route element={<ProtectedPage permission="CONTENT_MANAGER_EDIT" />}>
-            <Route path="content-manager/:id/category/edit/:categoryid" element={<CategoryEdit />} />
+            <Route
+              path="content-manager/:id/category/edit/:categoryid"
+              element={<CategoryEdit />}
+            />
           </Route>
           <Route element={<ProtectedPage permission="CONTENT_MANAGER_READ" />}>
             <Route path="content-manager/:id/archive" element={<ContentManagerArchivePage />} />
@@ -227,7 +241,10 @@ export default function RoutesComponent() {
             <Route path="content-manager/:id/data/new" element={<ContentManagerNewPage />} />
           </Route>
           <Route element={<ProtectedPage permission="CONTENT_MANAGER_READ" />}>
-            <Route path="content-manager/:id/detail/:dataId" element={<ContentManagerDetailDataPage />} />
+            <Route
+              path="content-manager/:id/detail/:dataId"
+              element={<ContentManagerDetailDataPage />}
+            />
           </Route>
           {/* GLOBAL CONFIG DATA */}
           <Route element={<ProtectedPage permission="GLOBAL_CONFIG_READ" />}>
@@ -261,13 +278,11 @@ const ProtectedRoute = ({
   return <Outlet />;
 };
 
-const ProtectedPage = ({
-  permission,
-}: any) => {
+const ProtectedPage = ({ permission }: any) => {
   const checkPermission: boolean = getCredential().roles.includes(permission);
   if (!checkPermission) {
-    return <Navigate to='/403' replace />
-  };
-  
-  return <Outlet />
-}
+    return <Navigate to="/403" replace />;
+  }
+
+  return <Outlet />;
+};

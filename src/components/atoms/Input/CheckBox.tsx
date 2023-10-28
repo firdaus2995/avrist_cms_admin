@@ -13,6 +13,7 @@ interface ICheckBox {
   updateType?: string;
   labelContainerStyle?: string;
   updateFormValue?: (formValue: { updateType: string; value: boolean }) => void;
+  name?: string;
 }
 
 export const CheckBox: React.FC<ICheckBox> = ({
@@ -25,6 +26,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
   inputStyle,
   updateFormValue,
   labelContainerStyle,
+  name,
 }) => {
   const [value, setValue] = useState(defaultValue);
 
@@ -43,6 +45,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
     <div className={`form-control ${containerStyle}`}>
       <label className={`label cursor-pointer ${labelContainerStyle}`}>
         <input
+          name={name}
           type="checkbox"
           className={`checkbox checkbox-primary mr-3 ${inputStyle}`}
           checked={defaultValue}
@@ -69,4 +72,5 @@ CheckBox.propTypes = {
   inputStyle: PropTypes.string,
   labelContainerStyle: PropTypes.string,
   disabled: PropTypes.bool,
+  name: PropTypes.string,
 };

@@ -1,6 +1,28 @@
+import dayjs from 'dayjs';
 import { Key, useCallback, useEffect, useState } from 'react';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { Controller, useForm } from 'react-hook-form';
+import { useNavigate, useParams } from 'react-router-dom';
+import { t } from 'i18next';
+
+import Plus from '@/assets/plus-purple.svg';
+import Edit from '@/assets/edit-purple.svg';
+import Restore from '@/assets/restore.svg';
+import RestoreOrange from '@/assets/restore-orange.svg';
+import CheckOrange from '@/assets/check-orange.svg';
+import FormList from '@/components/molecules/FormList';
 import Typography from '@/components/atoms/Typography';
+import StatusBadge from '@/components/atoms/StatusBadge';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import PaperIcon from '../../assets/paper.png';
+import WarningIcon from '@/assets/warning.png';
+import ModalForm from '@/components/molecules/ModalForm';
+import ModalLog from './components/ModalLog';
+import TimelineLog from '@/assets/timeline-log.svg';
+import TableDelete from '@/assets/table-delete.svg';
+import PaperSubmit from '../../assets/paper-submit.png';
+import CancelIcon from '@/assets/cancel.png';
+import { store, useAppDispatch } from '@/store';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useGetCategoryListQuery,
   useGetContentDataDetailQuery,
@@ -9,32 +31,11 @@ import {
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
-import { useNavigate, useParams } from 'react-router-dom';
-import FormList from '@/components/molecules/FormList';
-
-import { store, useAppDispatch } from '@/store';
-import { Controller, useForm } from 'react-hook-form';
-import Plus from '@/assets/plus-purple.svg';
-import Edit from '@/assets/edit-purple.svg';
-import Restore from '@/assets/restore.svg';
-import RestoreOrange from '@/assets/restore-orange.svg';
-import CheckOrange from '@/assets/check-orange.svg';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
-import StatusBadge from '@/components/atoms/StatusBadge';
 import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import ModalConfirm from '@/components/molecules/ModalConfirm';
-import PaperIcon from '../../assets/paper.png';
-import WarningIcon from '@/assets/warning.png';
 import { openToast } from '@/components/atoms/Toast/slice';
-import ModalForm from '@/components/molecules/ModalForm';
-import ModalLog from './components/ModalLog';
-import TimelineLog from '@/assets/timeline-log.svg';
-import dayjs from 'dayjs';
-import TableDelete from '@/assets/table-delete.svg';
-import { t } from 'i18next';
-import PaperSubmit from '../../assets/paper-submit.png';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -99,13 +100,18 @@ export default function ContentManagerDetailData() {
 
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'edit',
-    dataType: 'content'
+    dataType: 'content',
   });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   // AUTO APPROVE MODAL STATE
   const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
+
+  // LEAVE MODAL STATE
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
   useEffect(() => {
     if (contentDataDetail) {
@@ -154,14 +160,17 @@ export default function ContentManagerDetailData() {
     });
   };
 
-  const fetchGetCategoryList = useGetCategoryListQuery({
-    postTypeId,
-    pageIndex,
-    limit: pageLimit,
-    direction,
-    search,
-    sortBy,
-  }, {skip: contentDataDetailList?.categoryName === ""});
+  const fetchGetCategoryList = useGetCategoryListQuery(
+    {
+      postTypeId,
+      pageIndex,
+      limit: pageLimit,
+      direction,
+      search,
+      sortBy,
+    },
+    { skip: contentDataDetailList?.categoryName === '' },
+  );
   const { data: categoryListData } = fetchGetCategoryList;
 
   useEffect(() => {
@@ -362,13 +371,13 @@ export default function ContentManagerDetailData() {
 
   function transformText(text: string) {
     const words = text.split('_');
-  
+
     const capitalizedWords = words.map((word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     });
-  
+
     const result = capitalizedWords.join(' ').replace('Url', 'URL');
-  
+
     return result;
   }
 
@@ -544,6 +553,24 @@ export default function ContentManagerDetailData() {
               defaultValue={value}
               rules={{
                 required: { value: true, message: `${name} is required` },
+                validate: value => {
+                  if (value && value.length > 0) {
+                    // Parse the input value as JSON
+                    const parsedValue = JSON.parse(value);
+
+                    // Check if parsedValue is an array and every item has imageUrl and altText properties
+                    if (
+                      Array.isArray(parsedValue) &&
+                      parsedValue.every(item => item.imageUrl && item.altText)
+                    ) {
+                      return true; // Validation passed
+                    } else {
+                      return 'All items must have imageUrl and altText'; // Validation failed
+                    }
+                  } else {
+                    return `${name} is required`; // Validation failed for empty value
+                  }
+                },
               }}
               render={({ field }) => {
                 const onChange = useCallback(
@@ -761,7 +788,7 @@ export default function ContentManagerDetailData() {
                                       key={val.id}
                                       fieldTypeLabel={transformText(val?.name)}
                                       labelTitle={transformText(val?.name)}
-                                      disabled={!isEdited}          
+                                      disabled={!isEdited}
                                       placeholder=""
                                       error={!!errors?.[val.id]?.message}
                                       helperText={errors?.[val.id]?.message}
@@ -807,7 +834,7 @@ export default function ContentManagerDetailData() {
                                       key={val.id}
                                       fieldTypeLabel={transformText(val?.name)}
                                       labelTitle={transformText(val?.name)}
-                                      disabled={!isEdited}   
+                                      disabled={!isEdited}
                                       placeholder=""
                                       error={!!errors?.[val.id]?.message}
                                       helperText={errors?.[val.id]?.message}
@@ -831,7 +858,7 @@ export default function ContentManagerDetailData() {
                         }}
                         className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                         <img src={Plus} className="mr-3" />
-                      {t('user.content-manager-detail-data.addData')}
+                        {t('user.content-manager-detail-data.addData')}
                       </button>
                     </div>
                   )}
@@ -849,16 +876,23 @@ export default function ContentManagerDetailData() {
     return (
       <div className="flex justify-end mt-10">
         <div className="flex flex-row p-2 gap-2">
-          <button onClick={() => {}} className="btn btn-outline text-xs btn-sm w-28 h-10">
-          {t('user.content-manager-detail-data.cancel')}
+          <button
+            onClick={e => {
+              e.preventDefault();
+              setLeaveTitleModalShow(t('modal.confirmation'));
+              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setShowLeaveModal(true);
+            }}
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
+            {t('user.content-manager-detail-data.cancel')}
           </button>
           <button
             onClick={() => {}}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
-          {t('user.content-manager-detail-data.saveAsDraft')}
+            {t('user.content-manager-detail-data.saveAsDraft')}
           </button>
           <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-          {t('user.content-manager-detail-data.submit')}
+            {t('user.content-manager-detail-data.submit')}
           </button>
         </div>
       </div>
@@ -874,7 +908,7 @@ export default function ContentManagerDetailData() {
               goBack();
             }}
             className="btn btn-outline text-xs btn-sm w-28 h-10">
-          {t('user.content-manager-detail-data.cancel')}
+            {t('user.content-manager-detail-data.cancel')}
           </button>
           <button
             onClick={() => {
@@ -891,7 +925,7 @@ export default function ContentManagerDetailData() {
               }
             }}
             className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-          {t('user.content-manager-detail-data.submit')}
+            {t('user.content-manager-detail-data.submit')}
           </button>
         </div>
       </div>
@@ -934,7 +968,7 @@ export default function ContentManagerDetailData() {
                     }}
                     className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
                     <img src={Edit} className="mr-3" />
-                  {t('user.content-manager-detail-data.editContent')}
+                    {t('user.content-manager-detail-data.editContent')}
                   </button>
                 )
               : null}
@@ -948,7 +982,7 @@ export default function ContentManagerDetailData() {
             }}
             className="btn bg-secondary-warning border-none text-xs btn-sm w-48 h-10">
             <img src={Restore} className="mr-3" />
-          {t('user.content-manager-detail-data.restore')}
+            {t('user.content-manager-detail-data.restore')}
           </button>
         );
       default:
@@ -1032,6 +1066,11 @@ export default function ContentManagerDetailData() {
     );
   };
 
+  const onLeave = () => {
+    setShowLeaveModal(false);
+    goBack();
+  };
+
   return (
     <TitleCard
       onBackClick={goBack}
@@ -1068,7 +1107,7 @@ export default function ContentManagerDetailData() {
         open={showModalWarning}
         title={''}
         message={t('user.content-manager-detail-data.modalMessages.warning') ?? ''}
-        submitTitle={t('user.content-manager-detail-data.yes') }
+        submitTitle={t('user.content-manager-detail-data.yes')}
         icon={WarningIcon}
         submitAction={() => {
           setShowModalWarning(false);
@@ -1082,14 +1121,14 @@ export default function ContentManagerDetailData() {
 
       <ModalConfirm
         open={showModalApprove}
-        title={t('user.content-manager-detail-data.approve') }
-        cancelTitle={t('user.content-manager-detail-data.no') }
+        title={t('user.content-manager-detail-data.approve')}
+        cancelTitle={t('user.content-manager-detail-data.no')}
         message={
           contentDataDetailList?.status === 'WAITING_APPROVE'
             ? t('user.content-manager-detail-data.modalMessages.approveContent') ?? ''
             : t('user.content-manager-detail-data.modalMessages.approveDelete') ?? ''
         }
-        submitTitle={t('user.content-manager-detail-data.yes') }
+        submitTitle={t('user.content-manager-detail-data.yes')}
         icon={CheckOrange}
         submitAction={() => {
           setShowModalApprove(false);
@@ -1109,10 +1148,10 @@ export default function ContentManagerDetailData() {
 
       <ModalConfirm
         open={showArchivedModal}
-        title={t('user.content-manager-detail-data.restoreContentData') }
-        cancelTitle={t('user.content-manager-detail-data.cancel') }
+        title={t('user.content-manager-detail-data.restoreContentData')}
+        cancelTitle={t('user.content-manager-detail-data.cancel')}
         message={t('user.content-manager-detail-data.modalMessages.restoreContentData') ?? ''}
-        submitTitle={t('user.content-manager-detail-data.yes') }
+        submitTitle={t('user.content-manager-detail-data.yes')}
         icon={RestoreOrange}
         submitAction={() => {
           setShowArchivedModal(false);
@@ -1132,10 +1171,10 @@ export default function ContentManagerDetailData() {
         open={showModalRejected}
         formTitle=""
         height={640}
-        submitTitle={t('user.content-manager-detail-data.yes') }
+        submitTitle={t('user.content-manager-detail-data.yes')}
         submitType="bg-secondary-warning border-none"
         submitDisabled={rejectComments === ''}
-        cancelTitle={t('user.content-manager-detail-data.no') }
+        cancelTitle={t('user.content-manager-detail-data.no')}
         cancelAction={() => {
           setShowModalRejected(false);
         }}
@@ -1153,17 +1192,21 @@ export default function ContentManagerDetailData() {
         <div className="flex flex-col justify-center items-center">
           <img src={PaperIcon} className="w-10" />
           {contentDataDetailList?.status === 'WAITING_APPROVE' ? (
-            <p className="font-semibold my-3 text-xl">{t('user.content-manager-detail-data.modalMessages.rejectContent') }</p>
+            <p className="font-semibold my-3 text-xl">
+              {t('user.content-manager-detail-data.modalMessages.rejectContent')}
+            </p>
           ) : (
-            <p className="font-semibold my-3 text-xl">{t('user.content-manager-detail-data.deleteRejectConfirmation') }</p>
+            <p className="font-semibold my-3 text-xl">
+              {t('user.content-manager-detail-data.deleteRejectConfirmation')}
+            </p>
           )}
           <TextArea
             name="shortDesc"
-            labelTitle={t('user.content-manager-detail-data.rejectComment') }
+            labelTitle={t('user.content-manager-detail-data.rejectComment')}
             labelStyle="font-bold"
             value={rejectComments}
             labelRequired
-            placeholder={t('user.content-manager-detail-data.reject-comments-placeholder') ?? '' }
+            placeholder={t('user.content-manager-detail-data.reject-comments-placeholder') ?? ''}
             containerStyle="rounded-3xl"
             onChange={e => {
               setRejectComments(e.target.value);
@@ -1191,7 +1234,9 @@ export default function ContentManagerDetailData() {
         }}>
         <div className="flex flex-col justify-center items-center">
           <img src={PaperSubmit} className="w-10" />
-          <p className="font-bold mt-3 text-xl">{t('user.content-manager-detail-data.modalMessages.autoApproveTitle')}</p>
+          <p className="font-bold mt-3 text-xl">
+            {t('user.content-manager-detail-data.modalMessages.autoApproveTitle')}
+          </p>
           <p className="font-base mt-2 text-xl text-center">
             {t('user.content-manager-detail-data.modalMessages.autoApproveSubtitle')}
           </p>
@@ -1206,16 +1251,39 @@ export default function ContentManagerDetailData() {
         </div>
       </ModalForm>
 
+      <ModalConfirm
+        open={showLeaveModal}
+        cancelAction={() => {
+          setShowLeaveModal(false);
+        }}
+        title={titleLeaveModalShow ?? ''}
+        cancelTitle={t('no')}
+        message={messageLeaveModalShow ?? ''}
+        submitAction={onLeave}
+        submitTitle={t('yes')}
+        icon={CancelIcon}
+        btnSubmitStyle="btn-warning"
+      />
+
       {contentDataDetail && (
         <form onSubmit={handleSubmit(onSubmitData)}>
           <div className="ml-2 mt-6">
             <div className="grid grid-cols-1 gap-5">
               {contentDataDetailList?.lastEdited && (
-                <div>{t('user.content-manager-detail-data.lastEditedBy') } <span className='font-bold'>{contentDataDetailList?.lastEdited?.editedBy}</span> {t('user.content-manager-detail-data.at')} <span className='font-bold'>{dayjs(contentDataDetailList?.lastEdited?.editedAt).format('DD/MM/YYYY - HH:mm')}</span></div>
+                <div>
+                  {t('user.content-manager-detail-data.lastEditedBy')}{' '}
+                  <span className="font-bold">{contentDataDetailList?.lastEdited?.editedBy}</span>{' '}
+                  {t('user.content-manager-detail-data.at')}{' '}
+                  <span className="font-bold">
+                    {dayjs(contentDataDetailList?.lastEdited?.editedAt).format(
+                      'DD/MM/YYYY - HH:mm',
+                    )}
+                  </span>
+                </div>
               )}
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="mt-5 ml-1 w-48 mr-16">
-                {t('user.content-manager-detail-data.title')}
+                  {t('user.content-manager-detail-data.title')}
                 </Typography>
                 <InputText
                   name="title"
@@ -1228,16 +1296,20 @@ export default function ContentManagerDetailData() {
                   }}
                 />
               </div>
-              {contentDataDetailList?.categoryName !== "" && (
+              {contentDataDetailList?.categoryName !== '' && (
                 <div className="flex flex-row">
                   <Typography type="body" size="m" weight="bold" className="w-48 ml-1">
-                  {t('user.content-manager-detail-data.category')}
+                    {t('user.content-manager-detail-data.category')}
                   </Typography>
                   <Controller
                     name="category"
                     control={control}
                     defaultValue={contentDataDetailList?.categoryName}
-                    rules={{ required: `${t('user.content-manager-detail-data.category')} ${t('user.content-manager-detail-data.is-required')}` }}
+                    rules={{
+                      required: `${t('user.content-manager-detail-data.category')} ${t(
+                        'user.content-manager-detail-data.is-required',
+                      )}`,
+                    }}
                     render={({ field }) => {
                       const onChange = useCallback(
                         (e: any) => {
@@ -1265,7 +1337,7 @@ export default function ContentManagerDetailData() {
               )}
               <div className="flex flex-row">
                 <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-16">
-                {t('user.content-manager-detail-data.shortDescription')}
+                  {t('user.content-manager-detail-data.shortDescription')}
                 </Typography>
                 <TextArea
                   name="shortDesc"

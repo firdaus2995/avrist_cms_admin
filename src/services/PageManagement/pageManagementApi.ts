@@ -267,8 +267,8 @@ export const pageManagementApi = createApi({
             $content: String!
             $isDraft: Boolean!
             $isAutoApprove: Boolean!
-            $pageTemplateId: Boolean!
-            $postTypeId: Boolean!
+            $pageTemplateId: Int!
+            $postTypeId: Int!
           ) {
             pageUpdate(
               request: {
