@@ -11,8 +11,6 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { InputText } from '@/components/atoms/Input/InputText';
-import { TextArea } from '@/components/atoms/Input/TextArea';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
@@ -23,13 +21,13 @@ import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/conten
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
+import FormList from '../../components/molecules/FormList';
 
 export default function PageManagementNew() {
   const {
     control,
     handleSubmit,
-    // eslint-disable-next-line no-empty-pattern
-    formState: {},
+    formState: { errors },
     getValues,
   } = useForm();
   const navigate = useNavigate();
@@ -92,7 +90,7 @@ export default function PageManagementNew() {
   // RTK GET ELIGIBLE AUTO APPROVE
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'create',
-    dataType: 'page'
+    dataType: 'page',
   });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
@@ -205,7 +203,7 @@ export default function PageManagementNew() {
         <div className="flex flex-col justify-center items-center">
           <img src={PaperSubmit} className="w-10" />
           <p className="font-bold mt-3 text-xl">{t('user.page-management-new.autoApproveTitle')}</p>
-          <p className="font-base mt-2 text-xl text-center">
+          <p className="font-base my-2 text-l text-center">
             {t('user.page-management-new.autoApproveSubtitle')}
           </p>
           <CheckBox
@@ -214,7 +212,6 @@ export default function PageManagementNew() {
               setIsAutoApprove(e.value);
             }}
             labelTitle={t('user.page-management-new.autoApproveLabel')}
-            labelStyle="text-xl mt-2"
           />
         </div>
       </ModalForm>
@@ -235,22 +232,27 @@ export default function PageManagementNew() {
             <Typography weight="bold" size="l">
               {t('user.page-management-new.generalInformation')}
             </Typography>
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row justify-between mt-2">
               <Controller
                 name="pageName"
                 control={control}
                 defaultValue=""
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'Page name is required',
+                  },
+                }}
                 render={({ field }) => (
-                  <InputText
-                    labelTitle={t('user.page-management-new.pageNameLabel')}
-                    labelStyle="font-semibold"
-                    labelWidth={150}
-                    labelRequired
-                    direction="row"
-                    roundStyle="xl"
-                    placeholder={t('user.page-management-new.pageNamePlaceholder')}
-                    inputWidth={350}
+                  <FormList.TextField
                     {...field}
+                    labelTitle={t('user.page-management-new.pageNameLabel')}
+                    labelRequired
+                    placeholder={t('user.page-management-new.pageNamePlaceholder')}
+                    error={!!errors?.pageName?.message}
+                    helperText={errors?.pageName?.message}
+                    border={false}
+                    inputWidth={350}
                   />
                 )}
               />
@@ -258,17 +260,22 @@ export default function PageManagementNew() {
                 name="metaTitle"
                 control={control}
                 defaultValue=""
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'Meta title is required',
+                  },
+                }}
                 render={({ field }) => (
-                  <InputText
-                    labelTitle={t('user.page-management-new.metaTitleLabel')}
-                    labelStyle="font-semibold"
-                    labelWidth={150}
-                    labelRequired
-                    direction="row"
-                    roundStyle="xl"
-                    placeholder={t('user.page-management-new.metaTitlePlaceholder')}
-                    inputWidth={350}
+                  <FormList.TextField
                     {...field}
+                    labelTitle={t('user.page-management-new.metaTitleLabel')}
+                    labelRequired
+                    placeholder={t('user.page-management-new.metaTitlePlaceholder')}
+                    error={!!errors?.metaTitle?.message}
+                    helperText={errors?.metaTitle?.message}
+                    border={false}
+                    inputWidth={350}
                   />
                 )}
               />
@@ -278,17 +285,22 @@ export default function PageManagementNew() {
                 name="slug"
                 control={control}
                 defaultValue=""
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'Slug is required',
+                  },
+                }}
                 render={({ field }) => (
-                  <InputText
-                    labelTitle={t('user.page-management-new.slugLabel')}
-                    labelStyle="font-semibold"
-                    labelWidth={150}
-                    labelRequired
-                    direction="row"
-                    roundStyle="xl"
-                    placeholder={t('user.page-management-new.slugPlaceholder')}
-                    inputWidth={350}
+                  <FormList.TextField
                     {...field}
+                    labelTitle={t('user.page-management-new.slugLabel')}
+                    labelRequired
+                    placeholder={t('user.page-management-new.slugPlaceholder')}
+                    error={!!errors?.slug?.message}
+                    helperText={errors?.slug?.message}
+                    border={false}
+                    inputWidth={350}
                   />
                 )}
               />
@@ -296,17 +308,22 @@ export default function PageManagementNew() {
                 name="metaDescription"
                 control={control}
                 defaultValue=""
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'Meta description is required',
+                  },
+                }}
                 render={({ field }) => (
-                  <InputText
-                    labelTitle={t('user.page-management-new.metaDescriptionLabel')}
-                    labelStyle="font-semibold"
-                    labelWidth={150}
-                    labelRequired
-                    direction="row"
-                    roundStyle="xl"
-                    placeholder={t('user.page-management-new.metaDescriptionPlaceholder')}
-                    inputWidth={350}
+                  <FormList.TextField
                     {...field}
+                    labelTitle={t('user.page-management-new.metaDescriptionLabel')}
+                    labelRequired
+                    placeholder={t('user.page-management-new.metaDescriptionPlaceholder')}
+                    error={!!errors?.metaDescription?.message}
+                    helperText={errors?.metaDescription?.message}
+                    border={false}
+                    inputWidth={350}
                   />
                 )}
               />
@@ -315,17 +332,21 @@ export default function PageManagementNew() {
               <Controller
                 name="shortDesc"
                 control={control}
-                defaultValue=""
+                rules={{
+                  required: {
+                    value: true,
+                    message: 'Short description is required',
+                  },
+                }}
                 render={({ field }) => (
-                  <TextArea
-                    labelTitle={t('user.page-management-new.shortDescriptionLabel')}
-                    labelStyle="font-semibold"
-                    labelWidth={150}
-                    labelRequired
-                    direction="row"
-                    placeholder={t('user.page-management-new.shortDescriptionPlaceholder') ?? ''}
-                    inputWidth={350}
+                  <FormList.TextAreaField
                     {...field}
+                    labelTitle="Sort Description"
+                    placeholder="Input Short Description"
+                    error={!!errors?.shortDesc?.message}
+                    helperText={errors?.shortDesc?.message}
+                    border={false}
+                    inputWidth={350}
                   />
                 )}
               />

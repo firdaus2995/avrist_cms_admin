@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
@@ -26,7 +26,7 @@ import { FilterButton } from '@/components/molecules/FilterButton/index.';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 
-const ArchiveButton = () => {
+const ArchiveButton = memo(function ArchiveButton() {
   return (
     <div className="inline-block float-right">
       <Link to="archive">
@@ -39,9 +39,9 @@ const ArchiveButton = () => {
       </Link>
     </div>
   );
-};
+});
 
-const CreateButton = () => {
+const CreateButton = memo(function CreateButton() {
   return (
     <div className="inline-block float-right">
       <Link to="new">
@@ -62,7 +62,7 @@ const CreateButton = () => {
       </Link>
     </div>
   );
-};
+});
 
 export default function PageManagementList() {
   const listTabs = [
@@ -347,7 +347,7 @@ export default function PageManagementList() {
     setEndDate('');
   };
 
-  const TopRightButton = () => {
+  const TopRightButton = memo(function TopRightButton() {
     return (
       <div className="flex flex-row">
         {isPageListActive && (
@@ -377,7 +377,7 @@ export default function PageManagementList() {
         </RoleRenderer>
       </div>
     );
-  };
+  });
 
   return (
     <>
