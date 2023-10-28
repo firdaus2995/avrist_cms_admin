@@ -62,6 +62,18 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    deletePageHard: builder.mutation<any, { id: number }>({
+      query: payload => ({
+        document: gql`
+          mutation pageHardDelete($id: Int!) {
+            pageHardDelete(id: $id) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     restorePage: builder.mutation<any, { id: number }>({
       query: payload => ({
         document: gql`
@@ -310,4 +322,5 @@ export const {
   useCreatePageDataMutation,
   useUpdatePageStatusMutation,
   useUpdatePageDataMutation,
+  useDeletePageHardMutation,
 } = pageManagementApi;

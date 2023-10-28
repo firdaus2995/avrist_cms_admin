@@ -4,7 +4,8 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useGetPageManagementListQuery,
   useRestorePageMutation,
-  useDeletePageMutation,
+  // useDeletePageMutation,
+  useDeletePageHardMutation,
 } from '@/services/PageManagement/pageManagementApi';
 import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
@@ -67,13 +68,13 @@ export default function PageManagementArchive() {
     },
   );
 
-  const { data } = fetchQuery;
+  const { data, isFetching } = fetchQuery;
 
   // RTK RESTORE
   const [restorePage, { isLoading }] = useRestorePageMutation();
 
   // RTK DELETE
-  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+  const [pageHardDelete, { isLoading: deletePageLoading }] = useDeletePageHardMutation();
 
   useEffect(() => {
     if (data) {
@@ -235,7 +236,7 @@ export default function PageManagementArchive() {
 
   // FUNCTION FOR DELETE PAGE
   const submitDeletePage = () => {
-    deletePage({ id: idDelete })
+    pageHardDelete({ id: idDelete })
       .unwrap()
       .then(async d => {
         setShowConfirm(false);
@@ -243,7 +244,7 @@ export default function PageManagementArchive() {
           openToast({
             type: 'success',
             title: t('user.page-management.list.delete.success'),
-            message: d.pageDelete.message,
+            message: d.pageHardDelete.message,
           }),
         );
         await fetchQuery.refetch();
@@ -308,7 +309,7 @@ export default function PageManagementArchive() {
           <Table
             rows={listData}
             columns={COLUMNS}
-            loading={false}
+            loading={isFetching}
             error={false}
             manualPagination={true}
             manualSorting={true}
