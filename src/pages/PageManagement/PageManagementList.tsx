@@ -113,20 +113,22 @@ export default function PageManagementList() {
   const searchQuery = isPageListActive ? searchPageList : searchMyTask;
 
   // RTK GET DATA
-  const fetchQuery = useGetPageManagementListQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search: searchQuery,
-    filterBy,
-    startDate,
-    endDate,
-    isArchive: false,
-  },
-  {
-    refetchOnMountOrArgChange: true,
-  });
+  const fetchQuery = useGetPageManagementListQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search: searchQuery,
+      filterBy,
+      startDate,
+      endDate,
+      isArchive: false,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data } = fetchQuery;
 
   const fetchQueryMyTask = useGetPageMyTaskListQuery({
@@ -185,7 +187,7 @@ export default function PageManagementList() {
           setSortByMyTask(sortBy);
           setDirectionMyTask(direction);
         }
-      }else{
+      } else {
         if (isPageListActive) {
           setSortByPageList('id');
           setDirectionPageList('desc');
@@ -242,7 +244,11 @@ export default function PageManagementList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-management.list.page-list.row.created-by')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-management.list.page-list.row.created-by')}
+        </span>
+      ),
       accessorKey: 'createdBy',
       enableSorting: true,
       cell: (info: any) => (
