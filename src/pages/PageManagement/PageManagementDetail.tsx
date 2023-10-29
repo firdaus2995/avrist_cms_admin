@@ -673,7 +673,7 @@ export default function PageManagementDetail() {
           <img src={PaperSubmit} className="w-10" />
           <p className="font-bold mt-3 text-xl">{t('user.page-management.detail.labels.autoApproveTitle')}</p>
           <p className="font-base mt-2 text-xl text-center">
-            {t('user.page-management.detail.labels.autoApproveSubtitle')}
+            {t('user.page-management.detail.labels.autoApproveSubtitle', { title: getValues().pageName })}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}

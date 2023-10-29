@@ -276,9 +276,9 @@
           "log": "Log",
           "generalInformation": "General Information",
           "log-approval": "Log Approval",
-          "autoApproveTitle": "Submit Content",
-          "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
-          "autoApproveLabel": "I want to auto approve this content data"
+          "autoApproveTitle": "Submit Page",
+          "autoApproveSubtitle": "Do you want to submit {{title}}? Please recheck your page data before submit.",
+          "autoApproveLabel": "I want to auto approve this page data"
         },
         "statuses": {
           "waitingReview": "Waiting Review",
@@ -326,9 +326,9 @@
       "leaveConfirmationMessage": "Are you sure you want to leave without saving?",
       "successToastTitle": "Success",
       "errorToastTitle": "Failed",
-      "autoApproveTitle": "Submit Content",
-      "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
-      "autoApproveLabel": "I want to auto approve this content data"
+      "autoApproveTitle": "Submit Page",
+      "autoApproveSubtitle": "Do you want to submit {{title}}? Please recheck your page data before submit.",
+      "autoApproveLabel": "I want to auto approve this page data"
     },
 
     "content-manager": {
@@ -357,7 +357,7 @@
       "category-required": "Category is required",
       "field-required": "Field is required",
       "autoApproveTitle": "Submit Content",
-      "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
+      "autoApproveSubtitle": "Do you want to submit {{title}} content data? Please recheck your content data before submit content.",
       "autoApproveLabel": "I want to auto approve this content data"
     },
 
@@ -400,7 +400,7 @@
         "rejectContent": "Do you want to reject this content data?",
         "rejectComment": "Please check the checkbox below the page detail before you submit this form",
         "autoApproveTitle": "Submit Content",
-        "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
+        "autoApproveSubtitle": "Do you want to submit {{title}} content data? Please recheck your content data before submit content.",
         "autoApproveLabel": "I want to auto approve this content data"
       }
     },

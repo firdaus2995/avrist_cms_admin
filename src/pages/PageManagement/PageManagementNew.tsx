@@ -206,7 +206,7 @@ export default function PageManagementNew() {
           <img src={PaperSubmit} className="w-10" />
           <p className="font-bold mt-3 text-xl">{t('user.page-management-new.autoApproveTitle')}</p>
           <p className="font-base mt-2 text-xl text-center">
-            {t('user.page-management-new.autoApproveSubtitle')}
+            {t('user.page-management-new.autoApproveSubtitle', { title: getValues().pageName })}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}
@@ -401,6 +401,7 @@ export default function PageManagementNew() {
                 direction="row"
                 defaultValue=""
                 labelEmpty=""
+                labelRequired
                 items={listContents}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                   if (event) {
