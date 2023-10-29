@@ -123,6 +123,9 @@ export default function PageManagementList() {
     startDate,
     endDate,
     isArchive: false,
+  },
+  {
+    refetchOnMountOrArgChange: true,
   });
   const { data } = fetchQuery;
 
@@ -138,6 +141,13 @@ export default function PageManagementList() {
 
   // RTK DELETE
   const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+
+  useEffect(() => {
+    const refetch = async () => {
+      await fetchQuery.refetch();
+    };
+    void refetch();
+  }, []);
 
   useEffect(() => {
     if (data && isPageListActive) {
