@@ -33,7 +33,7 @@ export default function PageManagementNew() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
-  // PAGE TEMPLACE SELECTION STATE
+  // PAGE TEMPLATE SELECTION STATE
   const [pageTemplates, setPageTemplates] = useState<any>([]);
   const [selected, setSelected] = useState<any>(null);
   const [search, setSearch] = useState<any>('');
@@ -88,10 +88,15 @@ export default function PageManagementNew() {
   const { data: dataContents } = fetchContentsQuery;
 
   // RTK GET ELIGIBLE AUTO APPROVE
-  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
-    actionType: 'create',
-    dataType: 'page',
-  });
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery(
+    {
+      actionType: 'create',
+      dataType: 'page',
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
@@ -203,7 +208,7 @@ export default function PageManagementNew() {
         <div className="flex flex-col justify-center items-center">
           <img src={PaperSubmit} className="w-10" />
           <p className="font-bold mt-3 text-xl">{t('user.page-management-new.autoApproveTitle')}</p>
-          <p className="font-base my-2 text-l text-center">
+          <p className="font-base my-3 text-l text-center">
             {t('user.page-management-new.autoApproveSubtitle')}
           </p>
           <CheckBox
@@ -334,7 +339,7 @@ export default function PageManagementNew() {
                 control={control}
                 rules={{
                   required: {
-                    value: true,
+                    value: false,
                     message: 'Short description is required',
                   },
                 }}
@@ -352,10 +357,11 @@ export default function PageManagementNew() {
               />
             </div>
             <div className="flex flex-col justify-start gap-3">
-              <Typography size="m" weight="semi">
+              <Typography type="body" size="m" weight="bold">
                 {t('user.page-management-new.contentLabel')}
               </Typography>
               <CkEditor
+                data={content}
                 onChange={(data: string) => {
                   setContent(data);
                 }}
