@@ -18,7 +18,8 @@ export const getCredential = (): IGetCredential => {
 };
 
 export const removeCredential = () => {
-  sessionStorage.removeItem('accessToken');
-  sessionStorage.removeItem('refreshToken');
-  sessionStorage.removeItem('roles');
+  localStorage.removeItem('accessToken');
+  localStorage.removeItem('refreshToken');
+  localStorage.removeItem('roles');
+  localStorage.removeItem('expiry');
 };
