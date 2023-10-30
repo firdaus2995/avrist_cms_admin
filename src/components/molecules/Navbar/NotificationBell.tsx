@@ -154,6 +154,22 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
     };
   };
 
+  const handlerReadNotificationSingle = async (id: any) => {
+    const payload = {
+      notificationId: id.toString(),
+    };
+    try {
+      void await readNotification(payload);
+      const backendData: any = await fetchQuery.refetch();
+      if (backendData) {
+        setTotal(backendData?.data?.notificationList.total);
+        setNotifications(backendData?.data?.notificationList?.notifications);
+      };
+    } catch (error) {
+      console.log(error);
+    };
+  };
+
   return (
     <Menu ref={ref} as="div" className="relative inline-block text-left z-[999]">
       {({ open, close }) => (
@@ -210,6 +226,9 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
                   notifications.map((element: any, index: number) => (
                     <div
                       key={index}
+                      onClick={() => {
+                        void handlerReadNotificationSingle(element.id)
+                      }}
                       className="flex flex-row flex-start gap-[8px] py-[8px] border-b-[1px] border-[#D6D6D6]">
                       <div
                         className={`mt-[6px] w-[6px] h-[6px] min-w-[6px] rounded-full ${
