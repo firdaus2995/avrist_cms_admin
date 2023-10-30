@@ -87,7 +87,7 @@ export default function Dashboard() {
       | undefined;
     role: string | null | undefined;
   }) => {
-    return roles?.includes(data.role) ? (
+    return (
       <div className="w-full flex flex-row xl:h-[35vh] lg:h-[20vh] rounded-xl shadow-md mt-5 bg-white">
         <div className="flex w-1/3 p-10">
           <img className="w-full" src={data.image} />
@@ -117,7 +117,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    ) : null;
+    );
   };
 
   return (
@@ -148,15 +148,17 @@ export default function Dashboard() {
             {t('dashboard.start-creating-content')}
           </div>
           <div className="grid grid-cols-2 gap-4 p-7">
-            {data.map((val, idx) =>
-              idx === 2 ? (
-                <div key={idx} className="col-span-2 ...">
-                  {contentContainer(val)}
-                </div>
-              ) : (
-                <>{contentContainer(val)}</>
-              ),
-            )}
+            {data
+              .filter((item: any) => roles.includes(item.role))
+              .map((val, idx) =>
+                idx === 2 ? (
+                  <div key={idx} className="col-span-2 ...">
+                    {contentContainer(val)}
+                  </div>
+                ) : (
+                  <>{contentContainer(val)}</>
+                ),
+              )}
           </div>
         </div>
       </RoleRenderer>

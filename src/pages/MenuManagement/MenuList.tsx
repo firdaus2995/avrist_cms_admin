@@ -47,7 +47,7 @@ export default function MenuList() {
   }: any = useForm();
 
   const maxImageSize = 2 * 1024 * 1024;
-  const maxChar = 70;
+  const maxChar = 50;
 
   const [isAddClick, setIsAddClicked] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
