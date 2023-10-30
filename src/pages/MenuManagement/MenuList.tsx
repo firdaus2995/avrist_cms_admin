@@ -189,7 +189,7 @@ export default function MenuList() {
             message: d.roleDelete?.message || '',
           }),
         );
-        navigate(0);
+        await fetchQuery.refetch();
       })
       .catch(_err => {
         // console.log(err);
