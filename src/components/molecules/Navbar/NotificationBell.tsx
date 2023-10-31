@@ -15,6 +15,7 @@ import {
   useSeeNotificationMutation,
 } from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
+import { Link } from 'react-router-dom';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
@@ -224,7 +225,8 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
                 height={500}>
                 {notifications.length > 0 &&
                   notifications.map((element: any, index: number) => (
-                    <div
+                    <Link
+                      to={element.link}
                       key={index}
                       onClick={() => {
                         void handlerReadNotificationSingle(element.id)
@@ -251,7 +253,7 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
                           'HH:mm',
                         )}`}</h6>
                       </div>
-                    </div>
+                    </Link>
                   ))}
               </InfiniteScroll>
               <div className="flex flex-row justify-end p-[16px]">
