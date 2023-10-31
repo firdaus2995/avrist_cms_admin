@@ -724,6 +724,7 @@ export default function PageManagementDetail() {
               setIsAutoApprove(e.value);
             }}
             labelTitle={t('user.page-management.detail.labels.autoApproveLabel')}
+            labelStyle='text-xl'
           />
         </div>
       </ModalForm>
