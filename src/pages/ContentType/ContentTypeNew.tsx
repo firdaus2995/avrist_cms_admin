@@ -16,7 +16,10 @@ import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '../../store';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { useGetConfigQuery, usePostTypeCreateMutation } from '@/services/ContentType/contentTypeApi';
+import {
+  useGetConfigQuery,
+  usePostTypeCreateMutation,
+} from '@/services/ContentType/contentTypeApi';
 
 export default function ContentTypeNew() {
   const dispatch = useAppDispatch();
@@ -116,7 +119,7 @@ export default function ContentTypeNew() {
       isDeleted: false,
     },
   ]);
-  
+
   function onAddList() {
     if (openedAttribute?.code === 'looping') {
       const data = {
@@ -255,17 +258,17 @@ export default function ContentTypeNew() {
       <div className="flex flex-col border-b-2 pb-8">
         <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-10 text-lg font-bold">
           <Controller
-            name='contentName'
+            name="contentName"
             control={control}
-            defaultValue=''
+            defaultValue=""
             rules={{ required: t('components.atoms.required') ?? '' }}
             render={({ field }) => (
               <InputText
                 {...field}
                 labelTitle={t('user.content-type-edit.contentTypeColumnName')}
                 labelStyle="font-semibold"
-                direction='row'
-                containerStyle='mb-5'
+                direction="row"
+                containerStyle="mb-5"
                 labelRequired
                 roundStyle="xl"
                 placeholder={'Enter your new content name'}
@@ -278,16 +281,16 @@ export default function ContentTypeNew() {
         <div className="flex flex-row items-center">
           <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-24 text-lg font-bold">
             <Controller
-              name='slugName'
+              name="slugName"
               control={control}
-              defaultValue=''
+              defaultValue=""
               rules={{ required: t('components.atoms.required') ?? '' }}
               render={({ field }) => (
                 <InputText
                   {...field}
                   labelTitle={t('user.content-type-edit.slugName')}
                   labelStyle="font-semibold"
-                  direction='row'
+                  direction="row"
                   labelRequired
                   roundStyle="xl"
                   placeholder={t('user.content-type-edit.slugName-placeholder')}
@@ -527,7 +530,11 @@ export default function ContentTypeNew() {
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
             <div className="flex flex-row">
               <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.code) === 'looping' ? 'looping content' : getType(openedAttribute?.code)}</div>
+              <div className="font-bold capitalize ml-5">
+                {getType(openedAttribute?.code) === 'looping'
+                  ? 'looping content'
+                  : getType(openedAttribute?.code)}
+              </div>
             </div>
             <div className="p-2">
               <svg
@@ -547,7 +554,13 @@ export default function ContentTypeNew() {
           </div>
           <div className="flex flex-col mx-10 mt-16">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              {`${t('user.content-type-edit.add-new')} ${getType(openedAttribute?.code) === 'looping' ? t('user.content-type-edit.looping') : `${t('user.content-type-edit.add-new-extension')} ${getType(openedAttribute?.code)}`}`}
+              {`${t('user.content-type-edit.add-new')} ${
+                getType(openedAttribute?.code) === 'looping'
+                  ? t('user.content-type-edit.looping')
+                  : `${t('user.content-type-edit.add-new-extension')} ${getType(
+                      openedAttribute?.code,
+                    )}`
+              }`}
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
@@ -677,12 +690,12 @@ export default function ContentTypeNew() {
                                     (_val: any, index: any) => index !== idx,
                                   );
                                   setLoopTypeRequest(updated);
-                                  
+
                                   const newOpenedAttribute: any = copyArray(openedAttribute);
                                   if (newOpenedAttribute?.attributeList?.length > 0) {
                                     newOpenedAttribute?.attributeList?.splice(idx, 1);
                                     setOpenedAttribute(newOpenedAttribute);
-                                  };
+                                  }
                                 }}
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -699,7 +712,9 @@ export default function ContentTypeNew() {
                             </div>
                             <div className="flex flex-col w-1/2">
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.nameLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
@@ -724,7 +739,9 @@ export default function ContentTypeNew() {
                                 }}
                               />
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.fieldIdLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
@@ -752,7 +769,9 @@ export default function ContentTypeNew() {
                             {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.minLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).min_length}
@@ -778,7 +797,9 @@ export default function ContentTypeNew() {
                                   }}
                                 />
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.maxLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).max_length}
@@ -874,7 +895,7 @@ export default function ContentTypeNew() {
                     className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
+                  {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
                 </button>
               </div>
             ) : null}
@@ -907,7 +928,11 @@ export default function ContentTypeNew() {
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
             <div className="flex flex-row">
               <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType) === 'looping' ? 'looping content' : getType(openedAttribute?.fieldType)}</div>
+              <div className="font-bold capitalize ml-5">
+                {getType(openedAttribute?.fieldType) === 'looping'
+                  ? 'looping content'
+                  : getType(openedAttribute?.fieldType)}
+              </div>
             </div>
             <div className="p-2">
               <svg
@@ -927,7 +952,11 @@ export default function ContentTypeNew() {
           </div>
           <div className="flex flex-col mx-10 mt-10">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType) === 'looping' ? 'multiple content type' : getType(openedAttribute?.fieldType)}</div>
+              <div className="font-bold capitalize ml-5">
+                {getType(openedAttribute?.fieldType) === 'looping'
+                  ? 'multiple content type'
+                  : getType(openedAttribute?.fieldType)}
+              </div>
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
@@ -991,7 +1020,8 @@ export default function ContentTypeNew() {
                   }}
                 />
               </div>
-            ) : openedAttribute?.fieldType === 'IMAGE' || openedAttribute?.fieldType === 'DOCUMENT' ? (
+            ) : openedAttribute?.fieldType === 'IMAGE' ||
+              openedAttribute?.fieldType === 'DOCUMENT' ? (
               <div className="flex flex-row gap-4 my-5">
                 <Radio
                   labelTitle=""
@@ -1077,7 +1107,9 @@ export default function ContentTypeNew() {
                             </div>
                             <div className="flex flex-col w-1/2">
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.nameLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
@@ -1102,7 +1134,9 @@ export default function ContentTypeNew() {
                                 }}
                               />
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.fieldIdLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
@@ -1130,7 +1164,9 @@ export default function ContentTypeNew() {
                             {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.minLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).min_length}
@@ -1156,7 +1192,9 @@ export default function ContentTypeNew() {
                                   }}
                                 />
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.maxLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).max_length}
@@ -1253,7 +1291,7 @@ export default function ContentTypeNew() {
                     className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
+                  {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
                 </button>
               </div>
             ) : null}
@@ -1298,14 +1336,13 @@ export default function ContentTypeNew() {
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
-        <form
-        className="flex flex-col w-100"
-        onSubmit={handleSubmit(onSubmit)}>
+        <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
           {renderForm()}
           {renderListItems()}
           <div className="flex absolute right-2 bottom-2 gap-3">
             <button
               className="btn btn-outline btn-md"
+              type='button'
               onClick={() => {
                 setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
                 setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
@@ -1313,9 +1350,7 @@ export default function ContentTypeNew() {
               }}>
               {t('btn.cancel')}
             </button>
-            <button
-              type='submit'
-              className="btn btn-success btn-md text-white">
+            <button type="submit" className="btn btn-success btn-md text-white">
               {t('btn.create')}
             </button>
           </div>

@@ -1408,6 +1408,7 @@ export default function ContentTypeEdit() {
           <div className="flex absolute right-2 bottom-2 gap-3">
             <button
               className="btn btn-outline btn-md"
+              type='button'
               onClick={() => {
                 setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
                 setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
