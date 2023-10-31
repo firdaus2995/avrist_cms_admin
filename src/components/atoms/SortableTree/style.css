@@ -23,3 +23,8 @@
 .rstcustom__rowTitle {
   font-size: 14px;
 }
+
+.rst__virtualScrollOverride {
+  overflow: visible !important;
+  overflow-y: visible !important;
+}

@@ -50,7 +50,6 @@ export const rolesApi = createApi({
         variables: payload,
       }),
     }),
-
     getPermissionHirarky: builder.query<IGetPermissionResponse, null>({
       query: () => ({
         document: gql`

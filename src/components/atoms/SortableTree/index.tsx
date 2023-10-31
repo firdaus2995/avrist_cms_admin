@@ -140,7 +140,8 @@ export default function SortableTreeComponent(props: ISortableTree) {
               </div>,
             ],
             style: {
-              width: '80vh',
+              width: '50vw',
+              minWidth: 300,
             },
           })}
         />

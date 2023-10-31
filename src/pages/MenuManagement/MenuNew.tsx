@@ -1,8 +1,11 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { t } from 'i18next';
+
 import Typography from '@/components/atoms/Typography';
 import FormList from '@/components/molecules/FormList';
+import TakedownModal from './components/TakedownModal';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
   useEditMenuMutation,
   useCreateMenuMutation,
@@ -10,14 +13,11 @@ import {
 } from '@/services/Menu/menuApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { t } from 'i18next';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import TakedownModal from './components/TakedownModal';
 
 // OTHER GET DATA
-import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
-// import { UniqueTypeNamesRule } from 'graphql';
+import { useGetPageManagementApprovedListQuery } from '@/services/PageManagement/pageManagementApi';
 
 const maxImageSize = 2 * 1024 * 1024;
 const maxChar = 50;
@@ -55,15 +55,7 @@ export default function MenuNew() {
   const [selectedPageId, setSelectedPageId] = useState<any>(null);
   const [openTakedownModal, setOpenTakedownModal] = useState(false);
 
-  const [listPage, setListPage] = useState<any>([]);
-  const [pageIndex] = useState(0);
-  const [pageLimit] = useState(9999);
-  const [direction] = useState('asc');
-  const [search] = useState('');
-  const [sortBy] = useState('id');
-  const [filterBy] = useState('');
-  const [startDate] = useState('');
-  const [endDate] = useState('');
+  const [approvedPageData, setApprovedPageData] = useState<any>([]);
 
   const resetValue = () => {
     reset();
@@ -74,41 +66,28 @@ export default function MenuNew() {
   };
 
   // GET LIST DATA
-  const fetchPageListQuery = useGetPageManagementListQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search,
-    filterBy,
-    startDate,
-    endDate,
-    isArchive: false,
-  });
-  const { data: listPageData } = fetchPageListQuery;
+  const fetchApprovedPageQuery = useGetPageManagementApprovedListQuery(null);
+  const { data: dataApprovedPage } = fetchApprovedPageQuery;
 
   useEffect(() => {
-    const pagesTemp = listPageData?.pageList?.pages;
-    if (pagesTemp) {
-      const filteredListPageData = pagesTemp?.map((val: any) => {
-        const list = {
-          value: val.id,
-          label: val.title,
+    if (dataApprovedPage) {
+      const approvedPageList = dataApprovedPage?.pageApprovedListForMenu?.pages.map((element: any) => {
+        return {
+          value: Number(element.id),
+          label: element.title,
         };
-
-        return list;
       });
-      setListPage(filteredListPageData);
-    }
-  }, [listPageData]);
+      setApprovedPageData(approvedPageList);
+    };
+  }, [approvedPageData]);
 
   useEffect(() => {
     const defPageId = getValues('pageId');
-    if (listPage && defPageId) {
-      const selectedLabel = listPage?.find((item: any) => item.value === defPageId)?.label ?? null;
+    if (approvedPageData && defPageId) {
+      const selectedLabel = approvedPageData?.find((item: any) => item.value === defPageId)?.label ?? null;
       setSelectedPageId(selectedLabel);
     }
-  }, [listPage, getValues('pageId')]);
+  }, [approvedPageData, getValues('pageId')]);
 
   // GET DEFAULT DATA
   const fetchDefaultData = useGetMenuByIdQuery(
@@ -298,7 +277,7 @@ export default function MenuNew() {
                             defaultValue={selectedPageId}
                             error={!!errors?.pageId?.message}
                             helperText={errors?.pageId?.message}
-                            items={listPage}
+                            items={approvedPageData}
                             onChange={onChange}
                             inputWidth={350}
                           />
