@@ -1,28 +1,32 @@
-import dayjs from 'dayjs';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, memo } from 'react';
 import { Link } from 'react-router-dom';
-import { t } from 'i18next';
-
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import {
+  useGetPageManagementListQuery,
+  useDeletePageMutation,
+  useGetPageMyTaskListQuery,
+} from '@/services/PageManagement/pageManagementApi';
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 
-import PaginationComponent from '@/components/molecules/Pagination';
-import StatusBadge from '@/components/atoms/StatusBadge';
-import ModalLog from './components/ModalLog';
 import TableDelete from '@/assets/table-delete.svg';
 import ArchiveBox from '@/assets/archive-box.svg';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
-import ModalConfirm from '@/components/molecules/ModalConfirm';
-import Table from '@/components/molecules/Table';
-import RoleRenderer from '../../components/atoms/RoleRenderer';
-import { InputSearch } from '@/components/atoms/Input/InputSearch';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useGetPageManagementListQuery, useDeletePageMutation, useGetPageMyTaskListQuery } from '@/services/PageManagement/pageManagementApi';
-import { useAppDispatch } from '@/store';
-import { openToast } from '@/components/atoms/Toast/slice';
-import { FilterButton } from '@/components/molecules/FilterButton/index.';
 
-const ArchiveButton = () => {
+import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import PaginationComponent from '@/components/molecules/Pagination';
+import StatusBadge from '@/components/atoms/StatusBadge';
+import ModalLog from './components/ModalLog';
+import dayjs from 'dayjs';
+import { FilterButton } from '@/components/molecules/FilterButton/index.';
+import { t } from 'i18next';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
+
+const ArchiveButton = memo(function ArchiveButton() {
   return (
     <div className="inline-block float-right">
       <Link to="archive">
@@ -35,9 +39,9 @@ const ArchiveButton = () => {
       </Link>
     </div>
   );
-};
+});
 
-const CreateButton = () => {
+const CreateButton = memo(function CreateButton() {
   return (
     <div className="inline-block float-right">
       <Link to="new">
@@ -58,9 +62,131 @@ const CreateButton = () => {
       </Link>
     </div>
   );
-};
+});
 
 export default function PageManagementList() {
+  const listTabs = [
+    {
+      name: t('user.page-management.list.page-list.title'),
+      isActive: 1,
+    },
+    {
+      name: t('user.page-management.list.my-task.title'),
+      isActive: 2,
+    },
+  ];
+  // const now = dayjs().format('YYYY-MM-DD');
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  const [activeTab, setActiveTab] = useState(1);
+  const isPageListActive = activeTab === 1;
+  const dispatch = useAppDispatch();
+  const [listData, setListData] = useState<any>([]);
+  const [listDataMyTask, setListDataMyTask] = useState<any>([]);
+
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [titleConfirm, setTitleConfirm] = useState('');
+  const [messageConfirm, setMessageConfirm] = useState('');
+  const [idDelete, setIdDelete] = useState(0);
+  const [idLog, setIdLog] = useState(null);
+  const [logTitle, setLogTitle] = useState(null);
+
+  const [filterBy, setFilterBy] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+
+  // TABLE PAGINATION STATE - PAGE LIST
+  const [total, setTotal] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(10);
+
+  const [directionPageList, setDirectionPageList] = useState('desc');
+  const [directionMyTask, setDirectionMyTask] = useState('desc');
+
+  const [searchPageList, setSearchPageList] = useState('');
+  const [searchMyTask, setSearchMyTask] = useState('');
+  const [sortByPageList, setSortByPageList] = useState('createdAt');
+  const [sortByMyTask, setSortByMyTask] = useState('createdAt');
+
+  const sortBy = isPageListActive ? sortByPageList : sortByMyTask;
+  const direction = isPageListActive ? directionPageList : directionMyTask;
+  const searchQuery = isPageListActive ? searchPageList : searchMyTask;
+
+  // RTK GET DATA
+  const fetchQuery = useGetPageManagementListQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search: searchQuery,
+      filterBy,
+      startDate,
+      endDate,
+      isArchive: false,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data, isFetching: isFetchingListData } = fetchQuery;
+
+  const fetchQueryMyTask = useGetPageMyTaskListQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search: searchQuery,
+      isArchive: false,
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataMyTask, isFetching: isFetchingMyTask } = fetchQueryMyTask;
+
+  // RTK DELETE
+  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
+
+  useEffect(() => {
+    if (data && isPageListActive) {
+      setListData(data?.pageList?.pages);
+      setTotal(data?.pageList?.total);
+    }
+    if (dataMyTask && !isPageListActive) {
+      setListDataMyTask(dataMyTask?.pageMyTaskList?.pages);
+      setTotal(dataMyTask?.pageMyTaskList?.total);
+    }
+  }, [data, dataMyTask, isPageListActive]);
+
+  // FUNCTION FOR SORTING FOR ATOMIC TABLE
+  const handleSortModelChange = useCallback(
+    (sortModel: SortingState) => {
+      if (sortModel?.length) {
+        const sortBy = sortModel[0].id;
+        const direction = sortModel[0].desc ? 'desc' : 'asc';
+
+        if (isPageListActive) {
+          setSortByPageList(sortBy);
+          setDirectionPageList(direction);
+        } else {
+          setSortByMyTask(sortBy);
+          setDirectionMyTask(direction);
+        }
+      } else {
+        if (isPageListActive) {
+          setSortByPageList('id');
+          setDirectionPageList('desc');
+        } else {
+          setSortByMyTask('id');
+          setDirectionMyTask('desc');
+        }
+      }
+    },
+    [isPageListActive],
+  );
+
   // TABLE COLUMN
   const COLUMNS = [
     {
@@ -180,144 +306,6 @@ export default function PageManagementList() {
       ),
     },
   ];
-  
-  const listTabs = [
-    {
-      name: t('user.page-management.list.page-list.title'),
-      isActive: 1,
-    },
-    {
-      name: t('user.page-management.list.my-task.title'),
-      isActive: 2,
-    },
-  ];
-
-  const dispatch = useAppDispatch();
-
-  const [filterOpen, setFilterOpen] = useState(false);
-
-  const [activeTab, setActiveTab] = useState(1);
-  const [listData, setListData] = useState<any>([]);
-  const [listDataMyTask, setListDataMyTask] = useState<any>([]);
-
-  const [showConfirm, setShowConfirm] = useState(false);
-  const [titleConfirm, setTitleConfirm] = useState('');
-  const [messageConfirm, setMessageConfirm] = useState('');
-  const [idDelete, setIdDelete] = useState(0);
-  const [idLog, setIdLog] = useState(null);
-  const [logTitle, setLogTitle] = useState(null);
-
-  const [filterBy, setFilterBy] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
-
-  // TABLE PAGINATION STATE - PAGE LIST
-  const [total, setTotal] = useState(0);
-  const [pageIndex, setPageIndex] = useState(0);
-  const [pageLimit, setPageLimit] = useState(10);
-
-  const [directionPageList, setDirectionPageList] = useState('desc');
-  const [directionMyTask, setDirectionMyTask] = useState('desc');
-
-  const [searchPageList, setSearchPageList] = useState('');
-  const [searchMyTask, setSearchMyTask] = useState('');
-  const [sortByPageList, setSortByPageList] = useState('createdAt');
-  const [sortByMyTask, setSortByMyTask] = useState('createdAt');
-
-  const now = dayjs().format('YYYY-MM-DD');
-  const isPageListActive = activeTab === 1;
-
-  const sortBy = isPageListActive ? sortByPageList : sortByMyTask;
-  const direction = isPageListActive ? directionPageList : directionMyTask;
-  const searchQuery = isPageListActive ? searchPageList : searchMyTask;
-
-  // RTK GET DATA
-  const fetchQuery = useGetPageManagementListQuery(
-    {
-      pageIndex,
-      limit: pageLimit,
-      sortBy,
-      direction,
-      search: searchQuery,
-      filterBy,
-      startDate,
-      endDate,
-      isArchive: false,
-    },
-    {
-      refetchOnMountOrArgChange: true,
-    },
-  );
-  const { data } = fetchQuery;
-
-  const fetchQueryMyTask = useGetPageMyTaskListQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search: searchQuery,
-    isArchive: false,
-  });
-  const { data: dataMyTask } = fetchQueryMyTask;
-
-  // RTK DELETE
-  const [deletePage, { isLoading: deletePageLoading }] = useDeletePageMutation();
-
-  useEffect(() => {
-    const refetch = async () => {
-      await fetchQuery.refetch();
-    };
-    void refetch();
-  }, []);
-
-  useEffect(() => {
-    if (data && isPageListActive) {
-      setListData(data?.pageList?.pages);
-      setTotal(data?.pageList?.total);
-    }
-    if (dataMyTask && !isPageListActive) {
-      setListDataMyTask(dataMyTask?.pageMyTaskList?.pages);
-      setTotal(dataMyTask?.pageMyTaskList?.total);
-    }
-  }, [data, dataMyTask, isPageListActive]);
-
-  useEffect(() => {
-    const refetchData = async () => {
-      if (isPageListActive) {
-        await fetchQuery.refetch();
-      } else {
-        await fetchQueryMyTask.refetch();
-      }
-    };
-    void refetchData();
-  }, [isPageListActive]);
-
-  // FUNCTION FOR SORTING FOR ATOMIC TABLE
-  const handleSortModelChange = useCallback(
-    (sortModel: SortingState) => {
-      if (sortModel?.length) {
-        const sortBy = sortModel[0].id;
-        const direction = sortModel[0].desc ? 'desc' : 'asc';
-
-        if (isPageListActive) {
-          setSortByPageList(sortBy);
-          setDirectionPageList(direction);
-        } else {
-          setSortByMyTask(sortBy);
-          setDirectionMyTask(direction);
-        }
-      } else {
-        if (isPageListActive) {
-          setSortByPageList('id');
-          setDirectionPageList('desc');
-        } else {
-          setSortByMyTask('id');
-          setDirectionMyTask('desc');
-        }
-      }
-    },
-    [isPageListActive],
-  );
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
@@ -354,12 +342,12 @@ export default function PageManagementList() {
   };
 
   const resetState = () => {
-    setFilterBy('CREATED_AT');
-    setStartDate(now);
-    setEndDate(now);
+    setFilterBy('');
+    setStartDate('');
+    setEndDate('');
   };
 
-  const TopRightButton = () => {
+  const TopRightButton = memo(function TopRightButton() {
     return (
       <div className="flex flex-row">
         {isPageListActive && (
@@ -389,7 +377,7 @@ export default function PageManagementList() {
         </RoleRenderer>
       </div>
     );
-  };
+  });
 
   return (
     <>
@@ -414,7 +402,7 @@ export default function PageManagementList() {
           submitTitle={t('user.page-management.list.submit-title')}
           loading={deletePageLoading}
           icon={WarningIcon}
-          btnSubmitStyle={''}
+          btnSubmitStyle={'btn-error'}
         />
         <TitleCard
           title={t('user.page-management.list.page-list.title') ?? ''}
@@ -427,6 +415,7 @@ export default function PageManagementList() {
                 } else {
                   setSearchMyTask(e.target.value);
                 }
+                setPageIndex(0);
               }}
               placeholder={t('user.page-management.list.page-list.search-placeholder') ?? ''}
             />
@@ -456,7 +445,7 @@ export default function PageManagementList() {
               <Table
                 rows={listData}
                 columns={COLUMNS}
-                loading={false}
+                loading={isFetchingListData}
                 error={false}
                 manualPagination={true}
                 manualSorting={true}
@@ -466,7 +455,7 @@ export default function PageManagementList() {
               <Table
                 rows={listDataMyTask}
                 columns={COLUMNS}
-                loading={false}
+                loading={isFetchingMyTask}
                 error={false}
                 manualPagination={true}
                 manualSorting={true}

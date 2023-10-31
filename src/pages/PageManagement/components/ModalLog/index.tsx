@@ -13,10 +13,16 @@ export default function ModalLog(props: any) {
   const { data, isLoading } = usePageLogApprovalQuery({ id });
 
   useEffect(() => {
-    if (data) {
+    if (id && data) {
       setListData(data?.pageLogApproval?.logs);
     }
-  }, [data]);
+  }, [id, data]);
+
+  useEffect(() => {
+    if (!open) {
+      setListData([]);
+    }
+  }, [open]);
 
   const Card = ({ date, datas }: any) => {
     return (
@@ -75,7 +81,7 @@ export default function ModalLog(props: any) {
             {datas?.comment !== '' && (
               <div className="flex justify-between mt-5">
                 <div className="flex flex-row justify-center ml-3 opacity-80">
-                  Comment : 
+                  Comment :
                   <Typography type="body" size="m" weight="regular" className="ml-3">
                     {datas?.comment}
                   </Typography>
