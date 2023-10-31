@@ -412,7 +412,7 @@ export default function MenuNew() {
                   render={({ field }) => (
                     <FormList.TextAreaField
                       {...field}
-                      labelTitle="Sort Description"
+                      labelTitle="Short Description"
                       placeholder="Input Short Description"
                       error={!!errors?.shortDesc?.message}
                       helperText={errors?.shortDesc?.message}
