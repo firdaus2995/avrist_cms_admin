@@ -234,8 +234,11 @@ export default function MenuList() {
       menuType: type,
       externalUrl: urlLink,
       isNewTab: isOpenTab,
-      pageId: page,
+      ...(page && {
+        pageId: page,
+      }),
     };
+
     createMenu(payload)
       .unwrap()
       .then(() => {
@@ -269,8 +272,11 @@ export default function MenuList() {
         menuType: type,
         externalUrl: urlLink,
         isNewTab: isOpenTab,
-        pageId: page,
+        ...(page && {
+          pageId: page,
+        }),
       };
+      
       editMenu(payload)
         .unwrap()
         .then(async () => {

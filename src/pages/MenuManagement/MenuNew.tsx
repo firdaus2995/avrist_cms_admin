@@ -163,8 +163,9 @@ export default function MenuNew() {
       isNewTab: e.isNewTab || false,
       pageId: e.pageId || null,
       shortDesc: e.shortDesc || '',
-      icon: e.menuIcon || '',
+      icon: e.icon || '',
     };
+
     createMenu(payload)
       .unwrap()
       .then(() => {
@@ -195,7 +196,7 @@ export default function MenuNew() {
       isNewTab: e.isNewTab || false,
       pageId: e.pageId || null,
       shortDesc: e.shortDesc || '',
-      icon: e.menuIcon || '',
+      icon: e.icon || '',
     };
     editMenu(payload)
       .unwrap()
