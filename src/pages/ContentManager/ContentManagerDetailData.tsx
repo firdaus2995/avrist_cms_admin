@@ -1238,7 +1238,7 @@ export default function ContentManagerDetailData() {
             {t('user.content-manager-detail-data.modalMessages.autoApproveTitle')}
           </p>
           <p className="font-base mt-2 text-xl text-center">
-            {t('user.content-manager-detail-data.modalMessages.autoApproveSubtitle')}
+            {t('user.content-manager-detail-data.modalMessages.autoApproveSubtitle', { title: contentDataDetailList?.title })}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}

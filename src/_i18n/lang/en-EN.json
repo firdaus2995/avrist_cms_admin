@@ -4,7 +4,7 @@
     "DataIsUsedException": "This data is been used, you can’t delete this data",
     "DataHasBeenExistException": "Email has been Exist"
   },
-  "toast-success": "Success",
+  "toast-success": "Success!",
   "toast-failed": "Failed",
   "btn": {
     "save": "Submit",
@@ -276,9 +276,9 @@
           "log": "Log",
           "generalInformation": "General Information",
           "log-approval": "Log Approval",
-          "autoApproveTitle": "Submit Content",
-          "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
-          "autoApproveLabel": "I want to auto approve this content data"
+          "autoApproveTitle": "Submit Page",
+          "autoApproveSubtitle": "Do you want to submit {{title}}? Please recheck your page data before submit.",
+          "autoApproveLabel": "I want to auto approve this page data"
         },
         "statuses": {
           "waitingReview": "Waiting Review",
@@ -326,9 +326,9 @@
       "leaveConfirmationMessage": "Are you sure you want to leave without saving?",
       "successToastTitle": "Success",
       "errorToastTitle": "Failed",
-      "autoApproveTitle": "Submit Content",
-      "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
-      "autoApproveLabel": "I want to auto approve this content data"
+      "autoApproveTitle": "Submit Page",
+      "autoApproveSubtitle": "Do you want to submit {{title}}? Please recheck your page data before submit.",
+      "autoApproveLabel": "I want to auto approve this page data"
     },
 
     "content-manager": {
@@ -357,7 +357,7 @@
       "category-required": "Category is required",
       "field-required": "Field is required",
       "autoApproveTitle": "Submit Content",
-      "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
+      "autoApproveSubtitle": "Do you want to submit {{title}} content data? Please recheck your content data before submit content.",
       "autoApproveLabel": "I want to auto approve this content data"
     },
 
@@ -400,7 +400,7 @@
         "rejectContent": "Do you want to reject this content data?",
         "rejectComment": "Please check the checkbox below the page detail before you submit this form",
         "autoApproveTitle": "Submit Content",
-        "autoApproveSubtitle": "Do you want to submit Homepage Avrist Life content data? Please recheck your content data before submit content.",
+        "autoApproveSubtitle": "Do you want to submit {{title}} content data? Please recheck your content data before submit content.",
         "autoApproveLabel": "I want to auto approve this content data"
       }
     },
@@ -648,7 +648,7 @@
           "title": "Page Template Details"
         }
       },
-      "toast-success": "Success",
+      "toast-success": "Success!",
       "toast-failed": "Failed",
       "modal": {
         "confirmation": "Confirmation",
@@ -758,7 +758,7 @@
         "menuEdit": "Edit Menu",
         "successDelete": "Success delete",
         "failedDelete": "Failed delete",
-        "toastSuccess": "Success",
+        "toastSuccess": "Success!",
         "toastFailed": "Oops failed delete",
         "cancel": "Cancel",
         "submit": "Submit",
@@ -852,7 +852,7 @@
           "placeholder-user-email": "Email",
           "leave-confirmation": "Do you want to cancel all of the process?"
         },
-        "toast-success": "Success",
+        "toast-success": "Success!",
         "toast-failed": "Failed",
         "success-msg": "Your user update has been successfully saved!",
         "failed-msg": "Failed to update user '{{name}}'!",
@@ -939,7 +939,7 @@
         }
       },
       "toast": {
-        "success": "Success",
+        "success": "Success!",
         "failed": "Failed"
       }
     },
@@ -977,7 +977,7 @@
         "edit": "Edit Global Config Data",
         "global-config-data": "Global Config Data"
       },
-      "toast-success": "Success",
+      "toast-success": "Success!",
       "toast-failed": "Failed",
       "modal": {
         "confirmation": "Confirmation",
@@ -1071,7 +1071,7 @@
           "failed-msg": "Failed to add role '{{name}}'."
         }
       },
-      "toast-success": "Success",
+      "toast-success": "Success!",
       "toast-failed": "Failed",
       "btn": {
         "cancel": "Cancel",
@@ -1111,7 +1111,7 @@
     },
 
     "tabs-category-edit": {
-      "toast-success": "Success",
+      "toast-success": "Success!",
       "toast-failed": "Failed",
       "content-manager": {
         "category": {
@@ -1157,7 +1157,7 @@
         "save": "Save"
       },
       "toast": {
-        "success": "Success",
+        "success": "Success!",
         "failed": "Failed"
       },
       "loading": "Loading..."

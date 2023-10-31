@@ -10,13 +10,13 @@ import WarningIcon from '../../assets/warning.png';
 import TableEdit from '../../assets/table-edit.png';
 import TableDelete from '../../assets/table-delete.svg';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
+import Typography from '@/components/atoms/Typography';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import { useDeleteUserMutation, useGetUserQuery } from '../../services/User/userApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
-import Typography from '@/components/atoms/Typography';
-import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function UsersList() {
   const StatusBadge = (status: any) => {

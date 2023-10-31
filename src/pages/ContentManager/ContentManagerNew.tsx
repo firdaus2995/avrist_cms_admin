@@ -1230,7 +1230,7 @@ export default function ContentManagerNew() {
           <img src={PaperSubmit} className="w-10" />
           <p className="font-bold mt-3 text-xl">{t('user.content-manager-new.autoApproveTitle')}</p>
           <p className="font-base mt-2 text-xl text-center">
-            {t('user.content-manager-new.autoApproveSubtitle')}
+            {t('user.content-manager-new.autoApproveSubtitle', { title: getValues().title })}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}

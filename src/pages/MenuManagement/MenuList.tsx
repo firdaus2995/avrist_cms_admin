@@ -8,7 +8,6 @@ import LifeInsurance from '../../assets/lifeInsurance.png';
 import DropDown from '../../components/molecules/DropDown';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import StatusBadge from '@/components/atoms/StatusBadge';
-// import Modal from '../../components/atoms/Modal';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import PaperIcon from '../../assets/paper.svg';
@@ -33,7 +32,6 @@ import { useGetPageManagementListQuery } from '../../services/PageManagement/pag
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 
 export default function MenuList() {
-  // const params = useParams();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const now = dayjs().format('YYYY-MM-DD');
@@ -47,7 +45,7 @@ export default function MenuList() {
   }: any = useForm();
 
   const maxImageSize = 2 * 1024 * 1024;
-  const maxChar = 70;
+  const maxChar = 50;
 
   const [isAddClick, setIsAddClicked] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
@@ -189,10 +187,9 @@ export default function MenuList() {
             message: d.roleDelete?.message || '',
           }),
         );
-        navigate(0);
+        await fetchQuery.refetch();
       })
       .catch(_err => {
-        // console.log(err);
         dispatch(
           openToast({
             type: 'error',
@@ -242,7 +239,6 @@ export default function MenuList() {
     createMenu(payload)
       .unwrap()
       .then(() => {
-        // console.log('edited');
         setIsOpenForm(false);
         setIsAddClicked(false);
         dispatch(
@@ -278,7 +274,6 @@ export default function MenuList() {
       editMenu(payload)
         .unwrap()
         .then(async () => {
-          // console.log('edited');
           setIsEdit(false);
           dispatch(
             openToast({
@@ -329,9 +324,6 @@ export default function MenuList() {
             <div
               role="button"
               onClick={() => {
-                // setFormData({...formData, type: 'Page'});
-                // setType('PAGE');
-                // setIsOpenForm(true);
                 navigate('new', { state: { pageType: 'PAGE' } });
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
@@ -340,9 +332,6 @@ export default function MenuList() {
             <div
               role="button"
               onClick={() => {
-                // setFormData({...formData, type: 'Link'});
-                // setType('LINK');
-                // setIsOpenForm(true);
                 navigate('new', { state: { pageType: 'LINK' } });
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
@@ -351,9 +340,6 @@ export default function MenuList() {
             <div
               role="button"
               onClick={() => {
-                // setFormData({...formData, type: 'No Landing Page'});
-                // setType('NO_LANDING_PAGE');
-                // setIsOpenForm(true);
                 navigate('new', { state: { pageType: 'NO_LANDING_PAGE' } });
               }}
               className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
@@ -670,7 +656,6 @@ export default function MenuList() {
                   {t('user.menu-list.menuList.menuEdit')}
                 </div>
               )}
-
               <hr />
               {!isEdit ? (
                 <div className="flex">
@@ -686,23 +671,26 @@ export default function MenuList() {
                 </div>
               ) : null}
             </div>
-            {isOpenForm && renderForm()}
-            {!isOpenForm && (
-              <>
-                {dataScructure?.length > 0 && (
-                  <SortableTreeComponent
-                    data={dataScructure}
-                    onClick={(data: any, action: string | undefined) => {
-                      onEdit(data, action);
-                    }}
-                    onChange={function (node: any, data: any): void {
-                      handlerUpdateMenuStructure(node, data);
-                    }}
-                  />
-                )}
-                {renderAddButtons()}
-              </>
-            )}
+            {
+              isOpenForm ? (
+                renderForm()
+              ) : (
+                <>
+                  {dataScructure?.length > 0 && (
+                    <SortableTreeComponent
+                      data={dataScructure}
+                      onClick={(data: any, action: string | undefined) => {
+                        onEdit(data, action);
+                      }}
+                      onChange={function (node: any, data: any): void {
+                        handlerUpdateMenuStructure(node, data);
+                      }}
+                    />
+                  )}
+                  {renderAddButtons()}
+                </>
+              )
+            }
             <div className="mt-[200px] flex justify-end items-center">
               <div className="flex flex-row p-2 gap-2">
                 <button
@@ -715,7 +703,6 @@ export default function MenuList() {
                 </button>
               </div>
             </div>
-            {/* {modalEdit()} */}
             <ModalConfirm
               open={openTakedownModal}
               cancelAction={() => {
