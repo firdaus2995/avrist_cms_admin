@@ -12,7 +12,7 @@ import Radio from '@/components/molecules/Radio';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { copyArray } from '@/utils/logicHelper';
+import { copyArray, errorMessageTypeConverter } from '@/utils/logicHelper';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { useAppDispatch } from '../../store';
@@ -446,11 +446,12 @@ export default function ContentTypeEdit() {
         );
         navigate('/content-type');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
+            message: t(`errors.content-type-builder.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

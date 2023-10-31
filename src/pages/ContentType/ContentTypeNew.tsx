@@ -11,7 +11,7 @@ import Modal from '@/components/atoms/Modal';
 import Radio from '@/components/molecules/Radio';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { copyArray } from '@/utils/logicHelper';
+import { copyArray, errorMessageTypeConverter } from '@/utils/logicHelper';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '../../store';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -374,11 +374,12 @@ export default function ContentTypeNew() {
         );
         navigate('/content-type');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
+            message: t(`errors.content-type-builder.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
