@@ -12,6 +12,7 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import WarningIcon from '../../assets/warning.png';
 import PaginationComponent from '@/components/molecules/Pagination';
 import PreviewModal from './PreviewModal';
+import RoleRenderer from '../../components/atoms/RoleRenderer';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useAppDispatch } from '@/store';
@@ -22,9 +23,7 @@ import {
   useDeleteEmailBodyMutation,
 } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { getCredential } from '@/utils/Credential';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
-import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function EmailFormBuilderList() {
   // TABLE COLUMN
@@ -64,16 +63,15 @@ export default function EmailFormBuilderList() {
               }}
             />
           </button>
-          {canEditEmailFormBuilder && (
-            <img
-              className={`cursor-pointer select-none flex items-center justify-center`}
-              src={TableEdit}
-              onClick={() => {
-                onClickEmailFormBuilderEdit(info.getValue());
-              }}
-            />
-          )}
-          {canDeleteEmailFormBuilder && (
+          <RoleRenderer allowedRoles={['EMAIL_FORM_EDIT']}>
+            <Link to={`edit/${info.getValue()}`}>
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center`}
+                src={TableEdit}
+              />
+            </Link>
+          </RoleRenderer>
+          <RoleRenderer allowedRoles={['EMAIL_FORM_DELETE']}>
             <img
               className={`cursor-pointer select-none flex items-center justify-center`}
               src={TableDelete}
@@ -81,7 +79,7 @@ export default function EmailFormBuilderList() {
                 onClickEmailFormBuilderDelete(info.getValue());
               }}
             />
-          )}
+          </RoleRenderer>
         </div>
       ),
     },
@@ -130,24 +128,23 @@ export default function EmailFormBuilderList() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <button
-            className="min-h-[34px] h-[34px] btn btn-outline btn-primary text-xs"
-            onClick={() => {
-              onClickEmailBodyView(info.getValue());
-            }}>
-            {t('user.email-form-builder-list.email-body.list.view-detail')}
-          </button>
-          {
-            canDeleteEmailFormBuilder && (
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableDelete}
-                onClick={() => {
-                  onClickEmailBodyDelete(info.getValue());
-                }}
-              />
-            )
-          }
+          <RoleRenderer allowedRoles={['EMAIL_FORM_READ']}>
+            <Link
+              to={`view-body/${info.getValue()}`}
+              className="min-h-[34px] h-[34px] btn btn-outline btn-primary text-xs"
+            >
+              {t('user.email-form-builder-list.email-body.list.view-detail')}
+            </Link>
+          </RoleRenderer>
+          <RoleRenderer allowedRoles={['EMAIL_FORM_DELETE']}>
+            <img
+              className={`cursor-pointer select-none flex items-center justify-center`}
+              src={TableDelete}
+              onClick={() => {
+                onClickEmailBodyDelete(info.getValue());
+              }}
+            />
+          </RoleRenderer>
         </div>
       ),
     },
@@ -163,10 +160,6 @@ export default function EmailFormBuilderList() {
 
   // TAB STATE
   const [selectedTab, setSelectedTab] = useState(location?.state?.from === 'EMAIL_BODY' ? 1 : 0);
-
-  const [canCreateEmailFormBuilder, setCanCreateEmailFormBuilder] = useState(false);
-  const [canEditEmailFormBuilder, setCanEditEmailFormBuilder] = useState(false);
-  const [canDeleteEmailFormBuilder, setCanDeleteEmailFormBuilder] = useState(false);
 
   const [totalEFB, setTotalEFB] = useState(0);
   const [pageIndexEFB, setPageIndexEFB] = useState(0);
@@ -246,18 +239,6 @@ export default function EmailFormBuilderList() {
       setTotalEB(dataEB?.emailBodyList?.total);
     }
   }, [dataEB]);
-
-  useEffect(() => {
-    getCredential().roles.forEach((element: any) => {
-      if (element === 'EMAIL_FORM_CREATE') {
-        setCanCreateEmailFormBuilder(true);
-      } else if (element === 'EMAIL_FORM_EDIT') {
-        setCanEditEmailFormBuilder(true);
-      } else if (element === 'EMAIL_FORM_DELETE') {
-        setCanDeleteEmailFormBuilder(true);
-      }
-    });
-  }, []);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChangeEFB = useCallback((sortModel: SortingState) => {
@@ -340,15 +321,6 @@ export default function EmailFormBuilderList() {
   // TABLE FUNCTION FOR VIEW EMAIL FORM BUILDER
   const onClickEmailFormBuilderView = (id: any) => {
     setPreviewIdEFB(id);
-  };
-
-  const onClickEmailBodyView = (id: number) => {
-    navigate(`view-body/${id}`);
-  };
-
-  // TABLE FUNCTION FOR EDIT EMAIL FORM BUILDER
-  const onClickEmailFormBuilderEdit = (id: number) => {
-    navigate(`edit/${id}`);
   };
 
   // TABLE FUNCTION FOR DELETE EMAIL FORM BUILDER
@@ -449,23 +421,23 @@ export default function EmailFormBuilderList() {
           }
           topMargin="mt-2"
           TopSideButtons={
-            canCreateEmailFormBuilder ? (
-              selectedTab === 0 ? (
-                <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
-                  <img src={Plus} className="w-[24px] h-[24px]" />
-                  <span>
-                    {t('user.email-form-builder-list.email-form-builder.list.add-new-form')}
-                  </span>
-                </Link>
-              ) : (
-                <Link to="new-body" className="btn btn-primary flex flex-row gap-2 rounded-xl">
-                  <img src={Plus} className="w-[24px] h-[24px]" />
-                  <span>{t('user.email-form-builder-list.email-body.list.add-new-form')}</span>
-                </Link>
-              )
-            ) : (
-              <></>
-            )
+            <RoleRenderer allowedRoles={['EMAIL_FORM_CREATE']}>
+              {
+                selectedTab === 0 ? (
+                  <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+                    <img src={Plus} className="w-[24px] h-[24px]" />
+                    <span>
+                      {t('user.email-form-builder-list.email-form-builder.list.add-new-form')}
+                    </span>
+                  </Link>
+                ) : (
+                  <Link to="new-body" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+                    <img src={Plus} className="w-[24px] h-[24px]" />
+                    <span>{t('user.email-form-builder-list.email-body.list.add-new-form')}</span>
+                  </Link>
+                )
+              }
+            </RoleRenderer>
           }
           SearchBar={
             selectedTab === 0 ? (

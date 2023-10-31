@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import SortableTree from '@nosferatu500/react-sortable-tree';
+import SortableTree, { getVisibleNodeCount } from '@nosferatu500/react-sortable-tree';
 import '@nosferatu500/react-sortable-tree/style.css';
 import { ISortableTree } from './types';
 import TreeTheme from 'react-sortable-tree-theme-full-node-drag';
@@ -22,6 +22,8 @@ export default function SortableTreeComponent(props: ISortableTree) {
   const [selectedTree, setSelectedTree] = useState(0);
   const [offsetLeft, setOffsetLeft] = useState(0);
   const [offsetTop, setOffsetTop] = useState(300);
+
+  const count = getVisibleNodeCount({treeData})
 
   function updateTreeData(treeData: any) {
     setTreeData(treeData);
@@ -56,6 +58,10 @@ export default function SortableTreeComponent(props: ISortableTree) {
     onClick(rowData, action);
   }, [action]);
 
+  useEffect(() => {
+    setTreeData(data);
+  }, [JSON.stringify(data)]);
+
   const MoreIcon = () => {
     return (
       <div
@@ -89,7 +95,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
 
   return (
     <div className="mt-10" ref={refParent}>
-      <div className="w-full h-[50vh] overflow-auto">
+      <div className="w-full" style={{height: count * 62}}>
         {openMore && MoreIcon()}
         <SortableTree
           theme={TreeTheme}
@@ -134,7 +140,6 @@ export default function SortableTreeComponent(props: ISortableTree) {
               </div>,
             ],
             style: {
-              height: '100%',
               width: '80vh',
             },
           })}
