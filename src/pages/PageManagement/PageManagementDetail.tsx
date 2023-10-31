@@ -577,6 +577,7 @@ export default function PageManagementDetail() {
           <div className="flex flex-row justify-between">
             <Typography size="m" weight="bold">
               {t('user.page-management.detail.labels.chooseTemplate')}
+              <span className="text-reddist">*</span>
             </Typography>
             <InputSearch
               onBlur={(e: any) => {
@@ -607,7 +608,8 @@ export default function PageManagementDetail() {
                 </div>
               ))}
           </div>
-          <div className="w-full flex justify-center">
+          <div className="w-full flex justify-center items-center">
+            <div className='mr-5 font-semibold'>Total {total} Items</div>
             <PaginationComponent
               total={total}
               page={pageIndex}
@@ -625,7 +627,6 @@ export default function PageManagementDetail() {
             <DropDown
               labelTitle={t('user.page-management.detail.labels.chooseContentType') ?? ''}
               labelStyle="font-bold	"
-              labelRequired
               defaultValue={pageDetailList?.postType?.id}
               labelEmpty=""
               items={listContents}

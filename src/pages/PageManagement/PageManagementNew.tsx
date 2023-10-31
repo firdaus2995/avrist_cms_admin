@@ -379,7 +379,8 @@ export default function PageManagementNew() {
                   </div>
                 ))}
             </div>
-            <div className="w-full flex justify-center">
+            <div className="w-full flex justify-center items-center">
+              <div className='mr-5 font-semibold'>Total {total} Items</div>
               <PaginationComponent
                 total={total}
                 page={pageIndex}
@@ -401,7 +402,6 @@ export default function PageManagementNew() {
                 direction="row"
                 defaultValue=""
                 labelEmpty=""
-                labelRequired
                 items={listContents}
                 onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
                   if (event) {

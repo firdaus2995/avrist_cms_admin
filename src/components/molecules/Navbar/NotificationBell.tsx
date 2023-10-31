@@ -41,7 +41,7 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
     await fetch(`${baseUrl}/notifications/count`, {
       method: 'GET',
       headers: {
-        Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${getCredential().accessToken}`,
       },
     })
       .then(async response => await response.json())
