@@ -4,8 +4,7 @@ import NotificationBell from './NotificationBell';
 import { useAppSelector } from '../../../store';
 import { useGetUserProfileQuery } from '../../../services/User/userApi';
 import { useGetCmsEntityLogoQuery } from '@/services/Config/configApi';
-import { getCredential } from '@/utils/Credential';
-const baseUrl = import.meta.env.VITE_API_URL;
+import restApiRequest from '@/utils/restApiRequest';
 interface INavbar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -18,7 +17,6 @@ export const Navbar: React.FC<INavbar> = ({
   const { title } = useAppSelector(s => s.navbarSlice);
   const [logo, setLogo] = useState("");
   const [count, setCount] = useState(0);
-  const token = getCredential().accessToken;
  
   // RTK USER PROFILE
   const fetchUserDetailQuery = useGetUserProfileQuery({});
@@ -30,19 +28,18 @@ export const Navbar: React.FC<INavbar> = ({
 
   // GET COUNT NOTIFICATION
   const getCount = async () => {
-    await fetch(`${baseUrl}/notifications/count`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then(async response => await response.json())
-      .then(data => {
-        setCount(data?.data?.result);
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      const imageUrl = `/notifications/count`;
+      const response = await restApiRequest('GET', imageUrl, null, 'json' );
+  
+      if (response) {
+        setCount(response?.data?.data?.result);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  
+    return '';
   };
 
   useEffect(() => {

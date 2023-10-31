@@ -16,8 +16,8 @@ import {
 } from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
 import { Link } from 'react-router-dom';
+import restApiRequest from '@/utils/restApiRequest';
 
-const baseUrl = import.meta.env.VITE_API_URL;
 const intervalTime = import.meta.env.VITE_NOTIFICATION_INTERVAL;
 
 const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
@@ -35,24 +35,23 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
   const [total, setTotal] = useState<any>(0);
   const [isShow, setIsShow] = useState(false);
   const [isFetching, setIsFetching] = useState(false);
-  
+
   const getCount = async () => {
     setIsFetching(true);
-    await fetch(`${baseUrl}/notifications/count`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${getCredential().accessToken}`,
-      },
-    })
-      .then(async response => await response.json())
-      .then(data => {
-        setCount(data?.data?.result);
+    try {
+      const imageUrl = `/notifications/count`;
+      const response = await restApiRequest('GET', imageUrl, null, 'json' );
+  
+      if (response) {
+        setCount(response?.data?.data?.result);
         setIsFetching(false);
-      })
-      .catch(err => {
-        setIsFetching(false);
-        console.log(err);
-      });
+      }
+    } catch (err) {
+      console.error(err);
+      setIsFetching(false);
+    }
+  
+    return '';
   };
 
   useClickAway(ref, () => {
