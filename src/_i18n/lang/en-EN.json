@@ -2,7 +2,11 @@
   "errors": {
     "UnableToChangeOwnUserStatusException": "Failed to update data! You can't change your own data! Please contact another user with eligible role",
     "DataIsUsedException": "This data is been used, you can’t delete this data",
-    "DataHasBeenExistException": "Email has been Exist"
+    "DataHasBeenExistException": "Email has been Exist",
+    "content-type-builder": {
+      "DataHasBeenExistException":"Name has been Exist",
+      "DataIsUsedException" : "Post Type is being used by Post Data"
+    }
   },
   "toast-success": "Success!",
   "toast-failed": "Failed",
