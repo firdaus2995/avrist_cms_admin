@@ -19,7 +19,7 @@ import TakedownModal from './components/TakedownModal';
 import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
 
 const maxImageSize = 2 * 1024 * 1024;
-const maxChar = 70;
+const maxChar = 50;
 
 export default function MenuNew() {
   const navigate = useNavigate();
