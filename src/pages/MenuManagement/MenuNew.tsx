@@ -163,8 +163,9 @@ export default function MenuNew() {
       isNewTab: e.isNewTab || false,
       pageId: e.pageId || null,
       shortDesc: e.shortDesc || '',
-      icon: e.menuIcon || '',
+      icon: e.icon || '',
     };
+
     createMenu(payload)
       .unwrap()
       .then(() => {
@@ -195,7 +196,7 @@ export default function MenuNew() {
       isNewTab: e.isNewTab || false,
       pageId: e.pageId || null,
       shortDesc: e.shortDesc || '',
-      icon: e.menuIcon || '',
+      icon: e.icon || '',
     };
     editMenu(payload)
       .unwrap()
@@ -411,7 +412,7 @@ export default function MenuNew() {
                   render={({ field }) => (
                     <FormList.TextAreaField
                       {...field}
-                      labelTitle="Sort Description"
+                      labelTitle="Short Description"
                       placeholder="Input Short Description"
                       error={!!errors?.shortDesc?.message}
                       helperText={errors?.shortDesc?.message}

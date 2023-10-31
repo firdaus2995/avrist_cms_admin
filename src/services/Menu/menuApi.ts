@@ -14,7 +14,7 @@ export const menuApi = createApi({
             $menuType: String!
             $externalUrl: String!
             $isNewTab: Boolean!
-            $pageId: Int!
+            $pageId: Int
             $shortDesc: String!
             $icon: String!
           ) {
