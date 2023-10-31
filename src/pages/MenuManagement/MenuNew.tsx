@@ -206,7 +206,7 @@ export default function MenuNew() {
     if (pageType) {
       setSelectedType(screenType.find(item => item.value === pageType) ?? screenType[0]);
     }
-  }, [location?.state]);
+  }, [JSON.stringify(location?.state)]);
 
   return (
     <>
