@@ -137,13 +137,18 @@ export default function PageManagementArchive() {
       ),
       accessorKey: 'title',
       enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
-      ),
+      cell: (info: any) => {
+        // const id = info.row.original.id;
+        return (
+          // <Link to={`/page-management/detail/${id}`}>
+            <p className="text-[14px] truncate">
+              {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+                ? info.getValue()
+                : '-'}
+            </p>
+          // </Link>
+        );
+      },
     },
     {
       header: () => (
