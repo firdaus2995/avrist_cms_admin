@@ -5,9 +5,7 @@ import {
   useGetCategoryListQuery,
   useGetEligibleAutoApproveQuery,
 } from '@/services/ContentManager/contentManagerApi';
-import {
-  useGetPostTypeDetailQuery,
-} from '@/services/ContentType/contentTypeApi';
+import { useGetPostTypeDetailQuery } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
 import { useForm, Controller } from 'react-hook-form';
@@ -48,9 +46,6 @@ export default function ContentManagerNew() {
     handleSubmit,
     formState: { errors },
     getValues,
-    trigger,
-    // setError,
-    // clearErrors,
   } = useForm();
 
   // LEAVE MODAL STATE
@@ -63,6 +58,8 @@ export default function ContentManagerNew() {
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   const [contentTempData, setContentTempData] = useState<any[]>([]);
+  const [stringifyData, setStringifyData] = useState<any[]>([]);
+  const [isDraft, setIsDraft] = useState<boolean>(false);
 
   const handleFormChange = (
     id: string | number,
@@ -122,7 +119,7 @@ export default function ContentManagerNew() {
 
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'create',
-    dataType: 'content'
+    dataType: 'content',
   });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
@@ -220,18 +217,65 @@ export default function ContentManagerNew() {
     });
   }
 
+  useEffect(() => {
+    if (contentTempData) {
+      const convertedData = convertContentData(contentTempData);
+      const newData = convertLoopingToArrays(convertedData);
+      setStringifyData(newData);
+    }
+  }, [contentTempData]);
+
+  const onLeave = () => {
+    setShowLeaveModal(false);
+    goBack();
+  };
+
+  const saveDraft = () => {
+    const value = getValues();
+    setIsDraft(false);
+    const payload = {
+      title: value.title,
+      shortDesc: value.shortDesc,
+      isDraft: true,
+      postTypeId: id,
+      categoryName: postTypeDetail?.isUseCategory ? value.category : '',
+      contentData: stringifyData,
+    };
+    createContentData(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('user.content-manager-new.draft-success'),
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('user.content-manager-new.draft-failed'),
+          }),
+        );
+      });
+  };
+
   function onSubmitData() {
-    if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
-      setShowModalAutoApprove(true);
+    if (isDraft) {
+      saveDraft();
     } else {
-      saveData();
+      if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
+        setShowModalAutoApprove(true);
+      } else {
+        saveData();
+      }
     }
   }
 
   const saveData = () => {
     const value = getValues();
-    const convertedData = convertContentData(contentTempData);
-    const stringifyData = convertLoopingToArrays(convertedData);
     const payload = {
       title: value.title,
       shortDesc: value.shortDesc,
@@ -391,48 +435,6 @@ export default function ContentManagerNew() {
     return orderData.sort((a, b) => a.order - b.order);
   }
 
-  const onLeave = () => {
-    setShowLeaveModal(false);
-    goBack();
-  };
-
-  const saveDraft = (e: any) => {
-    e.preventDefault();
-    const value = getValues();
-
-    const convertedData = convertContentData(contentTempData);
-    const stringifyData = convertLoopingToArrays(convertedData);
-    void trigger();
-
-    const payload = {
-      title: value.title,
-      shortDesc: value.shortDesc,
-      isDraft: true,
-      postTypeId: id,
-      categoryName: value?.category || '',
-      contentData: stringifyData,
-    };
-    createContentData(payload)
-      .unwrap()
-      .then(() => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('user.content-manager-new.draft-success'),
-          }),
-        );
-        goBack();
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('user.content-manager-new.draft-failed'),
-          }),
-        );
-      });
-  };
-
   const deleteLoopingField = (id: any) => {
     const existingLoopingIndex = postTypeDetail.attributeList.findIndex(
       (attribute: { id: any }) => attribute.id === id,
@@ -465,13 +467,13 @@ export default function ContentManagerNew() {
 
   function transformText(text: string) {
     const words = text.split('_');
-  
+
     const capitalizedWords = words.map((word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     });
-  
+
     const result = capitalizedWords.join(' ').replace('Url', 'URL');
-  
+
     return result;
   }
 
@@ -1181,7 +1183,10 @@ export default function ContentManagerNew() {
             {t('user.content-manager-new.cancel')}
           </button>
           <button
-            onClick={saveDraft}
+            onClick={() => {
+              setIsDraft(true);
+            }}
+            type="submit"
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             {t('user.content-manager-new.save-as-draft')}
           </button>
