@@ -35,7 +35,7 @@ export default function ContentManagerDetail() {
   // GO BACK
   const navigate = useNavigate();
   const goBack = () => {
-    navigate(-1);
+    navigate('/content-manager');
   };
 
   // TABLE PAGINATION STATE
