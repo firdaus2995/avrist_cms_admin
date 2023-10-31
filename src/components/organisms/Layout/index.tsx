@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import React, { useEffect, useState } from 'react';
 import { isDesktop, isTablet, isMobile } from 'react-device-detect';
-import { useLocation } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { Outlet, useNavigate } from 'react-router';
 import { ErrorBoundary } from "react-error-boundary";
 
@@ -338,7 +338,8 @@ const Layout: React.FC<any> = props => {
                                 }}        
                               />
                             </div>
-                            <div 
+                            <Link
+                              to={element.link} 
                               className="flex flex-col flex-1 gap-[4px] cursor-pointer"
                               onClick={() => {
                                 void handlerReadNotificationSingle(element.id)
@@ -347,7 +348,7 @@ const Layout: React.FC<any> = props => {
                               <h2 className={`text-[14px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
                               <h4 className='text-[16px] text-body-text-2'>{element.content}</h4>
                               <h6 className='text-[14px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
-                            </div>  
+                            </Link>  
                             <div className="flex items-center justify-end min-w-[100px]">
                               {
                                 element.isSelected && (
