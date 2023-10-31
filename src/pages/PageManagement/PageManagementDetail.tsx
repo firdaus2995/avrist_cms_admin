@@ -22,7 +22,6 @@ import CheckOrange from '@/assets/check-orange.svg';
 import PaperIcon from '../../assets/paper.png';
 import WarningIcon from '@/assets/warning.png';
 import { useForm, Controller } from 'react-hook-form';
-import { InputText } from '@/components/atoms/Input/InputText';
 import CkEditor from '@/components/atoms/Ckeditor';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import DropDown from '@/components/molecules/DropDown';
@@ -37,6 +36,7 @@ import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi
 import PaginationComponent from '@/components/molecules/Pagination';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import CancelIcon from '@/assets/cancel.png';
+import FormList from '../../components/molecules/FormList';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -82,7 +82,12 @@ export default function PageManagementDetail() {
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
   // RTK GET DATA
-  const fetchDataById = useGetPageByIdQuery({ id });
+  const fetchDataById = useGetPageByIdQuery(
+    { id },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data: pageDataDetail } = fetchDataById;
 
   // RTK GET PAGE TEMPLATE
@@ -115,14 +120,16 @@ export default function PageManagementDetail() {
   );
   const { data: dataContents } = fetchContentsQuery;
 
-  useEffect(() => {
-    void fetchDataById.refetch();
-  }, []);
+  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery(
+    {
+      actionType: 'edit',
+      dataType: 'page',
+    },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
 
-  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
-    actionType: 'edit',
-    dataType: 'page'
-  });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
@@ -163,7 +170,12 @@ export default function PageManagementDetail() {
   };
 
   // FORM VALIDATION
-  const { control, handleSubmit, getValues } = useForm();
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+  } = useForm();
 
   const submitButton = () => {
     return (
@@ -463,27 +475,32 @@ export default function PageManagementDetail() {
 
   const editContent = () => {
     return (
-      <form className="flex flex-col gap-3" onSubmit={handleSubmit(handlerSubmit)}>
+      <form className="flex flex-col gap-5" onSubmit={handleSubmit(handlerSubmit)}>
         <div className="flex flex-col gap-3">
           <Typography weight="bold" size="l">
             {t('user.page-management.detail.labels.generalInformation')}
           </Typography>
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between mt-2">
             <Controller
               name="pageName"
               control={control}
               defaultValue={pageDetailList?.title}
+              rules={{
+                required: {
+                  value: true,
+                  message: 'Page name is required',
+                },
+              }}
               render={({ field }) => (
-                <InputText
-                  labelTitle={t('user.page-management.detail.labels.pageName')}
-                  labelStyle="font-semibold"
-                  labelWidth={150}
-                  labelRequired
-                  direction="row"
-                  roundStyle="xl"
-                  placeholder={t('user.page-management.detail.labels.enterNewPageName')}
-                  inputWidth={350}
+                <FormList.TextField
                   {...field}
+                  labelTitle={t('user.page-management-new.pageNameLabel')}
+                  labelRequired
+                  placeholder={t('user.page-management-new.pageNamePlaceholder')}
+                  error={!!errors?.pageName?.message}
+                  helperText={errors?.pageName?.message}
+                  border={false}
+                  inputWidth={350}
                 />
               )}
             />
@@ -491,17 +508,22 @@ export default function PageManagementDetail() {
               name="metaTitle"
               control={control}
               defaultValue={pageDetailList?.metaTitle}
+              rules={{
+                required: {
+                  value: true,
+                  message: 'Meta title is required',
+                },
+              }}
               render={({ field }) => (
-                <InputText
-                  labelTitle={t('user.page-management.detail.labels.metaTitle')}
-                  labelStyle="font-semibold"
-                  labelWidth={150}
-                  labelRequired
-                  direction="row"
-                  roundStyle="xl"
-                  placeholder={t('user.page-management.detail.labels.enterMetaTitle')}
-                  inputWidth={350}
+                <FormList.TextField
                   {...field}
+                  labelTitle={t('user.page-management-new.metaTitleLabel')}
+                  labelRequired
+                  placeholder={t('user.page-management-new.metaTitlePlaceholder')}
+                  error={!!errors?.metaTitle?.message}
+                  helperText={errors?.metaTitle?.message}
+                  border={false}
+                  inputWidth={350}
                 />
               )}
             />
@@ -511,17 +533,22 @@ export default function PageManagementDetail() {
               name="slug"
               control={control}
               defaultValue={pageDetailList?.slug}
+              rules={{
+                required: {
+                  value: true,
+                  message: 'Slug is required',
+                },
+              }}
               render={({ field }) => (
-                <InputText
-                  labelTitle={t('user.page-management.detail.labels.slug')}
-                  labelStyle="font-semibold"
-                  labelWidth={150}
-                  labelRequired
-                  direction="row"
-                  roundStyle="xl"
-                  placeholder={t('user.page-management.detail.labels.enterSlugName')}
-                  inputWidth={350}
+                <FormList.TextField
                   {...field}
+                  labelTitle={t('user.page-management-new.slugLabel')}
+                  labelRequired
+                  placeholder={t('user.page-management-new.slugPlaceholder')}
+                  error={!!errors?.slug?.message}
+                  helperText={errors?.slug?.message}
+                  border={false}
+                  inputWidth={350}
                 />
               )}
             />
@@ -529,17 +556,22 @@ export default function PageManagementDetail() {
               name="metaDescription"
               control={control}
               defaultValue={pageDetailList?.metaDescription}
+              rules={{
+                required: {
+                  value: true,
+                  message: 'Meta description is required',
+                },
+              }}
               render={({ field }) => (
-                <InputText
-                  labelTitle={t('user.page-management.detail.labels.metaDescription')}
-                  labelStyle="font-semibold"
-                  labelWidth={150}
-                  labelRequired
-                  direction="row"
-                  roundStyle="xl"
-                  placeholder={t('user.page-management.detail.labels.enterMetaDescription')}
-                  inputWidth={350}
+                <FormList.TextField
                   {...field}
+                  labelTitle={t('user.page-management-new.metaDescriptionLabel')}
+                  labelRequired
+                  placeholder={t('user.page-management-new.metaDescriptionPlaceholder')}
+                  error={!!errors?.metaDescription?.message}
+                  helperText={errors?.metaDescription?.message}
+                  border={false}
+                  inputWidth={350}
                 />
               )}
             />
@@ -549,25 +581,35 @@ export default function PageManagementDetail() {
               name="shortDesc"
               control={control}
               defaultValue={pageDetailList?.shortDesc}
+              rules={{
+                required: {
+                  value: false,
+                  message: 'Short description is required',
+                },
+              }}
               render={({ field }) => (
-                <TextArea
-                  labelTitle={t('user.page-management.detail.labels.shortDesc')}
-                  labelStyle="font-semibold"
-                  labelWidth={150}
-                  labelRequired
-                  direction="row"
-                  placeholder={t('user.page-management.detail.labels.enterDescription') ?? ''}
-                  inputWidth={350}
+                <FormList.TextAreaField
                   {...field}
+                  labelTitle="Sort Description"
+                  placeholder="Input Short Description"
+                  error={!!errors?.shortDesc?.message}
+                  helperText={errors?.shortDesc?.message}
+                  border={false}
+                  inputWidth={350}
                 />
               )}
             />
           </div>
           <div className="flex flex-col justify-start gap-3">
-            <Typography size="m" weight="semi">
-              {t('user.page-management.detail.labels.content')}
+            <Typography type="body" size="m" weight="bold">
+              {t('user.page-management-new.contentLabel')}
             </Typography>
-            <CkEditor />
+            <CkEditor
+              data={content}
+              onChange={(data: string) => {
+                setContent(data);
+              }}
+            />
           </div>
         </div>
         {/* DIVIDER */}
@@ -682,7 +724,6 @@ export default function PageManagementDetail() {
               setIsAutoApprove(e.value);
             }}
             labelTitle={t('user.page-management.detail.labels.autoApproveLabel')}
-            labelStyle="text-xl mt-2"
           />
         </div>
       </ModalForm>
@@ -799,8 +840,7 @@ export default function PageManagementDetail() {
             setShowModalRejected(false);
             const payload = {
               id: pageDetailList?.id,
-              status:
-                pageDetailList?.status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
+              status: pageDetailList?.status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
               comment: rejectComments,
             };
 
@@ -840,7 +880,9 @@ export default function PageManagementDetail() {
           title={titleLeaveModalShow ?? ''}
           cancelTitle={t('no')}
           message={messageLeaveModalShow ?? ''}
-          submitAction={() => { goBack(); }}
+          submitAction={() => {
+            goBack();
+          }}
           submitTitle={t('yes')}
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
