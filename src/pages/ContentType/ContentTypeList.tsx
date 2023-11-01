@@ -207,7 +207,7 @@ export default function ContentTypeList() {
 
   const onClickPageDuplicate = (id: number, title: string) => {
     setIdDuplicate(id);
-    setTitleConfirmDuplicate(t('user.content-type-list.are-you-sure') ?? ''); // Use translation key for title
+    setTitleConfirmDuplicate(t('user.content-type-list.duplicate-content') ?? ''); // Use translation key for title
     setMessageConfirmDuplicate(
       t('user.content-type-list.do-you-want-to-duplicate', { title }) ?? '',
     ); // Use translation key for message

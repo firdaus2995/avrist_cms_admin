@@ -564,7 +564,8 @@
       "search": "Search",
       "yes": "Yes",
       "no": "No",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "duplicate-content": "Duplicate Content"
     },
 
     "email-form-builder-new": {
