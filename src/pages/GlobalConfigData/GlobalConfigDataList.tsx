@@ -175,7 +175,7 @@ export default function GlobalConfigDataList() {
                 className={`cursor-pointer select-none flex items-center justify-center`}
                 src={TableDelete}
                 onClick={() => {
-                  onClickDelete(info.getValue(), info?.row?.original?.title);
+                  onClickDelete(info.getValue(), info?.row?.original?.variable);
                 }}
               />
             </div>
