@@ -5,9 +5,7 @@ import {
   useGetCategoryListQuery,
   useGetEligibleAutoApproveQuery,
 } from '@/services/ContentManager/contentManagerApi';
-import {
-  useGetPostTypeDetailQuery,
-} from '@/services/ContentType/contentTypeApi';
+import { useGetPostTypeDetailQuery } from '@/services/ContentType/contentTypeApi';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch } from '@/store';
 import { useForm, Controller } from 'react-hook-form';
@@ -122,7 +120,7 @@ export default function ContentManagerNew() {
 
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'create',
-    dataType: 'content'
+    dataType: 'content',
   });
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
@@ -465,13 +463,13 @@ export default function ContentManagerNew() {
 
   function transformText(text: string) {
     const words = text.split('_');
-  
+
     const capitalizedWords = words.map((word: string) => {
       return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     });
-  
+
     const result = capitalizedWords.join(' ').replace('Url', 'URL');
-  
+
     return result;
   }
 
@@ -649,12 +647,11 @@ export default function ContentManagerNew() {
               name={id.toString()}
               control={control}
               rules={{
-                required: `${name} is required`,
+                required: { value: true, message: `${name} is required` },
                 validate: value => {
-                  if (value && value.length > 0) {
-                    // Parse the input value as JSON
-                    const parsedValue = JSON.parse(value);
-
+                  // Parse the input value as JSON
+                  const parsedValue = JSON?.parse(value);
+                  if (parsedValue && parsedValue.length > 0) {
                     // Check if parsedValue is an array and every item has imageUrl and altText properties
                     if (
                       Array.isArray(parsedValue) &&

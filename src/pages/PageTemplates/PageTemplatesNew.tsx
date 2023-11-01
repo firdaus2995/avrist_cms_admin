@@ -77,13 +77,24 @@ export default function PageTemplatesNew() {
     fieldId: '',
     description: '',
   });
-  // IMAGE ERROR VALIDATION
-  const [imageRequiredError, setImageRequiredError] = useState(false);
 
   const [configErrors, setConfigErrors] = useState({
     key: '',
     description: '',
   });
+
+  const listDataType = [
+    {
+      value: 'SINGLE',
+      label: 'Single',
+    },
+    {
+      value: 'COLLECTION',
+      label: 'Collection',
+    },
+  ];
+
+  const [selectedDataType, setSelectedDataType] = useState<any>(listDataType[0]);
 
   // ATTRIBUTES FUNCTION
   const onAddNewAttributes = () => {
@@ -163,14 +174,10 @@ export default function PageTemplatesNew() {
   const { data } = fetchConfigQuery;
 
   const onSubmit = (e: any) => {
-    if (e.imagePreview === '[]') {
-      setImageRequiredError(true);
+    if (e.pageId) {
+      onSubmitEdit(e);
     } else {
-      if (e.pageId) {
-        onSubmitEdit(e);
-      } else {
-        onSubmitNew(e);
-      }
+      onSubmitNew(e);
     }
   };
 
@@ -187,6 +194,7 @@ export default function PageTemplatesNew() {
       attributes: updatedAttributesData,
       configs: configData,
       imageUrl: e.imagePreview,
+      dataType: selectedDataType,
     };
     editedPageTemplate(payload)
       .unwrap()
@@ -223,6 +231,7 @@ export default function PageTemplatesNew() {
       attributes: updatedAttributesData,
       configs: configData,
       imageUrl: e.imagePreview,
+      dataType: selectedDataType,
     };
     createPageTemplate(payload)
       .unwrap()
@@ -266,7 +275,6 @@ export default function PageTemplatesNew() {
       };
       void refetch();
     }
-    setImageRequiredError(false);
   }, [mode]);
 
   // FILL DATA FOR DETAIL / EDIT
@@ -278,12 +286,14 @@ export default function PageTemplatesNew() {
       const defaultPageFileName = data?.filenameCode || '';
       const defaultPageId = data?.id || '';
       const defaultImageUrl = data?.imageUrl || '';
+      const defaultDataType = data?.dataType || listDataType[0];
 
       setValue('pageName', defaultPageName);
       setValue('pageDescription', defaultPageDescription);
       setValue('pageFileName', defaultPageFileName);
       setValue('pageId', defaultPageId);
       setValue('imagePreview', defaultImageUrl);
+      setSelectedDataType(defaultDataType);
 
       const originalAttributes = data?.attributes;
       const combineAttributes = originalAttributes.map((item: any) => ({
@@ -301,6 +311,7 @@ export default function PageTemplatesNew() {
         setValue('pageFileName', defaultPageFileName);
         setValue('pageId', defaultPageId);
         setValue('imagePreview', defaultImageUrl);
+        setSelectedDataType(defaultDataType);
       }
     }
   }, [pageTemplate, listAttributes]);
@@ -653,6 +664,7 @@ export default function PageTemplatesNew() {
                   onChange={onChange}
                   border={false}
                   disabled={mode === 'detail'}
+                  inputWidth={400}
                 />
               );
             }}
@@ -685,6 +697,7 @@ export default function PageTemplatesNew() {
                   onChange={onChange}
                   border={false}
                   disabled={mode === 'detail'}
+                  inputWidth={400}
                 />
               );
             }}
@@ -720,30 +733,43 @@ export default function PageTemplatesNew() {
                   onChange={onChange}
                   border={false}
                   disabled={mode === 'detail'}
+                  inputWidth={400}
                 />
               );
             }}
           />
+          <div className="flex flex-row">
+            <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+              Data Type
+              <span className={'text-reddist text-lg'}>{`*`}</span>
+            </Typography>
+            <FormList.DropDown
+              defaultValue={selectedDataType?.label}
+              items={listDataType}
+              onChange={(e: any) => {
+                setSelectedDataType(e);
+              }}
+              disabled={mode === 'detail'}
+              inputWidth={400}
+            />
+          </div>
           <Controller
             key="imagePreview"
             name="imagePreview"
             control={control}
             defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.imageUrl || '' : ''}
             rules={{
-              required: `${t('user.page-template-new.form.imagePreview.required-message')}`,
+              // VALIDATE TANPA ALT TEXT
               validate: value => {
-                if (value && value.length > 0) {
-                  // Parse the input value as JSON
-                  const parsedValue = JSON.parse(value);
-
+                // Parse the input value as JSON
+                const parsedValue = JSON?.parse(value);
+                if (parsedValue && parsedValue.length > 0) {
                   // Check if parsedValue is an array and every item has imageUrl and altText properties
                   if (
                     Array.isArray(parsedValue) &&
                     parsedValue.every(item => item.imageUrl && item.altText)
                   ) {
                     return true; // Validation passed
-                  } else {
-                    return 'All items must have Image and Alt Text'; // Validation failed
                   }
                 } else {
                   return `${t('user.page-template-new.form.imagePreview.required-message')}`; // Validation failed for empty value
@@ -758,6 +784,7 @@ export default function PageTemplatesNew() {
                 <FormList.FileUploaderV2
                   {...field}
                   key="imagePreview"
+                  name="imagePreview"
                   labelTitle={t('user.page-template-new.form.imagePreview.label')}
                   labelRequired
                   labelText={
@@ -770,19 +797,16 @@ export default function PageTemplatesNew() {
                   }
                   isDocument={false}
                   multiple={false}
-                  error={!!errors?.imagePreview?.message || imageRequiredError}
-                  helperText={
-                    imageRequiredError
-                      ? t('user.page-template-new.form.imagePreview.required-message')
-                      : errors?.imagePreview?.message
-                  }
+                  error={!!errors?.imagePreview?.message}
+                  helperText={errors?.imagePreview?.message}
                   onChange={(e: any) => {
                     onChange(e);
-                    setImageRequiredError(false);
                   }}
                   border={false}
                   disabled={mode === 'detail'}
                   editMode={mode !== 'detail'}
+                  inputWidth={500}
+                  disabledAltText={true}
                 />
               );
             }}

@@ -554,10 +554,9 @@ export default function ContentManagerDetailData() {
               rules={{
                 required: { value: true, message: `${name} is required` },
                 validate: value => {
-                  if (value && value.length > 0) {
-                    // Parse the input value as JSON
-                    const parsedValue = JSON.parse(value);
-
+                  // Parse the input value as JSON
+                  const parsedValue = JSON?.parse(value);
+                  if (parsedValue && parsedValue.length > 0) {
                     // Check if parsedValue is an array and every item has imageUrl and altText properties
                     if (
                       Array.isArray(parsedValue) &&
