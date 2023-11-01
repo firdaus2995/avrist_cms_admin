@@ -20,6 +20,7 @@ interface ITextArea {
   name?: string;
   isError?: boolean;
   helperText?: string;
+  maxLength?: number;
 }
 
 export const TextArea: React.FC<ITextArea> = ({
@@ -40,6 +41,7 @@ export const TextArea: React.FC<ITextArea> = ({
   name,
   isError,
   helperText,
+  maxLength,
 }) => {
   return (
     <div>
@@ -71,6 +73,7 @@ export const TextArea: React.FC<ITextArea> = ({
           onChange={e => {
             onChange(e);
           }}
+          maxLength={maxLength}
           className={`textarea ${
             isError ? 'border-error' : 'textarea-bordered'
           } w-full text-base py-3 rounded-xl ${textAreaStyle}`}
@@ -116,4 +119,5 @@ TextArea.propTypes = {
   inputHeight: PropTypes.number,
   isError: PropTypes.bool,
   helperText: PropTypes.string,
+  maxLength: PropTypes.number,
 };
