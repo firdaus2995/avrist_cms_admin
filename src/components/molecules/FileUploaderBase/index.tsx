@@ -69,6 +69,7 @@ export default function FileUploaderBase({
   value,
   showMaxSize,
   editMode = false,
+  disabledAltText,
 }: any) {
   const dispatch = useAppDispatch();
   const [filesData, setFilesData] = useState<any>([]);
@@ -78,10 +79,16 @@ export default function FileUploaderBase({
 
   const formatData = () => {
     const formattedData = filesData.map((data: any, index: any) => {
-      return {
-        imageUrl: data.response,
-        altText: altTexts[index] || '',
-      };
+      if (isDocument) {
+        return {
+          imageUrl: data.response,
+        };
+      } else {
+        return {
+          imageUrl: data.response,
+          altText: altTexts[index] || '',
+        };
+      }
     });
 
     // Call onCombineDataChange here to trigger it whenever formatData is called
@@ -282,7 +289,7 @@ export default function FileUploaderBase({
                   onAltTextChange(newAltTexts);
                 }}
               />
-              {!isDocument && (
+              {!isDocument && !disabledAltText && (
                 <div className="flex flex-row my-2 items-center">
                   <label htmlFor={index} className="w-16 mr-2">
                     <p className="text-xs font-semibold">Alt Text</p>

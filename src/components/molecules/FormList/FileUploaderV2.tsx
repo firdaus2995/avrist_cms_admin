@@ -23,23 +23,25 @@ export default function FileUploaderV2({
   editMode,
   inputWidth,
   inputHeight,
+  disabledAltText = false,
+  isOptional = false,
 }: any) {
-  function convertToArr(arr: any[], key: string | number | undefined) {
-    if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
-      return [];
-    }
+  // function convertToArr(arr: any[], key: string | number | undefined) {
+  //   if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
+  //     return [];
+  //   }
 
-    const values = arr.map(obj => obj[key]);
+  //   const values = arr.map(obj => obj[key]);
 
-    if (values.length === 1) {
-      return values[0];
-    } else {
-      const jsonString = JSON.stringify(
-        values.map(item => (typeof item === 'string' ? item.replace(/"/g, '\\"') : item)),
-      );
-      return jsonString;
-    }
-  }
+  //   if (values.length === 1) {
+  //     return values[0];
+  //   } else {
+  //     const jsonString = JSON.stringify(
+  //       values.map(item => (typeof item === 'string' ? item.replace(/"/g, '\\"') : item)),
+  //     );
+  //     return jsonString;
+  //   }
+  // }
 
   return (
     <div>
@@ -51,12 +53,19 @@ export default function FileUploaderV2({
         {fieldTypeLabel}
       </Typography>
       <div className="flex flex-row">
-        {labelTitle ? (
-          <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
-            {labelTitle}
-            <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
-          </Typography>
-        ) : null}
+        <div>
+          {labelTitle ? (
+            <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
+              {labelTitle}
+              <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+            </Typography>
+          ) : null}
+          {isOptional ? (
+            <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
+              <p>{`{ Optional }`}</p>
+            </Typography>
+          ) : null}
+        </div>
 
         <div
           className={`
@@ -72,26 +81,27 @@ export default function FileUploaderV2({
               isDocument={isDocument}
               multiple={multiple}
               label={labelText}
-              onFilesChange={(e: any) => {
-                const values = convertToArr(e, 'response');
-                if (isDocument) {
-                  onChange(values);
-                }
+              onFilesChange={(_e: any) => {
+                // const values = convertToArr(e, 'response');
+                // if (isDocument) {
+                //   onChange(values);
+                // }
               }}
               onAltTextChange={(_e: any) => {
                 // console.log(e);
               }}
               onCombineDataChange={(e: any) => {
                 const values = JSON.stringify(e);
-                if (!isDocument) {
-                  onChange(values);
-                }
+                // if (!isDocument && !disabledAltText) {
+                onChange(values);
+                // }
               }}
               disabled={disabled}
               maxSize={maxSize}
               value={value}
               showMaxSize={showMaxSize}
               editMode={editMode}
+              disabledAltText={disabledAltText}
             />
             {error && (
               <div className="flex flex-row px-1 py-2">

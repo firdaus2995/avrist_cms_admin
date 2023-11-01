@@ -67,18 +67,21 @@ const DropDown = ({
         <input
           id={id}
           type="text"
-          placeholder="Search or select an option..."
+          placeholder="Select an option..."
           value={searchTerm}
+          disabled={disabled}
           onClick={() => {
             setIsOpen(!isOpen);
           }}
-          className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
-            disabled ? 'text-[#637488]' : ''
+          className={`w-full h-full rounded-xl px-1 outline-0 ${inputStyle} ${
+            disabled ? 'text-[#637488] bg-[#E9EEF4] ' : ''
           }`}
         />
         <div
           onClick={() => {
-            setIsOpen(!isOpen);
+            if (!disabled) {
+              setIsOpen(!isOpen);
+            }
           }}
           className={`
             flex items-center 
@@ -91,7 +94,9 @@ const DropDown = ({
         </div>
       </div>
       {isOpen && (
-        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto z-50">
+        <div
+          style={{ width: inputWidth ?? '100%' }}
+          className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto z-50">
           {filteredOptions.length > 0 ? (
             <ul>
               {filteredOptions.map((option: any, index: any) => (
