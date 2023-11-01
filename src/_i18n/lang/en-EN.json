@@ -554,7 +554,7 @@
       "edit": "Edit",
       "delete": "Delete",
       "are-you-sure": "Are you sure?",
-      "do-you-want-to-delete": "Do you want to delete {{title}}?",
+      "do-you-want-to-delete": "Do you want to delete {{title}} from the list?",
       "do-you-want-to-duplicate": "Do you want to duplicate {{title}}?",
       "success-delete-content-type": "Success Delete Content Type",
       "failed-delete-content-type": "Failed Delete Content Type",
