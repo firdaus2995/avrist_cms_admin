@@ -502,11 +502,11 @@ export default function ContentManagerNew() {
               rules={{
                 required: { value: true, message: `${name} is required` },
                 maxLength: {
-                  value: configs?.max_length,
+                  value: configs?.max_length > 0 ? configs?.max_length : 9999,
                   message: `${configs?.max_length} characters maximum`,
                 },
                 minLength: {
-                  value: configs?.min_length,
+                  value: configs?.min_length > 0 ? configs?.min_length : 0,
                   message: `${configs?.min_length} characters minimum`,
                 },
               }}
@@ -543,11 +543,11 @@ export default function ContentManagerNew() {
               rules={{
                 required: { value: true, message: `${name} is required` },
                 maxLength: {
-                  value: configs?.max_length,
+                  value: configs?.max_length > 0 ? configs?.max_length : 9999,
                   message: `${configs?.max_length} characters maximum`,
                 },
                 minLength: {
-                  value: configs?.min_length,
+                  value: configs?.min_length > 0 ? configs?.min_length : 0,
                   message: `${configs?.min_length} characters minimum`,
                 },
               }}
@@ -886,11 +886,11 @@ export default function ContentManagerNew() {
                           rules={{
                             required: { value: true, message: `${val.name} is required` },
                             maxLength: {
-                              value: configs?.max_length,
+                              value: configs?.max_length > 0 ? configs?.max_length : 9999,
                               message: `${configs?.max_length} characters maximum`,
                             },
                             minLength: {
-                              value: configs?.min_length,
+                              value: configs?.min_length > 0 ? configs?.min_length : 0,
                               message: `${configs?.min_length} characters minimum`,
                             },
                           }}
