@@ -2,7 +2,7 @@ import { createApi } from '@reduxjs/toolkit/dist/query/react';
 import { gql } from 'graphql-request';
 
 import customFetchBase from '../../utils/Interceptor';
-export const menuApi = createApi({
+export const menuApi: any = createApi({
   reducerPath: 'menuApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
@@ -43,7 +43,7 @@ export const menuApi = createApi({
       }),
     }),
     getMenuList: builder.query({
-      query: payload => ({
+      query: () => ({
         document: gql`
           query{
             menuList {
@@ -80,7 +80,6 @@ export const menuApi = createApi({
             }
           }
         `,
-        variables: payload,
       }),
     }),
     editMenu: builder.mutation<any, any>({

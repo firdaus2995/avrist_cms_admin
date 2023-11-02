@@ -97,7 +97,7 @@ const DropDown = ({
               setOpen(!open); 
             }} 
             tabIndex={0} 
-            className={`w-full flex flex-row justify-between items-center p-3 h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left text-sm focus:border-bright-purple ${!selected ? "text-body-text-1" : ""} ${error && 'border-reddist'}`}
+            className={`w-full flex flex-row justify-between items-center px-5 h-[48px] border-[1px] border-neutral-300 rounded-xl bg-transparent box-border text-left focus:border-bright-purple ${!selected ? "text-[#9CA3AF]" : ""} ${error && 'border-reddist'}`}
           >
             {selectedLabel}
             <img src={open ? ChevronUp : ChevronDown} className="w-6 h-6" />

@@ -25,24 +25,8 @@ export default function FileUploaderV2({
   inputHeight,
   disabledAltText = false,
   isOptional = false,
+  labelWidth = 225,
 }: any) {
-  // function convertToArr(arr: any[], key: string | number | undefined) {
-  //   if (!Array.isArray(arr) || arr.length === 0 || key === undefined) {
-  //     return [];
-  //   }
-
-  //   const values = arr.map(obj => obj[key]);
-
-  //   if (values.length === 1) {
-  //     return values[0];
-  //   } else {
-  //     const jsonString = JSON.stringify(
-  //       values.map(item => (typeof item === 'string' ? item.replace(/"/g, '\\"') : item)),
-  //     );
-  //     return jsonString;
-  //   }
-  // }
-
   return (
     <div>
       <Typography
@@ -53,15 +37,18 @@ export default function FileUploaderV2({
         {fieldTypeLabel}
       </Typography>
       <div className="flex flex-row">
-        <div>
+        <div style={{
+          width: labelWidth,
+          minWidth: labelWidth,
+        }}>
           {labelTitle ? (
-            <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
+            <Typography type="body" size="m" weight="bold">
               {labelTitle}
               <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
             </Typography>
           ) : null}
           {isOptional ? (
-            <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
+            <Typography type="body" size="m" weight="bold">
               <p>{`{ Optional }`}</p>
             </Typography>
           ) : null}
