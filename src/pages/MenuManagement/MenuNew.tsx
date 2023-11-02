@@ -77,9 +77,9 @@ export default function MenuNew() {
     const payload = {
       title: data?.title,
       menuType: selectedType,
-      externalUrl: data?.externalUrl ?? '',
-      isNewTab: data?.isNewTab ?? false,
-      pageId: data?.pageId ?? null,
+      pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
+      externalUrl: selectedType === 'LINK' ? (data?.externalUrl ?? '') : '',
+      isNewTab: (selectedType === 'PAGE' || selectedType === 'LINK') ? (data?.isNewTab ?? false) : false,
       shortDesc: data?.shortDesc,
       icon: data?.icon ?? '',
     };
@@ -222,7 +222,7 @@ export default function MenuNew() {
               </div>
             )}
             {/* ROW */}
-            {selectedType.value !== 'NO_LANDING_PAGE' && (
+            {selectedType !== 'NO_LANDING_PAGE' && (
               <div className='flex flex-row gap-14'>
                 <div className='flex flex-1'>
                   <Controller

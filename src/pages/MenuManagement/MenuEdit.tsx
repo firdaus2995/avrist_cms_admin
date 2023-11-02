@@ -1,204 +1,111 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useForm, Controller } from 'react-hook-form';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import Typography from '@/components/atoms/Typography';
+import { t } from 'i18next';
+
 import FormList from '@/components/molecules/FormList';
-import {
-  useEditMenuMutation,
-  useCreateMenuMutation,
-  useGetMenuByIdQuery,
-} from '@/services/Menu/menuApi';
+import DropDown from '@/components/molecules/DropDown';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { useEditMenuMutation, useGetMenuByIdQuery } from '@/services/Menu/menuApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { t } from 'i18next';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import TakedownModal from './components/TakedownModal';
-
-// OTHER GET DATA
 import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
-// import { UniqueTypeNamesRule } from 'graphql';
-
-const maxImageSize = 2 * 1024 * 1024;
-const maxChar = 50;
+import { menuType } from './constants';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { TextArea } from '@/components/atoms/Input/TextArea';
 
 export default function MenuNew() {
   const navigate = useNavigate();
   const params = useParams();
-  const location = useLocation();
-
   const dispatch = useAppDispatch();
   const {
     control,
     handleSubmit,
-    formState: { errors },
     setValue,
-    getValues,
     reset,
+    formState: { errors },
   } = useForm();
 
-  const screenType = [
-    {
-      value: 'PAGE',
-      label: 'Page',
-    },
-    {
-      value: 'LINK',
-      label: 'Link',
-    },
-    {
-      value: 'NO_LANDING_PAGE',
-      label: 'No Landing Page',
-    },
-  ];
-  const [selectedType, setSelectedType] = useState<any>(screenType[0]);
-  const [selectedPageId, setSelectedPageId] = useState<any>(null);
-  const [openTakedownModal, setOpenTakedownModal] = useState(false);
+  // BACKEND STATE
+  const [listApprovedPage, setListApprovedPage] = useState<any>([]);
+  // FORM STATE
+  const [id] = useState<any>(Number(params.id));
+  const [selectedType, setSelectedType] = useState<any>(menuType[0]);
 
-  const [listPage, setListPage] = useState<any>([]);
-  const [pageIndex] = useState(0);
-  const [pageLimit] = useState(9999);
-  const [direction] = useState('asc');
-  const [search] = useState('');
-  const [sortBy] = useState('id');
-  const [filterBy] = useState('');
-  const [startDate] = useState('');
-  const [endDate] = useState('');
-
-  const resetValue = () => {
-    reset();
-    setSelectedPageId(screenType[0]);
-    setSelectedPageId(null);
-    setOpenTakedownModal(false);
-    navigate('/menu', { replace: true });
-  };
-
-  // GET LIST DATA
-  const fetchPageListQuery = useGetPageManagementListQuery({
-    pageIndex,
-    limit: pageLimit,
-    sortBy,
-    direction,
-    search,
-    filterBy,
-    startDate,
-    endDate,
-    isArchive: false,
-  });
-  const { data: listPageData } = fetchPageListQuery;
-
-  useEffect(() => {
-    const pagesTemp = listPageData?.pageList?.pages;
-    if (pagesTemp) {
-      const filteredListPageData = pagesTemp?.map((val: any) => {
-        const list = {
-          value: val.id,
-          label: val.title,
-        };
-
-        return list;
-      });
-      setListPage(filteredListPageData);
-    }
-  }, [listPageData]);
-
-  useEffect(() => {
-    const defPageId = getValues('pageId');
-    if (listPage && defPageId) {
-      const selectedLabel = listPage?.find((item: any) => item.value === defPageId)?.label ?? null;
-      setSelectedPageId(selectedLabel);
-    }
-  }, [listPage, getValues('pageId')]);
-
-  // GET DEFAULT DATA
+  // RTK GET DATA MENU DETAIL
   const fetchDefaultData = useGetMenuByIdQuery(
-    { id: parseInt(params.id ?? '') },
+    { id },
     {
       refetchOnMountOrArgChange: true,
     },
   );
+  const { data: dataDetail } = fetchDefaultData;
 
-  const { data: defaultData } = fetchDefaultData;
+  // RTK GET PAGE
+  const fetchPageListQuery = useGetPageManagementListQuery({
+    pageIndex: 0,
+    limit: 9999,
+    sortBy: 'id',
+    direction: 'asc',
+    search: '',
+    filterBy: '',
+    startDate: '',
+    endDate: '',
+    isArchive: false,
+  });
+  const { data: dataPage } = fetchPageListQuery;
 
-  useEffect(() => {
-    const data = defaultData?.menuById;
-    if (data) {
-      const defId = data.id || '';
-      const defTitle = data.title || '';
-      const defMenuType = data.menuType || '';
-      const defExternalUrl = data.externalUrl || '';
-      const defIsNewTab = data.isNewTab || false;
-      const defPageId = data.pageId || null;
-
-      const defShortDesc = data.shortDesc || '';
-      const defIcon = data.icon || '';
-
-      setValue('id', defId);
-      setValue('title', defTitle);
-      setSelectedType(screenType.find(item => item.value === defMenuType) ?? screenType[0]);
-      setValue('externalUrl', defExternalUrl);
-      setValue('isNewTab', defIsNewTab);
-      setValue('pageId', defPageId);
-      setValue('shortDesc', defShortDesc);
-      setValue('icon', defIcon);
-    }
-  }, [defaultData]);
-
-  // POST
-  const onSubmit = (e: any) => {
-    if (e.id) {
-      onPostEdit(e);
-    } else {
-      onPostCreate(e);
-    }
-  };
-
-  const [createMenu] = useCreateMenuMutation();
+  // RTK CREATE MENU
   const [editMenu] = useEditMenuMutation();
 
-  const onPostCreate = (e: any) => {
+  useEffect(() => {
+    reset();
+  }, [selectedType]);
+
+  useEffect(() => {
+    if (dataPage) {
+      setListApprovedPage(dataPage?.pageList?.pages?.map((val: any) => {
+        return {
+          value: val.id,
+          label: val.title,
+        };
+      }));
+    };
+  }, [dataPage]);
+
+  useEffect(() => {
+    if (dataDetail) {
+      const menuDetail = dataDetail?.menuById;
+
+      setSelectedType(menuType.find(item => item.value === menuDetail?.menuType)?.value);
+
+      const defaultValues: any = {};
+
+      defaultValues.id= menuDetail?.id;
+      defaultValues.title= menuDetail?.title;
+      defaultValues.externalUrl= menuDetail?.externalUrl;
+      defaultValues.isNewTab= menuDetail?.isNewTab ?? false;
+      defaultValues.pageId= menuDetail?.pageId ?? null;
+      defaultValues.shortDesc= menuDetail?.shortDesc;
+      defaultValues.icon= menuDetail?.icon ?? '';
+
+      reset({ ...defaultValues });
+    };
+  }, [dataDetail]);
+
+  const onSubmit = (data: any) => {
     const payload = {
-      title: e.title,
-      menuType: selectedType.value,
-      externalUrl: e.externalUrl || '',
-      isNewTab: e.isNewTab || false,
-      pageId: e.pageId || null,
-      shortDesc: e.shortDesc || '',
-      icon: e.icon || '',
+      id: data?.id,
+      title: data?.title,
+      menuType: selectedType,
+      pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
+      externalUrl: selectedType === 'LINK' ? (data?.externalUrl ?? '') : '',
+      isNewTab: (selectedType === 'PAGE' || selectedType === 'LINK') ? (data?.isNewTab ?? false) : false,
+      shortDesc: data?.shortDesc,
+      icon: data?.icon ?? '',
     };
 
-    createMenu(payload)
-      .unwrap()
-      .then(() => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-          }),
-        );
-        navigate('/menu', { replace: true });
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-          }),
-        );
-      });
-  };
-
-  const onPostEdit = (e: any) => {
-    const payload = {
-      id: e.id,
-      title: e.title,
-      menuType: selectedType.value,
-      externalUrl: e.externalUrl || '',
-      isNewTab: e.isNewTab || false,
-      pageId: e.pageId || null,
-      shortDesc: e.shortDesc || '',
-      icon: e.icon || '',
-    };
     editMenu(payload)
       .unwrap()
       .then(() => {
@@ -208,7 +115,7 @@ export default function MenuNew() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu', { replace: true });
+        navigate('/menu');
       })
       .catch(() => {
         dispatch(
@@ -220,142 +127,150 @@ export default function MenuNew() {
       });
   };
 
-  const isEditMode = location.pathname.includes('edit');
-
-  useEffect(() => {
-    const pageType = location?.state?.pageType;
-    if (pageType) {
-      setSelectedType(screenType.find(item => item.value === pageType) ?? screenType[0]);
-    }
-  }, [location?.state]);
-
   return (
-    <>
-      <TakedownModal
-        open={openTakedownModal}
-        onCancel={() => {
-          setOpenTakedownModal(false);
-        }}
-        idDelete={params?.id}
-      />
-      <TitleCard title={isEditMode ? 'Edit Menu' : 'Create Menu'} border={true}>
-        {/* MAIN CONTAINER */}
-        <div className="flex flex-col mt-5 gap-5">
-          {/* FORM SECTION */}
-          <form className="flex flex-col gap-5" onSubmit={handleSubmit(onSubmit)}>
-            <div className="flex flex-col gap-5">
-              <div className="flex flex-row justify-between">
+    <TitleCard title='Create Menu' border={true}>
+      <div className="flex flex-col mt-5 gap-5">
+        <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
+          <div className='flex flex-col mt-[60px] gap-5'>
+            {/* ROW */}
+            <div className='flex flex-row gap-14'>
+              <div className='flex flex-1'>
                 <Controller
                   name="title"
                   control={control}
+                  defaultValue=''
                   rules={{ required: 'Title is required' }}
                   render={({ field }) => (
-                    <FormList.TextField
+                    <InputText
                       {...field}
+                      direction="row"
+                      inputWidth={400}
+                      labelWidth={200}
                       labelTitle="Page Title"
+                      labelStyle="font-bold"
                       labelRequired
+                      roundStyle="xl"
                       placeholder="Input Page Title"
-                      error={!!errors?.title?.message}
+                      isError={!!errors?.title?.message}
                       helperText={errors?.title?.message}
-                      border={false}
-                      inputWidth={350}
                     />
                   )}
                 />
-                <div className="flex flex-row items-center">
-                  <Typography type="body" size="m" weight="bold" className="w-40 ml-1">
-                    Type
-                  </Typography>
-                  <FormList.DropDown
-                    defaultValue={selectedType.label}
-                    labelTitle="Type"
-                    items={screenType}
-                    onChange={(e: any) => {
-                      setSelectedType(e);
-                    }}
-                    inputWidth={350}
-                  />
-                </div>
               </div>
-              {selectedType.value === 'PAGE' && (
-                <div className="flex flex-row justify-start">
-                  <div className="flex flex-row items-center">
-                    <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-                      Page
-                      <span className={'text-reddist text-lg'}>{`*`}</span>
-                    </Typography>
-                    <Controller
-                      name="pageId"
-                      control={control}
-                      rules={{ required: 'Page is required' }}
-                      render={({ field }) => {
-                        const onChange = useCallback((e: any) => {
-                          field.onChange({ target: { value: e.value } });
-                        }, []);
-                        return (
-                          <FormList.DropDown
+              <div className='flex flex-1'>
+                <DropDown
+                  direction='row'
+                  inputWidth={400}
+                  labelWidth={200}
+                  labelTitle="Type"
+                  labelStyle="font-bold"
+                  labelEmpty="Choose Type"
+                  items={menuType}
+                  defaultValue={selectedType}
+                  onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                    if (event) {
+                      setSelectedType(value)
+                    };
+                  }}
+                />
+              </div>
+            </div>
+            {/* ROW */}
+            {(selectedType === 'PAGE' || selectedType === 'LINK') && (
+              <div className='flex flex-row gap-14'>
+                <div className='flex flex-1'>
+                  {
+                    selectedType === 'PAGE' ? (
+                      <Controller
+                        name='pageId'
+                        control={control}
+                        defaultValue=''
+                        rules={{ required: 'Page is required' }}
+                        render={({ field }) => (
+                          <DropDown
                             {...field}
-                            defaultValue={selectedPageId}
+                            direction='row'
+                            inputWidth={400}
+                            labelWidth={200}      
+                            labelTitle="Page"
+                            labelStyle="font-bold"
+                            labelRequired
+                            labelEmpty="Choose Page"
+                            items={listApprovedPage}
+                            defaultValue={field.value}
                             error={!!errors?.pageId?.message}
-                            helperText={errors?.pageId?.message}
-                            items={listPage}
-                            onChange={onChange}
-                            inputWidth={350}
+                            helperText={errors?.roleId?.message}
+                            onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                              if (event) {
+                                setValue('pageId', value);
+                                field.onChange(value);
+                              };
+                            }}
                           />
-                        );
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-              {selectedType.value === 'LINK' && (
-                <div className="flex flex-row justify-start">
-                  <Controller
-                    name="externalUrl"
-                    control={control}
-                    rules={{
-                      required: `URL is required`,
-                      pattern: {
-                        value:
-                          /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                        message: 'Invalid URL',
-                      },
-                    }}
-                    render={({ field }) => (
-                      <FormList.TextField
-                        {...field}
-                        labelTitle="URL Link"
-                        labelRequired
-                        placeholder="Input URL Link"
-                        error={!!errors?.url?.message}
-                        helperText={errors?.url?.message}
-                        border={false}
-                        inputWidth={350}
+                        )}
                       />
-                    )}
-                  />
+                    ) : (
+                      <Controller
+                        name="externalUrl"
+                        control={control}
+                        defaultValue=''
+                          rules={{
+                            required: `URL is required`,
+                            pattern: {
+                              value:
+                                /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                              message: 'Invalid URL',
+                            },
+                          }}
+                        render={({ field }) => (
+                          <InputText
+                            {...field}
+                            direction="row"
+                            inputWidth={400}
+                            labelWidth={200}
+                            labelTitle="URL Link"
+                            labelStyle="font-bold"
+                            labelRequired
+                            roundStyle="xl"
+                            placeholder="Input URL Link"
+                            isError={!!errors?.externalUrl?.message}
+                            helperText={errors?.externalUrl?.message}
+                          />
+                        )}
+                      />
+                    )
+                  }
                 </div>
-              )}
-              {selectedType.value !== 'NO_LANDING_PAGE' && (
-                <div className="w-40 ml-60">
+                <div className='flex flex-1'>{/* SPACES */}</div>
+              </div>
+            )}
+            {/* ROW */}
+            {selectedType !== 'NO_LANDING_PAGE' && (
+              <div className='flex flex-row gap-14'>
+                <div className='flex flex-1'>
                   <Controller
                     name="isNewTab"
                     control={control}
+                    defaultValue={false}
                     render={({ field }) => (
                       <CheckBox
                         {...field}
-                        defaultValue={field.value || false}
+                        containerStyle="ml-[200px]"
+                        labelTitle={t('user.menu-list.menuList.openInNewTab')}
+                        defaultValue={field.value}
                         updateFormValue={e => {
                           field.onChange(e.value);
                         }}
-                        labelTitle={t('user.menu-list.menuList.openInNewTab')}
-                        updateType={''}
                       />
                     )}
                   />
                 </div>
-              )}
-              <div className="flex flex-row justify-start">
+                <div className='flex flex-1'>{/* SPACES */}</div>
+              </div>
+            )}
+            {/* ROW */}
+            <div className="flex flex-row gap-14">
+              <div className='flex flex-1'>
                 <Controller
                   key="icon"
                   name="icon"
@@ -364,20 +279,22 @@ export default function MenuNew() {
                     const onChange = useCallback((e: any) => {
                       field.onChange({ target: { value: e } });
                     }, []);
+
                     return (
                       <FormList.FileUploaderV2
                         {...field}
                         key="icon"
+                        inputWidth={400}
+                        labelWidth={200}
                         labelTitle="Menu Icon"
+                        onChange={onChange}
+                        maxSize={2*1024*1024}
                         isDocument={false}
                         multiple={false}
-                        onChange={onChange}
                         border={false}
                         disabled={false}
-                        maxSize={maxImageSize}
                         showMaxSize={true}
                         editMode={true}
-                        inputWidth={350}
                         disabledAltText={true}
                         isOptional={true}
                       />
@@ -385,52 +302,53 @@ export default function MenuNew() {
                   }}
                 />
               </div>
-              <div className="flex flex-col justify-start">
+              <div className='flex flex-1'>{/* SPACES */}</div>
+            </div>
+            {/* ROW */}
+            <div className="flex flex-row gap-14">
+              <div className='flex flex-col flex-1'>
                 <Controller
                   name="shortDesc"
                   control={control}
+                  defaultValue=""
                   render={({ field }) => (
-                    <FormList.TextAreaField
-                      {...field}
+                    <TextArea
+                      inputWidth={400}
+                      labelWidth={200}
                       labelTitle="Short Description"
+                      labelStyle="font-bold"
+                      direction="row"
                       placeholder="Input Short Description"
-                      error={!!errors?.shortDesc?.message}
-                      helperText={errors?.shortDesc?.message}
-                      border={false}
-                      inputWidth={350}
-                      maxLength={maxChar}
+                      maxLength={50}
+                      {...field}
                     />
                   )}
                 />
-                <div className="w-[35rem] flex justify-end">
-                  <p className="text-body-text-3 text-xs mt-2">
-                    {t('user.menu-list.menuList.maxDescription', { maxChar })}
+                <div className="w-full flex justify-end">
+                  <p className="text-body-text-3 text-xs mt-2 mr-4">
+                    {t('user.menu-list.menuList.maxDescription', { maxChar: 50 })}
                   </p>
                 </div>
               </div>
+              <div className='flex flex-1'>{/* SPACES */}</div>
             </div>
-            <div className="mt-16 flex justify-end items-center">
-              <div className="flex flex-row p-2 gap-2">
-                <button
-                  className="btn btn-outline text-xs btn-sm w-28 h-10"
-                  onClick={e => {
-                    e.preventDefault();
-                    if (isEditMode) {
-                      setOpenTakedownModal(true);
-                    } else {
-                      resetValue();
-                    }
-                  }}>
-                  {isEditMode ? 'Takedown' : 'Cancel'}
-                </button>
-                <button className="btn btn-primary text-xs btn-sm w-28 h-10" type="submit">
-                  Save
-                </button>
-              </div>
-            </div>
-          </form>
-        </div>
-      </TitleCard>
-    </>
+          </div>
+
+          <div className="mt-[200px] flex justify-end items-end gap-2">
+            <button
+              className="btn btn-outline text-xs btn-sm w-28 h-10"
+              onClick={e => {
+                e.preventDefault();
+                navigate('/menu', { replace: true });
+              }}>
+              Cancel
+            </button>
+            <button className="btn btn-primary text-xs btn-sm w-28 h-10" type="submit">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    </TitleCard>
   );
 }
