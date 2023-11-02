@@ -39,6 +39,7 @@ export const pageManagementApi = createApi({
               pages {    
                 id
                 title
+                dataType
                 status
                 createdBy 
                 createdAt
@@ -180,6 +181,7 @@ export const pageManagementApi = createApi({
             pageById(id: $id) {
               id
               title
+              dataType
               slug
               metaTitle
               metaDescription
@@ -210,6 +212,7 @@ export const pageManagementApi = createApi({
         document: gql`
           mutation pageCreate(
             $title: String!
+            $dataType: String!
             $slug: String!
             $metatitle: String!
             $metaDescription: String!
@@ -223,6 +226,7 @@ export const pageManagementApi = createApi({
             pageCreate(
               request: {
                 title: $title
+                dataType: $dataType
                 slug: $slug
                 metaTitle: $metatitle
                 metaDescription: $metaDescription
@@ -236,6 +240,7 @@ export const pageManagementApi = createApi({
             ) {
               id
               title
+              dataType
               slug
               metaTitle
               metaDescription
@@ -275,6 +280,7 @@ export const pageManagementApi = createApi({
           mutation pageUpdate(
             $id: Int!
             $title: String!
+            $dataType: String!
             $slug: String!
             $metatitle: String!
             $metaDescription: String!
@@ -288,6 +294,7 @@ export const pageManagementApi = createApi({
             pageUpdate(
               request: {
                 title: $title
+                dataType: $dataType
                 slug: $slug
                 metaTitle: $metatitle
                 metaDescription: $metaDescription
@@ -302,6 +309,7 @@ export const pageManagementApi = createApi({
             ) {
               id
               title
+              dataType
               slug
               metaTitle
               metaDescription
