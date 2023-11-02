@@ -209,7 +209,7 @@ export default function PageManagementNew() {
           <img src={PaperSubmit} className="w-10" />
           <p className="font-bold mt-3 text-xl">{t('user.page-management-new.autoApproveTitle')}</p>
           <p className="font-base my-3 text-l text-center">
-            {t('user.page-management-new.autoApproveSubtitle')}
+            {t('user.page-management-new.autoApproveSubtitle', { title: getValues().pageName })}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}
@@ -407,6 +407,7 @@ export default function PageManagementNew() {
                 ))}
             </div>
             <div className="w-full flex justify-center">
+              <div className='mr-5 font-semibold'>Total {total} Items</div>
               <PaginationComponent
                 total={total}
                 page={pageIndex}
