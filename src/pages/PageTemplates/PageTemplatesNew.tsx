@@ -191,10 +191,10 @@ export default function PageTemplatesNew() {
       filenameCode: e.pageFileName,
       name: e.pageName,
       shortDesc: e.pageDescription,
+      imageUrl: e.imagePreview,
+      dataType: selectedDataType.value,
       attributes: updatedAttributesData,
       configs: configData,
-      imageUrl: e.imagePreview,
-      dataType: selectedDataType,
     };
     editedPageTemplate(payload)
       .unwrap()
@@ -228,11 +228,12 @@ export default function PageTemplatesNew() {
       filenameCode: e.pageFileName,
       name: e.pageName,
       shortDesc: e.pageDescription,
+      imageUrl: e.imagePreview,
+      dataType: selectedDataType.value,
       attributes: updatedAttributesData,
       configs: configData,
-      imageUrl: e.imagePreview,
-      dataType: selectedDataType,
     };
+
     createPageTemplate(payload)
       .unwrap()
       .then((d: any) => {
@@ -286,8 +287,11 @@ export default function PageTemplatesNew() {
       const defaultPageFileName = data?.filenameCode || '';
       const defaultPageId = data?.id || '';
       const defaultImageUrl = data?.imageUrl || '';
-      const defaultDataType = data?.dataType || listDataType[0];
 
+      // ini sepaket ya!
+      const findDefaultDataType = listDataType.find(item => item.value === data?.dataType);
+      const defaultDataType = findDefaultDataType ?? listDataType[0];
+      
       setValue('pageName', defaultPageName);
       setValue('pageDescription', defaultPageDescription);
       setValue('pageFileName', defaultPageFileName);
@@ -740,7 +744,7 @@ export default function PageTemplatesNew() {
           />
           <div className="flex flex-row">
             <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-              Data Type
+            {t('user.page-template-list.page-template.table.data-type')}
               <span className={'text-reddist text-lg'}>{`*`}</span>
             </Typography>
             <FormList.DropDown
@@ -749,7 +753,7 @@ export default function PageTemplatesNew() {
               onChange={(e: any) => {
                 setSelectedDataType(e);
               }}
-              disabled={mode === 'detail'}
+              disabled={mode === 'detail' || mode === 'edit'}
               inputWidth={400}
             />
           </div>

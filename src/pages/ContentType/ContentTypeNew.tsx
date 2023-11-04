@@ -20,6 +20,8 @@ import {
   useGetConfigQuery,
   usePostTypeCreateMutation,
 } from '@/services/ContentType/contentTypeApi';
+import Typography from '@/components/atoms/Typography';
+import FormList from '@/components/molecules/FormList';
 
 export default function ContentTypeNew() {
   const dispatch = useAppDispatch();
@@ -119,6 +121,19 @@ export default function ContentTypeNew() {
       isDeleted: false,
     },
   ]);
+
+  const listDataType = [
+    {
+      value: 'SINGLE',
+      label: 'Single',
+    },
+    {
+      value: 'COLLECTION',
+      label: 'Collection',
+    },
+  ];
+
+  const [selectedDataType, setSelectedDataType] = useState<any>(listDataType[1]);
 
   function onAddList() {
     if (openedAttribute?.code === 'looping') {
@@ -266,19 +281,18 @@ export default function ContentTypeNew() {
               <InputText
                 {...field}
                 labelTitle={t('user.content-type-edit.contentTypeColumnName')}
-                labelStyle="font-semibold"
                 direction="row"
-                containerStyle="mb-5"
                 labelRequired
                 roundStyle="xl"
                 placeholder={'Enter your new content name'}
                 isError={!!errors?.contentName}
+                inputWidth={400}
               />
             )}
           />
         </div>
-        <p></p>
-        <div className="flex flex-row items-center">
+
+        <div className="flex flex-row items-center mt-3">
           <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-24 text-lg font-bold">
             <Controller
               name="slugName"
@@ -289,26 +303,45 @@ export default function ContentTypeNew() {
                 <InputText
                   {...field}
                   labelTitle={t('user.content-type-edit.slugName')}
-                  labelStyle="font-semibold"
                   direction="row"
                   labelRequired
                   roundStyle="xl"
                   placeholder={t('user.content-type-edit.slugName-placeholder')}
                   isError={!!errors?.slugName}
+                  inputWidth={400}
                 />
               )}
             />
           </div>
-          <div className="ml-10">
-            <CheckBox
-              defaultValue={isUseCategory}
-              updateFormValue={e => {
-                setIsUseCategory(e.value);
+        </div>
+
+        <div className="flex flex-row items-center mt-3">
+          <div className="flex flex-row items-center">
+            <Typography type="body" size="s" weight="bold" className="w-[222px] ml-1">
+              {t('user.page-template-list.page-template.table.data-type')}
+              <span className={'text-reddist ml-1'}>{`*`}</span>
+            </Typography>
+            <FormList.DropDown
+              defaultValue={selectedDataType?.label}
+              items={listDataType}
+              onChange={(e: any) => {
+                setSelectedDataType(e);
               }}
-              labelTitle={t('user.content-type-edit.use-category')}
-              updateType={''}
+              inputWidth={400}
             />
           </div>
+          {selectedDataType?.value === 'COLLECTION' && (
+            <div className="ml-10">
+              <CheckBox
+                defaultValue={isUseCategory}
+                updateFormValue={e => {
+                  setIsUseCategory(e.value);
+                }}
+                labelTitle={t('user.content-type-edit.use-category')}
+                updateType={''}
+              />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -359,8 +392,9 @@ export default function ContentTypeNew() {
     const payload = {
       name: data?.contentName,
       slug: data?.slugName,
-      isUseCategory,
+      isUseCategory: selectedDataType.value === 'COLLECTION' ? isUseCategory : false,
       attributeRequests: transformedData.filter((_element: any, index: number) => index >= 2),
+      dataType: selectedDataType.value,
     };
 
     postCreate(payload)
@@ -1343,7 +1377,7 @@ export default function ContentTypeNew() {
           <div className="flex absolute right-2 bottom-2 gap-3">
             <button
               className="btn btn-outline btn-md"
-              type='button'
+              type="button"
               onClick={() => {
                 setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
                 setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');

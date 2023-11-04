@@ -741,7 +741,8 @@
           "action": "Action",
           "view-detail": "View Detail",
           "delete-confirm-title": "Are you sure?",
-          "delete-confirm-body": "Do you want to delete this Page Template?"
+          "delete-confirm-body": "Do you want to delete this Page Template?",
+          "data-type": "Data Type"
         },
         "search-placeholder": "Search"
       },
