@@ -50,6 +50,21 @@ export const pageManagementApi = createApi({
         variables: payload,
       }),
     }),
+    getPageManagementApprovedList: builder.query<any, any>({
+      query: () => ({
+        document: gql`
+          query pageApprovedListForMenu {
+            pageApprovedListForMenu {
+              total
+              pages {
+                id
+                title
+              }
+            }
+          }
+        `,
+      }),
+    }),
     deletePage: builder.mutation<any, { id: number }>({
       query: payload => ({
         document: gql`
@@ -313,6 +328,7 @@ export const pageManagementApi = createApi({
 
 export const {
   useGetPageManagementListQuery,
+  useGetPageManagementApprovedListQuery,
   useDeletePageMutation,
   useRestorePageMutation,
   usePageLogApprovalQuery,

@@ -5,10 +5,10 @@ import { t } from 'i18next';
 import FormList from '@/components/molecules/FormList';
 import DropDown from '@/components/molecules/DropDown';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useCreateMenuMutation } from '@/services/Menu/menuApi';
+import { useEditMenuMutation, useGetMenuByIdQuery } from '@/services/Menu/menuApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
 import { menuType } from './constants';
@@ -17,7 +17,7 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 
 export default function MenuNew() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const params = useParams();
   const dispatch = useAppDispatch();
   const {
     control,
@@ -30,7 +30,17 @@ export default function MenuNew() {
   // BACKEND STATE
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
+  const [id] = useState<any>(Number(params.id));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
+
+  // RTK GET DATA MENU DETAIL
+  const fetchDefaultData = useGetMenuByIdQuery(
+    { id },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
+  const { data: dataDetail } = fetchDefaultData;
 
   // RTK GET PAGE
   const fetchPageListQuery = useGetPageManagementListQuery({
@@ -47,7 +57,7 @@ export default function MenuNew() {
   const { data: dataPage } = fetchPageListQuery;
 
   // RTK CREATE MENU
-  const [createMenu] = useCreateMenuMutation();
+  const [editMenu] = useEditMenuMutation();
 
   useEffect(() => {
     reset();
@@ -65,16 +75,28 @@ export default function MenuNew() {
   }, [dataPage]);
 
   useEffect(() => {
-    const pageType = location?.state?.pageType;
-    if (pageType) {
-      setSelectedType(menuType.find((item) => {
-        return item.value === pageType;
-      })?.value);
+    if (dataDetail) {
+      const menuDetail = dataDetail?.menuById;
+
+      setSelectedType(menuType.find(item => item.value === menuDetail?.menuType)?.value);
+
+      const defaultValues: any = {};
+
+      defaultValues.id= menuDetail?.id;
+      defaultValues.title= menuDetail?.title;
+      defaultValues.externalUrl= menuDetail?.externalUrl;
+      defaultValues.isNewTab= menuDetail?.isNewTab ?? false;
+      defaultValues.pageId= menuDetail?.pageId ?? null;
+      defaultValues.shortDesc= menuDetail?.shortDesc;
+      defaultValues.icon= menuDetail?.icon ?? '';
+
+      reset({ ...defaultValues });
     };
-  }, [location]);
+  }, [dataDetail]);
 
   const onSubmit = (data: any) => {
     const payload = {
+      id: data?.id,
       title: data?.title,
       menuType: selectedType,
       pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
@@ -84,7 +106,7 @@ export default function MenuNew() {
       icon: data?.icon ?? '',
     };
 
-    createMenu(payload)
+    editMenu(payload)
       .unwrap()
       .then(() => {
         dispatch(
@@ -175,6 +197,7 @@ export default function MenuNew() {
                             labelRequired
                             labelEmpty="Choose Page"
                             items={listApprovedPage}
+                            defaultValue={field.value}
                             error={!!errors?.pageId?.message}
                             helperText={errors?.roleId?.message}
                             onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {

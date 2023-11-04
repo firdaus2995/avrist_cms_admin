@@ -48,14 +48,15 @@ export default function UsersEdit() {
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
-  // RTK GET ROLE
+  // RTK GET USER DETAIL
   const fetchUserDetailQuery = useGetUserDetailQuery(
     { id },
     {
       refetchOnMountOrArgChange: true,
     },
   );
-  
+  const { data } = fetchUserDetailQuery;
+
   // RTK GET ROLE
   const fetchRoleQuery = useGetRoleQuery({});
   const { data: dataRole } = fetchRoleQuery;
@@ -63,9 +64,6 @@ export default function UsersEdit() {
   // RTK GET DEPARTMENT
   const fetchDepartmentQuery = useGetDepartmentQuery({});
   const { data: dataDepartment } = fetchDepartmentQuery;  
-
-  // RTK USER DETAIL
-  const { data } = fetchUserDetailQuery;
 
   // RTK EDIT USER
   const [editUser, { isLoading }] = useEditUserMutation();

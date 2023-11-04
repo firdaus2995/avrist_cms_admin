@@ -960,7 +960,7 @@
       },
       "modalConfirm": {
         "title": "Are you sure?",
-        "message": "Do you want to delete {{title}}?",
+        "message": "Do you want to delete {{title}} from the list?",
         "cancelTitle": "Cancel",
         "submitTitle": "Yes"
       },
