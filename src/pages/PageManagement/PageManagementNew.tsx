@@ -22,13 +22,15 @@ import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import FormList from '../../components/molecules/FormList';
+import { dataTypeList } from './contants';
 
 export default function PageManagementNew() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    setValue,
     getValues,
+    formState: { errors },
   } = useForm();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
@@ -136,6 +138,7 @@ export default function PageManagementNew() {
 
     const payload = {
       title: formData?.pageName,
+      dataType: formData?.dataType,
       slug: formData?.slug,
       metatitle: formData?.metaTitle,
       metaDescription: formData?.metaDescription,
@@ -368,12 +371,38 @@ export default function PageManagementNew() {
                 render={({ field }) => (
                   <FormList.TextAreaField
                     {...field}
-                    labelTitle="Sort Description"
+                    labelTitle="Short Description"
                     placeholder="Input Short Description"
                     error={!!errors?.shortDesc?.message}
                     helperText={errors?.shortDesc?.message}
                     border={false}
                     inputWidth={350}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex flex-row justify-start">
+              <Controller
+                name='dataType'
+                control={control}
+                defaultValue='COLLECTION'
+                render={({ field }) => (
+                  <DropDown
+                    {...field}
+                    direction='row'
+                    inputWidth={350}
+                    labelWidth={228}      
+                    labelTitle="Page"
+                    labelStyle="font-bold"
+                    labelEmpty="Choose Page"
+                    items={dataTypeList}
+                    defaultValue={field.value}
+                    onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                      if (event) {
+                        setValue('dataType', value);
+                        field.onChange(value);
+                      };
+                    }}
                   />
                 )}
               />

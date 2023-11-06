@@ -175,6 +175,7 @@
           "archive": "Archive",
           "row": {
             "page-name": "Page Name",
+            "data-type": "Data Type",
             "created-by": "Created By",
             "created-date": "Created Date",
             "updated-date": "Updated Date",
@@ -242,6 +243,7 @@
       "detail": {
         "labels": {
           "pageName": "Page Name",
+          "data-type": "Data Type",
           "metaTitle": "Meta Title",
           "slug": "Slug",
           "metaDescription": "Meta Description",
@@ -741,7 +743,8 @@
           "action": "Action",
           "view-detail": "View Detail",
           "delete-confirm-title": "Are you sure?",
-          "delete-confirm-body": "Do you want to delete this Page Template?"
+          "delete-confirm-body": "Do you want to delete this Page Template?",
+          "data-type": "Data Type"
         },
         "search-placeholder": "Search"
       },

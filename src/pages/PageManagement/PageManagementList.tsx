@@ -233,6 +233,22 @@ export default function PageManagementList() {
     {
       header: () => (
         <span className="text-[14px]">
+          {t('user.page-management.list.page-list.row.data-type')}
+        </span>
+      ),
+      accessorKey: 'dataType',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">
           {t('user.page-management.list.page-list.row.created-by')}
         </span>
       ),

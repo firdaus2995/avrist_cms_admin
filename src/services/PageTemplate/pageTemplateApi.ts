@@ -16,6 +16,7 @@ export const pageTemplateApi: any = createApi({
             $sortBy: String
             $direction: String
             $search: String
+            $dataType: String
           ) {
             pageTemplateList(
               pageableRequest: {
@@ -24,13 +25,17 @@ export const pageTemplateApi: any = createApi({
                 direction: $direction
                 search: $search
                 sortBy: $sortBy
+                dataType: $dataType
               }
             ) {
               total
               templates {
                 id
+                filenameCode
                 name
                 imageUrl
+                dataType
+                shortDesc
                 createdBy {
                   id
                   name
@@ -62,9 +67,10 @@ export const pageTemplateApi: any = createApi({
             $filenameCode: String!
             $name: String!
             $shortDesc: String!
+            $imageUrl: String!
+            $dataType: String!
             $attributes: [PageTemplateAttributeRequest]
             $configs: [PageTemplateConfigRequest]
-            $imageUrl: String!
           ) {
             pageTemplateUpdate(
               id: $id
@@ -72,9 +78,10 @@ export const pageTemplateApi: any = createApi({
                 filenameCode: $filenameCode
                 name: $name
                 shortDesc: $shortDesc
+                imageUrl: $imageUrl
+                dataType: $dataType
                 attributes: $attributes
                 configs: $configs
-                imageUrl: $imageUrl
               }
             ) {
               id
@@ -107,18 +114,20 @@ export const pageTemplateApi: any = createApi({
             $filenameCode: String!
             $name: String!
             $shortDesc: String!
+            $imageUrl: String!
+            $dataType: String!
             $attributes: [PageTemplateAttributeRequest]
             $configs: [PageTemplateConfigRequest]
-            $imageUrl: String!
           ) {
             pageTemplateCreate(
               request: {
                 filenameCode: $filenameCode
                 name: $name
                 shortDesc: $shortDesc
+                imageUrl: $imageUrl
+                dataType: $dataType
                 attributes: $attributes
                 configs: $configs
-                imageUrl: $imageUrl
               }
             ) {
               id
@@ -167,6 +176,7 @@ export const pageTemplateApi: any = createApi({
                 name
               }
               imageUrl
+              dataType
             }
           }
         `,

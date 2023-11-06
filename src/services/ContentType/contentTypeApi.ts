@@ -29,6 +29,7 @@ export const contentTypeApi = createApi({
             $slug: String!
             $isUseCategory: Boolean
             $attributeRequests: [PostMetaTemplateRequest]!
+            $dataType: String!
           ) {
             postTypeCreate(
               request: {
@@ -37,6 +38,7 @@ export const contentTypeApi = createApi({
                 slug: $slug
                 isUseCategory: $isUseCategory
                 attributeRequests: $attributeRequests
+                dataType: $dataType
               }
             ) {
               id
@@ -44,6 +46,7 @@ export const contentTypeApi = createApi({
               postTypeGroup
               slug
               isUseCategory
+              dataType
             }
           }
         `,
@@ -59,6 +62,7 @@ export const contentTypeApi = createApi({
             $sortBy: String
             $direction: String
             $search: String
+            $dataType: String
           ) {
             postTypeList(
               postTypeGroup: "CONTENT_TYPE"
@@ -68,6 +72,7 @@ export const contentTypeApi = createApi({
                 sortBy: $sortBy
                 direction: $direction
                 search: $search
+                dataType: $dataType
               }
             ) {
               total
@@ -76,7 +81,10 @@ export const contentTypeApi = createApi({
                 name
                 isUseCategory
                 dataType
+<<<<<<< HEAD
                 singleContentDataId
+=======
+>>>>>>> f960769fda016ddc7493ad6599085f9233e3b921
               }
             }
           }
@@ -118,6 +126,7 @@ export const contentTypeApi = createApi({
                   parentId
                 }
               }
+              dataType
             }
           }
         `,
@@ -133,6 +142,7 @@ export const contentTypeApi = createApi({
             $slug: String!
             $isUseCategory: Boolean
             $attributeRequests: [PostMetaTemplateRequest]!
+            $dataType: String!
           ) {
             postTypeUpdate(
               id: $id
@@ -142,6 +152,7 @@ export const contentTypeApi = createApi({
                 slug: $slug
                 isUseCategory: $isUseCategory
                 attributeRequests: $attributeRequests
+                dataType: $dataType
               }
             ) {
               id
@@ -149,6 +160,7 @@ export const contentTypeApi = createApi({
               postTypeGroup
               slug
               isUseCategory
+              dataType
             }
           }
         `,

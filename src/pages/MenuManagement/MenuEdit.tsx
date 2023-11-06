@@ -3,6 +3,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { t } from 'i18next';
 
 import FormList from '@/components/molecules/FormList';
+import TakedownModal from './components/TakedownModal';
 import DropDown from '@/components/molecules/DropDown';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useEditMenuMutation, useGetMenuByIdQuery } from '@/services/Menu/menuApi';
@@ -32,6 +33,8 @@ export default function MenuNew() {
   // FORM STATE
   const [id] = useState<any>(Number(params.id));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
+  // TAKEDOWN MODAL
+  const [showTakedownMenuModal, setShowTakedownMenuModal] = useState(false);
 
   // RTK GET DATA MENU DETAIL
   const fetchDefaultData = useGetMenuByIdQuery(
@@ -56,7 +59,7 @@ export default function MenuNew() {
   });
   const { data: dataPage } = fetchPageListQuery;
 
-  // RTK CREATE MENU
+  // RTK EDIT MENU
   const [editMenu] = useEditMenuMutation();
 
   useEffect(() => {
@@ -128,7 +131,14 @@ export default function MenuNew() {
   };
 
   return (
-    <TitleCard title='Create Menu' border={true}>
+    <TitleCard title='Edit Menu' border={true}>
+      <TakedownModal
+        open={showTakedownMenuModal}
+        onCancel={() => {
+          setShowTakedownMenuModal(false);
+        }}
+        idDelete={id}
+      />
       <div className="flex flex-col mt-5 gap-5">
         <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
           <div className='flex flex-col mt-[60px] gap-5'>
@@ -336,12 +346,12 @@ export default function MenuNew() {
 
           <div className="mt-[200px] flex justify-end items-end gap-2">
             <button
+              type='button'
               className="btn btn-outline text-xs btn-sm w-28 h-10"
-              onClick={e => {
-                e.preventDefault();
-                navigate('/menu', { replace: true });
+              onClick={() => {
+                setShowTakedownMenuModal(true)
               }}>
-              Cancel
+              Takedown
             </button>
             <button className="btn btn-primary text-xs btn-sm w-28 h-10" type="submit">
               Save

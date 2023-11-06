@@ -163,7 +163,7 @@ export default function MenuList() {
   };
 
   const handlerTakedownMenu = () => {
-    deleteMenu({ id: idTakedownModal, noteTakedownModal })
+    deleteMenu({ id: idTakedownModal, takedownNote: noteTakedownModal })
       .unwrap()
       .then(async (res: any) => {
         setShowTakedownMenuModal(false);

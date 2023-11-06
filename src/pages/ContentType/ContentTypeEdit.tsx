@@ -16,7 +16,13 @@ import { copyArray, errorMessageTypeConverter } from '@/utils/logicHelper';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { useAppDispatch } from '../../store';
-import { useGetConfigQuery, useGetPostTypeDetailQuery, usePostTypeUpdateMutation } from '@/services/ContentType/contentTypeApi';
+import {
+  useGetConfigQuery,
+  useGetPostTypeDetailQuery,
+  usePostTypeUpdateMutation,
+} from '@/services/ContentType/contentTypeApi';
+import Typography from '@/components/atoms/Typography';
+import FormList from '@/components/molecules/FormList';
 
 export default function ContentTypeEdit() {
   const params = useParams();
@@ -92,10 +98,16 @@ export default function ContentTypeEdit() {
       setSlug(data?.postTypeDetail?.slug);
       setListItems(data?.postTypeDetail?.attributeList);
 
+      // ini sepaket ya!
+      const findDefaultDataType = listDataType.find(
+        item => item.value === data?.postTypeDetail?.dataType,
+      );
+      setSelectedDataType(findDefaultDataType);
+
       const defaultValues: any = {};
 
-      defaultValues.contentName= data?.postTypeDetail?.name;
-      defaultValues.slugName= data?.postTypeDetail?.slug;
+      defaultValues.contentName = data?.postTypeDetail?.name;
+      defaultValues.slugName = data?.postTypeDetail?.slug;
 
       reset({ ...defaultValues });
     }
@@ -151,6 +163,19 @@ export default function ContentTypeEdit() {
       setIsOpenModalAddAttribute(true);
     }
   }
+
+  const listDataType = [
+    {
+      value: 'SINGLE',
+      label: 'Single',
+    },
+    {
+      value: 'COLLECTION',
+      label: 'Collection',
+    },
+  ];
+
+  const [selectedDataType, setSelectedDataType] = useState<any>(listDataType[1]);
 
   function onAddList() {
     if (openedAttribute?.code === 'looping') {
@@ -300,18 +325,16 @@ export default function ContentTypeEdit() {
       <div className="flex flex-col border-b-2 pb-8">
         <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-10 text-lg font-bold">
           <Controller
-            name='contentName'
+            name="contentName"
             control={control}
-            defaultValue=''
+            defaultValue=""
             rules={{ required: t('components.atoms.required') ?? '' }}
             render={({ field }) => (
               <InputText
                 {...field}
                 labelTitle={t('user.content-type-edit.contentTypeColumnName')}
-                labelStyle="font-semibold"
-                direction='row'
+                direction="row"
                 labelRequired
-                containerStyle='mb-5'
                 value={name}
                 roundStyle="xl"
                 placeholder={'Enter your new content name'}
@@ -320,47 +343,68 @@ export default function ContentTypeEdit() {
                   setName(e.target.value);
                   field.onChange(e.target.value);
                 }}
+                inputWidth={400}
               />
             )}
           />
         </div>
-        <p></p>
-        <div className="flex flex-row items-center">
+
+        <div className="flex flex-row items-center mt-3">
           <div className="flex flex-row w-1/2 whitespace-nowrap items-center gap-24 text-lg font-bold">
-          <Controller
-            name='slugName'
-            control={control}
-            defaultValue=''
-            rules={{ required: t('components.atoms.required') ?? '' }}
-            render={({ field }) => (
-              <InputText
-                {...field}
-                labelTitle={t('user.content-type-edit.slugName')}
-                labelStyle="font-semibold"
-                direction='row'
-                labelRequired
-                value={slug}
-                roundStyle="xl"
-                placeholder={t('user.content-type-edit.slugName-placeholder')}
-                isError={!!errors?.slugName}
-                onChange={e => {
-                  setSlug(e.target.value);
-                  field.onChange(e.target.value);
-                }}
-              />
-            )}
-          />
-          </div>
-          <div className="ml-10">
-            <CheckBox
-              defaultValue={isUseCategory}
-              updateFormValue={e => {
-                setIsUseCategory(e.value);
-              }}
-              labelTitle={t('user.content-type-edit.use-category')}
-              updateType={''}
+            <Controller
+              name="slugName"
+              control={control}
+              defaultValue=""
+              rules={{ required: t('components.atoms.required') ?? '' }}
+              render={({ field }) => (
+                <InputText
+                  {...field}
+                  labelTitle={t('user.content-type-edit.slugName')}
+                  direction="row"
+                  labelRequired
+                  value={slug}
+                  roundStyle="xl"
+                  placeholder={t('user.content-type-edit.slugName-placeholder')}
+                  isError={!!errors?.slugName}
+                  onChange={e => {
+                    setSlug(e.target.value);
+                    field.onChange(e.target.value);
+                  }}
+                  inputWidth={400}
+                />
+              )}
             />
           </div>
+        </div>
+
+        <div className="flex flex-row items-center mt-3">
+          <div className="flex flex-row items-center">
+            <Typography type="body" size="s" weight="bold" className="w-[222px] ml-1">
+              {t('user.page-template-list.page-template.table.data-type')}
+              <span className={'text-reddist ml-1'}>{`*`}</span>
+            </Typography>
+            <FormList.DropDown
+              defaultValue={selectedDataType?.label}
+              items={listDataType}
+              onChange={(e: any) => {
+                setSelectedDataType(e);
+              }}
+              inputWidth={400}
+              disabled
+            />
+          </div>
+          {selectedDataType?.value === 'COLLECTION' && (
+            <div className="ml-10">
+              <CheckBox
+                defaultValue={isUseCategory}
+                updateFormValue={e => {
+                  setIsUseCategory(e.value);
+                }}
+                labelTitle={t('user.content-type-edit.use-category')}
+                updateType={''}
+              />
+            </div>
+          )}
         </div>
       </div>
     );
@@ -431,8 +475,9 @@ export default function ContentTypeEdit() {
       id: data?.postTypeDetail?.id,
       name,
       slug,
-      isUseCategory,
+      isUseCategory: selectedDataType.value === 'COLLECTION' ? isUseCategory : false,
       attributeRequests: convertedData,
+      dataType: selectedDataType.value,
     };
 
     postUpdate(payload)
@@ -603,7 +648,11 @@ export default function ContentTypeEdit() {
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
             <div className="flex flex-row">
               <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.code) === 'looping' ? 'looping content' : getType(openedAttribute?.code)}</div>
+              <div className="font-bold capitalize ml-5">
+                {getType(openedAttribute?.code) === 'looping'
+                  ? 'looping content'
+                  : getType(openedAttribute?.code)}
+              </div>
             </div>
             <div className="p-2">
               <svg
@@ -623,7 +672,13 @@ export default function ContentTypeEdit() {
           </div>
           <div className="flex flex-col mx-10 mt-16">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              {`${t('user.content-type-edit.add-new')} ${getType(openedAttribute?.code) === 'looping' ? t('user.content-type-edit.looping') : `${t('user.content-type-edit.add-new-extension')} ${getType(openedAttribute?.code)}`}`}
+              {`${t('user.content-type-edit.add-new')} ${
+                getType(openedAttribute?.code) === 'looping'
+                  ? t('user.content-type-edit.looping')
+                  : `${t('user.content-type-edit.add-new-extension')} ${getType(
+                      openedAttribute?.code,
+                    )}`
+              }`}
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
@@ -769,7 +824,9 @@ export default function ContentTypeEdit() {
                             </div>
                             <div className="flex flex-col w-1/2">
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.nameLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
@@ -794,7 +851,9 @@ export default function ContentTypeEdit() {
                                 }}
                               />
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.fieldIdLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
@@ -822,7 +881,9 @@ export default function ContentTypeEdit() {
                             {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.minLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).min_length}
@@ -848,7 +909,9 @@ export default function ContentTypeEdit() {
                                   }}
                                 />
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.maxLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={JSON.parse(val?.config).max_length}
@@ -944,7 +1007,7 @@ export default function ContentTypeEdit() {
                     className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
+                  {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
                 </button>
               </div>
             ) : null}
@@ -977,7 +1040,11 @@ export default function ContentTypeEdit() {
           <div className="flex flex-row w-full absolute -m-6 rounded-t-2xl justify-between bg-light-purple-2 items-center p-4">
             <div className="flex flex-row">
               <img className="ml-5" src={`data:image/svg+xml;base64,${openedAttribute?.icon}`} />
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType) === 'looping' ? 'looping content' : getType(openedAttribute?.fieldType)}</div>
+              <div className="font-bold capitalize ml-5">
+                {getType(openedAttribute?.fieldType) === 'looping'
+                  ? 'looping content'
+                  : getType(openedAttribute?.fieldType)}
+              </div>
             </div>
             <div className="p-2">
               <svg
@@ -997,7 +1064,11 @@ export default function ContentTypeEdit() {
           </div>
           <div className="flex flex-col mx-10 mt-10">
             <div className="p-4 capitalize font-bold border-b-2 mb-4">
-              <div className="font-bold capitalize ml-5">{getType(openedAttribute?.fieldType) === 'looping' ? 'multiple content type' : getType(openedAttribute?.fieldType)}</div>
+              <div className="font-bold capitalize ml-5">
+                {getType(openedAttribute?.fieldType) === 'looping'
+                  ? 'multiple content type'
+                  : getType(openedAttribute?.fieldType)}
+              </div>
             </div>
             <div className="flex flex-col w-1/2">
               <InputText
@@ -1137,7 +1208,7 @@ export default function ContentTypeEdit() {
                                   if (newOpenedAttribute?.attributeList?.length > 0) {
                                     newOpenedAttribute?.attributeList?.splice(idx, 1);
                                     setOpenedAttribute(newOpenedAttribute);
-                                  };
+                                  }
                                 }}
                                 xmlns="http://www.w3.org/2000/svg"
                                 fill="none"
@@ -1154,7 +1225,9 @@ export default function ContentTypeEdit() {
                             </div>
                             <div className="flex flex-col w-1/2">
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.nameLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.nameLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val.name}
@@ -1179,7 +1252,9 @@ export default function ContentTypeEdit() {
                                 }}
                               />
                               <InputText
-                                labelTitle={t('user.content-type-edit.modal.addAttribute.fieldIdLabel')}
+                                labelTitle={t(
+                                  'user.content-type-edit.modal.addAttribute.fieldIdLabel',
+                                )}
                                 labelStyle="font-bold"
                                 labelRequired
                                 value={val?.fieldId || getFieldId(val?.name)}
@@ -1207,7 +1282,9 @@ export default function ContentTypeEdit() {
                             {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.minLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={
@@ -1246,7 +1323,9 @@ export default function ContentTypeEdit() {
                                   }}
                                 />
                                 <InputText
-                                  labelTitle={t('user.content-type-edit.modal.addAttribute.maxLengthLabel')}
+                                  labelTitle={t(
+                                    'user.content-type-edit.modal.addAttribute.maxLengthLabel',
+                                  )}
                                   labelStyle="font-bold"
                                   type="number"
                                   value={
@@ -1356,7 +1435,7 @@ export default function ContentTypeEdit() {
                     className="w-6 h-6">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                   </svg>
-                {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
+                  {t('user.content-type-edit.modal.addAttribute.addAttributeButton')}
                 </button>
               </div>
             ) : null}
@@ -1401,15 +1480,13 @@ export default function ContentTypeEdit() {
           icon={CancelIcon}
           btnSubmitStyle="btn-warning"
         />
-        <form
-          className="flex flex-col w-100"
-          onSubmit={handleSubmit(onSubmit)}>
+        <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
           {renderForm()}
           {renderListItems()}
           <div className="flex absolute right-2 bottom-2 gap-3">
             <button
               className="btn btn-outline btn-md"
-              type='button'
+              type="button"
               onClick={() => {
                 setTitleConfirm(t('user.content-type-edit.modal.confirm.title') ?? '');
                 setmessageConfirm(t('user.content-type-edit.modal.confirm.message') ?? '');
@@ -1419,7 +1496,7 @@ export default function ContentTypeEdit() {
             </button>
             <button
               disabled={listItems.length === 0}
-              type='submit'
+              type="submit"
               className="btn btn-success btn-md text-white">
               {t('user.content-type-edit.btn.save')}
             </button>
