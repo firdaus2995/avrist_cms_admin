@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useGetPostTypeListQuery } from '../../services/ContentType/contentTypeApi';
 import Table from '@/components/molecules/Table';
@@ -12,6 +12,7 @@ import RoleRenderer from '../../components/atoms/RoleRenderer';
 
 export default function ContentManagerList() {
   const [listData, setListData] = useState<any>([]);
+  const navigate = useNavigate();
 
   // TABLE PAGINATION STATE
   const [total, setTotal] = useState(0);
@@ -50,11 +51,20 @@ export default function ContentManagerList() {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
   }, []);
+
+  function onRedirect(data: any) {
+    if (data?.dataType?.toLowerCase() === 'single') {
+      const path = `${data?.id}/detail/${data?.singleContentDataId}`;
+      navigate(path);
+    } else {
+      navigate(`${data?.id}`);
+    }
+  }
 
   // TABLE COLUMN
   const COLUMNS = [
@@ -65,7 +75,10 @@ export default function ContentManagerList() {
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
-        <Link to={`${info?.row?.original?.id}`}>
+        <div
+          onClick={() => {
+            onRedirect(info.row.original);
+          }}>
           <Typography
             type="body"
             size="s"
@@ -75,7 +88,19 @@ export default function ContentManagerList() {
               ? info.getValue()
               : '-'}
           </Typography>
-        </Link>
+        </div>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Data Type</span>,
+      accessorKey: 'dataType',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
       ),
     },
   ];
