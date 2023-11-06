@@ -175,6 +175,7 @@
           "archive": "Archive",
           "row": {
             "page-name": "Page Name",
+            "data-type": "Data Type",
             "created-by": "Created By",
             "created-date": "Created Date",
             "updated-date": "Updated Date",
@@ -242,6 +243,7 @@
       "detail": {
         "labels": {
           "pageName": "Page Name",
+          "data-type": "Data Type",
           "metaTitle": "Meta Title",
           "slug": "Slug",
           "metaDescription": "Meta Description",

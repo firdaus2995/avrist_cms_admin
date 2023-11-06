@@ -37,6 +37,7 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import CancelIcon from '@/assets/cancel.png';
 import FormList from '../../components/molecules/FormList';
+import { dataTypeList } from './contants';
 
 export default function PageManagementDetail() {
   const dispatch = useAppDispatch();
@@ -175,6 +176,7 @@ export default function PageManagementDetail() {
     handleSubmit,
     formState: { errors },
     getValues,
+    setValue,
   } = useForm();
 
   const submitButton = () => {
@@ -269,6 +271,7 @@ export default function PageManagementDetail() {
     const payload = {
       id,
       title: pageData?.pageName,
+      dataType: pageData?.dataType,
       slug: pageData?.slug,
       metatitle: pageData?.metaTitle,
       metaDescription: pageData?.metaDescription,
@@ -452,6 +455,11 @@ export default function PageManagementDetail() {
               title={t('user.page-management.detail.labels.shortDesc')}
               value={pageDetailList?.shortDesc}
             />
+            <div></div>
+            <Label
+              title={t('user.page-management.detail.labels.data-type')}
+              value={pageDetailList?.dataType}
+            />
           </div>
           <Label
             title={t('user.page-management.detail.labels.content')}
@@ -590,12 +598,38 @@ export default function PageManagementDetail() {
               render={({ field }) => (
                 <FormList.TextAreaField
                   {...field}
-                  labelTitle="Sort Description"
+                  labelTitle="Short Description"
                   placeholder="Input Short Description"
                   error={!!errors?.shortDesc?.message}
                   helperText={errors?.shortDesc?.message}
                   border={false}
                   inputWidth={350}
+                />
+              )}
+            />
+          </div>
+          <div className="flex flex-row justify-start">
+            <Controller
+              name='dataType'
+              control={control}
+              defaultValue={pageDetailList?.dataType}
+              render={({ field }) => (
+                <DropDown
+                  {...field}
+                  direction='row'
+                  inputWidth={350}
+                  labelWidth={228}      
+                  labelTitle="Page"
+                  labelStyle="font-bold"
+                  labelEmpty="Choose Page"
+                  items={dataTypeList}
+                  defaultValue={field.value}
+                  onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
+                    if (event) {
+                      setValue('dataType', value);
+                      field.onChange(value);
+                    };
+                  }}
                 />
               )}
             />
