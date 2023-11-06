@@ -115,7 +115,7 @@ export default function ContentTypeList() {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
@@ -143,6 +143,22 @@ export default function ContentTypeList() {
             </Typography>
           </div>
         </Link>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.page-template-list.page-template.table.data-type')}
+        </span>
+      ),
+      accessorKey: 'dataType',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
       ),
     },
     {

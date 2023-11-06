@@ -216,12 +216,12 @@ export const pageManagementApi = createApi({
             $slug: String!
             $metatitle: String!
             $metaDescription: String!
-            $shortDesc: String!
+            $shortDesc: String
             $content: String!
             $isDraft: Boolean!
             $isAutoApprove: Boolean!
             $pageTemplateId: Int!
-            $postTypeId: Int!
+            $postTypeId: Int
           ) {
             pageCreate(
               request: {

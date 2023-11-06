@@ -57,6 +57,22 @@ export default function PageTemplatesList() {
     {
       header: () => (
         <span className="text-[14px]">
+          {t('user.page-template-list.page-template.table.data-type')}
+        </span>
+      ),
+      accessorKey: 'dataType',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">
           {t('user.page-template-list.page-template.table.uploaded-by')}
         </span>
       ),
@@ -125,6 +141,7 @@ export default function PageTemplatesList() {
       sortBy,
       direction,
       search,
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,
