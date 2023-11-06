@@ -65,6 +65,7 @@ export default function PageManagementNew() {
       sortBy: 'id',
       direction: 'desc',
       search,
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,

@@ -81,10 +81,7 @@ export const contentTypeApi = createApi({
                 name
                 isUseCategory
                 dataType
-<<<<<<< HEAD
                 singleContentDataId
-=======
->>>>>>> f960769fda016ddc7493ad6599085f9233e3b921
               }
             }
           }
