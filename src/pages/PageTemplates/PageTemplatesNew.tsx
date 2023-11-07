@@ -164,9 +164,14 @@ export default function PageTemplatesNew() {
     }
     setOpenAddConfigModal(false);
   };
-  const onDeleteConfig = (indexToDelete: any) => {
-    const updatedItems = configData.filter((_item: any, index: any) => index !== indexToDelete);
+  const onSubmitDeleteConfig = () => {
+    const updatedItems = configData.filter((_item: any, index: any) => index !== deleteIdConfig);
     setConfigData(updatedItems);
+
+    setDeleteIdConfig(null);
+    setDeleteModalTitleConfig('');
+    setDeleteModalBodyConfig('');
+    setOpenDeleteModalConfig(false);
   };
 
   // DELETE ATTRIBUTES STATE
@@ -182,12 +187,18 @@ export default function PageTemplatesNew() {
     setOpenDeleteModalAttr(true);
   };
 
-  // const onClickDeleteConfig = (id: any, title: string) => {
-  //   setDeleteIdConfig(id);
-  //   setDeleteModalTitleConfig(`Are you sure?`);
-  //   setDeleteModalBodyConfig(`Do you want to delete this config?`);
-  //   setOpenDeleteModalConfig(true);
-  // };
+  // DELETE CONFIG STATE
+  const [deleteIdConfig, setDeleteIdConfig] = useState(null);
+  const [deleteModalTitleConfig, setDeleteModalTitleConfig] = useState('');
+  const [deleteModalBodyConfig, setDeleteModalBodyConfig] = useState('');
+  const [openDeleteModalConfig, setOpenDeleteModalConfig] = useState(false);
+
+  const onClickDeleteConfig = (id: any) => {
+    setDeleteIdConfig(id);
+    setDeleteModalTitleConfig(`Are you sure?`);
+    setDeleteModalBodyConfig(`Do you want to delete this config?`);
+    setOpenDeleteModalConfig(true);
+  };
 
   // RTK CREATE PAGE TEMPLATE
   const [createPageTemplate, { isLoading }] = useCreatePageTemplateMutation();
@@ -522,7 +533,7 @@ export default function PageTemplatesNew() {
                 src={TableDelete}
                 onClick={e => {
                   e.preventDefault();
-                  onDeleteConfig(info.row.index);
+                  onClickDeleteConfig(info.row.index);
                 }}
               />
             </div>
@@ -538,11 +549,30 @@ export default function PageTemplatesNew() {
         open={openDeleteModalAttr}
         title={deleteModalTitleAttr}
         message={deleteModalBodyAttr}
-        cancelTitle={t('user.email-form-builder-list.email-form-builder.list.cancel-title')}
-        submitTitle={t('user.email-form-builder-list.email-form-builder.list.submit-title')}
+        cancelTitle={'Cancel'}
+        submitTitle={'Yes'}
         submitAction={onSubmitDeleteAttributes}
         cancelAction={() => {
+          setDeleteIdAttr(null);
+          setDeleteModalTitleAttr('');
+          setDeleteModalBodyAttr('');
           setOpenDeleteModalAttr(false);
+        }}
+        icon={WarningIcon}
+        btnSubmitStyle=""
+      />
+      <ModalConfirm
+        open={openDeleteModalConfig}
+        title={deleteModalTitleConfig}
+        message={deleteModalBodyConfig}
+        cancelTitle={'Cancel'}
+        submitTitle={'Yes'}
+        submitAction={onSubmitDeleteConfig}
+        cancelAction={() => {
+          setDeleteIdConfig(null);
+          setDeleteModalTitleConfig('');
+          setDeleteModalBodyConfig('');
+          setOpenDeleteModalConfig(false);
         }}
         icon={WarningIcon}
         btnSubmitStyle=""
