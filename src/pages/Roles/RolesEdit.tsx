@@ -57,7 +57,7 @@ export default function RolesEdit() {
       reset({ ...defaultValues });
 
       dispatch(setId(parseInt(params.id ?? '')));
-      dispatch(setPermissions(data.roleById.permissions.split(',')));
+      dispatch(setPermissions(data.roleById.permissions.split(',').filter((element: string) => element !== 'HOME_READ')));
 
       const findDetail = window.location.pathname.includes('detail');
 
@@ -71,7 +71,7 @@ export default function RolesEdit() {
       id,
       name: data?.roleName,
       description: data?.roleDescription,
-      permissions: permissions.join(',') === 'HOME_READ' ? '' : permissions.join(','),
+      permissions: permissions.join(','),
     };
 
     roleUpdate(payload)
