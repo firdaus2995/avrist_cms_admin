@@ -95,31 +95,30 @@ export default function PageTemplatesNew() {
     },
   ];
 
-  const [selectedDataType, setSelectedDataType] = useState<any>(listDataType[0]);
+  const [selectedDataType, setSelectedDataType] = useState<any>(listDataType[1]);
 
   // ATTRIBUTES FUNCTION
   const onAddNewAttributes = () => {
+    const newErrors = { ...attributesErrors };
+  
     if (!newAttributes.fieldType) {
-      setAttributesErrors(prevErrors => ({
-        ...prevErrors,
-        fieldType: 'Field Type is required',
-      }));
-      return;
+      newErrors.fieldType = 'Field Type is required';
+    } else {
+      newErrors.fieldType = '';
     }
+  
     if (!newAttributes.fieldId) {
-      setAttributesErrors(prevErrors => ({
-        ...prevErrors,
-        fieldId: 'Field ID is required',
-      }));
-      return;
+      newErrors.fieldId = 'Field ID is required';
+    } else {
+      newErrors.fieldId = '';
     }
-
-    setAttributesErrors({
-      fieldType: '',
-      fieldId: '',
-      description: '',
-    });
-
+  
+    setAttributesErrors(newErrors);
+  
+    if (newErrors.fieldType || newErrors.fieldId) {
+      return; 
+    }
+  
     if (attributesEditIndex !== null) {
       const updatedAttributes = [...attributesData];
       updatedAttributes[attributesEditIndex] = newAttributes;

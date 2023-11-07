@@ -371,7 +371,7 @@ export default function PageManagementNew() {
                     inputWidth={350}
                     labelWidth={228}      
                     labelTitle="Page"
-                    labelStyle="font-bold"
+                    labelStyle="font-bold text-base"
                     labelEmpty="Choose Page"
                     items={dataTypeList}
                     defaultValue={field.value}
