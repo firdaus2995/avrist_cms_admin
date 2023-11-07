@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import UploadDocumentIcon from '@/assets/upload-file-2.svg';
 import Document from '@/assets/modal/document-orange.svg';
 import Close from '@/assets/close.png';
+import PreviewEyePurple from '@/assets/preview-eye-white.svg';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { formatFilename } from '@/utils/logicHelper';
@@ -9,6 +10,7 @@ import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { t } from 'i18next';
 import { getImageEditable } from '../../../utils/imageUtils';
 import restApiRequest from '../../../utils/restApiRequest';
+import ModalDisplay from '../ModalDisplay';
 
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
 const maxImgSize = import.meta.env.VITE_MAX_FILE_IMG_SIZE;
@@ -23,15 +25,43 @@ function bytesToSize(bytes: number): string {
 const FileItem = (props: any) => {
   const { name, value, onDeletePress, editMode } = props;
 
+  const [isOpenPreview, setIsOpenPreview] = useState(false);
+
   return (
     <>
+      <ModalDisplay
+        open={isOpenPreview}
+        cancelAction={() => {
+          setIsOpenPreview(false);
+        }}
+        title=""
+        width={800}
+        height={800}>
+        <div className="flex items-center justify-center">
+          {value?.type?.startsWith('image/') && (
+            <img className="object-contain" src={URL.createObjectURL(value)} alt={name} />
+          )}
+        </div>
+      </ModalDisplay>
       <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
         {value?.type?.startsWith('image/') ? (
-          <img
-            className="object-cover h-12 w-12 rounded-lg mr-3 border"
-            src={URL.createObjectURL(value)}
-            alt={name}
-          />
+          <div
+            className="relative h-12 w-12 rounded-lg mr-3 border cursor-pointer"
+            onClick={() => {
+              setIsOpenPreview(true);
+            }}>
+            <img
+              className="object-cover h-12 w-12 rounded-lg"
+              src={URL.createObjectURL(value)}
+              alt={name}
+            />
+            <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-opacity-0 bg-gray-600 rounded-lg hover:bg-opacity-75 group">
+              <img
+                className="h-[30px] w-[30px] invisible group-hover:visible"
+                src={PreviewEyePurple}
+              />
+            </div>
+          </div>
         ) : (
           <div className="h-12 w-12 flex justify-center items-center bg-light-purple rounded-lg mr-3">
             <img className="h-9 w-9" src={Document} alt="document" />
