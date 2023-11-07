@@ -12,7 +12,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 import { useCreateGroupMenuMutation } from '@/services/Menu/menuApi';
 
-export default function MenuNew() {
+export default function MenuNew () {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const {

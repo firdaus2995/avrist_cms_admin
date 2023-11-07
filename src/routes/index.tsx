@@ -30,12 +30,11 @@ const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNe
 const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
 
 const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
-const MenuManagementNewPage = React.lazy(
-  async () => await import('../pages/MenuManagement/MenuNew'),
-);
-const MenuManagementEditPage = React.lazy(
-  async () => await import('../pages/MenuManagement/MenuEdit'),
-);
+const MenuManagementNewPage = React.lazy(async () => await import('../pages/MenuManagement/MenuNew'));
+const MenuManagementEditPage = React.lazy(async () => await import('../pages/MenuManagement/MenuEdit'));
+const MenuManagementPageDetail = React.lazy(async () => await import('../pages/MenuManagement/MenuDetail'));
+const MenuManagementNewPageDetail = React.lazy(async () => await import('../pages/MenuManagement/MenuDetailNew'));
+const MenuManagementEditPageDetail = React.lazy(async () => await import('../pages/MenuManagement/MenuDetailEdit'));
 
 // IMPORT PAGE TEMPLATES PAGE
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
@@ -162,6 +161,9 @@ export default function RoutesComponent() {
             <Route path="menu" element={<MenuManagementPage />} />
             <Route path="menu/new" element={<MenuManagementNewPage />} />
             <Route path="menu/edit/:id" element={<MenuManagementEditPage />} />
+            <Route path="menu/detail/:id" element={<MenuManagementPageDetail />} />
+            <Route path="menu/detail/:id/new" element={<MenuManagementNewPageDetail />} />
+            <Route path="menu/detail/:id/edit/:detailid" element={<MenuManagementEditPageDetail />} />
           </Route>
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>

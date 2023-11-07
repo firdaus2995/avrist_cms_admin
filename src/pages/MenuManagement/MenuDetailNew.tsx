@@ -8,7 +8,7 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useCreateMenuMutation } from '@/services/Menu/menuApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
 import { menuType } from './constants';
@@ -18,6 +18,7 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 export default function MenuNew() {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
   const dispatch = useAppDispatch();
   const {
     control,
@@ -30,6 +31,7 @@ export default function MenuNew() {
   // BACKEND STATE
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
+  const [id] = useState<any>(Number(params.id));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
 
   // RTK GET PAGE
@@ -75,6 +77,7 @@ export default function MenuNew() {
 
   const onSubmit = (data: any) => {
     const payload = {
+      id,
       title: data?.title,
       menuType: selectedType,
       pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
@@ -93,7 +96,7 @@ export default function MenuNew() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu');
+        navigate(`/menu/detail/${id}`);
       })
       .catch(() => {
         dispatch(
@@ -316,7 +319,7 @@ export default function MenuNew() {
               className="btn btn-outline text-xs btn-sm w-28 h-10"
               onClick={e => {
                 e.preventDefault();
-                navigate('/menu', { replace: true });
+                navigate(`/menu/detail/${id}`, { replace: true });
               }}>
               Cancel
             </button>

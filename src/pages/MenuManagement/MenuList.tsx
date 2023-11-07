@@ -23,7 +23,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import { useGetGroupMenuQuery } from '@/services/Menu/menuApi';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
-export default function MenuList() {  
+export default function MenuList () {  
   // TABLE COLUMN
   const columns = [
     {
@@ -54,11 +54,11 @@ export default function MenuList() {
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <Link to={`detail/${info?.row?.original.id ?? 0}`}>
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
-        </p>
+        </Link>
       ),
     },
     {

@@ -18,7 +18,7 @@ function trimStringToLength(inputString: string, maxLength: number) {
   return inputString.substring(0, maxLength - 3) + '...';
 }
 
-function TakedownModal({ open, onCancel, idDelete }: any) {
+function TakedownModal({ open, onCancel, idDelete, idGroup }: any) {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const {
@@ -30,7 +30,7 @@ function TakedownModal({ open, onCancel, idDelete }: any) {
   const [deleteMenu] = useDeleteMenuMutation();
 
   const onSubmit = (data: any) => {
-    deleteMenu({ id: idDelete, takedownNote: data.takedownNote })
+    deleteMenu({ id: idGroup, detailId: idDelete, takedownNote: data.takedownNote })
       .unwrap()
       .then(async (d: any) => {
         reset();

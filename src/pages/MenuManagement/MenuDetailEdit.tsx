@@ -32,13 +32,16 @@ export default function MenuNew() {
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
   const [id] = useState<any>(Number(params.id));
+  const [detailId] = useState<any>(Number(params.detailid));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
   // TAKEDOWN MODAL
   const [showTakedownMenuModal, setShowTakedownMenuModal] = useState(false);
 
   // RTK GET DATA MENU DETAIL
   const fetchDefaultData = useGetMenuByIdQuery(
-    { id },
+    { 
+      id: detailId,
+    },
     {
       refetchOnMountOrArgChange: true,
     },
@@ -85,7 +88,8 @@ export default function MenuNew() {
 
       const defaultValues: any = {};
 
-      defaultValues.id= menuDetail?.id;
+      defaultValues.id= id;
+      defaultValues.detailId = detailId;
       defaultValues.title= menuDetail?.title;
       defaultValues.externalUrl= menuDetail?.externalUrl;
       defaultValues.isNewTab= menuDetail?.isNewTab ?? false;
@@ -100,6 +104,7 @@ export default function MenuNew() {
   const onSubmit = (data: any) => {
     const payload = {
       id: data?.id,
+      detailId: data?.detailId,
       title: data?.title,
       menuType: selectedType,
       pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
@@ -118,7 +123,7 @@ export default function MenuNew() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu');
+        navigate(`/menu/detail/${id}`);
       })
       .catch(() => {
         dispatch(
@@ -137,7 +142,8 @@ export default function MenuNew() {
         onCancel={() => {
           setShowTakedownMenuModal(false);
         }}
-        idDelete={id}
+        idGroup={id}
+        idDelete={detailId}
       />
       <div className="flex flex-col mt-5 gap-5">
         <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
@@ -347,7 +353,7 @@ export default function MenuNew() {
           <div className="mt-[200px] flex justify-end items-end gap-2">
             <button
               type='button'
-              className="btn btn-outline text-xs btn-sm w-28 h-10"
+              className="btn btn-primary btn-outline text-xs btn-sm w-28 h-10"
               onClick={() => {
                 setShowTakedownMenuModal(true)
               }}>
