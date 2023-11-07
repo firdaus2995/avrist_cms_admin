@@ -6,6 +6,104 @@ export const menuApi: any = createApi({
   reducerPath: 'menuApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
+    getGroupMenuDetail: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query menuGroupDetail(
+            $id: Int!
+          ) {
+            menuGroupDetail(
+              id: $id
+            ) {
+              id
+              name
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    getGroupMenu: builder.query<any, any>({
+      query: payload => ({
+        document: gql`
+          query groupMenuList(
+            $pageIndex: Int!
+            $limit: Int!
+            $sortBy: String
+            $direction: String
+            $search: String
+          ) {
+            groupMenuList(
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                direction: $direction
+                search: $search
+                sortBy: $sortBy
+              }
+            ) {
+              total
+              groupMenus {
+                id
+                name
+                status
+                lastPublishedBy
+                lastPublishedAt
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    createGroupMenu: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation menuGroupCreate(
+            $name: String!
+          ) {
+            menuGroupCreate(
+              name: $name
+            ) {
+              id
+              name
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    updateGroupMenu: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation menuGroupEdit(
+            $id: Int!
+            $name: String!
+          ) {
+            menuGroupEdit(
+              id: $id
+              name: $name
+            ) {
+              id
+              name
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    deleteGroupMenu: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation menuGroupDelete($id: Int!) {
+            menuGroupDelete(id: $id) {
+              message
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
     createMenu: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
@@ -161,6 +259,7 @@ export const menuApi: any = createApi({
       query: payload => ({
         document: gql`
           query menuLogList(
+            $id: Int!
             $pageIndex: Int!
             $limit: Int!
             $sortBy: String
@@ -168,6 +267,7 @@ export const menuApi: any = createApi({
             $search: String
           ) {
             menuLogList(
+              groupMenuId: $id
               pageableRequest: { 
                 pageIndex: $pageIndex, 
                 limit: $limit, 
@@ -176,6 +276,7 @@ export const menuApi: any = createApi({
                 search: $search 
               }
             ) {
+              groupMenuId
               total
               menuLogs {
                 id
@@ -214,6 +315,11 @@ export const menuApi: any = createApi({
 });
 
 export const {
+  useGetGroupMenuDetailQuery,
+  useGetGroupMenuQuery,
+  useCreateGroupMenuMutation,
+  useUpdateGroupMenuMutation,
+  useDeleteGroupMenuMutation,
   useCreateMenuMutation,
   useGetMenuListQuery,
   useEditMenuMutation,

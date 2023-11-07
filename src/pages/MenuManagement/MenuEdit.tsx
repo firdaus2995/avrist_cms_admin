@@ -1,114 +1,55 @@
-import { useState, useCallback, useEffect } from 'react';
-import { useForm, Controller } from 'react-hook-form';
 import { t } from 'i18next';
-
-import FormList from '@/components/molecules/FormList';
-import TakedownModal from './components/TakedownModal';
-import DropDown from '@/components/molecules/DropDown';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useEditMenuMutation, useGetMenuByIdQuery } from '@/services/Menu/menuApi';
-import { useAppDispatch } from '@/store';
-import { openToast } from '@/components/atoms/Toast/slice';
 import { useNavigate, useParams } from 'react-router-dom';
-import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
-import { menuType } from './constants';
-import { InputText } from '@/components/atoms/Input/InputText';
-import { TextArea } from '@/components/atoms/Input/TextArea';
+import { useEffect, useState } from 'react';
+import { useForm, Controller } from 'react-hook-form';
+
+import ModalConfirm from '../../components/molecules/ModalConfirm';
+import CancelIcon from '../../assets/cancel.png';
+import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import { InputText } from '../../components/atoms/Input/InputText';
+import { useAppDispatch } from '../../store';
+import { openToast } from '../../components/atoms/Toast/slice';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import { useGetGroupMenuDetailQuery, useUpdateGroupMenuMutation } from '@/services/Menu/menuApi';
 
 export default function MenuNew() {
+  const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const params = useParams();
-  const dispatch = useAppDispatch();
   const {
     control,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
 
-  // BACKEND STATE
-  const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
   const [id] = useState<any>(Number(params.id));
-  const [selectedType, setSelectedType] = useState<any>(menuType[0]);
-  // TAKEDOWN MODAL
-  const [showTakedownMenuModal, setShowTakedownMenuModal] = useState(false);
+  // LEAVE MODAL
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');  
 
-  // RTK GET DATA MENU DETAIL
-  const fetchDefaultData = useGetMenuByIdQuery(
+  // RTK GET USER DETAIL
+  const fetchGroupMenuDetailQuery = useGetGroupMenuDetailQuery(
     { id },
     {
       refetchOnMountOrArgChange: true,
     },
   );
-  const { data: dataDetail } = fetchDefaultData;
+  const { data } = fetchGroupMenuDetailQuery;  
 
-  // RTK GET PAGE
-  const fetchPageListQuery = useGetPageManagementListQuery({
-    pageIndex: 0,
-    limit: 9999,
-    sortBy: 'id',
-    direction: 'asc',
-    search: '',
-    filterBy: '',
-    startDate: '',
-    endDate: '',
-    isArchive: false,
-  });
-  const { data: dataPage } = fetchPageListQuery;
+  // RTK CREATE MENU
+  const [editMenu, { isLoading }] = useUpdateGroupMenuMutation();
 
-  // RTK EDIT MENU
-  const [editMenu] = useEditMenuMutation();
-
-  useEffect(() => {
-    reset();
-  }, [selectedType]);
-
-  useEffect(() => {
-    if (dataPage) {
-      setListApprovedPage(dataPage?.pageList?.pages?.map((val: any) => {
-        return {
-          value: val.id,
-          label: val.title,
-        };
-      }));
-    };
-  }, [dataPage]);
-
-  useEffect(() => {
-    if (dataDetail) {
-      const menuDetail = dataDetail?.menuById;
-
-      setSelectedType(menuType.find(item => item.value === menuDetail?.menuType)?.value);
-
-      const defaultValues: any = {};
-
-      defaultValues.id= menuDetail?.id;
-      defaultValues.title= menuDetail?.title;
-      defaultValues.externalUrl= menuDetail?.externalUrl;
-      defaultValues.isNewTab= menuDetail?.isNewTab ?? false;
-      defaultValues.pageId= menuDetail?.pageId ?? null;
-      defaultValues.shortDesc= menuDetail?.shortDesc;
-      defaultValues.icon= menuDetail?.icon ?? '';
-
-      reset({ ...defaultValues });
-    };
-  }, [dataDetail]);
-
-  const onSubmit = (data: any) => {
+  function onSubmit(data: any) {
     const payload = {
-      id: data?.id,
-      title: data?.title,
-      menuType: selectedType,
-      pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
-      externalUrl: selectedType === 'LINK' ? (data?.externalUrl ?? '') : '',
-      isNewTab: (selectedType === 'PAGE' || selectedType === 'LINK') ? (data?.isNewTab ?? false) : false,
-      shortDesc: data?.shortDesc,
-      icon: data?.icon ?? '',
+      id,
+      name: data?.name,
     };
-
+    
     editMenu(payload)
       .unwrap()
       .then(() => {
@@ -116,249 +57,101 @@ export default function MenuNew() {
           openToast({
             type: 'success',
             title: t('toast-success'),
+            message: t('user.menu-list.menuGroup.toast.success-create'),
           }),
         );
         navigate('/menu');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
+            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
   };
 
+  useEffect(() => {
+    if (data) {
+      const menuDetail = data?.menuGroupDetail;
+
+      const defaultValues: any = {};
+
+      defaultValues.name = menuDetail.name;
+
+      reset({ ...defaultValues });
+    };
+  }, [data]);
+
+  const onLeave = () => {
+    setShowLeaveModal(false);
+    navigate('/menu');
+  };
+
   return (
-    <TitleCard title='Edit Menu' border={true}>
-      <TakedownModal
-        open={showTakedownMenuModal}
-        onCancel={() => {
-          setShowTakedownMenuModal(false);
+    <TitleCard title={t('user.menu-list.menuGroup.texts.edit.title')} topMargin="mt-2">
+      <ModalConfirm
+        open={showLeaveModal}
+        cancelAction={() => {
+          setShowLeaveModal(false);
         }}
-        idDelete={id}
+        title={titleLeaveModalShow ?? ''}
+        cancelTitle={t('user.menu-list.menuGroup.modal.button-no')}
+        message={messageLeaveModalShow ?? ''}
+        submitAction={onLeave}
+        submitTitle={t('user.menu-list.menuGroup.modal.button-submit')}
+        icon={CancelIcon}
+        btnSubmitStyle="btn-warning"
       />
-      <div className="flex flex-col mt-5 gap-5">
-        <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
-          <div className='flex flex-col mt-[60px] gap-5'>
-            {/* ROW */}
-            <div className='flex flex-row gap-14'>
-              <div className='flex flex-1'>
-                <Controller
-                  name="title"
-                  control={control}
-                  defaultValue=''
-                  rules={{ required: 'Title is required' }}
-                  render={({ field }) => (
-                    <InputText
-                      {...field}
-                      direction="row"
-                      inputWidth={400}
-                      labelWidth={200}
-                      labelTitle="Page Title"
-                      labelStyle="font-bold"
-                      labelRequired
-                      roundStyle="xl"
-                      placeholder="Input Page Title"
-                      isError={!!errors?.title?.message}
-                      helperText={errors?.title?.message}
-                    />
-                  )}
-                />
-              </div>
-              <div className='flex flex-1'>
-                <DropDown
-                  direction='row'
-                  inputWidth={400}
-                  labelWidth={200}
-                  labelTitle="Type"
-                  labelStyle="font-bold"
-                  labelEmpty="Choose Type"
-                  items={menuType}
-                  defaultValue={selectedType}
-                  onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                    if (event) {
-                      setSelectedType(value)
-                    };
-                  }}
-                />
-              </div>
-            </div>
-            {/* ROW */}
-            {(selectedType === 'PAGE' || selectedType === 'LINK') && (
-              <div className='flex flex-row gap-14'>
-                <div className='flex flex-1'>
-                  {
-                    selectedType === 'PAGE' ? (
-                      <Controller
-                        name='pageId'
-                        control={control}
-                        defaultValue=''
-                        rules={{ required: 'Page is required' }}
-                        render={({ field }) => (
-                          <DropDown
-                            {...field}
-                            direction='row'
-                            inputWidth={400}
-                            labelWidth={200}      
-                            labelTitle="Page"
-                            labelStyle="font-bold"
-                            labelRequired
-                            labelEmpty="Choose Page"
-                            items={listApprovedPage}
-                            defaultValue={field.value}
-                            error={!!errors?.pageId?.message}
-                            helperText={errors?.roleId?.message}
-                            onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
-                              if (event) {
-                                setValue('pageId', value);
-                                field.onChange(value);
-                              };
-                            }}
-                          />
-                        )}
-                      />
-                    ) : (
-                      <Controller
-                        name="externalUrl"
-                        control={control}
-                        defaultValue=''
-                          rules={{
-                            required: `URL is required`,
-                            pattern: {
-                              value:
-                                /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                              message: 'Invalid URL',
-                            },
-                          }}
-                        render={({ field }) => (
-                          <InputText
-                            {...field}
-                            direction="row"
-                            inputWidth={400}
-                            labelWidth={200}
-                            labelTitle="URL Link"
-                            labelStyle="font-bold"
-                            labelRequired
-                            roundStyle="xl"
-                            placeholder="Input URL Link"
-                            isError={!!errors?.externalUrl?.message}
-                            helperText={errors?.externalUrl?.message}
-                          />
-                        )}
-                      />
-                    )
-                  }
-                </div>
-                <div className='flex flex-1'>{/* SPACES */}</div>
-              </div>
-            )}
-            {/* ROW */}
-            {selectedType !== 'NO_LANDING_PAGE' && (
-              <div className='flex flex-row gap-14'>
-                <div className='flex flex-1'>
-                  <Controller
-                    name="isNewTab"
-                    control={control}
-                    defaultValue={false}
-                    render={({ field }) => (
-                      <CheckBox
-                        {...field}
-                        containerStyle="ml-[200px]"
-                        labelTitle={t('user.menu-list.menuList.openInNewTab')}
-                        defaultValue={field.value}
-                        updateFormValue={e => {
-                          field.onChange(e.value);
-                        }}
-                      />
-                    )}
+      <form
+        className="flex flex-col w-100"
+        onSubmit={handleSubmit(onSubmit)}
+      >
+        <div className="flex flex-col mt-[60px] gap-5">
+          {/* ROW 1 */}
+          <div className="flex flex-row gap-14">
+            <div className='flex flex-1'>
+              <Controller
+                name='name'
+                control={control}
+                defaultValue=''
+                rules={{ required: t('components.atoms.required') ?? '' }}
+                render={({ field }) => (
+                  <InputText
+                    {...field}
+                    direction='row'
+                    labelWidth={200}
+                    labelTitle={t('user.menu-list.menuGroup.inputs.label-groupname')}
+                    labelStyle="font-semibold"
+                    labelRequired
+                    inputWidth={400}
+                    roundStyle="xl"
+                    placeholder={t('user.menu-list.menuGroup.inputs.label-groupname-placeholder')}
+                    isError={!!errors?.name}
                   />
-                </div>
-                <div className='flex flex-1'>{/* SPACES */}</div>
-              </div>
-            )}
-            {/* ROW */}
-            <div className="flex flex-row gap-14">
-              <div className='flex flex-1'>
-                <Controller
-                  key="icon"
-                  name="icon"
-                  control={control}
-                  render={({ field }) => {
-                    const onChange = useCallback((e: any) => {
-                      field.onChange({ target: { value: e } });
-                    }, []);
-
-                    return (
-                      <FormList.FileUploaderV2
-                        {...field}
-                        key="icon"
-                        inputWidth={400}
-                        labelWidth={200}
-                        labelTitle="Menu Icon"
-                        onChange={onChange}
-                        maxSize={2*1024*1024}
-                        isDocument={false}
-                        multiple={false}
-                        border={false}
-                        disabled={false}
-                        showMaxSize={true}
-                        editMode={true}
-                        disabledAltText={true}
-                        isOptional={true}
-                      />
-                    );
-                  }}
-                />
-              </div>
-              <div className='flex flex-1'>{/* SPACES */}</div>
-            </div>
-            {/* ROW */}
-            <div className="flex flex-row gap-14">
-              <div className='flex flex-col flex-1'>
-                <Controller
-                  name="shortDesc"
-                  control={control}
-                  defaultValue=""
-                  render={({ field }) => (
-                    <TextArea
-                      inputWidth={400}
-                      labelWidth={200}
-                      labelTitle="Short Description"
-                      labelStyle="font-bold"
-                      direction="row"
-                      placeholder="Input Short Description"
-                      maxLength={50}
-                      {...field}
-                    />
-                  )}
-                />
-                <div className="w-full flex justify-end">
-                  <p className="text-body-text-3 text-xs mt-2 mr-4">
-                    {t('user.menu-list.menuList.maxDescription', { maxChar: 50 })}
-                  </p>
-                </div>
-              </div>
-              <div className='flex flex-1'>{/* SPACES */}</div>
+                )}
+              />
             </div>
           </div>
-
-          <div className="mt-[200px] flex justify-end items-end gap-2">
-            <button
-              type='button'
-              className="btn btn-outline text-xs btn-sm w-28 h-10"
-              onClick={() => {
-                setShowTakedownMenuModal(true)
-              }}>
-              Takedown
-            </button>
-            <button className="btn btn-primary text-xs btn-sm w-28 h-10" type="submit">
-              Save
-            </button>
-          </div>
-        </form>
-      </div>
+        </div>
+        <div className="mt-[200px] flex justify-end items-end gap-2">
+          <button
+            className="btn btn-outline btn-md"
+            onClick={(event: any) => {
+              event.preventDefault();
+              setLeaveTitleModalShow(t('user.menu-list.menuGroup.modal.leave-confirmation-title'));
+              setMessageLeaveModalShow(t('user.menu-list.menuGroup.modal.leave-confirmation-body'));
+              setShowLeaveModal(true);
+            }}>
+            {isLoading ? t('loading') : t('btn.cancel')}
+          </button>
+          <button className="btn btn-success btn-md text-white" type="submit">
+            {isLoading ? t('loading') : t('btn.save')}
+          </button>
+        </div>
+      </form>
     </TitleCard>
   );
 }

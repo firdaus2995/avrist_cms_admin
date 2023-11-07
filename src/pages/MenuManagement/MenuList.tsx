@@ -1,386 +1,291 @@
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { SortingState } from '@tanstack/react-table';
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { t } from 'i18next';
 
-import SortableTreeComponent from '../../components/atoms/SortableTree';
-import LifeInsurance from '../../assets/lifeInsurance.png';
+import Table from '../../components/molecules/Table';
+import Plus from '../../assets/plus.png';
+import PaginationComponent from '../../components/molecules/Pagination';
+import WarningIcon from '../../assets/warning.png';
+import TableEdit from '../../assets/table-edit.png';
+import TableDelete from '../../assets/table-delete.svg';
+import ModalConfirm from '../../components/molecules/ModalConfirm';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import StatusBadge from '@/components/atoms/StatusBadge';
-import ModalConfirm from '../../components/molecules/ModalConfirm';
-import PaperIcon from '../../assets/paper.svg';
-import TimelineLog from '@/assets/timeline-log.svg';
 import ModalLog from './components/ModalLog';
-import { useForm } from 'react-hook-form';
+import TimelineLog from '@/assets/timeline-log.svg';
+import { TitleCard } from '../../components/molecules/Cards/TitleCard';
+import { InputSearch } from '../../components/atoms/Input/InputSearch';
+import { useDeleteUserMutation } from '../../services/User/userApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
-import { useNavigate } from 'react-router-dom';
-import { TextArea } from '@/components/atoms/Input/TextArea';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import {
-  useDeleteMenuMutation,
-  useGetMenuListQuery,
-  usePublishMenuMutation,
-  useUpdateMenuStructureMutation,
-} from '../../services/Menu/menuApi';
+import { useGetGroupMenuQuery } from '@/services/Menu/menuApi';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
-export default function MenuList() {
-  const navigate = useNavigate();
+export default function MenuList() {  
+  // TABLE COLUMN
+  const columns = [
+    {
+      header: () => <span className="text-[14px]"></span>,
+      accessorKey: 'status',
+      enableSorting: false,
+      cell: (info: any) => {
+        return (
+          <>
+            <StatusBadge status={info.getValue()} />
+            <div
+              className="cursor-pointer tooltip"
+              data-tip="Log"
+              onClick={() => {
+                setIdMenuLogModal(info?.row?.original?.id ?? 0);
+                setShowMenuLogModal(true);
+              }}>
+              <img src={TimelineLog} className="w-6 h-6" />
+            </div>
+          </>
+        );
+      },
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.name')}</span>
+      ),
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.lastPublishedAt')}</span>
+      ),
+      accessorKey: 'lastPublishedAt',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? dayjs(info.getValue()).format('MMM DD, YYYY')
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.lastPublishedBy')}</span>
+      ),
+      accessorKey: 'lastPublishedBy',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? dayjs(info.getValue()).format('MMM DD, YYYY')
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.action')}</span>
+      ),
+      accessorKey: 'id',
+      enableSorting: false,
+      cell: (info: any) => (
+        <div className="flex gap-3">
+          <RoleRenderer allowedRoles={['MENU_EDIT']}>
+            <Link to={`edit/${info.getValue()}`}>
+              <div className="tooltip" data-tip="Edit">
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center min-w-[34px]`}
+                  src={TableEdit}
+                />
+              </div>
+            </Link>
+          </RoleRenderer>
+          <RoleRenderer allowedRoles={['MENU_TAKEDOWN']}>
+            <div className="tooltip" data-tip="Delete">
+              <img
+                className={`cursor-pointer select-none flex items-center justify-center min-w-[34px]`}
+                src={TableDelete}
+                onClick={() => {
+                  onClickUserDelete(info.getValue(), info?.row?.original?.fullName);
+                }}
+              />
+            </div>
+          </RoleRenderer>
+        </div>
+      ),
+    },
+  ];
+
   const dispatch = useAppDispatch();
-  const {
-    getValues,
-    setValue,
-    watch,
-  }: any = useForm();
-
-  // MENU STATE
-  const [dataScructure, setDataStructure] = useState<any>([]);
-  // ADD MENU STATE
-  const [isAddClick, setIsAddClicked] = useState(false);
-  // TAKEDOWN MODAL
-  const [showTakedownMenuModal, setShowTakedownMenuModal] = useState(false);
-  const [noteTakedownModal, setNoteTakedownModal] = useState('');
-  const [idTakedownModal, setIdTakedownModal] = useState(0);
+  const [listData, setListData] = useState([]);
+  const [search, setSearch] = useState('');
+  // TABLE PAGINATION STATE
+  const [total, setTotal] = useState(0);
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageLimit, setPageLimit] = useState(10);
+  const [direction, setDirection] = useState('desc');
+  const [sortBy, setSortBy] = useState('id');
+  // DELETE MODAL STATE
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
+  const [deleteModalTitle, setDeleteModalTitle] = useState('');
+  const [deleteModalBody, setDeleteModayBody] = useState('');
+  const [deletedId, setDeletedId] = useState(0);
   // MENU LOG MODAL
   const [showMenuLogModal, setShowMenuLogModal] = useState(false);
+  const [idMenuLogModal, setIdMenuLogModal] = useState(0);
 
-  // RTK GET MENU
-  const fetchQuery = useGetMenuListQuery(
-    null,
+  // RTK GET DATA
+  const fetchQuery = useGetGroupMenuQuery(
+    {
+      pageIndex,
+      limit: pageLimit,
+      sortBy,
+      direction,
+      search,
+    },
     {
       refetchOnMountOrArgChange: true,
     },
   );
-  const { data } = fetchQuery;
+  const { data, isFetching, isError } = fetchQuery;
+  // RTK DELETE
+  const [deletedUser, { isLoading }] = useDeleteUserMutation();
 
-  // RTK UPDATE STRUCTURE
-  const [updateStructure] = useUpdateMenuStructureMutation();
-
-  // RTK DELETE MENU
-  const [deleteMenu] = useDeleteMenuMutation();
-
-  // RTK PUBLISH MENU
-  const [publishMenu] = usePublishMenuMutation();
-  
   useEffect(() => {
-    watch(['status', 'lastPublishedBy', 'lastPublishedAt']);
-  }, [watch]);
+    setPageIndex(0);
+  }, [search])
 
   useEffect(() => {
     if (data) {
-      function recursiveMenuGet(recurData: any) {
-        const masterPayload: any = [];
-
-        for (let i = 0; i < recurData.length; i++) {
-          masterPayload.push({
-            ...recurData[i],
-            ...(recurData[i].child
-              ? {
-                  child: recursiveMenuGet(recurData[i].child),
-                  children: recursiveMenuGet(recurData[i].child),
-                  expanded: true,
-                }
-              : {
-                  child: null,
-                  children: null,
-                  expanded: false,
-                }),
-          });
-        }
-
-        return masterPayload;
-      }
-
-      const listData = data?.menuList?.menus;
-
-      setDataStructure(recursiveMenuGet(listData));
-
-      setValue('status', data?.menuList.status);
-      setValue('lastPublishedBy', data?.menuList?.lastPublishedBy);
-      setValue('lastPublishedAt', data?.menuList?.lastPublishedAt);
+      setListData(data?.userList?.users);
+      setTotal(data?.userList?.total);
     }
   }, [data]);
 
-  const handlerUpdateMenuStructure = (node: any, data: any) => {
-    function recursiveMenuGenerator(recurData: any, recurParentId: any): any {
-      const masterPayload: any = [];
-
-      for (let i = 0; i < recurData.length; i++) {
-        if (payloadMenu.id === recurData[i].id) {
-          payloadMenu.order = i;
-          payloadMenu.parentId = recurParentId;
-        }
-
-        masterPayload.push({
-          id: recurData[i].id,
-          title: recurData[i].title ?? null,
-          menuType: recurData[i].menuType ?? null,
-          externalUrl: recurData[i].externalUrl ?? null,
-          isNewTab: recurData[i].isNewTab ?? false,
-          pageId: recurData[i].pageId ?? null,
-          order: i,
-          parentId: recurParentId,
-          child:
-            recurData[i]?.children?.length > 0
-              ? recursiveMenuGenerator(recurData[i].children, recurData[i].id)
-              : null,
-        });
-      }
-
-      return masterPayload;
-    }
-
-    const payloadMenu: any = {
-      id: node.id,
-      title: node.title ?? null,
-      menuType: node.menuType ?? null,
-      externalUrl: node.externalUrl ?? null,
+  // FUNCTION FOR SORTING FOR ATOMIC TABLE
+  const handleSortModelChange = useCallback((sortModel: SortingState) => {
+    if (sortModel.length) {
+      setSortBy(sortModel[0].id);
+      setDirection(sortModel[0].desc ? 'desc' : 'asc');
+    } else {
+      setSortBy('id');
+      setDirection('desc');
     };
+  }, []);
 
-    const payloadMenuList: any = recursiveMenuGenerator(data, null);
-
-    updateStructure({ menuList: payloadMenuList, menu: payloadMenu })
+  // FUNCTION FOR DELETE USER
+  const submitDeleteUser = () => {
+    deletedUser({
+      id: deletedId,
+    })
       .unwrap()
-      .then((res: any) => {
-        setValue('status', res.menuStructureUpdate.status);
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-          }),
-        );
-      });
-  };
-
-  const handlerActionMenu = (data: any, action: string | undefined) => {
-    if (action === 'EDIT') {
-      navigate(`edit/${data?.node?.id}`);
-    } else if (action === 'TAKEDOWN') {
-      setIdTakedownModal(data?.node?.id);
-      setShowTakedownMenuModal(true);
-    };
-  };
-
-  const handlerTakedownMenu = () => {
-    deleteMenu({ id: idTakedownModal, takedownNote: noteTakedownModal })
-      .unwrap()
-      .then(async (res: any) => {
-        setShowTakedownMenuModal(false);
-        setNoteTakedownModal('');
+      .then(async (result: any) => {
+        setOpenDeleteModal(false);
         dispatch(
           openToast({
             type: 'success',
-            title: t('user.menu-list.menuList.successDelete'),
-            message: res.roleDelete?.message ?? '',
+            title: t('user.menu-list.menuGroup.toast.success-delete'),
+            message: result.userDelete.message,
           }),
         );
         await fetchQuery.refetch();
+        setPageIndex(0);
       })
-      .catch(() => {
+      .catch((error: any) => {
+        setOpenDeleteModal(false);
         dispatch(
           openToast({
             type: 'error',
-            title: t('user.menu-list.menuList.failedDelete'),
-            message: !noteTakedownModal
-              ? t('user.menu-list.menuList.toastTakedownRequired')
-              : t('user.menu-list.menuList.toastFailed'),
+            title: t('user.menu-list.menuGroup.toast.failed-delete'),
+            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
   };
 
-  const handlerPublishMenu = () => {
-    publishMenu({})
-      .unwrap()
-      .then(() => {
-        dispatch(
-          openToast({
-            type: 'success',
-            title: t('toast-success'),
-          }),
-        );
-        setValue('status', 'PUBLISHED');
-      })
-      .catch(() => {
-        dispatch(
-          openToast({
-            type: 'error',
-            title: t('toast-failed'),
-          }),
-        );
-      });
-  };
-
-  const renderAddButtons = () => {
-    return (
-      <div className="flex flex-row items-center justify-center gap-4">
-        {!isAddClick ? (
-          <div
-            role="button"
-            onClick={() => {
-              setIsAddClicked(true);
-            }}
-            className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            {t('user.menu-list.menuList.addPages')}
-          </div>
-        ) : (
-          <>
-            <div
-              role="button"
-              onClick={() => {
-                navigate('new', { state: { pageType: 'PAGE' } });
-              }}
-              className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-              {t('user.menu-list.menuList.page')}
-            </div>
-            <div
-              role="button"
-              onClick={() => {
-                navigate('new', { state: { pageType: 'LINK' } });
-              }}
-              className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-              {t('user.menu-list.menuList.link')}
-            </div>
-            <div
-              role="button"
-              onClick={() => {
-                navigate('new', { state: { pageType: 'NO_LANDING_PAGE' } });
-              }}
-              className="py-4 transition ease-in-out hover:-translate-y-1 delay-150 px-10 bg-primary rounded-xl flex flex-row gap-2 font-semibold text-white">
-              {t('user.menu-list.menuList.noLandingPage')}
-            </div>
-          </>
-        )}
-      </div>
+  const onClickUserDelete = (id: number, name: string) => {
+    setDeletedId(id);
+    setDeleteModalTitle(t('user.menu-list.menuGroup.modal.delete-menu-title') ?? '');
+    setDeleteModayBody(
+      t('user.menu-list.menuGroup.modal.delete-menu-body', { name }) ?? '', // Pass the deleted user's name to the translation
     );
+    setOpenDeleteModal(true);
   };
 
   return (
     <>
       <RoleRenderer allowedRoles={['MENU_READ']}>
-        <TitleCard title="">
-          <ModalConfirm
-            open={showTakedownMenuModal}
-            cancelAction={() => {
-              setShowTakedownMenuModal(false);
-              setNoteTakedownModal('');
-            }}
-            modalWidth={600}
-            modalHeight={'100%'}
-            title={t('user.menu-list.menuList.takedownTitle')}
-            titleSize={18}
-            cancelTitle={t('user.menu-list.menuList.cancel')}
-            submitAction={() => {
-              if (noteTakedownModal.length > 0) {
-                handlerTakedownMenu();
-              } else {
-                dispatch(
-                  openToast({
-                    type: 'error',
-                    title: t('user.menu-list.menuList.failedDelete'),
-                    message: t('user.menu-list.menuList.toastTakedownRequired'),
-                  }),
-                );
-              }
-            }}
-            submitTitle={t('user.menu-list.menuList.submit')}
-            icon={PaperIcon}
-            iconSize={26}
-            btnSubmitStyle={'bg-secondary-warning border border-tertiary-warning'}>
-            <div className="w-full px-10">
-              <TextArea
-                name="TakedownComment"
-                labelTitle={t('user.menu-list.menuList.takedownComment')}
-                labelRequired
-                value={noteTakedownModal}
-                containerStyle="rounded-3xl"
-                isError={!noteTakedownModal}
-                helperText={
-                  !noteTakedownModal ? t('user.menu-list.menuList.takedownRequired') ?? '' : ''
-                }
-                onChange={e => {
-                  setNoteTakedownModal(e.target.value);
-                }}
-              />
-            </div>
-          </ModalConfirm>
-          <ModalLog
-            id={0}
-            open={showMenuLogModal}
-            toggle={() => {
-              setShowMenuLogModal(!showMenuLogModal);
-            }}
-            title={'Activity Log - Menu Management'}
-          />
-
-          <div className="flex flex-col gap-10">
-            <div className="text-2xl font-bold gap-2 text-primary flex flex-row">
-              <img src={LifeInsurance} className="w-8" />
-              {t('user.menu-list.menuList.avristLifeInsurance')}
-            </div>
-            <div className="flex flex-col gap-4">
-              <div className="flex flex-row gap-3 items-center">
-                <div className="text-2xl font-semibold ">
-                  {t('user.menu-list.menuList.menuStructure')}
-                </div>
-                <div
-                  className="cursor-pointer tooltip"
-                  data-tip="Log"
-                  onClick={() => {
-                    setShowMenuLogModal(true);
-                  }}>
-                  <img src={TimelineLog} className="w-6 h-6" />
-                </div>
-                <StatusBadge status={getValues('status') ?? ''} />
-              </div>
-              <hr />
-              <div className="flex">
-                <div className="text-sm">
-                  <span>{`Last Published by `}</span>
-                  <span className="font-bold">{getValues('lastPublishedBy')}</span>
-                  <span>{` at `}</span>
-                  <span className="font-bold">
-                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
-                    {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
-                  </span>
-                </div>
-              </div>
-            </div>
-            {dataScructure?.length > 0 && (
-              <SortableTreeComponent
-                data={dataScructure}
-                onClick={(data: any, action: string | undefined) => {
-                  handlerActionMenu(data, action);
-                }}
-                onChange={function (node: any, data: any): void {
-                  handlerUpdateMenuStructure(node, data);
-                }}
-              />
-            )}
-            {renderAddButtons()}
-            <div className="mt-[200px] flex justify-end items-center">
-              <div className="flex flex-row p-2 gap-2">
-                <button
-                  className="btn btn-success text-xs btn-sm w-28 h-10"
-                  onClick={() => {
-                    handlerPublishMenu();
-                  }}
-                  disabled={getValues('status') === 'PUBLISHED' && true}>
-                  {t('user.menu-list.menuList.submit')}
-                </button>
-              </div>
-            </div>
+        <ModalConfirm
+          open={openDeleteModal}
+          cancelAction={() => {
+            setOpenDeleteModal(false);
+          }}
+          title={deleteModalTitle}
+          message={deleteModalBody}
+          cancelTitle={t('user.menu-list.menuGroup.modal.button-cancel')}
+          submitTitle={t('user.menu-list.menuGroup.modal.button-submit')}
+          submitAction={submitDeleteUser}
+          loading={isLoading}
+          icon={WarningIcon}
+          btnSubmitStyle=""
+        />
+        <ModalLog
+          id={idMenuLogModal}
+          open={showMenuLogModal}
+          toggle={() => {
+            setShowMenuLogModal(!showMenuLogModal);
+          }}
+          title={'Activity Log - Menu Management'}
+        />
+        <TitleCard
+          title={t('user.menu-list.menuGroup.texts.list.title')}
+          topMargin="mt-2"
+          TopSideButtons={
+            <RoleRenderer allowedRoles={['MENU_CREATE']}>
+              <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
+                <img src={Plus} className="w-[24px] h-[24px]" />
+                {t('user.menu-list.menuGroup.buttons.create-menu')}
+              </Link>
+            </RoleRenderer>
+          }
+          SearchBar={
+            <InputSearch
+              onBlur={(e: any) => {
+                setSearch(e.target.value);
+              }}
+              placeholder={t('user.menu-list.menuGroup.inputs.search-placeholder') ?? ''}
+            />
+          }>
+          <div className="overflow-x-auto w-full mb-5">
+            <Table
+              rows={listData}
+              columns={columns}
+              manualPagination={true}
+              manualSorting={true}
+              onSortModelChange={handleSortModelChange}
+              loading={isFetching}
+              error={isError}
+            />
           </div>
+          <PaginationComponent
+            total={total}
+            page={pageIndex}
+            pageSize={pageLimit}
+            setPageSize={(page: number) => {
+              setPageLimit(page);
+              setPageIndex(0);
+            }}
+            setPage={(page: number) => {
+              setPageIndex(page);
+            }}
+          />
         </TitleCard>
       </RoleRenderer>
     </>
