@@ -301,7 +301,7 @@ export default function MenuNew() {
                     />
                   )}
                 />
-                <div className="w-full flex justify-end">
+                <div className="w-[600px] flex justify-end">
                   <p className="text-body-text-3 text-xs mt-2 mr-4">
                     {t('user.menu-list.menuList.maxDescription', { maxChar: 50 })}
                   </p>

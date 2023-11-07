@@ -7,4 +7,5 @@ export interface IModal {
   height?: number | string;
   title?: React.ReactNode;
   fullscreen?: boolean;
+  header?: React.ReactNode;
 }

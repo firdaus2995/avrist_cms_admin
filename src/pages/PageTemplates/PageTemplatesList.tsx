@@ -97,9 +97,7 @@ export default function PageTemplatesList() {
       cell: (info: any) => (
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
-            <button
-              className='min-h-[34px] h-[34px] btn btn-outline btn-primary text-xs'
-            >
+            <button className="min-h-[34px] h-[34px] btn btn-outline btn-primary text-xs">
               {t('user.page-template-list.page-template.table.view-detail')}
             </button>
           </Link>
@@ -163,7 +161,7 @@ export default function PageTemplatesList() {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
@@ -187,13 +185,15 @@ export default function PageTemplatesList() {
         await fetchQuery.refetch();
         setPageIndex(0);
       })
-      .catch(() => {
+      .catch((err: any) => {
+        const isUsed = err?.message?.includes('used');
+        const usedMessage = `You can't delete this page because this page is being used in an active menu`;
         setOpenDeleteModal(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.page-template-list.toasts.error-delete'),
-            message: t('user.page-template-list.toasts.error-message'),
+            message: isUsed ? usedMessage : t('user.page-template-list.toasts.error-message'),
           }),
         );
       });
