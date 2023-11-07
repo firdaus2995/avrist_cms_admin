@@ -99,25 +99,25 @@ export default function PageTemplatesNew() {
   // ATTRIBUTES FUNCTION
   const onAddNewAttributes = () => {
     const newErrors = { ...attributesErrors };
-  
+
     if (!newAttributes.fieldType) {
       newErrors.fieldType = 'Field Type is required';
     } else {
       newErrors.fieldType = '';
     }
-  
+
     if (!newAttributes.fieldId) {
       newErrors.fieldId = 'Field ID is required';
     } else {
       newErrors.fieldId = '';
     }
-  
+
     setAttributesErrors(newErrors);
-  
+
     if (newErrors.fieldType || newErrors.fieldId) {
-      return; 
+      return;
     }
-  
+
     if (attributesEditIndex !== null) {
       const updatedAttributes = [...attributesData];
       updatedAttributes[attributesEditIndex] = newAttributes;
@@ -129,8 +129,22 @@ export default function PageTemplatesNew() {
       setNewAttributes(initialAttributes);
     }
     setOpenAddAttributesModal(false);
-  };  
-  
+  };
+
+  useEffect(() => {
+    const newErrors = { fieldType: '', fieldId: '', description: '' };
+
+    if (!newAttributes.fieldType) {
+      newErrors.fieldType = 'Field Type is required';
+    }
+
+    if (!newAttributes.fieldId) {
+      newErrors.fieldId = 'Field ID is required';
+    }
+
+    setAttributesErrors(newErrors);
+  }, [newAttributes.fieldType, newAttributes.fieldId]);
+
   const onDeleteAttributes = (indexToDelete: any) => {
     const updatedItems = attributesData.filter((_item: any, index: any) => index !== indexToDelete);
     setAttributesData(updatedItems);
@@ -157,6 +171,17 @@ export default function PageTemplatesNew() {
     }
     setOpenAddConfigModal(false);
   };
+
+  useEffect(() => {
+    const newErrors = { key: '', description: '' };
+  
+    if (!newConfig.key) {
+      newErrors.key = 'Key is required';
+    }
+  
+    setConfigErrors(newErrors);
+  }, [newConfig.key]);
+  
   const onDeleteConfig = (indexToDelete: any) => {
     const updatedItems = configData.filter((_item: any, index: any) => index !== indexToDelete);
     setConfigData(updatedItems);
@@ -291,7 +316,7 @@ export default function PageTemplatesNew() {
       // ini sepaket ya!
       const findDefaultDataType = listDataType.find(item => item.value === data?.dataType);
       const defaultDataType = findDefaultDataType ?? listDataType[0];
-      
+
       setValue('pageName', defaultPageName);
       setValue('pageDescription', defaultPageDescription);
       setValue('pageFileName', defaultPageFileName);
@@ -744,7 +769,7 @@ export default function PageTemplatesNew() {
           />
           <div className="flex flex-row">
             <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-            {t('user.page-template-list.page-template.table.data-type')}
+              {t('user.page-template-list.page-template.table.data-type')}
               <span className={'text-reddist text-lg'}>{`*`}</span>
             </Typography>
             <FormList.DropDown
