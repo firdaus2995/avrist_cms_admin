@@ -92,7 +92,7 @@ export default function ContentManagerList() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Data Type</span>,
+      header: () => <span className="text-[14px]">{t('user.content-manager.data-type')}</span>,
       accessorKey: 'dataType',
       enableSorting: true,
       cell: (info: any) => (

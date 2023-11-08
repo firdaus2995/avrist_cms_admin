@@ -340,7 +340,8 @@
     "content-manager": {
       "title": "Content Manager",
       "searchPlaceholder": "Search",
-      "contentTypeColumnName": "Content Type Name"
+      "contentTypeColumnName": "Content Type Name",
+      "data-type": "Data Type"
     },
 
     "content-manager-new": {
