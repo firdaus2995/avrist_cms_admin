@@ -15,6 +15,7 @@ export default function Modal(props: IModal) {
           height: props.fullscreen ? '100%' : 'auto',
         }}>
         <div className="relative bg-white rounded-2xl shadow ">
+          {props.header}
           {props.title && (
             <div
               className={`flex items-start justify-between p-4  rounded-t ${
