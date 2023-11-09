@@ -29,8 +29,8 @@ export default function MenuList () {
   }: any = useForm();
 
   // MENU STATE
-  const [id] = useState<any>(Number(params.id));
-  const [name, setName] = useState<string>("");
+  const [groupMenuId] = useState<any>(Number(params.id));
+  const [groupMenuName, setGroupMenuName] = useState<string>("");
   const [dataScructure, setDataStructure] = useState<any>([]);
   // ADD MENU STATE
   const [isAddClick, setIsAddClicked] = useState(false);
@@ -43,7 +43,7 @@ export default function MenuList () {
 
   // RTK GET MENU
   const fetchQuery = useGetMenuListQuery(
-    { id },
+    { groupMenuId },
     {
       refetchOnMountOrArgChange: true,
     },
@@ -88,7 +88,7 @@ export default function MenuList () {
         return masterPayload;
       }
 
-      setName(data?.menuList?.groupMenuName);
+      setGroupMenuName(data?.menuList?.groupMenuName);
       setDataStructure(recursiveMenuGet(data?.menuList?.menus));
 
       setValue('status', data?.menuList?.status);
@@ -135,7 +135,7 @@ export default function MenuList () {
 
     const payloadMenuList: any = recursiveMenuGenerator(data, null);
 
-    updateStructure({ id, menuList: payloadMenuList, menu: payloadMenu })
+    updateStructure({ groupMenuId, menuList: payloadMenuList, menu: payloadMenu })
       .unwrap()
       .then((res: any) => {
         setValue('status', res.menuStructureUpdate.status);
@@ -160,7 +160,7 @@ export default function MenuList () {
   };
 
   const handlerTakedownMenu = () => {
-    deleteMenu({ id, detailId: idTakedownModal, takedownNote: noteTakedownModal })
+    deleteMenu({ groupMenuId, menuId: idTakedownModal, takedownNote: noteTakedownModal })
       .unwrap()
       .then(async (res: any) => {
         setShowTakedownMenuModal(false);
@@ -188,7 +188,7 @@ export default function MenuList () {
   };
 
   const handlerPublishMenu = () => {
-    publishMenu({ id })
+    publishMenu({ groupMenuId })
       .unwrap()
       .then(() => {
         dispatch(
@@ -312,7 +312,7 @@ export default function MenuList () {
             </div>
           </ModalConfirm>
           <ModalLog
-            id={id}
+            id={groupMenuId}
             open={showMenuLogModal}
             toggle={() => {
               setShowMenuLogModal(!showMenuLogModal);
@@ -328,7 +328,7 @@ export default function MenuList () {
             <div className="flex flex-col gap-4">
               <div className="flex flex-row gap-3 items-center">
                 <div className="text-2xl font-semibold ">
-                  {name}
+                  {groupMenuName}
                 </div>
                 <div
                   className="cursor-pointer tooltip"

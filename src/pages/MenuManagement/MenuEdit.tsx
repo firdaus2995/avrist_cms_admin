@@ -31,8 +31,8 @@ export default function MenuEdit () {
   // BACKEND STATE
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
-  const [id] = useState<any>(Number(params.id));
-  const [detailId] = useState<any>(Number(params.detailid));
+  const [groupMenuId] = useState<any>(Number(params.id));
+  const [menuId] = useState<any>(Number(params.menuid));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
   // TAKEDOWN MODAL
   const [showTakedownMenuModal, setShowTakedownMenuModal] = useState(false);
@@ -40,7 +40,7 @@ export default function MenuEdit () {
   // RTK GET DATA MENU DETAIL
   const fetchDefaultData = useGetMenuByIdQuery(
     { 
-      id: detailId,
+      id: menuId,
     },
     {
       refetchOnMountOrArgChange: true,
@@ -86,8 +86,6 @@ export default function MenuEdit () {
 
       const defaultValues: any = {};
 
-      defaultValues.id = id;
-      defaultValues.detailId = detailId;
       defaultValues.title= dataDetail?.menuById?.title;
       defaultValues.externalUrl= dataDetail?.menuById?.externalUrl;
       defaultValues.isNewTab= dataDetail?.menuById?.isNewTab ?? false;
@@ -101,8 +99,8 @@ export default function MenuEdit () {
 
   const onSubmit = (data: any) => {
     const payload = {
-      id: data?.id,
-      detailId: data?.detailId,
+      groupMenuId,
+      menuId,
       title: data?.title,
       menuType: selectedType,
       pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
@@ -121,7 +119,7 @@ export default function MenuEdit () {
             title: t('toast-success'),
           }),
         );
-        navigate(`/group-menu/menu/${id}`);
+        navigate(`/group-menu/menu/${groupMenuId}`);
       })
       .catch(() => {
         dispatch(
@@ -140,8 +138,8 @@ export default function MenuEdit () {
         onCancel={() => {
           setShowTakedownMenuModal(false);
         }}
-        idGroup={id}
-        idDelete={detailId}
+        idGroup={groupMenuId}
+        idDelete={menuId}
       />
       <div className="flex flex-col mt-5 gap-5">
         <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>

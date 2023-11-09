@@ -141,7 +141,7 @@ export default function GroupMenuList () {
   // DELETE MODAL STATE
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
-  const [deleteModalBody, setDeleteModayBody] = useState('');
+  const [deleteModalBody, setDeleteModalBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
   // MENU LOG MODAL
   const [showMenuLogModal, setShowMenuLogModal] = useState(false);
@@ -219,7 +219,7 @@ export default function GroupMenuList () {
   const onClickGroupMenuDelete = (id: number, name: string) => {
     setDeletedId(id);
     setDeleteModalTitle(t('user.menu-list.menuGroup.modal.delete-menu-title') ?? '');
-    setDeleteModayBody(
+    setDeleteModalBody(
       t('user.menu-list.menuGroup.modal.delete-menu-body', { name }) ?? '',
     );
     setOpenDeleteModal(true);

@@ -30,7 +30,7 @@ function TakedownModal({ open, onCancel, idDelete, idGroup }: any) {
   const [deleteMenu] = useDeleteMenuMutation();
 
   const onSubmit = (data: any) => {
-    deleteMenu({ id: idGroup, detailId: idDelete, takedownNote: data.takedownNote })
+    deleteMenu({ groupMenuId: idGroup, menuId: idDelete, takedownNote: data.takedownNote })
       .unwrap()
       .then(async (d: any) => {
         reset();

@@ -126,8 +126,8 @@ export const menuApi: any = createApi({
     getMenuList: builder.query({
       query: payload => ({
         document: gql`
-          query menuList ($id: Int!) {
-            menuList (groupMenuId: $id) {
+          query menuList ($groupMenuId: Int!) {
+            menuList (groupMenuId: $groupMenuId) {
               groupMenuName
               lastPublishedBy
               lastPublishedAt
@@ -169,7 +169,7 @@ export const menuApi: any = createApi({
       query: payload => ({
         document: gql`
           mutation menuCreate(
-            $id: Int!
+            $groupMenuId: Int!
             $title: String!
             $menuType: String!
             $externalUrl: String!
@@ -180,7 +180,7 @@ export const menuApi: any = createApi({
           ) {
             menuCreate(
               request: {
-                groupMenuId: $id
+                groupMenuId: $groupMenuId
                 title: $title
                 menuType: $menuType
                 externalUrl: $externalUrl
@@ -207,8 +207,8 @@ export const menuApi: any = createApi({
       query: payload => ({
         document: gql`
           mutation menuUpdate(
-            $id: Int!
-            $detailId: Int!
+            $groupMenuId: Int!
+            $menuId: Int!
             $title: String!
             $menuType: String!
             $externalUrl: String!
@@ -218,9 +218,9 @@ export const menuApi: any = createApi({
             $icon: String
           ) {
             menuUpdate(
-              id: $detailId
+              id: $menuId
               request: {
-                groupMenuId: $id
+                groupMenuId: $groupMenuId
                 title: $title
                 menuType: $menuType
                 externalUrl: $externalUrl
@@ -247,8 +247,8 @@ export const menuApi: any = createApi({
     deleteMenu: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuDelete($id: Int!, $detailId: Int!, $takedownNote: String!) {
-            menuDelete(groupMenuId: $id, id: $detailId, takedownNote: $takedownNote) {
+          mutation menuDelete($groupMenuId: Int!, $menuId: Int!, $takedownNote: String!) {
+            menuDelete(groupMenuId: $groupMenuId, id: $menuId, takedownNote: $takedownNote) {
               message
             }
           }
@@ -259,8 +259,8 @@ export const menuApi: any = createApi({
     publishMenu: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuPublish ($id: Int!) {
-            menuPublish (id: $id) {
+          mutation menuPublish ($groupMenuId: Int!) {
+            menuPublish (groupMenuId: $groupMenuId) {
               message
             }
           }
@@ -272,7 +272,7 @@ export const menuApi: any = createApi({
       query: payload => ({
         document: gql`
           query menuLogList(
-            $id: Int!
+            $groupMenuId: Int!
             $pageIndex: Int!
             $limit: Int!
             $sortBy: String
@@ -280,7 +280,7 @@ export const menuApi: any = createApi({
             $search: String
           ) {
             menuLogList(
-              groupMenuId: $id
+              groupMenuId: $groupMenuId
               pageableRequest: { 
                 pageIndex: $pageIndex, 
                 limit: $limit, 
@@ -308,8 +308,8 @@ export const menuApi: any = createApi({
     updateMenuStructure: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuStructureUpdate($id: Int!, $menu: Menu!, $menuList: [Menu]!) {
-            menuStructureUpdate(request: { groupMenuId: $id, menu: $menu, menuList: $menuList }) {
+          mutation menuStructureUpdate($groupMenuId: Int!, $menu: Menu!, $menuList: [Menu]!) {
+            menuStructureUpdate(request: { groupMenuId: $groupMenuId, menu: $menu, menuList: $menuList }) {
               status
             }
           }

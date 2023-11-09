@@ -182,7 +182,7 @@ export default function UsersList() {
   // DELETE MODAL STATE
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
-  const [deleteModalBody, setDeleteModayBody] = useState('');
+  const [deleteModalBody, setDeleteModalBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
 
   // RTK GET DATA
@@ -261,7 +261,7 @@ export default function UsersList() {
   const onClickUserDelete = (id: number, name: string) => {
     setDeletedId(id);
     setDeleteModalTitle(t('user.users-list.user.list.modal.delete-title') ?? '');
-    setDeleteModayBody(
+    setDeleteModalBody(
       t('user.users-list.user.list.modal.delete-body', { name }) ?? '', // Pass the deleted user's name to the translation
     );
     setOpenDeleteModal(true);
