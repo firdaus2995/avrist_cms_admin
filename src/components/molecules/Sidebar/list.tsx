@@ -25,7 +25,7 @@ export const sidebarList = [
     id: 3,
     title: 'Menu Management',
     icon: MenuIcon,
-    path: '/menu',
+    path: '/group-menu',
     role: 'MENU_READ'
   },
   {

@@ -29,12 +29,12 @@ const RolesPage = React.lazy(async () => await import('../pages/Roles'));
 const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNew'));
 const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
 
-const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
+const GroupMenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
+const GroupMenuManagementNewPage = React.lazy(async () => await import('../pages/MenuManagement/GroupMenuNew'));
+const GroupMenuManagementEditPage = React.lazy(async () => await import('../pages/MenuManagement/GroupMenuEdit'));
+const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement/MenuList'));
 const MenuManagementNewPage = React.lazy(async () => await import('../pages/MenuManagement/MenuNew'));
 const MenuManagementEditPage = React.lazy(async () => await import('../pages/MenuManagement/MenuEdit'));
-const MenuManagementPageDetail = React.lazy(async () => await import('../pages/MenuManagement/MenuDetail'));
-const MenuManagementNewPageDetail = React.lazy(async () => await import('../pages/MenuManagement/MenuDetailNew'));
-const MenuManagementEditPageDetail = React.lazy(async () => await import('../pages/MenuManagement/MenuDetailEdit'));
 
 // IMPORT PAGE TEMPLATES PAGE
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
@@ -158,12 +158,12 @@ export default function RoutesComponent() {
           </Route>
           {/* MENU MANAGEMENT PAGES ROUTE */}
           <Route element={<ProtectedPage permission="MENU_READ" />}>
-            <Route path="menu" element={<MenuManagementPage />} />
-            <Route path="menu/new" element={<MenuManagementNewPage />} />
-            <Route path="menu/edit/:id" element={<MenuManagementEditPage />} />
-            <Route path="menu/detail/:id" element={<MenuManagementPageDetail />} />
-            <Route path="menu/detail/:id/new" element={<MenuManagementNewPageDetail />} />
-            <Route path="menu/detail/:id/edit/:detailid" element={<MenuManagementEditPageDetail />} />
+            <Route path="group-menu" element={<GroupMenuManagementPage />} />
+            <Route path="group-menu/new" element={<GroupMenuManagementNewPage />} />
+            <Route path="group-menu/edit/:id" element={<GroupMenuManagementEditPage />} />
+            <Route path="group-menu/menu/:id" element={<MenuManagementPage />} />
+            <Route path="group-menu/menu/:id/new" element={<MenuManagementNewPage />} />
+            <Route path="group-menu/menu/:id/edit/:menuid" element={<MenuManagementEditPage />} />
           </Route>
           {/* PAGE TEMPLATE PAGES ROUTE */}
           <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
