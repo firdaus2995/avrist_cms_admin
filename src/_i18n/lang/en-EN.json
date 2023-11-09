@@ -76,6 +76,18 @@
       "title": "Edit Page Template Profile",
       "success-msg": "Success edit Page Template {{name}}",
       "failed-msg": "Failed edit Page Template {{name}}"
+    },
+    "delete-config": {
+      "title": "Are you sure",
+      "msg": "Do you want to delete this config?"
+    },
+    "delete-attrs": {
+      "title": "Are you sure",
+      "msg": "Do you want to delete this attributes?"
+    },
+    "form": {
+      "key-required": "Key is required",
+      "key-required": "Key is required",
     }
   },
   "email-form-builder": {
