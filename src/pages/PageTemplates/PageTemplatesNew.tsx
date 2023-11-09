@@ -100,25 +100,25 @@ export default function PageTemplatesNew() {
   // ATTRIBUTES FUNCTION
   const onAddNewAttributes = () => {
     const newErrors = { ...attributesErrors };
-  
+
     if (!newAttributes.fieldType) {
-      newErrors.fieldType = 'Field Type is required';
+      newErrors.fieldType = `${t('page-template.form.field-type-required')}`;
     } else {
       newErrors.fieldType = '';
     }
-  
+
     if (!newAttributes.fieldId) {
-      newErrors.fieldId = 'Field ID is required';
+      newErrors.fieldId = `${t('page-template.form.field-id-required')}`;
     } else {
       newErrors.fieldId = '';
     }
-  
+
     setAttributesErrors(newErrors);
-  
+
     if (newErrors.fieldType || newErrors.fieldId) {
-      return; 
+      return;
     }
-  
+
     if (attributesEditIndex !== null) {
       const updatedAttributes = [...attributesData];
       updatedAttributes[attributesEditIndex] = newAttributes;
@@ -131,6 +131,20 @@ export default function PageTemplatesNew() {
     }
     setOpenAddAttributesModal(false);
   };
+
+  useEffect(() => {
+    const newErrors = { fieldType: '', fieldId: '', description: '' };
+
+    if (!newAttributes.fieldType) {
+      newErrors.fieldType = 'Field Type is required';
+    }
+
+    if (!newAttributes.fieldId) {
+      newErrors.fieldId = 'Field ID is required';
+    }
+
+    setAttributesErrors(newErrors);
+  }, [newAttributes.fieldType, newAttributes.fieldId]);
 
   const onSubmitDeleteAttributes = () => {
     const updatedItems = attributesData.filter((_item: any, index: any) => index !== deleteIdAttr);
@@ -147,7 +161,7 @@ export default function PageTemplatesNew() {
     if (!newConfig.key) {
       setConfigErrors(prevErrors => ({
         ...prevErrors,
-        key: 'Key is required',
+        key: `${t('page-template.form.key-required')}`,
       }));
       return;
     }
@@ -163,9 +177,25 @@ export default function PageTemplatesNew() {
     }
     setOpenAddConfigModal(false);
   };
-  const onDeleteConfig = (indexToDelete: any) => {
-    const updatedItems = configData.filter((_item: any, index: any) => index !== indexToDelete);
+
+  useEffect(() => {
+    const newErrors = { key: '', description: '' };
+
+    if (!newConfig.key) {
+      newErrors.key = 'Key is required';
+    }
+
+    setConfigErrors(newErrors);
+  }, [newConfig.key]);
+
+  const onSubmitDeleteConfig = () => {
+    const updatedItems = configData.filter((_item: any, index: any) => index !== deleteIdConfig);
     setConfigData(updatedItems);
+
+    setDeleteIdConfig(null);
+    setDeleteModalTitleConfig('');
+    setDeleteModalBodyConfig('');
+    setOpenDeleteModalConfig(false);
   };
 
   // DELETE ATTRIBUTES STATE
@@ -176,17 +206,23 @@ export default function PageTemplatesNew() {
 
   const onClickDeleteAttributes = (id: any) => {
     setDeleteIdAttr(id);
-    setDeleteModalTitleAttr(`Are you sure?`);
-    setDeleteModalBodyAttr(`Do you want to delete this attributes?`);
+    setDeleteModalTitleAttr(`${t('page-template.delete-attrs.title')}`);
+    setDeleteModalBodyAttr(`${t('page-template.delete-attrs.msg')}`);
     setOpenDeleteModalAttr(true);
   };
 
-  // const onClickDeleteConfig = (id: any, title: string) => {
-  //   setDeleteIdConfig(id);
-  //   setDeleteModalTitleConfig(`Are you sure?`);
-  //   setDeleteModalBodyConfig(`Do you want to delete this config?`);
-  //   setOpenDeleteModalConfig(true);
-  // };
+  // DELETE CONFIG STATE
+  const [deleteIdConfig, setDeleteIdConfig] = useState(null);
+  const [deleteModalTitleConfig, setDeleteModalTitleConfig] = useState('');
+  const [deleteModalBodyConfig, setDeleteModalBodyConfig] = useState('');
+  const [openDeleteModalConfig, setOpenDeleteModalConfig] = useState(false);
+
+  const onClickDeleteConfig = (id: any) => {
+    setDeleteIdConfig(id);
+    setDeleteModalTitleConfig(`${t('page-template.delete-config.title')}`);
+    setDeleteModalBodyConfig(`${t('page-template.delete-config.msg')}`);
+    setOpenDeleteModalConfig(true);
+  };
 
   // RTK CREATE PAGE TEMPLATE
   const [createPageTemplate, { isLoading }] = useCreatePageTemplateMutation();
@@ -521,7 +557,7 @@ export default function PageTemplatesNew() {
                 src={TableDelete}
                 onClick={e => {
                   e.preventDefault();
-                  onDeleteConfig(info.row.index);
+                  onClickDeleteConfig(info.row.index);
                 }}
               />
             </div>
@@ -537,11 +573,30 @@ export default function PageTemplatesNew() {
         open={openDeleteModalAttr}
         title={deleteModalTitleAttr}
         message={deleteModalBodyAttr}
-        cancelTitle={t('user.email-form-builder-list.email-form-builder.list.cancel-title')}
-        submitTitle={t('user.email-form-builder-list.email-form-builder.list.submit-title')}
+        cancelTitle={t('cancel')}
+        submitTitle={t('yes')}
         submitAction={onSubmitDeleteAttributes}
         cancelAction={() => {
+          setDeleteIdAttr(null);
+          setDeleteModalTitleAttr('');
+          setDeleteModalBodyAttr('');
           setOpenDeleteModalAttr(false);
+        }}
+        icon={WarningIcon}
+        btnSubmitStyle=""
+      />
+      <ModalConfirm
+        open={openDeleteModalConfig}
+        title={deleteModalTitleConfig}
+        message={deleteModalBodyConfig}
+        cancelTitle={t('cancel')}
+        submitTitle={t('yes')}
+        submitAction={onSubmitDeleteConfig}
+        cancelAction={() => {
+          setDeleteIdConfig(null);
+          setDeleteModalTitleConfig('');
+          setDeleteModalBodyConfig('');
+          setOpenDeleteModalConfig(false);
         }}
         icon={WarningIcon}
         btnSubmitStyle=""
