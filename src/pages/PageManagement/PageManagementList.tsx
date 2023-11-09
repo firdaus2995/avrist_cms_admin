@@ -124,6 +124,7 @@ export default function PageManagementList() {
       startDate,
       endDate,
       isArchive: false,
+      dataType: "",
     },
     {
       refetchOnMountOrArgChange: true,
@@ -139,6 +140,7 @@ export default function PageManagementList() {
       direction,
       search: searchQuery,
       isArchive: false,
+      dataType: "",
     },
     {
       refetchOnMountOrArgChange: true,
