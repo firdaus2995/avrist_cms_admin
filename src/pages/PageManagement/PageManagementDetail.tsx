@@ -44,6 +44,7 @@ export default function PageManagementDetail() {
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
   const roles = store.getState().loginSlice.roles;
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [pageDetailList, setPageDetailList] = useState<any>([]);
@@ -305,6 +306,27 @@ export default function PageManagementDetail() {
       });
   };
 
+  function safeParseJSON(jsonString: any) {
+    try {
+      return JSON.parse(jsonString);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function getImageData(value: any) {
+    const parsedValue = safeParseJSON(value);
+    try {
+      if (parsedValue) {
+        return `${baseUrl}/files/get/${parsedValue[0]?.imageUrl}`;
+      } else {
+        return `${baseUrl}/files/get/${value}`;
+      }
+    } catch {
+      return '';
+    }
+  }
+
   const Badge = () => {
     return (
       <div className="ml-5 flex flex-row gap-5">
@@ -470,7 +492,7 @@ export default function PageManagementDetail() {
             value={pageDetailList?.pageTemplate?.name}
           />
           <div className="flex justify-center my-5">
-            <img src={pageDetailList?.pageTemplate?.imageUrl} />
+            <img src={getImageData(pageDetailList?.pageTemplate?.imageUrl)} />
           </div>
           <Label
             title={t('user.page-management.detail.labels.contentType')}
@@ -668,7 +690,7 @@ export default function PageManagementDetail() {
               pageTemplates.map((element: any) => (
                 <div key={element.id} className="px-[5%] py-5 flex flex-col basis-2/6 gap-3">
                   <img
-                    src={element.image}
+                    src={getImageData(element.imageUrl)}
                     className={`h-[450px] object-cover	cursor-pointer rounded-xl ${
                       selected === element.id
                         ? 'border-[#5A4180] border-4'

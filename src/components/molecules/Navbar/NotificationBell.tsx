@@ -228,7 +228,8 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
                       to={element.link}
                       key={index}
                       onClick={() => {
-                        void handlerReadNotificationSingle(element.id)
+                        void handlerReadNotificationSingle(element.id);
+                        close();
                       }}
                       className="flex flex-row flex-start gap-[8px] py-[8px] border-b-[1px] border-[#D6D6D6]">
                       <div
