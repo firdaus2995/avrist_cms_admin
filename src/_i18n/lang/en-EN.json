@@ -1268,7 +1268,8 @@
       "roles": "Roles",
       "create": "Create",
       "required": "This field is required",
-      "close-modal": "Close Modal"
+      "close-modal": "Close Modal",
+      "loading": "Loading"
     },
     "molecules": {
       "response": "Response",
