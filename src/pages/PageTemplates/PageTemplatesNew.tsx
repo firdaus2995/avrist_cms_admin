@@ -102,13 +102,13 @@ export default function PageTemplatesNew() {
     const newErrors = { ...attributesErrors };
 
     if (!newAttributes.fieldType) {
-      newErrors.fieldType = 'Field Type is required';
+      newErrors.fieldType = `${t('page-template.form.field-type-required')}`;
     } else {
       newErrors.fieldType = '';
     }
 
     if (!newAttributes.fieldId) {
-      newErrors.fieldId = 'Field ID is required';
+      newErrors.fieldId = `${t('page-template.form.field-id-required')}`;
     } else {
       newErrors.fieldId = '';
     }
@@ -161,7 +161,7 @@ export default function PageTemplatesNew() {
     if (!newConfig.key) {
       setConfigErrors(prevErrors => ({
         ...prevErrors,
-        key: 'Key is required',
+        key: `${t('page-template.form.key-required')}`,
       }));
       return;
     }
@@ -206,8 +206,8 @@ export default function PageTemplatesNew() {
 
   const onClickDeleteAttributes = (id: any) => {
     setDeleteIdAttr(id);
-    setDeleteModalTitleAttr(`Are you sure?`);
-    setDeleteModalBodyAttr(`Do you want to delete this attributes?`);
+    setDeleteModalTitleAttr(`${t('page-template.delete-attrs.title')}`);
+    setDeleteModalBodyAttr(`${t('page-template.delete-attrs.msg')}`);
     setOpenDeleteModalAttr(true);
   };
 
@@ -219,8 +219,8 @@ export default function PageTemplatesNew() {
 
   const onClickDeleteConfig = (id: any) => {
     setDeleteIdConfig(id);
-    setDeleteModalTitleConfig(`Are you sure?`);
-    setDeleteModalBodyConfig(`Do you want to delete this config?`);
+    setDeleteModalTitleConfig(`${t('page-template.delete-config.title')}`);
+    setDeleteModalBodyConfig(`${t('page-template.delete-config.msg')}`);
     setOpenDeleteModalConfig(true);
   };
 
@@ -573,8 +573,8 @@ export default function PageTemplatesNew() {
         open={openDeleteModalAttr}
         title={deleteModalTitleAttr}
         message={deleteModalBodyAttr}
-        cancelTitle={'Cancel'}
-        submitTitle={'Yes'}
+        cancelTitle={t('cancel')}
+        submitTitle={t('yes')}
         submitAction={onSubmitDeleteAttributes}
         cancelAction={() => {
           setDeleteIdAttr(null);
@@ -589,8 +589,8 @@ export default function PageTemplatesNew() {
         open={openDeleteModalConfig}
         title={deleteModalTitleConfig}
         message={deleteModalBodyConfig}
-        cancelTitle={'Cancel'}
-        submitTitle={'Yes'}
+        cancelTitle={t('cancel')}
+        submitTitle={t('yes')}
         submitAction={onSubmitDeleteConfig}
         cancelAction={() => {
           setDeleteIdConfig(null);
