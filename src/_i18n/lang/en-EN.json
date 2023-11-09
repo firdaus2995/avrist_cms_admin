@@ -87,8 +87,11 @@
     },
     "form": {
       "key-required": "Key is required",
-      "key-required": "Key is required",
-    }
+      "field-id-required": "Field ID is required",
+      "field-type-required": "Field type is required"
+    }, 
+    "cancel": "Cancel",
+    "yes": "Yes"
   },
   "email-form-builder": {
     "list": {
@@ -1273,6 +1276,8 @@
   },
   "no": "No",
   "yes": "Yes",
+  "cancel": "Cancel",
+  
 
   "components": {
     "atoms": {

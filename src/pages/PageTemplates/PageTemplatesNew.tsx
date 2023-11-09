@@ -132,6 +132,20 @@ export default function PageTemplatesNew() {
     setOpenAddAttributesModal(false);
   };
 
+  useEffect(() => {
+    const newErrors = { fieldType: '', fieldId: '', description: '' };
+
+    if (!newAttributes.fieldType) {
+      newErrors.fieldType = 'Field Type is required';
+    }
+
+    if (!newAttributes.fieldId) {
+      newErrors.fieldId = 'Field ID is required';
+    }
+
+    setAttributesErrors(newErrors);
+  }, [newAttributes.fieldType, newAttributes.fieldId]);
+
   const onSubmitDeleteAttributes = () => {
     const updatedItems = attributesData.filter((_item: any, index: any) => index !== deleteIdAttr);
     setAttributesData(updatedItems);
@@ -163,6 +177,17 @@ export default function PageTemplatesNew() {
     }
     setOpenAddConfigModal(false);
   };
+
+  useEffect(() => {
+    const newErrors = { key: '', description: '' };
+
+    if (!newConfig.key) {
+      newErrors.key = 'Key is required';
+    }
+
+    setConfigErrors(newErrors);
+  }, [newConfig.key]);
+
   const onSubmitDeleteConfig = () => {
     const updatedItems = configData.filter((_item: any, index: any) => index !== deleteIdConfig);
     setConfigData(updatedItems);
@@ -548,8 +573,8 @@ export default function PageTemplatesNew() {
         open={openDeleteModalAttr}
         title={deleteModalTitleAttr}
         message={deleteModalBodyAttr}
-        cancelTitle={'Cancel'}
-        submitTitle={'Yes'}
+        cancelTitle={t('cancel')}
+        submitTitle={t('yes')}
         submitAction={onSubmitDeleteAttributes}
         cancelAction={() => {
           setDeleteIdAttr(null);
@@ -564,8 +589,8 @@ export default function PageTemplatesNew() {
         open={openDeleteModalConfig}
         title={deleteModalTitleConfig}
         message={deleteModalBodyConfig}
-        cancelTitle={'Cancel'}
-        submitTitle={'Yes'}
+        cancelTitle={t('cancel')}
+        submitTitle={t('yes')}
         submitAction={onSubmitDeleteConfig}
         cancelAction={() => {
           setDeleteIdConfig(null);
