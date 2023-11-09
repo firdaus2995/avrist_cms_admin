@@ -29,6 +29,7 @@ export default function ContentManagerList() {
     direction,
     search,
     sortBy,
+    dataType: ""
   });
   const { data } = fetchQuery;
 
