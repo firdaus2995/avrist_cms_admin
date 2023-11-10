@@ -100,6 +100,7 @@ export default function PageManagementDetail() {
       sortBy: 'id',
       direction: 'desc',
       search,
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,
