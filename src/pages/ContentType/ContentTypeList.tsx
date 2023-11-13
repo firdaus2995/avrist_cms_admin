@@ -88,6 +88,7 @@ export default function ContentTypeList() {
     direction,
     search,
     sortBy,
+    dataType: '',
   });
   const { data } = fetchQuery;
 
