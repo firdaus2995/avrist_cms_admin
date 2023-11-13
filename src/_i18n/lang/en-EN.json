@@ -1,11 +1,41 @@
 {
   "errors": {
-    "UnableToChangeOwnUserStatusException": "Failed to update data! You can't change your own data! Please contact another user with eligible role",
-    "DataIsUsedException": "This data is been used, you can’t delete this data",
-    "DataHasBeenExistException": "Email has been Exist",
-    "content-type-builder": {
+    "user": {
+      "DataHasBeenExistException":"Email has been Exist",
+      "DataIsUsedException" : "This data is been used, you can’t delete this data",
+      "UnableToChangeOwnUserStatusException": "Failed to update data! You can't change your own data! Please contact another user with eligible role"
+    },
+    "role": {
+      "DataHasBeenExistException":"Data has been Exist",
+      "DataIsUsedException" : "This data is been used, you can’t delete this data"
+    },
+    "page-template": {
+      "DataHasBeenExistException":"Data has been Exist",
+      "DataIsUsedException" : "You can't delete this page because this page is being used in an active menu"
+    },
+    "page-management": {
+      "DataHasBeenExistException":"Data has been Exist",
+      "DataIsUsedException" : "This data is been used, you can’t delete this data"
+    },
+    "menu": {
+      "DataHasBeenExistException":"Data has been Exist",
+      "DataIsUsedException" : "This data is been used, you can’t delete this data"
+    },
+    "global-config": {
+      "DataHasBeenExistException":"Data has been Exist",
+      "DataIsUsedException" : "This data is been used, you can’t delete this data"
+    },
+    "email-form-builder": {
+      "DataHasBeenExistException":"Data has been Exist",
+      "DataIsUsedException" : "This data is been used, you can’t delete this data"
+    },
+    "content-type": {
       "DataHasBeenExistException":"Name has been Exist",
       "DataIsUsedException" : "Post Type is being used by Post Data"
+    },
+    "content-manager": {
+      "DataHasBeenExistException":"Data has been Exist",
+      "DataIsUsedException" : "This data is been used, you can’t delete this data"
     }
   },
   "toast-success": "Success!",

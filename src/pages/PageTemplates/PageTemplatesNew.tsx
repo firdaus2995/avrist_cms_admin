@@ -24,6 +24,7 @@ import { useGetConfigQuery } from '@/services/ContentType/contentTypeApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import WarningIcon from '../../assets/warning.png';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 const initialAttributes = {
   fieldType: '',
@@ -270,12 +271,12 @@ export default function PageTemplatesNew() {
         );
         navigate('/page-template');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('page-template.edit.failed-msg', { name: payload.name }),
+            message: t(`errors.page-template.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

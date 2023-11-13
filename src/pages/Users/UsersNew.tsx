@@ -113,7 +113,7 @@ export default function UsersNew() {
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.user.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

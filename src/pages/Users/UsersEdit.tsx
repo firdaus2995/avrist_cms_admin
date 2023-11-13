@@ -18,6 +18,7 @@ import { InputDate } from '../../components/atoms/Input/InputDate';
 import { useEditUserMutation, useGetRoleQuery, useGetUserDetailQuery } from '../../services/User/userApi';
 import { openToast } from '../../components/atoms/Toast/slice';
 import { useGetDepartmentQuery } from '@/services/Department/departmentApi';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function UsersEdit() {
   const navigate = useNavigate();
@@ -138,12 +139,12 @@ export default function UsersEdit() {
         );
         navigate('/user');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('user.users-edit.user.toast-failed'),
-            message: t('user.users-edit.user.failed-msg', { name: payload.fullName }),
+            message: t(`errors.user.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

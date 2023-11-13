@@ -22,6 +22,7 @@ import TableDelete from '@/assets/table-delete.svg';
 import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -252,11 +253,12 @@ export default function ContentManagerNew() {
         );
         goBack();
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('user.content-manager-new.draft-failed'),
+            message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

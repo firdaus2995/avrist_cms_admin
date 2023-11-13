@@ -26,7 +26,7 @@ import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { MultipleInput } from "@/components/molecules/MultipleInput";
 import { useAppDispatch } from "@/store";
 import { openToast } from "@/components/atoms/Toast/slice";
-import { checkIsEmail, copyArray } from "@/utils/logicHelper";
+import { checkIsEmail, copyArray, errorMessageTypeConverter } from "@/utils/logicHelper";
 import { useCreateEmailFormBuilderMutation, useGetEmailBodyDetailQuery, useGetEmailBodyQuery, useGetFormResultQuery } from "@/services/EmailFormBuilder/emailFormBuilderApi"; 
 import { useGetEmailFormAttributeListQuery } from "@/services/Config/configApi";
 import { LabelText } from '@/components/atoms/Label/Text';
@@ -367,12 +367,12 @@ export default function EmailFormBuilderNew() {
         );
         navigate('/email-form-builder');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('email-form-builder.add.failed-msg', { name: payload.name }),
+            message: t(`errors.email-form-builder.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

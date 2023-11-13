@@ -496,7 +496,7 @@ export default function ContentTypeEdit() {
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t(`errors.content-type-builder.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.content-type.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

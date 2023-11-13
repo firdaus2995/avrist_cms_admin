@@ -14,6 +14,7 @@ import { resetForm } from '../../services/Roles/rolesSlice';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { Controller, useForm } from 'react-hook-form';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function RolesNew() {
   const dispatch = useAppDispatch();
@@ -63,12 +64,12 @@ export default function RolesNew() {
         dispatch(resetForm());
         navigate('/roles');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('roles.add.failed-msg', { name: payload.name }),
+            message: t(`errors.role.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
