@@ -101,6 +101,7 @@ export default function GroupMenuNew () {
                     labelStyle="font-semibold"
                     labelRequired
                     inputWidth={400}
+                    maxLength={50}
                     roundStyle="xl"
                     placeholder={t('user.menu-list.menuGroup.inputs.label-groupname-placeholder')}
                     isError={!!errors?.name}
