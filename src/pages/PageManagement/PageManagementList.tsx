@@ -25,6 +25,7 @@ import dayjs from 'dayjs';
 import { FilterButton } from '@/components/molecules/FilterButton/index.';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 const ArchiveButton = memo(function ArchiveButton() {
   return (
@@ -347,13 +348,13 @@ export default function PageManagementList() {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setShowConfirm(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.page-management.list.delete.failed'),
-            message: t('user.page-management.list.delete.failed-message'),
+            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

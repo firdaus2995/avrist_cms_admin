@@ -19,10 +19,13 @@ export const formatFilename = (filename: string) => {
 };
 
 export const errorMessageTypeConverter = (errorMessage: any) => {
+  const knownError: string[] = ['DataHasBeenExistException', 'DataIsUsedException', 'UnableToChangeOwnUserStatusException'];
   const type: string = errorMessage.substring(0, errorMessage.indexOf(":"));
-  if (type[type.length - 1] === " ") {
-    return type.substring(0, (type.length - 1));
+
+  const convertedType: string = type[type.length - 1] === " " ? type.substring(0, (type.length - 1)) : type;
+  if (knownError.find((element: string) => element === convertedType)) {
+    return convertedType;
   } else {
-    return type;
+    return "UnexpectedErrorException";
   };
 };

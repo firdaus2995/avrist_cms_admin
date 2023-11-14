@@ -36,6 +36,7 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { openToast } from '@/components/atoms/Toast/slice';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -257,11 +258,12 @@ export default function ContentManagerDetailData() {
         );
         goBack();
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: 'Failed',
+            message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
         goBack();
@@ -1002,11 +1004,12 @@ export default function ContentManagerDetailData() {
         );
         goBack();
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('user.content-manager-detail-data.failed'),
+            message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
         goBack();
@@ -1026,11 +1029,12 @@ export default function ContentManagerDetailData() {
         );
         goBack();
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('user.content-manager-detail-data.failed'),
+            message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
         goBack();

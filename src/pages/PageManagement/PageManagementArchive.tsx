@@ -19,6 +19,7 @@ import { getCredential } from '@/utils/Credential';
 import TableDelete from '@/assets/table-delete.svg';
 import WarningIcon from '@/assets/warning.png';
 import { useTranslation } from 'react-i18next';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function PageManagementArchive() {
   const dispatch = useAppDispatch();
@@ -118,13 +119,13 @@ export default function PageManagementArchive() {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setOpenRestoreModal(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.page-management.archive.restore.failed'),
-            message: t('user.page-management.archive.restore.message'),
+            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
@@ -254,13 +255,13 @@ export default function PageManagementArchive() {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setShowConfirm(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.page-management.list.delete.failed'),
-            message: t('user.page-management.list.delete.failed-message'),
+            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

@@ -19,6 +19,7 @@ import PaginationComponent from '@/components/molecules/Pagination';
 import { getCredential } from '@/utils/Credential';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 const TopRightButton = () => {
   return (
@@ -233,13 +234,13 @@ export default function GlobalConfigDataList() {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setShowConfirm(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.global-config-data-list.toast.failedDeletePage'),
-            message: t('user.global-config-data-list.toast.somethingWentWrong'),
+            message: t(`errors.global-config.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

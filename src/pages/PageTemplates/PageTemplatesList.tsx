@@ -17,6 +17,7 @@ import {
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function PageTemplatesList() {
   const { t } = useTranslation(); // Initialize the useTranslation hook
@@ -185,15 +186,13 @@ export default function PageTemplatesList() {
         await fetchQuery.refetch();
         setPageIndex(0);
       })
-      .catch((err: any) => {
-        const isUsed = err?.message?.includes('used');
-        const usedMessage = `You can't delete this page because this page is being used in an active menu`;
+      .catch((error: any) => {
         setOpenDeleteModal(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.page-template-list.toasts.error-delete'),
-            message: isUsed ? usedMessage : t('user.page-template-list.toasts.error-message'),
+            message: t(`errors.page-template.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

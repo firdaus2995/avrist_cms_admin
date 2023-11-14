@@ -23,6 +23,7 @@ import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import FormList from '../../components/molecules/FormList';
 import { dataTypeList } from './contants';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function PageManagementNew() {
   const {
@@ -163,11 +164,11 @@ export default function PageManagementNew() {
         );
         navigate('/page-management');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

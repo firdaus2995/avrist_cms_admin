@@ -278,7 +278,7 @@ export default function EmailFormBuilderList() {
         );
         await fetchQueryEFB.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setOpenDeleteModalEFB(false);
         dispatch(
           openToast({
@@ -286,7 +286,7 @@ export default function EmailFormBuilderList() {
             title: t(
               'user.email-form-builder-list.email-form-builder.list.failed-delete-email-form',
             ),
-            message: 'Something went wrong!',
+            message: t(`errors.email-form-builder.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
@@ -312,7 +312,7 @@ export default function EmailFormBuilderList() {
           openToast({
             type: 'error',
             title: t('user.email-form-builder-list.email-body.list.failed-delete-email-body'),
-            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.email-form-builder.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

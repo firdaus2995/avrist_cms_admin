@@ -14,6 +14,7 @@ import PaginationComponent from '../../components/molecules/Pagination';
 import { SortingState } from '@tanstack/react-table';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 const CreateButton = () => {
   return (
@@ -91,13 +92,13 @@ export default function RolesList() {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setShowComfirm(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.roles-list.common.failedDelete'),
-            message: 'Oops gagal delete',
+            message: t(`errors.role.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
