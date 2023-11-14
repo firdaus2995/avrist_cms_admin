@@ -8,7 +8,7 @@ import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { useCreateMenuMutation } from '@/services/Menu/menuApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { useGetPageManagementListQuery } from '@/services/PageManagement/pageManagementApi';
 import { menuType } from './constants';
@@ -16,9 +16,10 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
-export default function MenuNew() {
+export default function MenuNew () {
   const navigate = useNavigate();
   const location = useLocation();
+  const params = useParams();
   const dispatch = useAppDispatch();
   const {
     control,
@@ -31,6 +32,7 @@ export default function MenuNew() {
   // BACKEND STATE
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
+  const [groupMenuId] = useState<any>(Number(params.id));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
 
   // RTK GET PAGE
@@ -76,6 +78,7 @@ export default function MenuNew() {
 
   const onSubmit = (data: any) => {
     const payload = {
+      groupMenuId,
       title: data?.title,
       menuType: selectedType,
       pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
@@ -94,7 +97,7 @@ export default function MenuNew() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu');
+        navigate(`/group-menu/menu/${groupMenuId}`);
       })
       .catch((error: any) => {
         dispatch(
@@ -303,7 +306,7 @@ export default function MenuNew() {
                     />
                   )}
                 />
-                <div className="w-[600px] flex justify-end">
+                <div className="w-full flex justify-end">
                   <p className="text-body-text-3 text-xs mt-2 mr-4">
                     {t('user.menu-list.menuList.maxDescription', { maxChar: 50 })}
                   </p>
@@ -318,7 +321,7 @@ export default function MenuNew() {
               className="btn btn-outline text-xs btn-sm w-28 h-10"
               onClick={e => {
                 e.preventDefault();
-                navigate('/menu', { replace: true });
+                navigate(`/group-menu/menu/${groupMenuId}`, { replace: true });
               }}>
               Cancel
             </button>

@@ -17,7 +17,7 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
-export default function MenuNew() {
+export default function MenuEdit () {
   const navigate = useNavigate();
   const params = useParams();
   const dispatch = useAppDispatch();
@@ -32,14 +32,17 @@ export default function MenuNew() {
   // BACKEND STATE
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
-  const [id] = useState<any>(Number(params.id));
+  const [groupMenuId] = useState<any>(Number(params.id));
+  const [menuId] = useState<any>(Number(params.menuid));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
   // TAKEDOWN MODAL
   const [showTakedownMenuModal, setShowTakedownMenuModal] = useState(false);
 
   // RTK GET DATA MENU DETAIL
   const fetchDefaultData = useGetMenuByIdQuery(
-    { id },
+    { 
+      id: menuId,
+    },
     {
       refetchOnMountOrArgChange: true,
     },
@@ -80,19 +83,16 @@ export default function MenuNew() {
 
   useEffect(() => {
     if (dataDetail) {
-      const menuDetail = dataDetail?.menuById;
-
-      setSelectedType(menuType.find(item => item.value === menuDetail?.menuType)?.value);
+      setSelectedType(menuType.find(item => item.value === dataDetail?.menuById?.menuType)?.value);
 
       const defaultValues: any = {};
 
-      defaultValues.id= menuDetail?.id;
-      defaultValues.title= menuDetail?.title;
-      defaultValues.externalUrl= menuDetail?.externalUrl;
-      defaultValues.isNewTab= menuDetail?.isNewTab ?? false;
-      defaultValues.pageId= menuDetail?.pageId ?? null;
-      defaultValues.shortDesc= menuDetail?.shortDesc;
-      defaultValues.icon= menuDetail?.icon ?? '';
+      defaultValues.title= dataDetail?.menuById?.title;
+      defaultValues.externalUrl= dataDetail?.menuById?.externalUrl;
+      defaultValues.isNewTab= dataDetail?.menuById?.isNewTab ?? false;
+      defaultValues.pageId= dataDetail?.menuById?.pageId ?? null;
+      defaultValues.shortDesc= dataDetail?.menuById?.shortDesc;
+      defaultValues.icon= dataDetail?.menuById?.icon ?? '';
 
       reset({ ...defaultValues });
     };
@@ -100,7 +100,8 @@ export default function MenuNew() {
 
   const onSubmit = (data: any) => {
     const payload = {
-      id: data?.id,
+      groupMenuId,
+      menuId,
       title: data?.title,
       menuType: selectedType,
       pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
@@ -119,7 +120,7 @@ export default function MenuNew() {
             title: t('toast-success'),
           }),
         );
-        navigate('/menu');
+        navigate(`/group-menu/menu/${groupMenuId}`);
       })
       .catch((error: any) => {
         dispatch(
@@ -139,7 +140,8 @@ export default function MenuNew() {
         onCancel={() => {
           setShowTakedownMenuModal(false);
         }}
-        idDelete={id}
+        idGroup={groupMenuId}
+        idDelete={menuId}
       />
       <div className="flex flex-col mt-5 gap-5">
         <form className="flex flex-col w-100" onSubmit={handleSubmit(onSubmit)}>
@@ -349,7 +351,7 @@ export default function MenuNew() {
           <div className="mt-[200px] flex justify-end items-end gap-2">
             <button
               type='button'
-              className="btn btn-outline text-xs btn-sm w-28 h-10"
+              className="btn btn-primary btn-outline text-xs btn-sm w-28 h-10"
               onClick={() => {
                 setShowTakedownMenuModal(true)
               }}>

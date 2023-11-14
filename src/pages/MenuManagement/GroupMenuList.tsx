@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { SortingState } from '@tanstack/react-table';
 import { useCallback, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -10,70 +11,81 @@ import WarningIcon from '../../assets/warning.png';
 import TableEdit from '../../assets/table-edit.png';
 import TableDelete from '../../assets/table-delete.svg';
 import ModalConfirm from '../../components/molecules/ModalConfirm';
-import Typography from '@/components/atoms/Typography';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import StatusBadge from '@/components/atoms/StatusBadge';
+import ModalLog from './components/ModalLog';
+import TimelineLog from '@/assets/timeline-log.svg';
+import Typography from '@/components/atoms/Typography';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { InputSearch } from '../../components/atoms/Input/InputSearch';
-import { useDeleteUserMutation, useGetUserQuery } from '../../services/User/userApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
+import { useDeleteGroupMenuMutation, useGetGroupMenuQuery } from '@/services/Menu/menuApi';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
-export default function UsersList() {
-  const StatusBadge = (status: any) => {
-    function getStyle({ status }: any) {
-      if (status) {
-        return 'bg-[#D9E7D6] border-[#8AA97C]';
-      } else if (status === undefined) {
-        return 'bg-[#E4E4E4] border-[#A9AAB5]';
-      } else {
-        return 'bg-[#EBD2CE] border-[#D09191]';
-      }
-    }
-
-    function getTitle({ status }: any) {
-      if (status) {
-        return 'Active';
-      } else if (status === undefined) {
-        return '-';
-      } else {
-        return 'Inactive';
-      }
-    }
-
-    const badgeClasses = `flex w-28 items-center justify-center text-gray h-7 border-2 ${getStyle(
-      status,
-    )}`;
-    
-    return (
-      <span className={badgeClasses}>
-        <Typography type="body" size="xs" weight="medium">
-          {getTitle(status)}
-        </Typography>
-      </span>
-    );
-  };
-  
+export default function GroupMenuList () {  
   // TABLE COLUMN
   const columns = [
     {
       header: () => <span className="text-[14px]"></span>,
-      accessorKey: 'statusActive',
+      accessorKey: 'status',
       enableSorting: false,
       cell: (info: any) => {
-        // console.log('ini info => ', info.getValue());
         return (
           <>
             <StatusBadge status={info.getValue()} />
+            <div
+              className="cursor-pointer tooltip"
+              data-tip="Log"
+              onClick={() => {
+                setIdMenuLogModal(info?.row?.original?.id ?? 0);
+                setShowMenuLogModal(true);
+              }}>
+              <img src={TimelineLog} className="w-6 h-6" />
+            </div>
           </>
         );
       },
     },
     {
       header: () => (
-        <span className="text-[14px]">{t('user.users-list.user.list.table.header.userId')}</span>
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.name')}</span>
       ),
-      accessorKey: 'userId',
+      accessorKey: 'name',
+      enableSorting: true,
+      cell: (info: any) => (
+        <Link to={`menu/${info?.row?.original.id ?? 0}`}>
+          <Typography
+            type="body"
+            size="s"
+            weight="semi"
+            className="truncate cursor-pointer text-primary">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? info.getValue()
+              : '-'}
+          </Typography>
+        </Link>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.lastPublishedAt')}</span>
+      ),
+      accessorKey: 'lastPublishedAt',
+      enableSorting: true,
+      cell: (info: any) => (
+        <p className="text-[14px] truncate">
+          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? dayjs(info.getValue()).format('MMM DD, YYYY')
+            : '-'}
+        </p>
+      ),
+    },
+    {
+      header: () => (
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.lastPublishedBy')}</span>
+      ),
+      accessorKey: 'lastPublishedBy',
       enableSorting: true,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
@@ -85,83 +97,29 @@ export default function UsersList() {
     },
     {
       header: () => (
-        <span className="text-[14px]">{t('user.users-list.user.list.table.header.userName')}</span>
-      ),
-      accessorKey: 'fullName',
-      enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
-      ),
-    },
-    {
-      header: () => (
-        <span className="text-[14px]">{t('user.users-list.user.list.table.header.email')}</span>
-      ),
-      accessorKey: 'email',
-      enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
-      ),
-    },
-    {
-      header: () => (
-        <span className="text-[14px]">{t('user.users-list.user.list.table.header.role')}</span>
-      ),
-      accessorKey: 'role.name',
-      enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
-      ),
-    },
-    {
-      header: () => <span className="text-[14px]">Department</span>,
-      accessorKey: 'department.name',
-      enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
-            : '-'}
-        </p>
-      ),
-    },
-    {
-      header: () => (
-        <span className="text-[14px]">{t('user.users-list.user.list.table.header.action')}</span>
+        <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.action')}</span>
       ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
-          <RoleRenderer allowedRoles={['USER_EDIT']}>
+          <RoleRenderer allowedRoles={['MENU_EDIT']}>
             <Link to={`edit/${info.getValue()}`}>
               <div className="tooltip" data-tip="Edit">
                 <img
-                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  className={`cursor-pointer select-none flex items-center justify-center min-w-[34px]`}
                   src={TableEdit}
                 />
               </div>
             </Link>
           </RoleRenderer>
-          <RoleRenderer allowedRoles={['USER_DELETE']}>
+          <RoleRenderer allowedRoles={['MENU_TAKEDOWN']}>
             <div className="tooltip" data-tip="Delete">
               <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
+                className={`cursor-pointer select-none flex items-center justify-center min-w-[34px]`}
                 src={TableDelete}
                 onClick={() => {
-                  onClickUserDelete(info.getValue(), info?.row?.original?.fullName);
+                  onClickGroupMenuDelete(info.getValue(), info?.row?.original?.name);
                 }}
               />
             </div>
@@ -185,9 +143,12 @@ export default function UsersList() {
   const [deleteModalTitle, setDeleteModalTitle] = useState('');
   const [deleteModalBody, setDeleteModalBody] = useState('');
   const [deletedId, setDeletedId] = useState(0);
+  // MENU LOG MODAL
+  const [showMenuLogModal, setShowMenuLogModal] = useState(false);
+  const [idMenuLogModal, setIdMenuLogModal] = useState(0);
 
   // RTK GET DATA
-  const fetchQuery = useGetUserQuery(
+  const fetchQuery = useGetGroupMenuQuery(
     {
       pageIndex,
       limit: pageLimit,
@@ -201,7 +162,7 @@ export default function UsersList() {
   );
   const { data, isFetching, isError } = fetchQuery;
   // RTK DELETE
-  const [deletedUser, { isLoading }] = useDeleteUserMutation();
+  const [deleteGroupMenu, { isLoading }] = useDeleteGroupMenuMutation();
 
   useEffect(() => {
     setPageIndex(0);
@@ -209,29 +170,25 @@ export default function UsersList() {
 
   useEffect(() => {
     if (data) {
-      setListData(data?.userList?.users);
-      setTotal(data?.userList?.total);
-    }
+      setListData(data?.groupMenuList?.groupMenus);
+      setTotal(data?.groupMenuList?.total);
+    };
   }, [data]);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
-      const listedColumn: any = {
-        userId: 'username',
-        fullName: 'name',
-      };
-      setSortBy(listedColumn[sortModel[0].id] ?? sortModel[0].id);
+      setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
-    }
+    };
   }, []);
 
-  // FUNCTION FOR DELETE USER
-  const submitDeleteUser = () => {
-    deletedUser({
+  // FUNCTION FOR DELETE GROUP MENU
+  const submitDeleteGroupMenu = () => {
+    deleteGroupMenu({
       id: deletedId,
     })
       .unwrap()
@@ -240,8 +197,8 @@ export default function UsersList() {
         dispatch(
           openToast({
             type: 'success',
-            title: t('user.users-list.user.list.toast.success-delete'),
-            message: result.userDelete.message,
+            title: t('user.menu-list.menuGroup.toast.success-delete'),
+            message: result.menuGroupDelete.message,
           }),
         );
         await fetchQuery.refetch();
@@ -252,25 +209,25 @@ export default function UsersList() {
         dispatch(
           openToast({
             type: 'error',
-            title: t('user.users-list.user.list.toast.failed-delete'),
-            message: t(`errors.user.${errorMessageTypeConverter(error.message)}`),
+            title: t('user.menu-list.menuGroup.toast.failed-delete'),
+            message: t(`errors.menu.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
   };
 
-  const onClickUserDelete = (id: number, name: string) => {
+  const onClickGroupMenuDelete = (id: number, name: string) => {
     setDeletedId(id);
-    setDeleteModalTitle(t('user.users-list.user.list.modal.delete-title') ?? '');
+    setDeleteModalTitle(t('user.menu-list.menuGroup.modal.delete-menu-title') ?? '');
     setDeleteModalBody(
-      t('user.users-list.user.list.modal.delete-body', { name }) ?? '', // Pass the deleted user's name to the translation
+      t('user.menu-list.menuGroup.modal.delete-menu-body', { name }) ?? '',
     );
     setOpenDeleteModal(true);
   };
 
   return (
     <>
-      <RoleRenderer allowedRoles={['USER_READ']}>
+      <RoleRenderer allowedRoles={['MENU_READ']}>
         <ModalConfirm
           open={openDeleteModal}
           cancelAction={() => {
@@ -278,21 +235,29 @@ export default function UsersList() {
           }}
           title={deleteModalTitle}
           message={deleteModalBody}
-          cancelTitle={t('user.users-list.user.list.modal.cancel')}
-          submitTitle={t('user.users-list.user.list.modal.yes')}
-          submitAction={submitDeleteUser}
+          cancelTitle={t('user.menu-list.menuGroup.modal.button-cancel')}
+          submitTitle={t('user.menu-list.menuGroup.modal.button-submit')}
+          submitAction={submitDeleteGroupMenu}
           loading={isLoading}
           icon={WarningIcon}
           btnSubmitStyle=""
         />
+        <ModalLog
+          id={idMenuLogModal}
+          open={showMenuLogModal}
+          toggle={() => {
+            setShowMenuLogModal(!showMenuLogModal);
+          }}
+          title={'Activity Log - Menu Management'}
+        />
         <TitleCard
-          title={t('user.users-list.user.list.title')}
+          title={t('user.menu-list.menuGroup.texts.list.title')}
           topMargin="mt-2"
           TopSideButtons={
-            <RoleRenderer allowedRoles={['USER_CREATE']}>
+            <RoleRenderer allowedRoles={['MENU_CREATE']}>
               <Link to="new" className="btn btn-primary flex flex-row gap-2 rounded-xl">
                 <img src={Plus} className="w-[24px] h-[24px]" />
-                {t('user.users-list.user.list.button-add')}
+                {t('user.menu-list.menuGroup.buttons.create-menu')}
               </Link>
             </RoleRenderer>
           }
@@ -301,7 +266,7 @@ export default function UsersList() {
               onBlur={(e: any) => {
                 setSearch(e.target.value);
               }}
-              placeholder={t('user.users-list.user.list.search-placeholder') ?? ''}
+              placeholder={t('user.menu-list.menuGroup.inputs.search-placeholder') ?? ''}
             />
           }>
           <div className="overflow-x-auto w-full mb-5">
@@ -315,7 +280,6 @@ export default function UsersList() {
               error={isError}
             />
           </div>
-
           <PaginationComponent
             total={total}
             page={pageIndex}

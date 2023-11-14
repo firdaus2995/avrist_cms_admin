@@ -2,6 +2,6 @@ import { IListPermission } from '../../../services/Roles/types';
 
 export interface IPermisionList {
   permissionList: IListPermission[];
-  loading: boolean;
+  loading?: boolean;
   disabled?: boolean;
 }

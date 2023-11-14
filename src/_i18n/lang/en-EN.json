@@ -825,7 +825,6 @@
     "menu-list": {
       "menuList": {
         "avristLifeInsurance": "Avrist Life Insurance",
-        "menuStructure": "Menu Structure",
         "menuEdit": "Edit Menu",
         "successDelete": "Success delete",
         "failedDelete": "Failed delete",
@@ -858,6 +857,52 @@
         "description": "Short Description",
         "descriptionPlaceholder": "Enter Description",
         "maxDescription": "Max. {{maxChar}} Characters"
+      },
+      "menuGroup": {
+        "table": {
+          "columns": {
+            "name": "Group Name",
+            "lastPublishedAt": "Last Published Date",
+            "lastPublishedBy": "Last Published By",
+            "action": "Action"
+          }
+        },
+        "modal": {
+          "button-no": "No",
+          "button-cancel": "Cancel",
+          "button-submit": "Yes",
+          "delete-menu-title": "Are you sure?",
+          "delete-menu-body": "Do you want to delete {{name}}?",
+          "leave-confirmation-title": "Are you sure?",
+          "leave-confirmation-body": "Do you want to cancel all of the process?"
+        },
+        "buttons": {
+          "create-menu": "Create New"
+        },
+        "inputs": {
+          "search-placeholder": "Search",
+          "label-groupname": "Group Name",
+          "label-groupname-placeholder": "Enter Group Name"
+        },
+        "texts": {
+          "list": {
+            "title": "Menu Management"
+          },
+          "create": {
+            "title": "Add Group Name"
+          },
+          "edit": {
+            "title": "Edit Group Name"
+          }
+        },
+        "toast": {
+          "success-create": "Success Create Menu",
+          "failed-create": "Failed Create Menu",
+          "failed-create-message": "Something went wrong!",
+          "success-delete": "Success Delete Menu",
+          "failed-delete": "Failed Delete Menu",
+          "failed-delete-message": "Something went wrong!"
+        }
       }
     },
 
