@@ -296,7 +296,6 @@ export default function EmailFormBuilderList() {
     deleteEmailBody({ id: deletedIdEB })
       .unwrap()
       .then(async d => {
-        setOpenDeleteModalEFB(false);
         dispatch(
           openToast({
             type: 'success',
@@ -307,7 +306,6 @@ export default function EmailFormBuilderList() {
         await fetchQueryEB.refetch();
       })
       .catch((error: any) => {
-        setOpenDeleteModalEFB(false);
         dispatch(
           openToast({
             type: 'error',
@@ -405,13 +403,16 @@ export default function EmailFormBuilderList() {
           message={deleteModalBodyEB}
           cancelTitle={t('user.email-form-builder-list.email-body.list.cancel-title')}
           submitTitle={t('user.email-form-builder-list.email-body.list.submit-title')}
-          submitAction={submitDeleteEmailBody}
+          submitAction={() => {
+            submitDeleteEmailBody(); 
+            setOpenDeleteModalEB(false);
+          }}
           cancelAction={() => {
             setOpenDeleteModalEB(false);
           }}
           loading={deleteEmailBodyLoading}
           icon={WarningIcon}
-          btnSubmitStyle=""
+          btnSubmitStyle="btn-error"
         />
         <TitleCard
           title={
