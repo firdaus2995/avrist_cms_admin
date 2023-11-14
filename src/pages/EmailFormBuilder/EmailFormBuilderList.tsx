@@ -156,6 +156,7 @@ export default function EmailFormBuilderList() {
   const [listDataEFB, setListDataEFB] = useState([]);
   const [listDataEB, setListDataEB] = useState([]);
   const [searchEFB, setSearchEFB] = useState('');
+  const [tempSearchEFB, setTempSearchEFB] = useState('');
   const [searchEB, setSearchEB] = useState('');
 
   // TAB STATE
@@ -336,6 +337,19 @@ export default function EmailFormBuilderList() {
     setOpenDeleteModalEB(true);
   };
 
+  useEffect(() => {
+    if (selectedTab === 0) {
+      void fetchQueryEFB.refetch();
+      setSearchEB(''); // Menambahkan pengaturan nilai pencarian untuk tab Email Body
+      setSearchEFB('');
+      setTempSearchEFB('');
+    } else if (selectedTab === 1) {
+      void fetchQueryEB.refetch();
+      setSearchEFB(''); // Menambahkan pengaturan nilai pencarian untuk tab Email Form Builder
+      setSearchEB('');
+    }
+  }, [selectedTab]);
+
   // TAB RENDER
 
   const renderTabs = () => {
@@ -443,14 +457,22 @@ export default function EmailFormBuilderList() {
           SearchBar={
             selectedTab === 0 ? (
               <InputSearch
+                value={tempSearchEFB}
                 onBlur={(e: any) => {
                   setSearchEFB(e.target.value);
+                }}
+                onChange={(e) => {
+                  setTempSearchEFB(e.target.value);
                 }}
                 placeholder={t('user.email-form-builder-list.email-form-builder.list.search') ?? ''}
               />
             ) : (
               <InputSearch
+                value={searchEB}
                 onBlur={(e: any) => {
+                  setSearchEB(e.target.value);
+                }}
+                onChange={(e) => {
                   setSearchEB(e.target.value);
                 }}
                 placeholder={t('user.email-form-builder-list.email-body.list.search') ?? ''}
