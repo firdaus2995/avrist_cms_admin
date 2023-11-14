@@ -1,11 +1,58 @@
 {
   "errors": {
-    "UnableToChangeOwnUserStatusException": "Gagal memperbarui data! Anda tidak dapat mengubah data Anda sendiri! Silakan hubungi pengguna lain dengan peran yang memenuhi syarat",
-    "DataIsUsedException": "Data ini telah digunakan, Anda tidak dapat menghapus data ini",
-    "DataHasBeenExistException" : "Email telah digunakan",
-    "content-type-builder": {
-      "DataHasBeenExistException":"Name has been Exist",
-      "DataIsUsedException" : "Post Type is being used by Post Data"
+    "user": {
+      "DataHasBeenExistException":"Email sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "UnableToChangeOwnUserStatusException": "Gagal memperbarui data! Anda tidak dapat mengubah data Anda sendiri! Silakan hubungi pengguna lain dengan role yang memenuhi syarat",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "role": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "page-template": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "page-management": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Anda tidak dapat menghapus halaman ini karena halaman ini sedang digunakan dalam menu aktif",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "menu": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "global-config": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "email-form-builder": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "content-type": {
+      "DataHasBeenExistException":"Nama sudah Ada",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
+      "delete": {
+        "DataIsUsedException" : "Post Type sedang digunakan oleh Post Data, you can't delete this data",
+        "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+      },
+      "edit": {
+        "DataHasBeenExistException":"Name already Exist",
+        "DataIsUsedException" : "Post Type sedang digunakan oleh Post Data, you can't edit this data",
+        "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+      }
+    },
+    "content-manager": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
     }
   },
   "toast-success": "Berhasil",

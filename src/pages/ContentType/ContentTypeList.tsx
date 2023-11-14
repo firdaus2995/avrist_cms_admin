@@ -251,7 +251,7 @@ export default function ContentTypeList() {
           openToast({
             type: 'error',
             title: t('user.content-type-list.failed-delete-content-type'),
-            message: t(`errors.content-type.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.content-type.delete.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
