@@ -13,7 +13,7 @@ import ModalLog from './components/ModalLog';
 import { useForm } from 'react-hook-form';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
@@ -24,8 +24,9 @@ import {
   useUpdateMenuStructureMutation,
 } from '../../services/Menu/menuApi';
 
-export default function MenuList() {
+export default function MenuList () {
   const navigate = useNavigate();
+  const params = useParams();
   const dispatch = useAppDispatch();
   const {
     getValues,
@@ -34,6 +35,8 @@ export default function MenuList() {
   }: any = useForm();
 
   // MENU STATE
+  const [groupMenuId] = useState<any>(Number(params.id));
+  const [groupMenuName, setGroupMenuName] = useState<string>("");
   const [dataScructure, setDataStructure] = useState<any>([]);
   // ADD MENU STATE
   const [isAddClick, setIsAddClicked] = useState(false);
@@ -46,7 +49,7 @@ export default function MenuList() {
 
   // RTK GET MENU
   const fetchQuery = useGetMenuListQuery(
-    null,
+    { groupMenuId },
     {
       refetchOnMountOrArgChange: true,
     },
@@ -91,11 +94,10 @@ export default function MenuList() {
         return masterPayload;
       }
 
-      const listData = data?.menuList?.menus;
+      setGroupMenuName(data?.menuList?.groupMenuName);
+      setDataStructure(recursiveMenuGet(data?.menuList?.menus));
 
-      setDataStructure(recursiveMenuGet(listData));
-
-      setValue('status', data?.menuList.status);
+      setValue('status', data?.menuList?.status);
       setValue('lastPublishedBy', data?.menuList?.lastPublishedBy);
       setValue('lastPublishedAt', data?.menuList?.lastPublishedAt);
     }
@@ -139,7 +141,7 @@ export default function MenuList() {
 
     const payloadMenuList: any = recursiveMenuGenerator(data, null);
 
-    updateStructure({ menuList: payloadMenuList, menu: payloadMenu })
+    updateStructure({ groupMenuId, menuList: payloadMenuList, menu: payloadMenu })
       .unwrap()
       .then((res: any) => {
         setValue('status', res.menuStructureUpdate.status);
@@ -164,7 +166,7 @@ export default function MenuList() {
   };
 
   const handlerTakedownMenu = () => {
-    deleteMenu({ id: idTakedownModal, takedownNote: noteTakedownModal })
+    deleteMenu({ groupMenuId, menuId: idTakedownModal, takedownNote: noteTakedownModal })
       .unwrap()
       .then(async (res: any) => {
         setShowTakedownMenuModal(false);
@@ -192,7 +194,7 @@ export default function MenuList() {
   };
 
   const handlerPublishMenu = () => {
-    publishMenu({})
+    publishMenu({ groupMenuId })
       .unwrap()
       .then(() => {
         dispatch(
@@ -317,7 +319,7 @@ export default function MenuList() {
             </div>
           </ModalConfirm>
           <ModalLog
-            id={0}
+            id={groupMenuId}
             open={showMenuLogModal}
             toggle={() => {
               setShowMenuLogModal(!showMenuLogModal);
@@ -333,7 +335,7 @@ export default function MenuList() {
             <div className="flex flex-col gap-4">
               <div className="flex flex-row gap-3 items-center">
                 <div className="text-2xl font-semibold ">
-                  {t('user.menu-list.menuList.menuStructure')}
+                  {groupMenuName}
                 </div>
                 <div
                   className="cursor-pointer tooltip"

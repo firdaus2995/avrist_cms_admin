@@ -8,13 +8,14 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 // import data from './dummy.json';
 
 export default function ModalLog(props: any) {
-  const { open, title, toggle } = props;
+  const { open, title, toggle, id } = props;
 
   const [listData, setListData] = useState<any>([]);
   const [limit, setLimit] = useState(10);
 
   const { data, isFetching, isError } = useGetMenuLogListQuery(
     {
+      groupMenuId: id,
       pageIndex: 0,
       limit,
       sortBy: 'createdAt',

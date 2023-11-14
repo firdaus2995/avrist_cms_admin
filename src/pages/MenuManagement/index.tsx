@@ -1,5 +1,5 @@
-import MenuList from './MenuList';
+import GroupMenuList from './GroupMenuList';
 
 export default function Roles() {
-  return <MenuList />;
+  return <GroupMenuList />;
 }
