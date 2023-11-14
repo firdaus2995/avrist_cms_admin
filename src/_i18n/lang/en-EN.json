@@ -7,50 +7,50 @@
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "role": {
-      "DataHasBeenExistException":"Data already Exist",
+      "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "page-template": {
-      "DataHasBeenExistException":"Data already Exist",
+      "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "page-management": {
-      "DataHasBeenExistException":"Data already Exist",
+      "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "You can't delete this page because this page is being used in an active menu",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "menu": {
-      "DataHasBeenExistException":"Data already Exist",
+      "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "global-config": {
-      "DataHasBeenExistException":"Data already Exist",
+      "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "email-form-builder": {
-      "DataHasBeenExistException":"Data already Exist",
+      "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "content-type": {
-      "DataHasBeenExistException":"Name already Exist",
+      "DataHasBeenExistException":"Name already exists",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
       "delete": {
         "DataIsUsedException" : "Post Type is being used by Post Data, you can't delete this data",
         "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
       },
       "edit": {
-        "DataHasBeenExistException":"Name already Exist",
+        "DataHasBeenExistException":"Name already exists",
         "DataIsUsedException" : "Post Type is being used by Post Data, you can't edit this data",
         "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
       }
     },
     "content-manager": {
-      "DataHasBeenExistException":"Data already Exist",
+      "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     }
