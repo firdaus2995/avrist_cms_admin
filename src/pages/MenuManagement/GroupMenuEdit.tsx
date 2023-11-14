@@ -67,7 +67,7 @@ export default function GroupMenuEdit () {
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.menu.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

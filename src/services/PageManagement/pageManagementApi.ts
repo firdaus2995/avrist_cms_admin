@@ -21,6 +21,7 @@ export const pageManagementApi = createApi({
             $startDate: String
             $endDate: String
             $isArchive: Boolean
+            $dataType: String
           ) {
             pageList(
               pageableRequest: {
@@ -33,6 +34,7 @@ export const pageManagementApi = createApi({
                 startDate: $startDate
                 endDate: $endDate
                 isArchive: $isArchive
+                dataType: $dataType
               }
             ) {
               total
@@ -149,6 +151,7 @@ export const pageManagementApi = createApi({
             $sortBy: String
             $direction: String
             $search: String
+            $dataType: String
           ) {
             pageMyTaskList(
               pageableRequest: {
@@ -157,6 +160,7 @@ export const pageManagementApi = createApi({
                 sortBy: $sortBy
                 direction: $direction
                 search: $search
+                dataType: $dataType
               }
             ) {
               total
@@ -167,6 +171,7 @@ export const pageManagementApi = createApi({
                 createdAt
                 createdBy
                 updatedAt
+                dataType
               }
             }
           }

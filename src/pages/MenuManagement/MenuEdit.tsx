@@ -15,6 +15,7 @@ import { useGetPageManagementListQuery } from '@/services/PageManagement/pageMan
 import { menuType } from './constants';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function MenuEdit () {
   const navigate = useNavigate();
@@ -121,11 +122,12 @@ export default function MenuEdit () {
         );
         navigate(`/group-menu/menu/${groupMenuId}`);
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
+            message: t(`errors.menu.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

@@ -18,6 +18,7 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import CancelIcon from '@/assets/cancel.png';
 
 import { openToast } from '@/components/atoms/Toast/slice';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function GlobalConfigDataNew() {
 
@@ -117,12 +118,12 @@ export default function GlobalConfigDataNew() {
         );
         navigate('/global-config-data');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: `${t('user.global-config-data-new.toast-failed-edit')} ${payload.value}`,
+            message: t(`errors.global-config.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

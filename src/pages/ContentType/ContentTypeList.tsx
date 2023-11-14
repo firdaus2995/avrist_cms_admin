@@ -88,6 +88,7 @@ export default function ContentTypeList() {
     direction,
     search,
     sortBy,
+    dataType: '',
   });
   const { data } = fetchQuery;
 
@@ -251,7 +252,7 @@ export default function ContentTypeList() {
           openToast({
             type: 'error',
             title: t('user.content-type-list.failed-delete-content-type'),
-            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.content-type.delete.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
@@ -271,12 +272,12 @@ export default function ContentTypeList() {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('user.content-type-list.failed-duplicate-page'), // Use translation key for error title
-            message: t('user.content-type-list.something-went-wrong'), // Use translation key for error message
+            message: t(`errors.content-type.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

@@ -210,7 +210,7 @@ export default function GroupMenuList () {
           openToast({
             type: 'error',
             title: t('user.menu-list.menuGroup.toast.failed-delete'),
-            message: t(`errors.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.menu.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

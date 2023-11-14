@@ -23,6 +23,7 @@ import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import FormList from '../../components/molecules/FormList';
 import { dataTypeList } from './contants';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function PageManagementNew() {
   const {
@@ -34,6 +35,7 @@ export default function PageManagementNew() {
   } = useForm();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const baseUrl = import.meta.env.VITE_API_URL;
 
   // PAGE TEMPLATE SELECTION STATE
   const [pageTemplates, setPageTemplates] = useState<any>([]);
@@ -64,6 +66,7 @@ export default function PageManagementNew() {
       sortBy: 'id',
       direction: 'desc',
       search,
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,
@@ -161,11 +164,11 @@ export default function PageManagementNew() {
         );
         navigate('/page-management');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
@@ -175,6 +178,27 @@ export default function PageManagementNew() {
     setShowLeaveModal(false);
     navigate('/page-management');
   };
+
+  function safeParseJSON(jsonString: any) {
+    try {
+      return JSON.parse(jsonString);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function getImageData(value: any) {
+    const parsedValue = safeParseJSON(value);
+    try {
+      if (parsedValue) {
+        return `${baseUrl}/files/get/${parsedValue[0]?.imageUrl}`;
+      } else {
+        return `${baseUrl}/files/get/${value}`;
+      }
+    } catch {
+      return '';
+    }
+  }
 
   return (
     <TitleCard title={t('user.page-management-new.title')} border={true}>
@@ -419,7 +443,7 @@ export default function PageManagementNew() {
                 pageTemplates.map((element: any) => (
                   <div key={element.id} className="px-[5%] py-5 flex flex-col basis-2/6 gap-3">
                     <img
-                      src={element.imageUrl}
+                      src={getImageData(element.imageUrl)}
                       className={`h-[450px] object-cover	cursor-pointer rounded-xl ${
                         selected === element.id
                           ? 'border-[#5A4180] border-4'
@@ -436,7 +460,7 @@ export default function PageManagementNew() {
                 ))}
             </div>
             <div className="w-full flex justify-center">
-              <div className='mr-5 font-semibold'>Total {total} Items</div>
+              <div className="mr-5 font-semibold">Total {total} Items</div>
               <PaginationComponent
                 total={total}
                 page={pageIndex}

@@ -14,6 +14,7 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { Controller, useForm } from 'react-hook-form';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function RolesEdit() {
   const dispatch = useAppDispatch();
@@ -88,12 +89,12 @@ export default function RolesEdit() {
         dispatch(resetForm());
         navigate('/roles');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('roles.edit.failed-msg', { name: payload.name }),
+            message: t(`errors.role.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

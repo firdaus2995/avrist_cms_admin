@@ -13,6 +13,7 @@ import { useAppDispatch } from "@/store";
 import { TitleCard } from "@/components/molecules/Cards/TitleCard";
 import { useCreateEmailBodyMutation } from "@/services/EmailFormBuilder/emailFormBuilderApi";
 import { openToast } from "@/components/atoms/Toast/slice";
+import { errorMessageTypeConverter } from "@/utils/logicHelper";
 
 export default function EmailBodyNew() {
   const {
@@ -56,11 +57,12 @@ export default function EmailBodyNew() {
           },
         });
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: 'Failed',
+            message: t(`errors.email-form-builder.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

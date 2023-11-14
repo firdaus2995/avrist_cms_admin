@@ -20,6 +20,7 @@ import TableDelete from '@/assets/table-delete.svg';
 import WarningIcon from '@/assets/warning.png';
 import { useTranslation } from 'react-i18next';
 import { getCredential } from '@/utils/Credential';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function PageManagementArchive() {
   const { t } = useTranslation();
@@ -139,13 +140,13 @@ export default function PageManagementArchive() {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         setOpenRestoreModal(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.content-manager-archive.toasts.errorRestore.title'),
-            message: t('user.content-manager-archive.toasts.errorRestore.message'),
+            message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

@@ -75,7 +75,7 @@ const LoginForm = () => {
           render={({ field }) => (
             <AuthInput
               key="username"
-              label={t('auth.login')}
+              label={t('auth.userId')}
               placeholder={t('auth.enter-userId')}
               error={errors.username?.message}
               styleClass="mb-5"

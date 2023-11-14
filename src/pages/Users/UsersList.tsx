@@ -17,6 +17,7 @@ import { InputSearch } from '../../components/atoms/Input/InputSearch';
 import { useDeleteUserMutation, useGetUserQuery } from '../../services/User/userApi';
 import { useAppDispatch } from '../../store';
 import { openToast } from '../../components/atoms/Toast/slice';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 export default function UsersList() {
   const StatusBadge = (status: any) => {
@@ -246,13 +247,13 @@ export default function UsersList() {
         await fetchQuery.refetch();
         setPageIndex(0);
       })
-      .catch(() => {
+      .catch((error: any) => {
         setOpenDeleteModal(false);
         dispatch(
           openToast({
             type: 'error',
             title: t('user.users-list.user.list.toast.failed-delete'),
-            message: t('user.users-list.user.list.toast.failed-delete-message'),
+            message: t(`errors.user.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

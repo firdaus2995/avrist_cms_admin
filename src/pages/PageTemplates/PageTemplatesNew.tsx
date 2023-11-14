@@ -23,6 +23,8 @@ import {
 import { useGetConfigQuery } from '@/services/ContentType/contentTypeApi';
 import { openToast } from '@/components/atoms/Toast/slice';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
+import WarningIcon from '../../assets/warning.png';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 const initialAttributes = {
   fieldType: '',
@@ -99,25 +101,25 @@ export default function PageTemplatesNew() {
   // ATTRIBUTES FUNCTION
   const onAddNewAttributes = () => {
     const newErrors = { ...attributesErrors };
-  
+
     if (!newAttributes.fieldType) {
-      newErrors.fieldType = 'Field Type is required';
+      newErrors.fieldType = `${t('page-template.form.field-type-required')}`;
     } else {
       newErrors.fieldType = '';
     }
-  
+
     if (!newAttributes.fieldId) {
-      newErrors.fieldId = 'Field ID is required';
+      newErrors.fieldId = `${t('page-template.form.field-id-required')}`;
     } else {
       newErrors.fieldId = '';
     }
-  
+
     setAttributesErrors(newErrors);
-  
+
     if (newErrors.fieldType || newErrors.fieldId) {
-      return; 
+      return;
     }
-  
+
     if (attributesEditIndex !== null) {
       const updatedAttributes = [...attributesData];
       updatedAttributes[attributesEditIndex] = newAttributes;
@@ -129,11 +131,30 @@ export default function PageTemplatesNew() {
       setNewAttributes(initialAttributes);
     }
     setOpenAddAttributesModal(false);
-  };  
-  
-  const onDeleteAttributes = (indexToDelete: any) => {
-    const updatedItems = attributesData.filter((_item: any, index: any) => index !== indexToDelete);
+  };
+
+  useEffect(() => {
+    const newErrors = { fieldType: '', fieldId: '', description: '' };
+
+    if (!newAttributes.fieldType) {
+      newErrors.fieldType = 'Field Type is required';
+    }
+
+    if (!newAttributes.fieldId) {
+      newErrors.fieldId = 'Field ID is required';
+    }
+
+    setAttributesErrors(newErrors);
+  }, [newAttributes.fieldType, newAttributes.fieldId]);
+
+  const onSubmitDeleteAttributes = () => {
+    const updatedItems = attributesData.filter((_item: any, index: any) => index !== deleteIdAttr);
     setAttributesData(updatedItems);
+
+    setDeleteIdAttr(null);
+    setDeleteModalTitleAttr('');
+    setDeleteModalBodyAttr('');
+    setOpenDeleteModalAttr(false);
   };
 
   // CONFIG FUNCTION
@@ -141,7 +162,7 @@ export default function PageTemplatesNew() {
     if (!newConfig.key) {
       setConfigErrors(prevErrors => ({
         ...prevErrors,
-        key: 'Key is required',
+        key: `${t('page-template.form.key-required')}`,
       }));
       return;
     }
@@ -157,9 +178,51 @@ export default function PageTemplatesNew() {
     }
     setOpenAddConfigModal(false);
   };
-  const onDeleteConfig = (indexToDelete: any) => {
-    const updatedItems = configData.filter((_item: any, index: any) => index !== indexToDelete);
+
+  useEffect(() => {
+    const newErrors = { key: '', description: '' };
+
+    if (!newConfig.key) {
+      newErrors.key = 'Key is required';
+    }
+
+    setConfigErrors(newErrors);
+  }, [newConfig.key]);
+
+  const onSubmitDeleteConfig = () => {
+    const updatedItems = configData.filter((_item: any, index: any) => index !== deleteIdConfig);
     setConfigData(updatedItems);
+
+    setDeleteIdConfig(null);
+    setDeleteModalTitleConfig('');
+    setDeleteModalBodyConfig('');
+    setOpenDeleteModalConfig(false);
+  };
+
+  // DELETE ATTRIBUTES STATE
+  const [deleteIdAttr, setDeleteIdAttr] = useState(null);
+  const [deleteModalTitleAttr, setDeleteModalTitleAttr] = useState('');
+  const [deleteModalBodyAttr, setDeleteModalBodyAttr] = useState('');
+  const [openDeleteModalAttr, setOpenDeleteModalAttr] = useState(false);
+
+  const onClickDeleteAttributes = (id: any) => {
+    setDeleteIdAttr(id);
+    setDeleteModalTitleAttr(`${t('page-template.delete-attrs.title')}`);
+    setDeleteModalBodyAttr(`${t('page-template.delete-attrs.msg')}`);
+    setOpenDeleteModalAttr(true);
+  };
+
+  // DELETE CONFIG STATE
+  const [deleteIdConfig, setDeleteIdConfig] = useState(null);
+  const [deleteModalTitleConfig, setDeleteModalTitleConfig] = useState('');
+  const [deleteModalBodyConfig, setDeleteModalBodyConfig] = useState('');
+  const [openDeleteModalConfig, setOpenDeleteModalConfig] = useState(false);
+
+  const onClickDeleteConfig = (id: any) => {
+    setDeleteIdConfig(id);
+    setDeleteModalTitleConfig(`${t('page-template.delete-config.title')}`);
+    setDeleteModalBodyConfig(`${t('page-template.delete-config.msg')}`);
+    setOpenDeleteModalConfig(true);
   };
 
   // RTK CREATE PAGE TEMPLATE
@@ -208,12 +271,12 @@ export default function PageTemplatesNew() {
         );
         navigate('/page-template');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
-            message: t('page-template.edit.failed-msg', { name: payload.name }),
+            message: t(`errors.page-template.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
@@ -291,7 +354,7 @@ export default function PageTemplatesNew() {
       // ini sepaket ya!
       const findDefaultDataType = listDataType.find(item => item.value === data?.dataType);
       const defaultDataType = findDefaultDataType ?? listDataType[0];
-      
+
       setValue('pageName', defaultPageName);
       setValue('pageDescription', defaultPageDescription);
       setValue('pageFileName', defaultPageFileName);
@@ -423,7 +486,7 @@ export default function PageTemplatesNew() {
                   src={TableDelete}
                   onClick={e => {
                     e.preventDefault();
-                    onDeleteAttributes(info.row.index);
+                    onClickDeleteAttributes(info.row.index);
                   }}
                 />
               </div>
@@ -495,7 +558,7 @@ export default function PageTemplatesNew() {
                 src={TableDelete}
                 onClick={e => {
                   e.preventDefault();
-                  onDeleteConfig(info.row.index);
+                  onClickDeleteConfig(info.row.index);
                 }}
               />
             </div>
@@ -506,380 +569,416 @@ export default function PageTemplatesNew() {
   ];
 
   return (
-    <TitleCard
-      title={`${mode === 'edit' ? 'Edit ' : ''}${t('page-template.add.title')}`}
-      TopSideButtons={
-        mode === 'detail' ? (
-          <Link to={`/page-template/edit/${params?.id}`}>
-            <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
-              <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
-                <img src={EditPurple} className="w-6 h-6 mr-1" />
-                {t('user.page-template-new.edit-content')}
-              </div>
-            </button>
-          </Link>
-        ) : (
-          <div />
-        )
-      }
-      topMargin="mt-2">
-      {/* ON CANCEL */}
+    <>
       <ModalConfirm
-        open={showLeaveModal}
-        cancelAction={() => {
-          setShowLeaveModal(false);
-        }}
-        title={titleLeaveModalShow ?? ''}
-        cancelTitle={t('no')}
-        message={messageLeaveModalShow ?? ''}
-        submitAction={onLeave}
+        open={openDeleteModalAttr}
+        title={deleteModalTitleAttr}
+        message={deleteModalBodyAttr}
+        cancelTitle={t('cancel')}
         submitTitle={t('yes')}
-        icon={CancelIcon}
-        btnSubmitStyle="btn-warning"
+        submitAction={onSubmitDeleteAttributes}
+        cancelAction={() => {
+          setDeleteIdAttr(null);
+          setDeleteModalTitleAttr('');
+          setDeleteModalBodyAttr('');
+          setOpenDeleteModalAttr(false);
+        }}
+        icon={WarningIcon}
+        btnSubmitStyle=""
       />
-      {/*  THIS IS ATTRIBUTES FORM */}
-      <ModalForm
-        height={640}
-        open={openAddAttributesModal}
-        formTitle="Add Attribute"
-        submitTitle={t('btn.save')}
-        submitType="btn-success"
-        cancelTitle={t('btn.cancel')}
+      <ModalConfirm
+        open={openDeleteModalConfig}
+        title={deleteModalTitleConfig}
+        message={deleteModalBodyConfig}
+        cancelTitle={t('cancel')}
+        submitTitle={t('yes')}
+        submitAction={onSubmitDeleteConfig}
         cancelAction={() => {
-          setOpenAddAttributesModal(false);
+          setDeleteIdConfig(null);
+          setDeleteModalTitleConfig('');
+          setDeleteModalBodyConfig('');
+          setOpenDeleteModalConfig(false);
         }}
-        submitAction={onAddNewAttributes}>
-        <div className="flex flex-col gap-5 w-full">
-          <div className="flex flex-row">
-            <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-              {t('user.page-template-new.form.attribute.type.label')}
-              <span className={'text-reddist text-lg'}>{`*`}</span>
-            </Typography>
-            <FormList.DropDown
-              key="category"
-              labelTitle={t('user.page-template-new.category')}
-              defaultValue={newAttributes.fieldType.label}
-              resetValue={openAddAttributesModal}
-              error={!!attributesErrors.fieldType}
-              helperText={attributesErrors.fieldType}
+        icon={WarningIcon}
+        btnSubmitStyle=""
+      />
+      <TitleCard
+        title={`${mode === 'edit' ? 'Edit ' : ''}${t('page-template.add.title')}`}
+        TopSideButtons={
+          mode === 'detail' ? (
+            <Link to={`/page-template/edit/${params?.id}`}>
+              <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
+                <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
+                  <img src={EditPurple} className="w-6 h-6 mr-1" />
+                  {t('user.page-template-new.edit-content')}
+                </div>
+              </button>
+            </Link>
+          ) : (
+            <div />
+          )
+        }
+        topMargin="mt-2">
+        {/* ON CANCEL */}
+        <ModalConfirm
+          open={showLeaveModal}
+          cancelAction={() => {
+            setShowLeaveModal(false);
+          }}
+          title={titleLeaveModalShow ?? ''}
+          cancelTitle={t('no')}
+          message={messageLeaveModalShow ?? ''}
+          submitAction={onLeave}
+          submitTitle={t('yes')}
+          icon={CancelIcon}
+          btnSubmitStyle="btn-warning"
+        />
+        {/*  THIS IS ATTRIBUTES FORM */}
+        <ModalForm
+          height={640}
+          open={openAddAttributesModal}
+          formTitle="Add Attribute"
+          submitTitle={t('btn.save')}
+          submitType="btn-success"
+          cancelTitle={t('btn.cancel')}
+          cancelAction={() => {
+            setOpenAddAttributesModal(false);
+          }}
+          submitAction={onAddNewAttributes}>
+          <div className="flex flex-col gap-5 w-full">
+            <div className="flex flex-row">
+              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                {t('user.page-template-new.form.attribute.type.label')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <FormList.DropDown
+                key="category"
+                labelTitle={t('user.page-template-new.category')}
+                defaultValue={newAttributes.fieldType.label}
+                resetValue={openAddAttributesModal}
+                error={!!attributesErrors.fieldType}
+                helperText={attributesErrors.fieldType}
+                themeColor="primary"
+                items={listAttributes}
+                onChange={(e: any) => {
+                  setNewAttributes({
+                    ...newAttributes,
+                    fieldType: e,
+                  });
+                }}
+              />
+            </div>
+            <FormList.TextField
+              key="fieldId"
+              labelTitle={t('user.page-template-new.form.attribute.fieldId.label')}
+              labelRequired
               themeColor="primary"
-              items={listAttributes}
+              placeholder={t('user.page-template-new.form.attribute.fieldId.placeholder')}
+              value={newAttributes.fieldId}
+              error={!!attributesErrors.fieldId}
+              helperText={attributesErrors.fieldId}
               onChange={(e: any) => {
-                setNewAttributes({
-                  ...newAttributes,
-                  fieldType: e,
-                });
+                setNewAttributes({ ...newAttributes, fieldId: e.target.value });
               }}
+              border={false}
+            />
+            <FormList.TextAreaField
+              key="description"
+              labelTitle={t('user.page-template-new.form.attribute.description.label')}
+              themeColor="primary"
+              placeholder={t('user.page-template-new.form.attribute.description.placeholder')}
+              value={newAttributes.description}
+              onChange={(e: any) => {
+                setNewAttributes({ ...newAttributes, description: e.target.value });
+              }}
+              border={false}
             />
           </div>
-          <FormList.TextField
-            key="fieldId"
-            labelTitle={t('user.page-template-new.form.attribute.fieldId.label')}
-            labelRequired
-            themeColor="primary"
-            placeholder={t('user.page-template-new.form.attribute.fieldId.placeholder')}
-            value={newAttributes.fieldId}
-            error={!!attributesErrors.fieldId}
-            helperText={attributesErrors.fieldId}
-            onChange={(e: any) => {
-              setNewAttributes({ ...newAttributes, fieldId: e.target.value });
-            }}
-            border={false}
-          />
-          <FormList.TextAreaField
-            key="description"
-            labelTitle={t('user.page-template-new.form.attribute.description.label')}
-            themeColor="primary"
-            placeholder={t('user.page-template-new.form.attribute.description.placeholder')}
-            value={newAttributes.description}
-            onChange={(e: any) => {
-              setNewAttributes({ ...newAttributes, description: e.target.value });
-            }}
-            border={false}
-          />
-        </div>
-      </ModalForm>
-      {/*  THIS IS CONFIG FORM */}
-      <ModalForm
-        open={openAddConfigModal}
-        formTitle={t('user.page-template-new.add-config')}
-        submitType="btn-success"
-        submitTitle={t('btn.save')}
-        cancelTitle={t('btn.cancel')}
-        cancelAction={() => {
-          setOpenAddConfigModal(false);
-        }}
-        submitAction={onAddNewConfig}>
-        <div className="flex flex-col gap-5 w-full">
-          <FormList.TextField
-            key="key"
-            labelTitle={t('user.page-template-new.form.config.key.label')}
-            labelRequired
-            placeholder={t('user.page-template-new.form.config.key.placeholder')}
-            value={newConfig.key}
-            error={!!configErrors.key}
-            helperText={configErrors.key}
-            onChange={(e: any) => {
-              setNewConfig({ ...newConfig, key: e.target.value });
-            }}
-            border={false}
-          />
-          <FormList.TextAreaField
-            key="description"
-            labelTitle={t('user.page-template-new.form.config.description.label')}
-            placeholder={t('user.page-template-new.form.config.description.placeholder')}
-            // error={!!errors?.pageName?.message}
-            // helperText={errors?.pageName?.message}
-            value={newConfig.description}
-            onChange={(e: any) => {
-              setNewConfig({ ...newConfig, description: e.target.value });
-            }}
-            border={false}
-          />
-        </div>
-      </ModalForm>
-      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-100 mt-[35px]">
-        <div className="flex flex-col gap-[30px]">
-          <Controller
-            key="pageName"
-            name="pageName"
-            control={control}
-            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.name || '' : ''}
-            rules={{
-              required: {
-                value: true,
-                message: t('user.page-template-new.form.pageName.required-message'),
-              },
-            }}
-            render={({ field }) => {
-              const onChange = useCallback((e: any) => {
-                // handleFormChange(id, e.target.value, fieldType);
-                field.onChange({ target: { value: e.target.value } });
-              }, []);
-              return (
-                <FormList.TextField
-                  {...field}
-                  key="pageName"
-                  labelTitle={t('user.page-template-new.form.pageName.label')}
-                  labelRequired
-                  placeholder={t('user.page-template-new.form.pageName.placeholder')}
-                  error={!!errors?.pageName?.message}
-                  helperText={errors?.pageName?.message}
-                  onChange={onChange}
-                  border={false}
-                  disabled={mode === 'detail'}
-                  inputWidth={400}
-                />
-              );
-            }}
-          />
-          <Controller
-            key="pageDescription"
-            name="pageDescription"
-            control={control}
-            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.shortDesc || '' : ''}
-            rules={{
-              required: {
-                value: true,
-                message: t('user.page-template-new.form.pageDescription.required-message'),
-              },
-            }}
-            render={({ field }) => {
-              const onChange = useCallback((e: any) => {
-                // handleFormChange(id, e.target.value, fieldType);
-                field.onChange({ target: { value: e.target.value } });
-              }, []);
-              return (
-                <FormList.TextField
-                  {...field}
-                  key="pageDescription"
-                  labelTitle={t('user.page-template-new.form.pageDescription.label')}
-                  labelRequired
-                  placeholder={t('user.page-template-new.form.pageDescription.placeholder')}
-                  error={!!errors?.pageDescription?.message}
-                  helperText={errors?.pageDescription?.message}
-                  onChange={onChange}
-                  border={false}
-                  disabled={mode === 'detail'}
-                  inputWidth={400}
-                />
-              );
-            }}
-          />
-          <Controller
-            key="pageFileName"
-            name="pageFileName"
-            control={control}
-            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.filenameCode || '' : ''}
-            rules={{
-              required: {
-                value: true,
-                message: t('user.page-template-new.form.pageFileName.required-message'),
-              },
-              pattern: {
-                value: /^[^\s-]+$/,
-                message: t('user.page-template-new.form.pageFileName.pattern-message'),
-              },
-            }}
-            render={({ field }) => {
-              const onChange = useCallback((e: any) => {
-                field.onChange({ target: { value: e.target.value } });
-              }, []);
-              return (
-                <FormList.TextField
-                  {...field}
-                  key="pageFileName"
-                  labelTitle={t('user.page-template-new.form.pageFileName.label')}
-                  labelRequired
-                  placeholder={t('user.page-template-new.form.pageFileName.placeholder')}
-                  error={!!errors?.pageFileName?.message}
-                  helperText={errors?.pageFileName?.message}
-                  onChange={onChange}
-                  border={false}
-                  disabled={mode === 'detail'}
-                  inputWidth={400}
-                />
-              );
-            }}
-          />
-          <div className="flex flex-row">
-            <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-            {t('user.page-template-list.page-template.table.data-type')}
-              <span className={'text-reddist text-lg'}>{`*`}</span>
-            </Typography>
-            <FormList.DropDown
-              defaultValue={selectedDataType?.label}
-              items={listDataType}
+        </ModalForm>
+        {/*  THIS IS CONFIG FORM */}
+        <ModalForm
+          open={openAddConfigModal}
+          formTitle={t('user.page-template-new.add-config')}
+          submitType="btn-success"
+          submitTitle={t('btn.save')}
+          cancelTitle={t('btn.cancel')}
+          cancelAction={() => {
+            setOpenAddConfigModal(false);
+          }}
+          submitAction={onAddNewConfig}>
+          <div className="flex flex-col gap-5 w-full">
+            <FormList.TextField
+              key="key"
+              labelTitle={t('user.page-template-new.form.config.key.label')}
+              labelRequired
+              placeholder={t('user.page-template-new.form.config.key.placeholder')}
+              value={newConfig.key}
+              error={!!configErrors.key}
+              helperText={configErrors.key}
               onChange={(e: any) => {
-                setSelectedDataType(e);
+                setNewConfig({ ...newConfig, key: e.target.value });
               }}
-              disabled={mode === 'detail' || mode === 'edit'}
-              inputWidth={400}
+              border={false}
+            />
+            <FormList.TextAreaField
+              key="description"
+              labelTitle={t('user.page-template-new.form.config.description.label')}
+              placeholder={t('user.page-template-new.form.config.description.placeholder')}
+              // error={!!errors?.pageName?.message}
+              // helperText={errors?.pageName?.message}
+              value={newConfig.description}
+              onChange={(e: any) => {
+                setNewConfig({ ...newConfig, description: e.target.value });
+              }}
+              border={false}
             />
           </div>
-          <Controller
-            key="imagePreview"
-            name="imagePreview"
-            control={control}
-            defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.imageUrl || '' : ''}
-            rules={{
-              // VALIDATE TANPA ALT TEXT
-              validate: value => {
-                // Parse the input value as JSON
-                const parsedValue = JSON?.parse(value);
-                if (parsedValue && parsedValue.length > 0) {
-                  // Check if parsedValue is an array and every item has imageUrl and altText properties
-                  if (
-                    Array.isArray(parsedValue) &&
-                    parsedValue.every(item => item.imageUrl && item.altText)
-                  ) {
-                    return true; // Validation passed
+        </ModalForm>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col w-100 mt-[35px]">
+          <div className="flex flex-col gap-[30px]">
+            <Controller
+              key="pageName"
+              name="pageName"
+              control={control}
+              defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.name || '' : ''}
+              rules={{
+                required: {
+                  value: true,
+                  message: t('user.page-template-new.form.pageName.required-message'),
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback((e: any) => {
+                  // handleFormChange(id, e.target.value, fieldType);
+                  field.onChange({ target: { value: e.target.value } });
+                }, []);
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key="pageName"
+                    labelTitle={t('user.page-template-new.form.pageName.label')}
+                    labelRequired
+                    placeholder={t('user.page-template-new.form.pageName.placeholder')}
+                    error={!!errors?.pageName?.message}
+                    helperText={errors?.pageName?.message}
+                    onChange={onChange}
+                    border={false}
+                    disabled={mode === 'detail'}
+                    inputWidth={400}
+                  />
+                );
+              }}
+            />
+            <Controller
+              key="pageDescription"
+              name="pageDescription"
+              control={control}
+              defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.shortDesc || '' : ''}
+              rules={{
+                required: {
+                  value: true,
+                  message: t('user.page-template-new.form.pageDescription.required-message'),
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback((e: any) => {
+                  // handleFormChange(id, e.target.value, fieldType);
+                  field.onChange({ target: { value: e.target.value } });
+                }, []);
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key="pageDescription"
+                    labelTitle={t('user.page-template-new.form.pageDescription.label')}
+                    labelRequired
+                    placeholder={t('user.page-template-new.form.pageDescription.placeholder')}
+                    error={!!errors?.pageDescription?.message}
+                    helperText={errors?.pageDescription?.message}
+                    onChange={onChange}
+                    border={false}
+                    disabled={mode === 'detail'}
+                    inputWidth={400}
+                  />
+                );
+              }}
+            />
+            <Controller
+              key="pageFileName"
+              name="pageFileName"
+              control={control}
+              defaultValue={
+                mode === 'edit' ? pageTemplate?.pageTemplateById?.filenameCode || '' : ''
+              }
+              rules={{
+                required: {
+                  value: true,
+                  message: t('user.page-template-new.form.pageFileName.required-message'),
+                },
+                pattern: {
+                  value: /^[^\s-]+$/,
+                  message: t('user.page-template-new.form.pageFileName.pattern-message'),
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback((e: any) => {
+                  field.onChange({ target: { value: e.target.value } });
+                }, []);
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key="pageFileName"
+                    labelTitle={t('user.page-template-new.form.pageFileName.label')}
+                    labelRequired
+                    placeholder={t('user.page-template-new.form.pageFileName.placeholder')}
+                    error={!!errors?.pageFileName?.message}
+                    helperText={errors?.pageFileName?.message}
+                    onChange={onChange}
+                    border={false}
+                    disabled={mode === 'detail'}
+                    inputWidth={400}
+                  />
+                );
+              }}
+            />
+            <div className="flex flex-row">
+              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                {t('user.page-template-list.page-template.table.data-type')}
+                <span className={'text-reddist text-lg'}>{`*`}</span>
+              </Typography>
+              <FormList.DropDown
+                defaultValue={selectedDataType?.label}
+                items={listDataType}
+                onChange={(e: any) => {
+                  setSelectedDataType(e);
+                }}
+                disabled={mode === 'detail' || mode === 'edit'}
+                inputWidth={400}
+              />
+            </div>
+            <Controller
+              key="imagePreview"
+              name="imagePreview"
+              control={control}
+              defaultValue={mode === 'edit' ? pageTemplate?.pageTemplateById?.imageUrl || '' : ''}
+              rules={{
+                // VALIDATE TANPA ALT TEXT
+                validate: value => {
+                  // Parse the input value as JSON
+                  const parsedValue = JSON?.parse(value);
+                  if (parsedValue && parsedValue.length > 0) {
+                    // Check if parsedValue is an array and every item has imageUrl and altText properties
+                    if (
+                      Array.isArray(parsedValue) &&
+                      parsedValue.every(item => item.imageUrl && item.altText)
+                    ) {
+                      return true; // Validation passed
+                    }
+                  } else {
+                    return `${t('user.page-template-new.form.imagePreview.required-message')}`; // Validation failed for empty value
                   }
-                } else {
-                  return `${t('user.page-template-new.form.imagePreview.required-message')}`; // Validation failed for empty value
-                }
-              },
-            }}
-            render={({ field }) => {
-              const onChange = useCallback((e: any) => {
-                field.onChange({ target: { value: e } });
-              }, []);
-              return (
-                <FormList.FileUploaderV2
-                  {...field}
-                  key="imagePreview"
-                  name="imagePreview"
-                  labelTitle={t('user.page-template-new.form.imagePreview.label')}
-                  labelRequired
-                  labelText={
-                    <>
-                      {t('user.page-template-new.form.imagePreview.preview')}{' '}
-                      <span className="text-primary font-semibold">
-                        {t('user.page-template-new.form.imagePreview.browse')}
-                      </span>
-                    </>
-                  }
-                  isDocument={false}
-                  multiple={false}
-                  error={!!errors?.imagePreview?.message}
-                  helperText={errors?.imagePreview?.message}
-                  onChange={(e: any) => {
-                    onChange(e);
-                  }}
-                  border={false}
-                  disabled={mode === 'detail'}
-                  editMode={mode !== 'detail'}
-                  inputWidth={500}
-                  disabledAltText={true}
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback((e: any) => {
+                  field.onChange({ target: { value: e } });
+                }, []);
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    key="imagePreview"
+                    name="imagePreview"
+                    labelTitle={t('user.page-template-new.form.imagePreview.label')}
+                    labelRequired
+                    labelText={
+                      <>
+                        {t('user.page-template-new.form.imagePreview.preview')}{' '}
+                        <span className="text-primary font-semibold">
+                          {t('user.page-template-new.form.imagePreview.browse')}
+                        </span>
+                      </>
+                    }
+                    isDocument={false}
+                    multiple={false}
+                    error={!!errors?.imagePreview?.message}
+                    helperText={errors?.imagePreview?.message}
+                    onChange={(e: any) => {
+                      onChange(e);
+                    }}
+                    border={false}
+                    disabled={mode === 'detail'}
+                    editMode={mode !== 'detail'}
+                    inputWidth={500}
+                    disabledAltText={true}
+                  />
+                );
+              }}
+            />
+
+            <FormList.FieldButton
+              name={t('user.page-template-new.form.attribute.label')}
+              buttonTitle={t('user.page-template-new.form.attribute.add')}
+              visible={mode !== 'detail'}
+              onClick={() => {
+                setOpenAddAttributesModal(true);
+              }}
+            />
+            {attributesData.length ? (
+              <div className="ml-2 lg:ml-56 ">
+                <Table
+                  rows={attributesData}
+                  columns={attributesColumns}
+                  manualPagination={true}
+                  manualSorting={true}
+                  loading={isLoadingPageTemplate}
+                  // error={isError}
                 />
-              );
-            }}
-          />
+              </div>
+            ) : (
+              <div />
+            )}
+            <FormList.FieldButton
+              name={t('user.page-template-new.form.config.label')}
+              buttonTitle={t('user.page-template-new.form.config.add')}
+              visible={mode !== 'detail'}
+              onClick={() => {
+                setOpenAddConfigModal(true);
+              }}
+            />
+            {configData.length ? (
+              <div className="ml-2 lg:ml-56 ">
+                <Table
+                  rows={configData}
+                  columns={configColumns}
+                  manualPagination={true}
+                  manualSorting={true}
+                  loading={isLoadingPageTemplate}
+                  // error={isError}
+                />
+              </div>
+            ) : (
+              <div />
+            )}
 
-          <FormList.FieldButton
-            name={t('user.page-template-new.form.attribute.label')}
-            buttonTitle={t('user.page-template-new.form.attribute.add')}
-            visible={mode !== 'detail'}
-            onClick={() => {
-              setOpenAddAttributesModal(true);
-            }}
-          />
-          {attributesData.length ? (
-            <div className="ml-2 lg:ml-56 ">
-              <Table
-                rows={attributesData}
-                columns={attributesColumns}
-                manualPagination={true}
-                manualSorting={true}
-                loading={isLoadingPageTemplate}
-                // error={isError}
-              />
-            </div>
-          ) : (
-            <div />
-          )}
-          <FormList.FieldButton
-            name={t('user.page-template-new.form.config.label')}
-            buttonTitle={t('user.page-template-new.form.config.add')}
-            visible={mode !== 'detail'}
-            onClick={() => {
-              setOpenAddConfigModal(true);
-            }}
-          />
-          {configData.length ? (
-            <div className="ml-2 lg:ml-56 ">
-              <Table
-                rows={configData}
-                columns={configColumns}
-                manualPagination={true}
-                manualSorting={true}
-                loading={isLoadingPageTemplate}
-                // error={isError}
-              />
-            </div>
-          ) : (
-            <div />
-          )}
-
-          {mode !== 'detail' ? (
-            <div className="flex justify-end items-end gap-2">
-              <button
-                className="btn btn-outline btn-md"
-                onClick={e => {
-                  e.preventDefault();
-                  setLeaveTitleModalShow(t('modal.confirmation'));
-                  setMessageLeaveModalShow(t('modal.leave-confirmation'));
-                  setShowLeaveModal(true);
-                }}>
-                {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.cancel')}
-              </button>
-              <button type="submit" className="btn btn-success btn-md text-white">
-                {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.save')}
-              </button>
-            </div>
-          ) : null}
-        </div>
-      </form>
-    </TitleCard>
+            {mode !== 'detail' ? (
+              <div className="flex justify-end items-end gap-2">
+                <button
+                  className="btn btn-outline btn-md"
+                  onClick={e => {
+                    e.preventDefault();
+                    setLeaveTitleModalShow(t('modal.confirmation'));
+                    setMessageLeaveModalShow(t('modal.leave-confirmation'));
+                    setShowLeaveModal(true);
+                  }}>
+                  {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.cancel')}
+                </button>
+                <button type="submit" className="btn btn-success btn-md text-white">
+                  {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.save')}
+                </button>
+              </div>
+            ) : null}
+          </div>
+        </form>
+      </TitleCard>
+    </>
   );
 }

@@ -16,7 +16,13 @@ import { openToast } from '../../components/atoms/Toast/slice';
 import { useNavigate, useParams } from 'react-router-dom';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import { useDeleteMenuMutation, useGetMenuListQuery, usePublishMenuMutation, useUpdateMenuStructureMutation } from '../../services/Menu/menuApi';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import {
+  useDeleteMenuMutation,
+  useGetMenuListQuery,
+  usePublishMenuMutation,
+  useUpdateMenuStructureMutation,
+} from '../../services/Menu/menuApi';
 
 export default function MenuList () {
   const navigate = useNavigate();
@@ -140,11 +146,11 @@ export default function MenuList () {
       .then((res: any) => {
         setValue('status', res.menuStructureUpdate.status);
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
-            title: t('toast-failed'),
+            message: t(`errors.menu.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
@@ -174,14 +180,14 @@ export default function MenuList () {
         );
         await fetchQuery.refetch();
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('user.menu-list.menuList.failedDelete'),
             message: !noteTakedownModal
               ? t('user.menu-list.menuList.toastTakedownRequired')
-              : t('user.menu-list.menuList.toastFailed'),
+              : t(`errors.menu.${errorMessageTypeConverter(error.message)}`)
           }),
         );
       });
@@ -199,11 +205,12 @@ export default function MenuList () {
         );
         setValue('status', 'PUBLISHED');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('toast-failed'),
+            message: t(`errors.menu.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
