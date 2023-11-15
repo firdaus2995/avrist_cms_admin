@@ -163,6 +163,9 @@ export default function CategoryTab(_props: { id: any }) {
             message: d.pageDelete.message,
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
       })
       .catch((err) => {

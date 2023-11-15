@@ -183,6 +183,9 @@ export default function PageTemplatesList() {
             message: result.pageTemplateDelete.message,
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
         setPageIndex(0);
       })

@@ -232,6 +232,9 @@ export default function GlobalConfigDataList() {
             title: t('user.global-config-data-list.toast.successDeletePage'),
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
       })
       .catch((error: any) => {

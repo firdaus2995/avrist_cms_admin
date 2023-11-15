@@ -138,6 +138,9 @@ export default function PageManagementArchive() {
             message: t('user.content-manager-archive.toasts.successRestore.message', { title: result.pageRestore.message }),
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
       })
       .catch((error: any) => {
