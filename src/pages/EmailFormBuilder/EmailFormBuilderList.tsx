@@ -242,6 +242,24 @@ export default function EmailFormBuilderList() {
     }
   }, [dataEB]);
 
+  useEffect(() => {
+    if (selectedTab === 0) {
+      void fetchQueryEFB.refetch();
+      clearSearchValue();
+    } else if (selectedTab === 1) {
+      void fetchQueryEB.refetch();
+      clearSearchValue();
+    }
+  }, [selectedTab]);
+
+  // FUNCTION FOR CLEARING SEARCH VALUE
+  function clearSearchValue() {
+    setSearchEB('');
+    setSearchEFB('');
+    setTempSearchEFB('');
+    setTempSearchEB('');
+  }
+
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChangeEFB = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
@@ -337,23 +355,6 @@ export default function EmailFormBuilderList() {
     setDeleteModalBodyEB(`Do you want to delete this email body?`);
     setOpenDeleteModalEB(true);
   };
-
-  function clearSearchValue() {
-    setSearchEB('');
-    setSearchEFB('');
-    setTempSearchEFB('');
-    setTempSearchEB('');
-  }
-
-  useEffect(() => {
-    if (selectedTab === 0) {
-      void fetchQueryEFB.refetch();
-      clearSearchValue();
-    } else if (selectedTab === 1) {
-      void fetchQueryEB.refetch();
-      clearSearchValue();
-    }
-  }, [selectedTab]);
 
   // TAB RENDER
 
