@@ -31,6 +31,7 @@ export default function PageManagementNew() {
     handleSubmit,
     setValue,
     getValues,
+    watch,
     formState: { errors },
   } = useForm();
   const navigate = useNavigate();
@@ -65,7 +66,7 @@ export default function PageManagementNew() {
       sortBy: 'id',
       direction: 'desc',
       search,
-      dataType: '',
+      dataType: getValues('dataType'),
     },
     {
       refetchOnMountOrArgChange: true,
@@ -84,7 +85,7 @@ export default function PageManagementNew() {
       sortBy: 'name',
       direction: 'asc',
       search: '',
-      dataType: '',
+      dataType: getValues('dataType'),
     },
     {
       refetchOnMountOrArgChange: true,
@@ -103,6 +104,10 @@ export default function PageManagementNew() {
     },
   );
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
+
+  useEffect(() => {
+    watch('dataType');
+  }, [watch]);
 
   useEffect(() => {
     if (dataContents) {
