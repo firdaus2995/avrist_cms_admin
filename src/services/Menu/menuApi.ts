@@ -63,7 +63,9 @@ export const menuApi: any = createApi({
             $name: String!
           ) {
             menuGroupCreate(
-              name: $name
+              request: {
+                name: $name
+              }
             ) {
               id
               name
@@ -78,7 +80,9 @@ export const menuApi: any = createApi({
         document: gql`
           mutation menuGroupEdit(
             $id: Int!
-            $name: String!
+            request: {
+              $name: String!
+            }
           ) {
             menuGroupEdit(
               id: $id
