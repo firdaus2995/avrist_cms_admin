@@ -29,3 +29,25 @@ export const errorMessageTypeConverter = (errorMessage: any) => {
     return "UnexpectedErrorException";
   };
 };
+
+export const safeParseJSON = (jsonString: any) => {
+  try {
+    return JSON.parse(jsonString);
+  } catch (e) {
+    return [];
+  };
+};
+
+export const getImageData = (value: any) => {
+  const baseUrl = import.meta.env.VITE_API_URL;
+  const parsedValue = safeParseJSON(value);
+  try {
+    if (parsedValue) {
+      return `${baseUrl}/files/get/${parsedValue[0]?.imageUrl}`;
+    } else {
+      return `${baseUrl}/files/get/${value}`;
+    };
+  } catch {
+    return '';
+  };
+};

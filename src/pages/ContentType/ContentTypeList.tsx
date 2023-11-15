@@ -244,6 +244,9 @@ export default function ContentTypeList() {
             message: d.postTypeDelete.message,
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
       })
       .catch((error: any) => {

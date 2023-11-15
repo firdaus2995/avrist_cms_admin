@@ -296,6 +296,9 @@ export default function EmailFormBuilderList() {
             message: d.postTypeDelete.message,
           }),
         );
+        if (listDataEFB?.length === 1) {
+          setPageIndexEFB(pageIndexEFB - 1);
+        }
         await fetchQueryEFB.refetch();
       })
       .catch((error: any) => {
@@ -323,6 +326,9 @@ export default function EmailFormBuilderList() {
             message: d.message,
           }),
         );
+        if (listDataEB?.length === 1) {
+          setPageIndexEB(pageIndexEB - 1);
+        }
         await fetchQueryEB.refetch();
       })
       .catch((error: any) => {
