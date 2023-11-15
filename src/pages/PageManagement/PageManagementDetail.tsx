@@ -38,13 +38,21 @@ import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import CancelIcon from '@/assets/cancel.png';
 import FormList from '../../components/molecules/FormList';
 import { dataTypeList } from './contants';
+import { getImageData } from '@/utils/logicHelper';
 
 export default function PageManagementDetail() {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    setValue,
+  } = useForm();
   const dispatch = useAppDispatch();
   const params = useParams();
-  const [id] = useState<any>(Number(params.id));
   const roles = store.getState().loginSlice.roles;
-  const baseUrl = import.meta.env.VITE_API_URL;
+
+  const [id] = useState<any>(Number(params.id));
 
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [pageDetailList, setPageDetailList] = useState<any>([]);
@@ -116,6 +124,7 @@ export default function PageManagementDetail() {
       sortBy: 'name',
       direction: 'asc',
       search: '',
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,
@@ -172,15 +181,7 @@ export default function PageManagementDetail() {
     navigate(-1);
   };
 
-  // FORM VALIDATION
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-    getValues,
-    setValue,
-  } = useForm();
-
+  // MAIN FUNCTION
   const submitButton = () => {
     return (
       <div className="flex justify-end mt-10">
@@ -307,27 +308,7 @@ export default function PageManagementDetail() {
       });
   };
 
-  function safeParseJSON(jsonString: any) {
-    try {
-      return JSON.parse(jsonString);
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function getImageData(value: any) {
-    const parsedValue = safeParseJSON(value);
-    try {
-      if (parsedValue) {
-        return `${baseUrl}/files/get/${parsedValue[0]?.imageUrl}`;
-      } else {
-        return `${baseUrl}/files/get/${value}`;
-      }
-    } catch {
-      return '';
-    }
-  }
-
+  // COMPONENTS
   const Badge = () => {
     return (
       <div className="ml-5 flex flex-row gap-5">

@@ -23,7 +23,7 @@ import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import FormList from '../../components/molecules/FormList';
 import { dataTypeList } from './contants';
-import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
 
 export default function PageManagementNew() {
   const {
@@ -35,7 +35,6 @@ export default function PageManagementNew() {
   } = useForm();
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
-  const baseUrl = import.meta.env.VITE_API_URL;
 
   // PAGE TEMPLATE SELECTION STATE
   const [pageTemplates, setPageTemplates] = useState<any>([]);
@@ -85,6 +84,7 @@ export default function PageManagementNew() {
       sortBy: 'name',
       direction: 'asc',
       search: '',
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,
@@ -122,6 +122,8 @@ export default function PageManagementNew() {
     }
   }, [dataContents, dataPageTemplates]);
 
+  // UTILITY
+
   const handlerSubmit = (type?: string) => {
     if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
       setShowModalAutoApprove(true);
@@ -130,6 +132,7 @@ export default function PageManagementNew() {
     }
   };
 
+  // MAIN FUNCTION
   const saveData = (type?: string) => {
     const formData = getValues();
 
@@ -178,27 +181,6 @@ export default function PageManagementNew() {
     setShowLeaveModal(false);
     navigate('/page-management');
   };
-
-  function safeParseJSON(jsonString: any) {
-    try {
-      return JSON.parse(jsonString);
-    } catch (e) {
-      return [];
-    }
-  }
-
-  function getImageData(value: any) {
-    const parsedValue = safeParseJSON(value);
-    try {
-      if (parsedValue) {
-        return `${baseUrl}/files/get/${parsedValue[0]?.imageUrl}`;
-      } else {
-        return `${baseUrl}/files/get/${value}`;
-      }
-    } catch {
-      return '';
-    }
-  }
 
   return (
     <TitleCard title={t('user.page-management-new.title')} border={true}>
