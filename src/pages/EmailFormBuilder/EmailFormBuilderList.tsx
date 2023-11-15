@@ -156,7 +156,9 @@ export default function EmailFormBuilderList() {
   const [listDataEFB, setListDataEFB] = useState([]);
   const [listDataEB, setListDataEB] = useState([]);
   const [searchEFB, setSearchEFB] = useState('');
+  const [tempSearchEFB, setTempSearchEFB] = useState('');
   const [searchEB, setSearchEB] = useState('');
+  const [tempSearchEB, setTempSearchEB] = useState('');
 
   // TAB STATE
   const [selectedTab, setSelectedTab] = useState(location?.state?.from === 'EMAIL_BODY' ? 1 : 0);
@@ -240,6 +242,24 @@ export default function EmailFormBuilderList() {
     }
   }, [dataEB]);
 
+  useEffect(() => {
+    if (selectedTab === 0) {
+      void fetchQueryEFB.refetch();
+      clearSearchValue();
+    } else if (selectedTab === 1) {
+      void fetchQueryEB.refetch();
+      clearSearchValue();
+    }
+  }, [selectedTab]);
+
+  // FUNCTION FOR CLEARING SEARCH VALUE
+  function clearSearchValue() {
+    setSearchEB('');
+    setSearchEFB('');
+    setTempSearchEFB('');
+    setTempSearchEB('');
+  }
+
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChangeEFB = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
@@ -276,6 +296,9 @@ export default function EmailFormBuilderList() {
             message: d.postTypeDelete.message,
           }),
         );
+        if (listDataEFB?.length === 1) {
+          setPageIndexEFB(pageIndexEFB - 1);
+        }
         await fetchQueryEFB.refetch();
       })
       .catch((error: any) => {
@@ -303,6 +326,9 @@ export default function EmailFormBuilderList() {
             message: d.message,
           }),
         );
+        if (listDataEB?.length === 1) {
+          setPageIndexEB(pageIndexEB - 1);
+        }
         await fetchQueryEB.refetch();
       })
       .catch((error: any) => {
@@ -443,15 +469,23 @@ export default function EmailFormBuilderList() {
           SearchBar={
             selectedTab === 0 ? (
               <InputSearch
+                value={tempSearchEFB}
                 onBlur={(e: any) => {
                   setSearchEFB(e.target.value);
+                }}
+                onChange={(e) => {
+                  setTempSearchEFB(e.target.value);
                 }}
                 placeholder={t('user.email-form-builder-list.email-form-builder.list.search') ?? ''}
               />
             ) : (
               <InputSearch
+                value={tempSearchEB}
                 onBlur={(e: any) => {
                   setSearchEB(e.target.value);
+                }}
+                onChange={(e) => {
+                  setTempSearchEB(e.target.value);
                 }}
                 placeholder={t('user.email-form-builder-list.email-body.list.search') ?? ''}
               />

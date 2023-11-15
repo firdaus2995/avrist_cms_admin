@@ -90,6 +90,9 @@ export default function RolesList() {
             message: d.roleDelete.message,
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
       })
       .catch((error: any) => {

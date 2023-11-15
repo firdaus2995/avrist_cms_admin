@@ -204,6 +204,9 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
             message: 'Success! Your data has been successfully deleted!',
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
       })
       .catch(() => {

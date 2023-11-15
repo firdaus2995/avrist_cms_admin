@@ -244,6 +244,9 @@ export default function UsersList() {
             message: result.userDelete.message,
           }),
         );
+        if (listData?.length === 1) {
+          setPageIndex(pageIndex - 1);
+        }
         await fetchQuery.refetch();
         setPageIndex(0);
       })
