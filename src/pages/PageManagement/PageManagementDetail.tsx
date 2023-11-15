@@ -108,7 +108,7 @@ export default function PageManagementDetail() {
       sortBy: 'id',
       direction: 'desc',
       search,
-      dataType: '',
+      dataType: pageDetailList?.dataType ?? '',
     },
     {
       refetchOnMountOrArgChange: true,
@@ -124,7 +124,7 @@ export default function PageManagementDetail() {
       sortBy: 'name',
       direction: 'asc',
       search: '',
-      dataType: '',
+      dataType: pageDetailList?.dataType ?? '',
     },
     {
       refetchOnMountOrArgChange: true,
