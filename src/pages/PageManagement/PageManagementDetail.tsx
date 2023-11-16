@@ -47,6 +47,7 @@ export default function PageManagementDetail() {
     formState: { errors },
     getValues,
     setValue,
+    watch,
   } = useForm();
   const dispatch = useAppDispatch();
   const params = useParams();
@@ -108,7 +109,7 @@ export default function PageManagementDetail() {
       sortBy: 'id',
       direction: 'desc',
       search,
-      dataType: pageDetailList?.dataType ?? '',
+      dataType: getValues('dataType') ?? pageDetailList?.dataType,
     },
     {
       refetchOnMountOrArgChange: true,
@@ -124,7 +125,7 @@ export default function PageManagementDetail() {
       sortBy: 'name',
       direction: 'asc',
       search: '',
-      dataType: pageDetailList?.dataType ?? '',
+      dataType: getValues('dataType') ?? pageDetailList?.dataType,
     },
     {
       refetchOnMountOrArgChange: true,
@@ -141,8 +142,11 @@ export default function PageManagementDetail() {
       refetchOnMountOrArgChange: true,
     },
   );
-
   const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
+
+  useEffect(() => {
+    watch('dataType');
+  }, [watch]);
 
   useEffect(() => {
     if (pageDataDetail) {
