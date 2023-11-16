@@ -358,7 +358,7 @@ export default function PreviewModal({
             </div>
           ) : (
             <>
-              <div className='p-[16px] mr-2 bg-toast-error'>
+              <div className='p-[16px] mr-2 bg-toast-error rounded-lg'>
                 <div className='flex flex-col gap-2'>
                   <Typography type="body" size="m" weight="bold" className="text-reddist">
                     {t('user.email-form-builder-list.email-form-builder.list.preview-disclaimer-title')}
