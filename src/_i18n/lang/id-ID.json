@@ -666,7 +666,9 @@
           "success-delete-email-form": "Success Delete Email Form",
           "failed-delete-email-form": "Failed Delete Email Form",
           "success-delete-email-body": "Success Delete Email Body",
-          "failed-delete-email-body": "Failed Delete Email Body"
+          "failed-delete-email-body": "Failed Delete Email Body",
+          "preview-disclaimer-title": "Pernyataan",
+          "preview-disclaimer-body": "Ini hanya contoh bagaimana form akan ditampilkan di halaman depan! Pengguna tidak dapat melakukan tindakan apa pun pada pratinjau ini."
         }
       },
       "email-body": {

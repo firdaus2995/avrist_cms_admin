@@ -1,26 +1,38 @@
 import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
+import { t } from 'i18next';
 
 import Typography from '@/components/atoms/Typography';
 import UploadDocumentIcon from '@/assets/efb/preview-document.svg';
 import DropDown from '@/components/molecules/DropDown';
+import ImageRadioField from './ImageRadioField';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { useGetEmailFormBuilderDetailQuery } from '@/services/EmailFormBuilder/emailFormBuilderApi';
 import { LoadingCircle } from '@/components/atoms/Loading/loadingCircle';
 import { copyArray } from '@/utils/logicHelper';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import ImageRadioField from './ImageRadioField';
 
-export default function PreviewModal(props: any) {
-  const { open, toggle, id } = props;
+interface IPreviewModal {
+  open: boolean,
+  id: number | null,
+  toggle: () => void,
+}
+
+export default function PreviewModal({
+  open, 
+  toggle, 
+  id,
+}: IPreviewModal) {
+  const nameId: any = uuidv4();
+
+  const [listData, setListData] = useState([]);
+
   const fetchGetEmailFormBuilder = useGetEmailFormBuilderDetailQuery({
     id,
     pageIndex: 0,
     limit: 100,
   });
   const { data, isLoading } = fetchGetEmailFormBuilder;
-  const [listData, setListData] = useState([]);
-  const nameId: any = uuidv4();
 
   useEffect(() => {
     if (data) {
@@ -262,7 +274,7 @@ export default function PreviewModal(props: any) {
           return (
             <div
               key={index}
-              className="w-full h-[120px] flex flex-row items-center rounded-lg bg-white p-2 overflow-auto">
+              className="w-full h-[120px] flex flex-row items-center rounded-lg bg-white p-2 overflow-auto scrollbar scrollbar-h-3 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl scrollbar-thumb-light-purple">
               {items.map((element: any, keyIndex: number) => {
                 return (
                   <div key={keyIndex} className={`min-w-[20%] flex flex-col items-center`}>
@@ -317,11 +329,13 @@ export default function PreviewModal(props: any) {
   };
 
   return (
-    <div className={`modal ${open ? 'modal-open' : ''}`}>
-      <div className="modal-box overflow-hidden">
+    <div className={`modal ${open ? 'modal-open' : ''} `}>
+      <div className="max-w-[450px] modal-box overflow-hidden">
         <div className="h-7">
           <button
-            onClick={() => toggle()}
+            onClick={() => {
+              toggle();
+            }}
             className="btn btn-sm btn-circle btn-ghost absolute right-3 top-3">
             <svg
               aria-hidden="true"
@@ -337,16 +351,29 @@ export default function PreviewModal(props: any) {
           </button>
         </div>
 
-        <div className="sticky max-h-[calc(100vh-10rem)] overflow-y-auto">
-          {isLoading && (
+        <div className="sticky max-h-[calc(100vh-10rem)] overflow-y-auto scrollbar scrollbar-w-3 scrollbar-track-rounded-xl scrollbar-thumb-rounded-xl scrollbar-thumb-light-purple">
+          {isLoading ? (
             <div className="flex justify-center items-center">
               <LoadingCircle />
             </div>
+          ) : (
+            <>
+              <div className='p-[16px] mr-2 bg-toast-error'>
+                <div className='flex flex-col gap-2'>
+                  <Typography type="body" size="m" weight="bold" className="text-reddist">
+                    {t('user.email-form-builder-list.email-form-builder.list.preview-disclaimer-title')}
+                  </Typography>
+                  <Typography type="body" size="s" weight="regular" className="text-reddist">
+                    {t('user.email-form-builder-list.email-form-builder.list.preview-disclaimer-body')}
+                  </Typography>
+                </div>
+              </div>
+              <div className="mb-10 p-1 mr-2">{renderFormList()}</div>
+              <div className="flex justify-center items-center">
+                <div className="btn btn-primary flex flex-row gap-2 rounded-xl w-80">Submit</div>
+              </div>            
+            </>
           )}
-          <div className="mb-10 p-1 mr-2">{renderFormList()}</div>
-          <div className="flex justify-center items-center">
-            <div className="btn btn-primary flex flex-row gap-2 rounded-xl w-80">Submit</div>
-          </div>
         </div>
       </div>
     </div>
