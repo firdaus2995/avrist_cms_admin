@@ -681,7 +681,9 @@
           "success-delete-email-form": "Success Delete Email Form",
           "failed-delete-email-form": "Failed Delete Email Form",
           "success-delete-email-body": "Success Delete Email Body",
-          "failed-delete-email-body": "Failed Delete Email Body"
+          "failed-delete-email-body": "Failed Delete Email Body",
+          "preview-disclaimer-title": "Disclaimer",
+          "preview-disclaimer-body": "This is only the example of how the form will be shown on the front page! User can't do any action on this preview."
         }
       },
       "email-body": {
