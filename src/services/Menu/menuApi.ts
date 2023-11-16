@@ -26,14 +26,14 @@ export const menuApi: any = createApi({
     getGroupMenu: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query groupMenuList(
+          query menuGroupList(
             $pageIndex: Int!
             $limit: Int!
             $sortBy: String
             $direction: String
             $search: String
           ) {
-            groupMenuList(
+            menuGroupList(
               pageableRequest: {
                 pageIndex: $pageIndex
                 limit: $limit
@@ -43,7 +43,7 @@ export const menuApi: any = createApi({
               }
             ) {
               total
-              groupMenus {
+              menuGroups {
                 id
                 name
                 status
