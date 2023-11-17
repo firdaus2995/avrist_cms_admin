@@ -130,8 +130,8 @@ export const menuApi: any = createApi({
     getMenuList: builder.query({
       query: payload => ({
         document: gql`
-          query menuList ($groupMenuId: Int!) {
-            menuList (groupMenuId: $groupMenuId) {
+          query menuList ($menuGroupId: Int!) {
+            menuList (menuGroupId: $menuGroupId) {
               groupMenuName
               lastPublishedBy
               lastPublishedAt
@@ -173,7 +173,7 @@ export const menuApi: any = createApi({
       query: payload => ({
         document: gql`
           mutation menuCreate(
-            $groupMenuId: Int!
+            $menuGroupId: Int!
             $title: String!
             $menuType: String!
             $externalUrl: String!
@@ -184,7 +184,7 @@ export const menuApi: any = createApi({
           ) {
             menuCreate(
               request: {
-                groupMenuId: $groupMenuId
+                menuGroupId: $menuGroupId
                 title: $title
                 menuType: $menuType
                 externalUrl: $externalUrl
@@ -211,7 +211,7 @@ export const menuApi: any = createApi({
       query: payload => ({
         document: gql`
           mutation menuUpdate(
-            $groupMenuId: Int!
+            $menuGroupId: Int!
             $menuId: Int!
             $title: String!
             $menuType: String!
@@ -224,7 +224,7 @@ export const menuApi: any = createApi({
             menuUpdate(
               id: $menuId
               request: {
-                groupMenuId: $groupMenuId
+                menuGroupId: $menuGroupId
                 title: $title
                 menuType: $menuType
                 externalUrl: $externalUrl
@@ -251,8 +251,8 @@ export const menuApi: any = createApi({
     deleteMenu: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuDelete($groupMenuId: Int!, $menuId: Int!, $takedownNote: String!) {
-            menuDelete(groupMenuId: $groupMenuId, id: $menuId, takedownNote: $takedownNote) {
+          mutation menuDelete($menuGroupId: Int!, $menuId: Int!, $takedownNote: String!) {
+            menuDelete(menuGroupId: $menuGroupId, id: $menuId, takedownNote: $takedownNote) {
               message
             }
           }
@@ -263,8 +263,8 @@ export const menuApi: any = createApi({
     publishMenu: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuPublish ($groupMenuId: Int!) {
-            menuPublish (groupMenuId: $groupMenuId) {
+          mutation menuPublish ($menuGroupId: Int!) {
+            menuPublish (menuGroupId: $menuGroupId) {
               message
             }
           }
@@ -276,7 +276,7 @@ export const menuApi: any = createApi({
       query: payload => ({
         document: gql`
           query menuLogList(
-            $groupMenuId: Int!
+            $menuGroupId: Int!
             $pageIndex: Int!
             $limit: Int!
             $sortBy: String
@@ -284,7 +284,7 @@ export const menuApi: any = createApi({
             $search: String
           ) {
             menuLogList(
-              groupMenuId: $groupMenuId
+              menuGroupId: $menuGroupId
               pageableRequest: { 
                 pageIndex: $pageIndex, 
                 limit: $limit, 
@@ -293,7 +293,7 @@ export const menuApi: any = createApi({
                 search: $search 
               }
             ) {
-              groupMenuId
+              menuGroupId
               total
               menuLogs {
                 id
@@ -312,8 +312,8 @@ export const menuApi: any = createApi({
     updateMenuStructure: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation menuStructureUpdate($groupMenuId: Int!, $menu: Menu!, $menuList: [Menu]!) {
-            menuStructureUpdate(request: { groupMenuId: $groupMenuId, menu: $menu, menuList: $menuList }) {
+          mutation menuStructureUpdate($menuGroupId: Int!, $menu: Menu!, $menuList: [Menu]!) {
+            menuStructureUpdate(request: { menuGroupId: $menuGroupId, menu: $menu, menuList: $menuList }) {
               status
             }
           }

@@ -32,7 +32,7 @@ export default function MenuNew () {
   // BACKEND STATE
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
-  const [groupMenuId] = useState<any>(Number(params.id));
+  const [menuGroupId] = useState<any>(Number(params.id));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
 
   // RTK GET PAGE
@@ -78,7 +78,7 @@ export default function MenuNew () {
 
   const onSubmit = (data: any) => {
     const payload = {
-      groupMenuId,
+      menuGroupId,
       title: data?.title,
       menuType: selectedType,
       pageId: selectedType === 'PAGE' ? (data?.pageId ?? null) : null,
@@ -97,7 +97,7 @@ export default function MenuNew () {
             title: t('toast-success'),
           }),
         );
-        navigate(`/group-menu/menu/${groupMenuId}`);
+        navigate(`/group-menu/menu/${menuGroupId}`);
       })
       .catch((error: any) => {
         dispatch(
@@ -321,7 +321,7 @@ export default function MenuNew () {
               className="btn btn-outline text-xs btn-sm w-28 h-10"
               onClick={e => {
                 e.preventDefault();
-                navigate(`/group-menu/menu/${groupMenuId}`, { replace: true });
+                navigate(`/group-menu/menu/${menuGroupId}`, { replace: true });
               }}>
               Cancel
             </button>
