@@ -200,7 +200,7 @@
       "change-password": "Change Password",
       "cancel": "Cancel",
       "save": "Save",
-      "success-msg": "Success edit Profile {{name}}",
+      "success-msg": "Success! Your profile has been successfully updated!",
       "failed-msg": "Failed edit Profile {{name}}"
     },
     "change-password": {

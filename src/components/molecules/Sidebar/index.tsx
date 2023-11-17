@@ -270,7 +270,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           openToast({
             type: 'success',
             title: t('toast-success'),
-            message: t('user.edit-profile.success-msg', { name: payload.fullName }),
+            message: t('user.edit-profile.success-msg'),
           }),
         );
         handlerCancel();
