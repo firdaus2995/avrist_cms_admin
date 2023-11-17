@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { t } from 'i18next';
 import { To, useLocation, useNavigate } from 'react-router-dom';
+import * as yup from 'yup';
+
 import Menu from '@/assets/menu.png';
 import LogoutIcon from '@/assets/sidebar/Logout-icon.png';
 import EditIcon from '@/assets/sidebar/Edit-user.png';
@@ -7,24 +10,19 @@ import ProfilePhoto from '@/assets/Profile-photo.png';
 import WarningOrange from '@/assets/warning-orange.svg';
 import CloseIcon from '@/assets/close.png';
 import FileUploaderAvatar from '../FileUploaderAvatar';
+import Modal from '@/components/atoms/Modal';
+import ModalConfirm from '../ModalConfirm';
 import { clearAuth } from '@/services/Login/slice';
 import { sidebarList } from './list';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { InputPassword } from '@/components/atoms/Input/InputPassword';
-import {
-  useChangePasswordUserProfileMutation,
-  useEditUserProfileMutation,
-  useGetUserProfileQuery,
-} from '../../../services/User/userApi';
+import { useChangePasswordUserProfileMutation, useEditUserProfileMutation, useGetUserProfileQuery } from '../../../services/User/userApi';
 import { store, useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { t } from 'i18next';
 import { getCredential, removeCredential } from '@/utils/Credential';
-import Modal from '@/components/atoms/Modal';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
-import ModalConfirm from '../ModalConfirm';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 interface ISidebar {
   open: boolean;
@@ -309,12 +307,12 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           );
           handlerCancel();
         })
-        .catch(() => {
+        .catch((error: any) => {
           dispatch(
             openToast({
               type: 'error',
               title: t('toast-failed'),
-              message: t('user.change-password.failed-msg', { name: getValues().fullName }),
+              message: t(`errors.edit-profile.${errorMessageTypeConverter(error.message, true)}`),
             }),
           );
         });

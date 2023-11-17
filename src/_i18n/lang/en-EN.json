@@ -1,5 +1,11 @@
 {
   "errors": {
+    "edit-profile": {
+      "ConflictException": {
+        "New Password must be different from the Old Password": "New Password must be different from the Old Password",
+        "Old Password is incorrect": "Recent password doesn’t match. Please try again!"
+      }
+    },
     "user": {
       "DataHasBeenExistException":"Email already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
