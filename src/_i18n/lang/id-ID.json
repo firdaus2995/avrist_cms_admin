@@ -185,7 +185,7 @@
       "change-password": "Change Password",
       "cancel": "Cancel",
       "save": "Save",
-      "success-msg": "Profile {{name}} berhasil diperbarui",
+      "success-msg": "Sukses! Profil Anda telah berhasil diperbarui!",
       "failed-msg": "Profile {{name}} gagal diperbarui"
     },
     "change-password": {
