@@ -32,7 +32,7 @@ export default function MenuEdit () {
   // BACKEND STATE
   const [listApprovedPage, setListApprovedPage] = useState<any>([]);
   // FORM STATE
-  const [groupMenuId] = useState<any>(Number(params.id));
+  const [menuGroupId] = useState<any>(Number(params.id));
   const [menuId] = useState<any>(Number(params.menuid));
   const [selectedType, setSelectedType] = useState<any>(menuType[0]);
   // TAKEDOWN MODAL
@@ -100,7 +100,7 @@ export default function MenuEdit () {
 
   const onSubmit = (data: any) => {
     const payload = {
-      groupMenuId,
+      menuGroupId,
       menuId,
       title: data?.title,
       menuType: selectedType,
@@ -120,7 +120,7 @@ export default function MenuEdit () {
             title: t('toast-success'),
           }),
         );
-        navigate(`/group-menu/menu/${groupMenuId}`);
+        navigate(`/group-menu/menu/${menuGroupId}`);
       })
       .catch((error: any) => {
         dispatch(
@@ -140,7 +140,7 @@ export default function MenuEdit () {
         onCancel={() => {
           setShowTakedownMenuModal(false);
         }}
-        idGroup={groupMenuId}
+        idGroup={menuGroupId}
         idDelete={menuId}
       />
       <div className="flex flex-col mt-5 gap-5">
