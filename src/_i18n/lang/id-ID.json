@@ -1,5 +1,11 @@
 {
   "errors": {
+    "edit-profile": {
+      "ConflictException": {
+        "New Password must be different from the Old Password": "Password Baru harus berbeda dengan Password Lama",
+        "Old Password is incorrect": "Kata sandi terbaru tidak cocok. Silakan coba lagi!"
+      }
+    },
     "user": {
       "DataHasBeenExistException":"Email sudah ada",
       "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
