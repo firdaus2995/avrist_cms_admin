@@ -560,6 +560,7 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
                   direction="row"
                   themeColor="lavender"
                   roundStyle="xl"
+                  maxLength={30}
                   isError={!!errors?.fullName}
                   helperText={errors?.fullName?.message}
                   {...field}
