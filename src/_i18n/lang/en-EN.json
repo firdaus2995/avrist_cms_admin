@@ -1,5 +1,11 @@
 {
   "errors": {
+    "auth": {
+      "UnauthorizedException": {
+        "Wrong User ID or Password": "Please enter the correct username or password!",
+        "userId is not Found": "Please enter the correct username or password!"
+      }
+    },
     "edit-profile": {
       "ConflictException": {
         "New Password must be different from the Old Password": "New Password must be different from the Old Password",
@@ -1373,7 +1379,7 @@
     "reset-password": "Reset Password",
     "reset-success": "Reset password email sent successfully",
     "failed-reset": "Failed to send reset email",
-    "signin-failed": "Sign-in Failed"
+    "signin-failed": "Login Failed"
   },
   "no": "No",
   "yes": "Yes",

@@ -11,6 +11,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { t } from 'i18next';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 
 const schema = yup.object().shape({
   username: yup.string().required(t('form.login.userid-required') ?? 'User ID is required'),
@@ -50,13 +51,12 @@ const LoginForm = () => {
 
         window.location.assign('/');
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
             title: t('auth.signin-failed'),
-            message: t('auth.signin-failed'),
-          }),
+            message: t(`errors.auth.${errorMessageTypeConverter(error?.message, true)}`)}),
         );
       });
   };
