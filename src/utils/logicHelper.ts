@@ -19,7 +19,13 @@ export const formatFilename = (filename: string) => {
 };
 
 export const errorMessageTypeConverter = (errorMessage: any, messageConverter?: boolean) => {
-  const knownError: string[] = ['DataHasBeenExistException', 'DataIsUsedException', 'UnableToChangeOwnUserStatusException', 'ConflictException'];
+  const knownError: string[] = [
+    'ConflictException',
+    'DataHasBeenExistException', 
+    'DataIsUsedException', 
+    'UnableToChangeOwnUserStatusException', 
+    'UnauthorizedException',
+  ];
   const splittedErrorMessage: string[] = errorMessage.split(":");
 
   const type: string = splittedErrorMessage[0];

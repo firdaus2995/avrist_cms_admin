@@ -1,5 +1,11 @@
 {
   "errors": {
+    "auth": {
+      "UnauthorizedException": {
+        "Wrong User ID or Password": "Silakan masukkan nama pengguna atau kata sandi yang benar!",
+        "userId is not Found": "Silakan masukkan nama pengguna atau kata sandi yang benar!"
+      }
+    },
     "edit-profile": {
       "ConflictException": {
         "New Password must be different from the Old Password": "Password Baru harus berbeda dengan Password Lama",
