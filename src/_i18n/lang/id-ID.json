@@ -857,6 +857,49 @@
         "description": "Short Description",
         "descriptionPlaceholder": "Enter Description",
         "maxDescription": "Max. {{maxChar}} Characters"
+      },
+      "menuGroup": {
+        "table": {
+          "columns": {
+            "name": "Group Name",
+            "lastPublishedAt": "Tanggal Terakhir Diterbitkan",
+            "lastPublishedBy": "Terakhir Diterbitkan Oleh",
+            "action": "Aksi"
+          }
+        },
+        "modal": {
+          "button-no": "Tidak",
+          "button-cancel": "Batal",
+          "button-submit": "Ya",
+          "delete-menu-title": "Apa anda yakin?",
+          "delete-menu-body": "Apakah Anda ingin menghapus {{name}}?",
+          "leave-confirmation-title": "Apa anda yakin?",
+          "leave-confirmation-body": "Apakah Anda ingin membatalkan semua proses?"
+        },
+        "buttons": {
+          "create-menu": "Membuat baru"
+        },
+        "inputs": {
+          "search-placeholder": "Cari",
+          "label-groupname": "Group Name",
+          "label-groupname-placeholder": "Masukkan Group Name"
+        },
+        "texts": {
+          "list": {
+            "title": "Menu Management"
+          },
+          "create": {
+            "title": "Tambah Group Name"
+          },
+          "edit": {
+            "title": "Ubah Group Name"
+          }
+        },
+        "toast": {
+          "success-create": "Sukses Tambahkan Menu",
+          "success-edit": "Sukses Ubah Menu",
+          "success-delete": "Sukses Hapus Menu"
+        }
       }
     },
 
