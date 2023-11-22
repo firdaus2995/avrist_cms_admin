@@ -170,8 +170,8 @@ export default function GroupMenuList () {
 
   useEffect(() => {
     if (data) {
-      setListData(data?.groupMenuList?.menuGroups);
-      setTotal(data?.groupMenuList?.total);
+      setListData(data?.menuGroupList?.menuGroups);
+      setTotal(data?.menuGroupList?.total);
     };
   }, [data]);
 
