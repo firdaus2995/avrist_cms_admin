@@ -49,7 +49,7 @@ export default function GroupMenuEdit () {
       id,
       name: data?.name,
     };
-    
+
     editGroupMenu(payload)
       .unwrap()
       .then(() => {

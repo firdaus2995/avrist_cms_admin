@@ -242,14 +242,19 @@ export default function GroupMenuList () {
           icon={WarningIcon}
           btnSubmitStyle=""
         />
-        <ModalLog
-          id={idMenuLogModal}
-          open={showMenuLogModal}
-          toggle={() => {
-            setShowMenuLogModal(!showMenuLogModal);
-          }}
-          title={'Activity Log - Menu Management'}
-        />
+        {
+          idMenuLogModal && (
+            <ModalLog
+              id={idMenuLogModal}
+              open={showMenuLogModal}
+              toggle={() => {
+                setIdMenuLogModal(0);
+                setShowMenuLogModal(!showMenuLogModal);
+              }}
+              title={'Activity Log - Menu Management'}
+            />
+          )
+        }
         <TitleCard
           title={t('user.menu-list.menuGroup.texts.list.title')}
           topMargin="mt-2"
