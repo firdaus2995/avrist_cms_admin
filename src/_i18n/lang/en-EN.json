@@ -911,11 +911,8 @@
         },
         "toast": {
           "success-create": "Success Create Menu",
-          "failed-create": "Failed Create Menu",
-          "failed-create-message": "Something went wrong!",
-          "success-delete": "Success Delete Menu",
-          "failed-delete": "Failed Delete Menu",
-          "failed-delete-message": "Something went wrong!"
+          "success-edit": "Success Edit Menu",
+          "success-delete": "Success Delete Menu"
         }
       }
     },
