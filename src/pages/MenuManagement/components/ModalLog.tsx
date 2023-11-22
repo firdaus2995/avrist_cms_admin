@@ -15,7 +15,7 @@ export default function ModalLog(props: any) {
 
   const { data, isFetching, isError } = useGetMenuLogListQuery(
     {
-      groupMenuId: id,
+      menuGroupId: id,
       pageIndex: 0,
       limit,
       sortBy: 'createdAt',
