@@ -132,7 +132,7 @@ export const menuApi: any = createApi({
         document: gql`
           query menuList ($menuGroupId: Int!) {
             menuList (menuGroupId: $menuGroupId) {
-              groupMenuName
+              menuGroupName
               lastPublishedBy
               lastPublishedAt
               status
