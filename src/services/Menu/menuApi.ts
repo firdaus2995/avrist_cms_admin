@@ -111,8 +111,14 @@ export const menuApi: any = createApi({
     getMenuById: builder.query<any, { id: number }>({
       query: payload => ({
         document: gql`
-          query menuById($id: Int!) {
-            menuById(id: $id) {
+          query menuById(
+            $menuGroupId: Int!
+            $id: Int!
+          ) {
+            menuById(
+              menuGroupId: $menuGroupId
+              id: $id
+            ) {
               id
               title
               menuType
