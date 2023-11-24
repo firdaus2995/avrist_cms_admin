@@ -72,7 +72,7 @@ export default function GroupMenuList () {
         <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.lastPublishedAt')}</span>
       ),
       accessorKey: 'lastPublishedAt',
-      enableSorting: true,
+      enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
@@ -86,7 +86,7 @@ export default function GroupMenuList () {
         <span className="text-[14px]">{t('user.menu-list.menuGroup.table.columns.lastPublishedBy')}</span>
       ),
       accessorKey: 'lastPublishedBy',
-      enableSorting: true,
+      enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
