@@ -64,6 +64,10 @@ export default function MenuList () {
 
   // RTK PUBLISH MENU
   const [publishMenu] = usePublishMenuMutation();
+
+  const goBack = () => {
+    navigate('/group-menu');
+  };
   
   useEffect(() => {
     watch(['status', 'lastPublishedBy', 'lastPublishedAt']);
@@ -272,7 +276,7 @@ export default function MenuList () {
   return (
     <>
       <RoleRenderer allowedRoles={['MENU_READ']}>
-        <TitleCard title="">
+        <TitleCard hasBack={true} onBackClick={goBack} title="">
           <ModalConfirm
             open={showTakedownMenuModal}
             cancelAction={() => {

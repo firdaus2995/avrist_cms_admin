@@ -243,7 +243,7 @@ export default function GroupMenuList () {
           btnSubmitStyle=""
         />
         {
-          idMenuLogModal && (
+          idMenuLogModal > 0 && (
             <ModalLog
               id={idMenuLogModal}
               open={showMenuLogModal}
