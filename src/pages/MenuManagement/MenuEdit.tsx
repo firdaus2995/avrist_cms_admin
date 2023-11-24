@@ -41,6 +41,7 @@ export default function MenuEdit () {
   // RTK GET DATA MENU DETAIL
   const fetchDefaultData = useGetMenuByIdQuery(
     { 
+      menuGroupId,
       id: menuId,
     },
     {
