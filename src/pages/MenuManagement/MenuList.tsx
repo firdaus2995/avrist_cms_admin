@@ -66,7 +66,7 @@ export default function MenuList () {
   const [publishMenu] = usePublishMenuMutation();
 
   const goBack = () => {
-    navigate(-1);
+    navigate('/group-menu');
   };
   
   useEffect(() => {
