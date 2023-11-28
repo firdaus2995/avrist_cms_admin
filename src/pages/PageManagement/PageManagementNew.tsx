@@ -10,6 +10,9 @@ import DropDown from '@/components/molecules/DropDown';
 import PaginationComponent from '@/components/molecules/Pagination';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
+import ModalForm from '@/components/molecules/ModalForm';
+import PaperSubmit from '../../assets/paper-submit.png';
+import FormList from '../../components/molecules/FormList';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
@@ -19,9 +22,6 @@ import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import ModalForm from '@/components/molecules/ModalForm';
-import PaperSubmit from '../../assets/paper-submit.png';
-import FormList from '../../components/molecules/FormList';
 import { dataTypeList } from './contants';
 import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
 
@@ -176,7 +176,7 @@ export default function PageManagementNew() {
         dispatch(
           openToast({
             type: 'error',
-            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.page-management.add.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

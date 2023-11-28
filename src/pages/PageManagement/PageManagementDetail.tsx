@@ -38,7 +38,7 @@ import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import CancelIcon from '@/assets/cancel.png';
 import FormList from '../../components/molecules/FormList';
 import { dataTypeList } from './contants';
-import { getImageData } from '@/utils/logicHelper';
+import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
 
 export default function PageManagementDetail() {
   const {
@@ -301,11 +301,11 @@ export default function PageManagementDetail() {
         );
         goBack();
       })
-      .catch(() => {
+      .catch((error: any) => {
         dispatch(
           openToast({
             type: 'error',
-            title: t('user.page-management.detail.messages.failed'),
+            message: t(`errors.page-management.edit.${errorMessageTypeConverter(error.message)}`),
           }),
         );
         goBack();

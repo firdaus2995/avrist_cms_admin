@@ -31,7 +31,17 @@
     "page-management": {
       "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "You can't delete this page because this page is being used in an active menu",
-      "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
+      "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
+      "add": {
+        "DataHasBeenExistException":"Data already exists",
+        "DataIsUsedException" : "Page is already linked to another Menu! Please choose another Page!",
+        "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
+      },
+      "edit": {
+        "DataHasBeenExistException":"Data already exists",
+        "DataIsUsedException" : "Page is already linked to another Menu! Please choose another Page!",
+        "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
+      }
     },
     "menu": {
       "DataHasBeenExistException":"Data already exists",
