@@ -305,7 +305,7 @@ export default function PageManagementDetail() {
         dispatch(
           openToast({
             type: 'error',
-            message: t(`errors.page-management.edit.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
           }),
         );
         goBack();
