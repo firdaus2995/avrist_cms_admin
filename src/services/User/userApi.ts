@@ -19,6 +19,7 @@ export const userApi: any = createApi({
               gender
               company
               statusActive
+              profilePicture
               department {
                 id
                 name

@@ -98,6 +98,7 @@ export default function UsersEdit() {
       const userDetail = data?.userById;
 
       setIsActive(userDetail.statusActive);
+      setAvatar(userDetail.profilePicture);
 
       const defaultValues: any = {};
 
