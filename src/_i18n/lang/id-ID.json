@@ -31,6 +31,11 @@
     "page-management": {
       "DataHasBeenExistException":"Data sudah ada",
       "DataIsUsedException" : "Anda tidak dapat menghapus halaman ini karena halaman ini sedang digunakan dalam menu aktif",
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+    },
+    "menu": {
+      "DataHasBeenExistException":"Data sudah ada",
+      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
       "add": {
         "DataHasBeenExistException":"Data sudah ada",
@@ -42,11 +47,6 @@
         "DataIsUsedException" : "Halaman sudah tertaut ke Menu lain! Silakan pilih Halaman lain!",
         "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
       }
-    },
-    "menu": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
-      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
     },
     "global-config": {
       "DataHasBeenExistException":"Data sudah ada",

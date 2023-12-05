@@ -176,7 +176,7 @@ export default function PageManagementNew() {
         dispatch(
           openToast({
             type: 'error',
-            message: t(`errors.page-management.add.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });
