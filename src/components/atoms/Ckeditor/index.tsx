@@ -3,45 +3,6 @@ import { t } from 'i18next';
 
 import ErrorSmallIcon from '@/assets/error-small.svg';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { getCredential } from '../../../utils/Credential';
-
-const baseUrl = import.meta.env.VITE_API_URL;
-
-function uploadAdapter(loader: any) {
-  return {
-    upload: async () => {
-      return await new Promise((resolve, reject) => {
-        const token = getCredential().accessToken;
-        const body = new FormData();
-        loader.file.then((file: any) => {
-          body.append('image', file);
-          fetch(`${baseUrl}/files/image/upload`, {
-            method: 'POST',
-            body,
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          })
-            .then(async res => await res.json())
-            .then(res => {
-              resolve({
-                default: `${baseUrl}/${res.message}`,
-              });
-            })
-            .catch(err => {
-              reject(err);
-            });
-        });
-      });
-    },
-  };
-}
-
-function uploadPlugin(editor: any) {
-  editor.plugins.get('FileRepository').createUploadAdapter = (loader: any) => {
-    return uploadAdapter(loader);
-  };
-}
 
 interface ICkEditor {
   data?: string;
@@ -62,9 +23,6 @@ export default function CkEditor({
         disabled={false}
         data={data ?? ''}
         editor={Editor}
-        config={{
-          extraPlugins: [uploadPlugin],
-        }}
         onChange={(_event: any, editor: any) => {
           const data = editor.getData();
           if (onChange) {
