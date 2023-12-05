@@ -107,6 +107,10 @@ export default function MenuList () {
     }
   }, [data]);
 
+  const isLastPublishedInfoExists = () => {
+    return !(getValues('lastPublishedAt') === null || getValues('lastPublishedAt') === "" || getValues('lastPublishedBy') === null || getValues('lastPublishedBy') === "");
+  };
+
   const handlerUpdateMenuStructure = (node: any, data: any) => {
     function recursiveMenuGenerator(recurData: any, recurParentId: any): any {
       const masterPayload: any = [];
@@ -352,17 +356,21 @@ export default function MenuList () {
                 <StatusBadge status={getValues('status') ?? ''} />
               </div>
               <hr />
-              <div className="flex">
-                <div className="text-sm">
-                  <span>{`Last Published by `}</span>
-                  <span className="font-bold">{getValues('lastPublishedBy')}</span>
-                  <span>{` at `}</span>
-                  <span className="font-bold">
-                    {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
-                    {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
-                  </span>
-                </div>
-              </div>
+              {
+                isLastPublishedInfoExists() && (
+                  <div className="flex">
+                    <div className="text-sm">
+                      <span>{`Last Published by `}</span>
+                      <span className="font-bold">{getValues('lastPublishedBy')}</span>
+                      <span>{` at `}</span>
+                      <span className="font-bold">
+                        {dayjs(getValues('lastPublishedAt')).format('DD/MM/YYYY')} -{' '}
+                        {dayjs(getValues('lastPublishedAt')).format('HH:mm')}
+                      </span>
+                    </div>
+                  </div>
+                )
+              }
             </div>
             {dataScructure?.length > 0 && (
               <SortableTreeComponent
