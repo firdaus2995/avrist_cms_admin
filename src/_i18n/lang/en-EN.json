@@ -21,7 +21,8 @@
     "role": {
       "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "This data is being used, you can’t delete this data",
-      "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
+      "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
+      "ConflictException": "Role is being used by User"
     },
     "page-template": {
       "DataHasBeenExistException":"Data already exists",

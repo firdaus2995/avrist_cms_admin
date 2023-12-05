@@ -21,7 +21,8 @@
     "role": {
       "DataHasBeenExistException":"Data sudah ada",
       "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
-      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
+      "ConflictException": "Peran sedang digunakan oleh Pengguna lainnya"
     },
     "page-template": {
       "DataHasBeenExistException":"Data sudah ada",
