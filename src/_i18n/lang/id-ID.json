@@ -3,7 +3,8 @@
     "auth": {
       "UnauthorizedException": {
         "Wrong User ID or Password": "Silakan masukkan nama pengguna atau kata sandi yang benar!",
-        "userId is not Found": "Silakan masukkan nama pengguna atau kata sandi yang benar!"
+        "userId is not Found": "Silakan masukkan nama pengguna atau kata sandi yang benar!",
+        "User account is locked": "Akun pengguna terkunci"
       }
     },
     "edit-profile": {

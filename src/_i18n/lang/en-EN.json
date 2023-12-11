@@ -3,7 +3,8 @@
     "auth": {
       "UnauthorizedException": {
         "Wrong User ID or Password": "Please enter the correct username or password!",
-        "userId is not Found": "Please enter the correct username or password!"
+        "userId is not Found": "Please enter the correct username or password!",
+        "User account is locked": "User account is locked"
       }
     },
     "edit-profile": {
