@@ -5,6 +5,7 @@ import { useClickAway } from 'react-use';
 
 import Bell from '../../../assets/bell.svg';
 import NotifCheck from '../../../assets/notif-check.svg';
+import NoNotification from '../../../assets/no-notifications.svg';
 import { store, useAppDispatch } from '@/store';
 import { Menu, Transition } from '@headlessui/react';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
@@ -215,47 +216,55 @@ const NotificationBell = (props: { notificationCount: any; }): JSX.Element => {
                   </span>
                 </div>
               </div>
-              <InfiniteScroll
-                className="px-[16px] border-[#D6D6D6]"
-                dataLength={notifications.length}
-                next={handlerFetchMore}
-                loader={''}
-                hasMore={limit < total}
-                height={500}>
-                {notifications.length > 0 &&
-                  notifications.map((element: any, index: number) => (
-                    <Link
-                      to={element.link}
-                      key={index}
-                      onClick={() => {
-                        void handlerReadNotificationSingle(element.id);
-                        close();
-                      }}
-                      className="flex flex-row flex-start gap-[8px] py-[8px] border-b-[1px] border-[#D6D6D6]">
-                      <div
-                        className={`mt-[6px] w-[6px] h-[6px] min-w-[6px] rounded-full ${
-                          element.isRead ? 'bg-white' : 'bg-purple'
-                        }`}
-                      />
-                      <div className="flex flex-col flex-1 gap-[6px]">
-                        <h2
-                          className={`text-[12px] font-bold ${
-                            element.isRead ? 'text-body-text-4' : 'text-purple'
-                          }`}>
-                          {element.title}
-                        </h2>
-                        <h4 className="text-[14px] text-body-text-2 cursor-pointer">
-                          {element.content}
-                        </h4>
-                        <h6 className="text-[12px] text-body-text-1">{`${dayjs(
-                          element.createdAt,
-                        ).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format(
-                          'HH:mm',
-                        )}`}</h6>
-                      </div>
-                    </Link>
-                  ))}
-              </InfiniteScroll>
+              {
+                notifications.length > 0 ? (
+                  <InfiniteScroll
+                    className="px-[16px] border-[#D6D6D6]"
+                    dataLength={notifications.length}
+                    next={handlerFetchMore}
+                    loader={''}
+                    hasMore={limit < total}
+                    height={500}>
+                    {
+                      notifications.map((element: any, index: number) => (
+                        <Link
+                          to={element.link}
+                          key={index}
+                          onClick={() => {
+                            void handlerReadNotificationSingle(element.id);
+                            close();
+                          }}
+                          className="flex flex-row flex-start gap-[8px] py-[8px] border-b-[1px] border-[#D6D6D6]">
+                          <div
+                            className={`mt-[6px] w-[6px] h-[6px] min-w-[6px] rounded-full ${
+                              element.isRead ? 'bg-white' : 'bg-purple'
+                            }`}
+                          />
+                          <div className="flex flex-col flex-1 gap-[6px]">
+                            <h2
+                              className={`text-[12px] font-bold ${
+                                element.isRead ? 'text-body-text-4' : 'text-purple'
+                              }`}>
+                              {element.title}
+                            </h2>
+                            <h4 className="text-[14px] text-body-text-2 cursor-pointer">
+                              {element.content}
+                            </h4>
+                            <h6 className="text-[12px] text-body-text-1">{`${dayjs(
+                              element.createdAt,
+                            ).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format(
+                              'HH:mm',
+                            )}`}</h6>
+                          </div>
+                        </Link>
+                      ))}
+                  </InfiniteScroll>
+                ) : (
+                  <div className='flex justify-center items-center p-5'>
+                    <img src={NoNotification} />
+                  </div>
+                )
+              }
               <div className="flex flex-row justify-end p-[16px]">
                 <h2
                   className="text-[12px] font-bold text-purple cursor-pointer"
