@@ -730,7 +730,7 @@
         }
       },
       "toast-success": "Success!",
-      "toast-failed": "Failed",
+      "toast-failed": "Gagal",
       "modal": {
         "confirmation": "Confirmation",
         "leave-confirmation": "Are you sure you want to leave this page?"
@@ -910,7 +910,8 @@
         "toast": {
           "success-create": "Sukses Tambahkan Menu",
           "success-edit": "Sukses Ubah Menu",
-          "success-delete": "Sukses Hapus Menu"
+          "success-delete": "Sukses Hapus Menu",
+          "failed-delete": "Gagal Hapus Menu"
         }
       }
     },
@@ -978,7 +979,7 @@
           "leave-confirmation": "Do you want to cancel all of the process?"
         },
         "toast-success": "Success!",
-        "toast-failed": "Failed",
+        "toast-failed": "Gagal",
         "success-msg": "Your user update has been successfully saved!",
         "failed-msg": "Failed to update user '{{name}}'!",
         "roles": {
@@ -1103,7 +1104,7 @@
         "global-config-data": "Global Config Data"
       },
       "toast-success": "Success!",
-      "toast-failed": "Failed",
+      "toast-failed": "Gagal",
       "modal": {
         "confirmation": "Confirmation",
         "leave-confirmation": "Are you sure you want to leave without saving?"
@@ -1185,7 +1186,7 @@
       },
       "loading": "Loading...",
       "toast-success": "Success!",
-      "toast-failed": "Failed!"
+      "toast-failed": "Gagal"
     },
 
     "roles-new": {
@@ -1197,7 +1198,7 @@
         }
       },
       "toast-success": "Success!",
-      "toast-failed": "Failed",
+      "toast-failed": "Gagal",
       "btn": {
         "cancel": "Cancel",
         "save": "Save"

@@ -924,7 +924,8 @@
         "toast": {
           "success-create": "Success Create Menu",
           "success-edit": "Success Edit Menu",
-          "success-delete": "Success Delete Menu"
+          "success-delete": "Success Delete Menu",
+          "failed-delete": "Failed Delete Menu"
         }
       }
     },
@@ -1199,7 +1200,7 @@
       },
       "loading": "Loading...",
       "toast-success": "Success!",
-      "toast-failed": "Failed!"
+      "toast-failed": "Failed"
     },
 
     "roles-new": {
