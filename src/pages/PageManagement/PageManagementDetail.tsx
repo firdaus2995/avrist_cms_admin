@@ -1,44 +1,45 @@
+import dayjs from 'dayjs';
+import { t } from 'i18next';
 import { useCallback, useEffect, useState } from 'react';
-import { TitleCard } from '@/components/molecules/Cards/TitleCard';
-import StatusBadge from '@/components/atoms/StatusBadge';
-import Typography from '@/components/atoms/Typography';
-import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { useNavigate, useParams } from 'react-router-dom';
-import {
-  useGetPageByIdQuery,
-  useRestorePageMutation,
-  useUpdatePageDataMutation,
-  useUpdatePageStatusMutation,
-} from '@/services/PageManagement/pageManagementApi';
-import { store, useAppDispatch } from '@/store';
-import Edit from '@/assets/edit-purple.svg';
-import Restore from '@/assets/restore.svg';
-import { TextArea } from '@/components/atoms/Input/TextArea';
+
+import CkEditor from '@/components/atoms/Ckeditor';
 import ModalForm from '@/components/molecules/ModalForm';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import RestoreOrange from '@/assets/restore-orange.svg';
 import CheckOrange from '@/assets/check-orange.svg';
 import PaperIcon from '../../assets/paper.png';
 import WarningIcon from '@/assets/warning.png';
-import { useForm, Controller } from 'react-hook-form';
-import CkEditor from '@/components/atoms/Ckeditor';
-import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import Edit from '@/assets/edit-purple.svg';
+import Restore from '@/assets/restore.svg';
+import StatusBadge from '@/components/atoms/StatusBadge';
+import Typography from '@/components/atoms/Typography';
 import DropDown from '@/components/molecules/DropDown';
-import { openToast } from '@/components/atoms/Toast/slice';
-import ModalLog from './components/ModalLog';
-import TimelineLog from '@/assets/timeline-log.svg';
-import dayjs from 'dayjs';
-import { t } from 'i18next';
-import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
-import PaperSubmit from '../../assets/paper-submit.png';
-import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
-import PaginationComponent from '@/components/molecules/Pagination';
-import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import CancelIcon from '@/assets/cancel.png';
 import FormList from '../../components/molecules/FormList';
+import ModalLog from './components/ModalLog';
+import TimelineLog from '@/assets/timeline-log.svg';
+import PaperSubmit from '../../assets/paper-submit.png';
+import PaginationComponent from '@/components/molecules/Pagination';
+import { TextArea } from '@/components/atoms/Input/TextArea';
+import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
+import { ButtonMenu } from '@/components/molecules/ButtonMenu';
+import { store, useAppDispatch } from '@/store';
+import { useForm, Controller } from 'react-hook-form';
+import { InputSearch } from '@/components/atoms/Input/InputSearch';
+import { openToast } from '@/components/atoms/Toast/slice';
+import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
+import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
+import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
 import { dataTypeList } from './contants';
 import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
+import {
+  useGetPageByIdQuery,
+  useRestorePageMutation,
+  useUpdatePageDataMutation,
+  useUpdatePageStatusMutation,
+} from '@/services/PageManagement/pageManagementApi';
 
 export default function PageManagementDetail() {
   const {
@@ -201,9 +202,9 @@ export default function PageManagementDetail() {
             onClick={() => {
               const payload = {
                 id: pageDetailList?.id,
-                status: 'WAITING_APPROVE',
+                status: pageDetailList?.status === 'DELETE_REVIEW' ? 'DELETE_APPROVE' : 'WAITING_APPROVE',
                 comment: 'Already review',
-              };
+              };              
 
               if (isAlreadyReview) {
                 onUpdateStatus(payload);
@@ -407,15 +408,15 @@ export default function PageManagementDetail() {
           <>
             {roles?.includes('PAGE_EDIT')
               ? !isEdited && (
-                  <button
-                    onClick={() => {
-                      setIsEdited(true);
-                    }}
-                    className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                    <img src={Edit} className="mr-3" />
-                    {t('user.page-management.detail.labels.editContent')}
-                  </button>
-                )
+                <button
+                  onClick={() => {
+                    setIsEdited(true);
+                  }}
+                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                  <img src={Edit} className="mr-3" />
+                  {t('user.page-management.detail.labels.editContent')}
+                </button>
+              )
               : null}
           </>
         );
@@ -626,7 +627,7 @@ export default function PageManagementDetail() {
                   {...field}
                   direction='row'
                   inputWidth={350}
-                  labelWidth={228}      
+                  labelWidth={228}
                   labelTitle="Page"
                   labelStyle="font-bold"
                   labelEmpty="Choose Page"
@@ -677,11 +678,10 @@ export default function PageManagementDetail() {
                 <div key={element.id} className="px-[5%] py-5 flex flex-col basis-2/6 gap-3">
                   <img
                     src={getImageData(element.imageUrl)}
-                    className={`h-[450px] object-cover	cursor-pointer rounded-xl ${
-                      selected === element.id
+                    className={`h-[450px] object-cover	cursor-pointer rounded-xl ${selected === element.id
                         ? 'border-[#5A4180] border-4'
                         : 'border-[#828282] border-2'
-                    }`}
+                      }`}
                     onClick={() => {
                       setSelected(element.id);
                     }}
@@ -778,7 +778,7 @@ export default function PageManagementDetail() {
         title={t('user.page-management.detail.labels.approve')}
         cancelTitle={t('user.page-management.detail.labels.restoreNo')}
         message={'Test'}
-        submitAction={() => {}}
+        submitAction={() => { }}
         submitTitle={t('user.page-management.detail.labels.restoreYes')}
         // icon={WarningIcon}
         icon={undefined}
@@ -792,7 +792,7 @@ export default function PageManagementDetail() {
           open={showModalReview}
           title={t('user.page-management.detail.labels.reviewPageContent')}
           cancelTitle={t('user.page-management.detail.labels.restoreNo')}
-          message={t('user.page-management.detail.labels.restoreConfirmation') ?? ''}
+          message={t('user.page-management.detail.labels.reviewPageConfirmation') ?? ''}
           submitTitle={t('user.page-management.detail.labels.restoreYes')}
           icon={PaperIcon}
           submitAction={() => {
@@ -944,7 +944,7 @@ export default function PageManagementDetail() {
         {isEdited ? editContent() : viewContent()}
         {roles?.includes('PAGE_REVIEW') ? (
           pageDetailList?.status === 'WAITING_REVIEW' ||
-          pageDetailList?.status === 'DELETE_REVIEW' ? (
+            pageDetailList?.status === 'DELETE_REVIEW' ? (
             <div className="flex flex-row justify-between">
               <div className="w-[30vh] mt-5">
                 <CheckBox
