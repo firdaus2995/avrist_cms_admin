@@ -108,13 +108,13 @@ export default function PageManagementArchive() {
       id: restoreId,
     })
       .unwrap()
-      .then(async (result: any) => {
+      .then(async () => {
         setOpenRestoreModal(false);
         dispatch(
           openToast({
             type: 'success',
             title: t('user.page-management.archive.restore.success'),
-            message: result.pageRestore.message,
+            message: t('user.page-management.archive.restore.success-message'),
           }),
         );
         await fetchQuery.refetch();
@@ -125,7 +125,7 @@ export default function PageManagementArchive() {
           openToast({
             type: 'error',
             title: t('user.page-management.archive.restore.failed'),
-            message: t(`errors.page-management.${errorMessageTypeConverter(error.message)}`),
+            message: t(`errors.page-management.restore.${errorMessageTypeConverter(error.message)}`),
           }),
         );
       });

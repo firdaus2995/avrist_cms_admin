@@ -33,7 +33,10 @@
     "page-management": {
       "DataHasBeenExistException":"Data already exists",
       "DataIsUsedException" : "You can't delete this page because this page is being used in an active menu",
-      "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
+      "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
+      "restore": {
+        "UnexpectedErrorException": "Something went wrong. Please try again!"
+      }
     },
     "menu": {
       "DataHasBeenExistException":"Data already exists",
@@ -320,9 +323,9 @@
           "message": "Do you want to permanently delete this page? If you delete this page, you can’t recover it."
         },
         "restore": {
-          "success": "Success Restore Page",
-          "failed": "Failed Restore Page",
-          "message": "Something went wrong!"
+          "success": "Success",
+          "success-message": "Your page has been successfully restored!",
+          "failed": "Restore Failed"
         },
         "title-card": "Archive List"
       },
