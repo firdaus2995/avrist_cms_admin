@@ -53,9 +53,9 @@ export default function PageManagementNew() {
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
-
   // AUTO APPROVE MODAL STATE
   const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
+  const [typeModalAutoApprove, setTypeModalAutoApprove] = useState<string>('normal');
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   // RTK GET PAGE TEMPLATE
@@ -132,9 +132,10 @@ export default function PageManagementNew() {
   const handlerSubmit = (type?: string) => {
     if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
       setShowModalAutoApprove(true);
+      setTypeModalAutoApprove(type === 'draft' ? 'draft' : 'normal');
     } else {
       saveData(type);
-    }
+    };
   };
 
   // MAIN FUNCTION
@@ -142,9 +143,9 @@ export default function PageManagementNew() {
     const formData = getValues();
 
     let isDraft: boolean = false;
-    if (type === 'draft') {
+    if (type === 'draft' || typeModalAutoApprove === 'draft') {
       isDraft = true;
-    }
+    }    
 
     const payload = {
       title: formData?.pageName,
@@ -159,7 +160,7 @@ export default function PageManagementNew() {
       isAutoApprove,
       pageTemplateId: selected,
       postTypeId: contentTypeId,
-    };
+    };    
 
     createPageData(payload)
       .unwrap()
@@ -225,13 +226,17 @@ export default function PageManagementNew() {
           <p className="font-base my-3 text-l text-center">
             {t('user.page-management-new.autoApproveSubtitle', { title: getValues().pageName })}
           </p>
-          <CheckBox
-            defaultValue={isAutoApprove}
-            updateFormValue={e => {
-              setIsAutoApprove(e.value);
-            }}
-            labelTitle={t('user.page-management-new.autoApproveLabel')}
-          />
+          {
+            typeModalAutoApprove !== 'draft' && (
+              <CheckBox
+                defaultValue={isAutoApprove}
+                updateFormValue={e => {
+                  setIsAutoApprove(e.value);
+                }}
+                labelTitle={t('user.page-management-new.autoApproveLabel')}
+              />
+            )
+          }
         </div>
       </ModalForm>
       <div className="flex flex-col mt-5 gap-5">
@@ -491,6 +496,7 @@ export default function PageManagementNew() {
               {t('btn.cancel')}
             </button>
             <button
+              type='button'
               className="btn btn-outline btn-warning btn-md"
               onClick={handleSubmit((_data: any) => {
                 handlerSubmit('draft');
