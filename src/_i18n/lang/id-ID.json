@@ -33,7 +33,10 @@
     "page-management": {
       "DataHasBeenExistException":"Data sudah ada",
       "DataIsUsedException" : "Anda tidak dapat menghapus halaman ini karena halaman ini sedang digunakan dalam menu aktif",
-      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
+      "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
+      "restore": {
+        "UnexpectedErrorException": "Ada yang salah. Silakan coba lagi!"
+      }
     },
     "menu": {
       "DataHasBeenExistException":"Data sudah ada",
@@ -305,9 +308,9 @@
           "message": "Do you want to permanently delete this page? If you delete this page, you can’t recover it."
         },
         "restore": {
-          "success": "Success Restore Page",
-          "failed": "Failed Restore Page",
-          "message": "Something went wrong!"
+          "success": "Sukses",
+          "success-message": "Halaman Anda telah berhasil dipulihkan!",
+          "failed": "Pemulihan Gagal"
         },
         "title-card": "Archive List"
       },
@@ -731,7 +734,7 @@
         }
       },
       "toast-success": "Success!",
-      "toast-failed": "Failed",
+      "toast-failed": "Gagal",
       "modal": {
         "confirmation": "Confirmation",
         "leave-confirmation": "Are you sure you want to leave this page?"
@@ -911,7 +914,8 @@
         "toast": {
           "success-create": "Sukses Tambahkan Menu",
           "success-edit": "Sukses Ubah Menu",
-          "success-delete": "Sukses Hapus Menu"
+          "success-delete": "Sukses Hapus Menu",
+          "failed-delete": "Gagal Hapus Menu"
         }
       }
     },
@@ -979,7 +983,7 @@
           "leave-confirmation": "Do you want to cancel all of the process?"
         },
         "toast-success": "Success!",
-        "toast-failed": "Failed",
+        "toast-failed": "Gagal",
         "success-msg": "Your user update has been successfully saved!",
         "failed-msg": "Failed to update user '{{name}}'!",
         "roles": {
@@ -1104,7 +1108,7 @@
         "global-config-data": "Global Config Data"
       },
       "toast-success": "Success!",
-      "toast-failed": "Failed",
+      "toast-failed": "Gagal",
       "modal": {
         "confirmation": "Confirmation",
         "leave-confirmation": "Are you sure you want to leave without saving?"
@@ -1186,7 +1190,7 @@
       },
       "loading": "Loading...",
       "toast-success": "Success!",
-      "toast-failed": "Failed!"
+      "toast-failed": "Gagal"
     },
 
     "roles-new": {
@@ -1198,7 +1202,7 @@
         }
       },
       "toast-success": "Success!",
-      "toast-failed": "Failed",
+      "toast-failed": "Gagal",
       "btn": {
         "cancel": "Cancel",
         "save": "Save"
