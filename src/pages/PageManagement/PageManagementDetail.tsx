@@ -780,7 +780,6 @@ export default function PageManagementDetail() {
         message={'Test'}
         submitAction={() => { }}
         submitTitle={t('user.page-management.detail.labels.restoreYes')}
-        // icon={WarningIcon}
         icon={undefined}
       />
       <TitleCard
@@ -870,6 +869,7 @@ export default function PageManagementDetail() {
 
         <ModalForm
           open={showModalRejected}
+          submitPosition="justify-center"
           formTitle=""
           height={640}
           submitTitle={t('user.page-management.detail.labels.restoreYes')}
@@ -889,7 +889,7 @@ export default function PageManagementDetail() {
 
             onUpdateStatus(payload);
           }}>
-          <div className="flex flex-col justify-center items-center">
+          <div className="flex flex-col justify-center items-center w-full">
             <img src={PaperIcon} className="w-10" />
             {pageDetailList?.status === 'WAITING_APPROVE' ? (
               <p className="font-semibold my-3 text-xl">
@@ -907,7 +907,7 @@ export default function PageManagementDetail() {
               value={rejectComments}
               labelRequired
               placeholder={t('user.page-management.detail.labels.enterRejectComments') ?? ''}
-              containerStyle="rounded-3xl"
+              containerStyle="px-8" 
               onChange={e => {
                 setRejectComments(e.target.value);
               }}

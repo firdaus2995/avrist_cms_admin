@@ -44,7 +44,7 @@ export const TextArea: React.FC<ITextArea> = ({
   maxLength,
 }) => {
   return (
-    <div>
+    <div className='w-full'>
       <div
         className={`form-control w-full ${containerStyle} ${
           direction === 'row' ? 'flex-row items-start' : ''
@@ -63,7 +63,7 @@ export const TextArea: React.FC<ITextArea> = ({
         <textarea
           name={name}
           style={{
-            width: inputWidth ?? '',
+            width: inputWidth ?? '100%',
             height: inputHeight ?? '',
           }}
           rows={rows ?? 4}
