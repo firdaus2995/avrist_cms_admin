@@ -8,3 +8,5 @@ export const dataTypeList = [
     label: 'Single',
   },
 ];
+
+export const forbiddenStatusDelete: string[] = ['WAITING_REVIEW, WAITING_APPROVE', 'DELETE_REVIEW', 'DELETE_APPROVE'];
