@@ -316,6 +316,7 @@
       },
       "detail": {
         "labels": {
+          "title": "Page Management",
           "pageName": "Page Name",
           "data-type": "Data Type",
           "metaTitle": "Meta Title",

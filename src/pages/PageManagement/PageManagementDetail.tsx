@@ -783,7 +783,7 @@ export default function PageManagementDetail() {
         icon={undefined}
       />
       <TitleCard
-        title={`${pageDetailList?.title} - ${t('page-template.list.title') ?? ''}`}
+        title={`${pageDetailList?.title} - ${t('user.page-management.detail.labels.title') ?? ''}`}
         titleComponent={<Badge />}
         border={true}
         TopSideButtons={rightTopButton()}>
