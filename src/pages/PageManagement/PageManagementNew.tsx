@@ -55,7 +55,6 @@ export default function PageManagementNew() {
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
   // AUTO APPROVE MODAL STATE
   const [showModalAutoApprove, setShowModalAutoApprove] = useState<boolean>(false);
-  const [typeModalAutoApprove, setTypeModalAutoApprove] = useState<string>('normal');
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   // RTK GET PAGE TEMPLATE
@@ -129,12 +128,11 @@ export default function PageManagementNew() {
 
   // UTILITY
 
-  const handlerSubmit = (type?: string) => {
+  const handlerSubmit = () => {
     if (eligibleAutoApprove?.isUserEligibleAutoApprove?.result) {
       setShowModalAutoApprove(true);
-      setTypeModalAutoApprove(type === 'draft' ? 'draft' : 'normal');
     } else {
-      saveData(type);
+      saveData();
     };
   };
 
@@ -143,7 +141,7 @@ export default function PageManagementNew() {
     const formData = getValues();
 
     let isDraft: boolean = false;
-    if (type === 'draft' || typeModalAutoApprove === 'draft') {
+    if (type === 'draft') {
       isDraft = true;
     }    
 
@@ -226,17 +224,13 @@ export default function PageManagementNew() {
           <p className="font-base my-3 text-l text-center">
             {t('user.page-management-new.autoApproveSubtitle', { title: getValues().pageName })}
           </p>
-          {
-            typeModalAutoApprove !== 'draft' && (
-              <CheckBox
-                defaultValue={isAutoApprove}
-                updateFormValue={e => {
-                  setIsAutoApprove(e.value);
-                }}
-                labelTitle={t('user.page-management-new.autoApproveLabel')}
-              />
-            )
-          }
+            <CheckBox
+              defaultValue={isAutoApprove}
+              updateFormValue={e => {
+                setIsAutoApprove(e.value);
+              }}
+              labelTitle={t('user.page-management-new.autoApproveLabel')}
+            />
         </div>
       </ModalForm>
       <div className="flex flex-col mt-5 gap-5">
@@ -499,7 +493,7 @@ export default function PageManagementNew() {
               type='button'
               className="btn btn-outline btn-warning btn-md"
               onClick={handleSubmit((_data: any) => {
-                handlerSubmit('draft');
+                saveData('draft');
               })}>
               {t('user.page-management-new.saveDraftButton')}
             </button>
