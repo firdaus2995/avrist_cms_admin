@@ -1,5 +1,5 @@
 export interface IDropDown {
-  labelTitle?: string;
+  labelTitle: string;
   labelStyle?: string;
   labelEmpty?: string;
   labelRequired?: boolean;
