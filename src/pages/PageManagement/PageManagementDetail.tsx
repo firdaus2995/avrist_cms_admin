@@ -16,7 +16,6 @@ import StatusBadge from '@/components/atoms/StatusBadge';
 import Typography from '@/components/atoms/Typography';
 import DropDown from '@/components/molecules/DropDown';
 import CancelIcon from '@/assets/cancel.png';
-import FormList from '../../components/molecules/FormList';
 import ModalLog from './components/ModalLog';
 import TimelineLog from '@/assets/timeline-log.svg';
 import PaperSubmit from '../../assets/paper-submit.png';
@@ -40,6 +39,7 @@ import {
   useUpdatePageDataMutation,
   useUpdatePageStatusMutation,
 } from '@/services/PageManagement/pageManagementApi';
+import { InputText } from '@/components/atoms/Input/InputText';
 
 export default function PageManagementDetail() {
   const {
@@ -49,7 +49,9 @@ export default function PageManagementDetail() {
     getValues,
     setValue,
     watch,
-  } = useForm();
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
   const dispatch = useAppDispatch();
   const params = useParams();
   const roles = store.getState().loginSlice.roles;
@@ -331,11 +333,16 @@ export default function PageManagementDetail() {
     );
   };
 
-  const Label = ({ title, value }: any) => {
+  const Label = ({ title, value, required }: any) => {
     return (
       <div className="flex flex-row">
         <Typography type="body" size="m" weight="medium" className="my-2 w-48">
           {title}
+          {
+            required && (
+              <span className='text-reddist font-bold'>*</span>
+            )
+          }
         </Typography>
         <Typography type="body" size="s" weight="regular" className="text-body-text-2 my-2 mr-5">
           {value}
@@ -447,18 +454,22 @@ export default function PageManagementDetail() {
             <Label
               title={t('user.page-management.detail.labels.pageName')}
               value={pageDetailList?.title}
+              required
             />
             <Label
               title={t('user.page-management.detail.labels.metaTitle')}
               value={pageDetailList?.metaTitle}
+              required
             />
             <Label
               title={t('user.page-management.detail.labels.slug')}
               value={pageDetailList?.slug}
+              required
             />
             <Label
               title={t('user.page-management.detail.labels.metaDescription')}
               value={pageDetailList?.metaDescription}
+              required
             />
             <Label
               title={t('user.page-management.detail.labels.shortDesc')}
@@ -468,6 +479,7 @@ export default function PageManagementDetail() {
             <Label
               title={t('user.page-management.detail.labels.data-type')}
               value={pageDetailList?.dataType}
+              required
             />
           </div>
           <Label
@@ -475,7 +487,7 @@ export default function PageManagementDetail() {
             value={pageDetailList?.content}
           />
           <Label
-            title={t('user.page-management.detail.labels.chooseTemplate')}
+            title={t('user.page-management.detail.labels.chosenTemplate')}
             value={pageDetailList?.pageTemplate?.name}
           />
           <div className="flex justify-center my-5">
@@ -509,15 +521,17 @@ export default function PageManagementDetail() {
                 },
               }}
               render={({ field }) => (
-                <FormList.TextField
+                <InputText
                   {...field}
+                  direction='row'
+                  inputWidth={350}
                   labelTitle={t('user.page-management-new.pageNameLabel')}
                   labelRequired
-                  placeholder={t('user.page-management-new.pageNamePlaceholder')}
-                  error={!!errors?.pageName?.message}
+                  labelStyle="font-bold"
+                  placeholder={t('user.add.placeholder-user-fullname')}
+                  roundStyle="xl"
+                  isError={!!errors?.pageName}
                   helperText={errors?.pageName?.message}
-                  border={false}
-                  inputWidth={350}
                 />
               )}
             />
@@ -532,15 +546,17 @@ export default function PageManagementDetail() {
                 },
               }}
               render={({ field }) => (
-                <FormList.TextField
+                <InputText
                   {...field}
+                  direction='row'
+                  inputWidth={350}
                   labelTitle={t('user.page-management-new.metaTitleLabel')}
                   labelRequired
+                  labelStyle="font-bold"
                   placeholder={t('user.page-management-new.metaTitlePlaceholder')}
-                  error={!!errors?.metaTitle?.message}
+                  roundStyle="xl"
+                  isError={!!errors?.metaTitle}
                   helperText={errors?.metaTitle?.message}
-                  border={false}
-                  inputWidth={350}
                 />
               )}
             />
@@ -557,15 +573,17 @@ export default function PageManagementDetail() {
                 },
               }}
               render={({ field }) => (
-                <FormList.TextField
+                <InputText
                   {...field}
+                  direction='row'
+                  inputWidth={350}
                   labelTitle={t('user.page-management-new.slugLabel')}
                   labelRequired
+                  labelStyle="font-bold"
                   placeholder={t('user.page-management-new.slugPlaceholder')}
-                  error={!!errors?.slug?.message}
+                  roundStyle="xl"
+                  isError={!!errors?.slug}
                   helperText={errors?.slug?.message}
-                  border={false}
-                  inputWidth={350}
                 />
               )}
             />
@@ -580,15 +598,17 @@ export default function PageManagementDetail() {
                 },
               }}
               render={({ field }) => (
-                <FormList.TextField
+                <InputText
                   {...field}
+                  direction='row'
+                  inputWidth={350}
                   labelTitle={t('user.page-management-new.metaDescriptionLabel')}
                   labelRequired
+                  labelStyle="font-bold"
                   placeholder={t('user.page-management-new.metaDescriptionPlaceholder')}
-                  error={!!errors?.metaDescription?.message}
+                  roundStyle="xl"
+                  isError={!!errors?.metaDescription}
                   helperText={errors?.metaDescription?.message}
-                  border={false}
-                  inputWidth={350}
                 />
               )}
             />
@@ -598,21 +618,15 @@ export default function PageManagementDetail() {
               name="shortDesc"
               control={control}
               defaultValue={pageDetailList?.shortDesc}
-              rules={{
-                required: {
-                  value: false,
-                  message: 'Short description is required',
-                },
-              }}
               render={({ field }) => (
-                <FormList.TextAreaField
+                <TextArea
                   {...field}
-                  labelTitle="Short Description"
-                  placeholder="Input Short Description"
-                  error={!!errors?.shortDesc?.message}
-                  helperText={errors?.shortDesc?.message}
-                  border={false}
+                  direction='row'
                   inputWidth={350}
+                  labelTitle={t('user.page-management-new.shortDescriptionLabel')}
+                  labelStyle="font-bold"
+                  placeholder={t('user.page-management-new.shortDescriptionPlaceholder')}
+                  roundStyle="xl"
                 />
               )}
             />
@@ -627,10 +641,9 @@ export default function PageManagementDetail() {
                   {...field}
                   direction='row'
                   inputWidth={350}
-                  labelWidth={228}
-                  labelTitle="Page"
+                  labelTitle={t('user.page-management-new.dataTypeLabel')}
                   labelStyle="font-bold"
-                  labelEmpty="Choose Page"
+                  labelRequired
                   items={dataTypeList}
                   defaultValue={field.value}
                   onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {

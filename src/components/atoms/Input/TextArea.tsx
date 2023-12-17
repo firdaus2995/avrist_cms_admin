@@ -1,4 +1,5 @@
-import PropTypes from 'prop-types';
+import React from 'react';
+
 import ErrorSmallIcon from '../../../assets/error-small.svg';
 import { t } from 'i18next';
 
@@ -15,6 +16,7 @@ interface ITextArea {
   placeholder?: string | null;
   disabled?: boolean;
   inputWidth?: number;
+  roundStyle?: string;
   inputHeight?: number;
   onChange: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
   name?: string;
@@ -36,6 +38,7 @@ export const TextArea: React.FC<ITextArea> = ({
   placeholder,
   disabled,
   inputWidth,
+  roundStyle = 'xl',
   inputHeight,
   onChange,
   name,
@@ -76,7 +79,7 @@ export const TextArea: React.FC<ITextArea> = ({
           maxLength={maxLength}
           className={`textarea ${
             isError ? 'border-error' : 'textarea-bordered'
-          } w-full text-base py-3 rounded-xl ${textAreaStyle}`}
+          } w-full text-base py-3 rounded-${roundStyle} ${textAreaStyle}`}
         />
         {
           isError && (direction === 'column' || !direction) && (
@@ -99,25 +102,4 @@ export const TextArea: React.FC<ITextArea> = ({
       }
     </div>
   );
-};
-
-TextArea.propTypes = {
-  rows: PropTypes.number,
-  direction: PropTypes.string,
-  labelTitle: PropTypes.string.isRequired,
-  labelStyle: PropTypes.string,
-  labelWidth: PropTypes.number,
-  labelRequired: PropTypes.bool,
-  textAreaStyle: PropTypes.string,
-  containerStyle: PropTypes.string,
-  value: PropTypes.string,
-  placeholder: PropTypes.string,
-  onChange: PropTypes.func.isRequired,
-  disabled: PropTypes.bool,
-  name: PropTypes.string,
-  inputWidth: PropTypes.number,
-  inputHeight: PropTypes.number,
-  isError: PropTypes.bool,
-  helperText: PropTypes.string,
-  maxLength: PropTypes.number,
 };
