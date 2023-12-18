@@ -192,9 +192,11 @@ export const pageManagementApi = createApi({
               metaDescription
               shortDesc
               content
+              lastComment
+              status
               lastEdited {
-                  editedBy
-                  editedAt
+                editedBy
+                editedAt
               }
               pageTemplate {
                 id
@@ -205,7 +207,6 @@ export const pageManagementApi = createApi({
                 id
                 name
               }
-              status
             }
           }
         `,

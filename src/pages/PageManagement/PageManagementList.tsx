@@ -26,6 +26,7 @@ import { FilterButton } from '@/components/molecules/FilterButton/index.';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import { allowedStatusDelete } from './constants';
 
 const ArchiveButton = memo(function ArchiveButton() {
   return (
@@ -310,17 +311,23 @@ export default function PageManagementList() {
               </button>
             </div>
           </Link>
-          <RoleRenderer allowedRoles={['PAGE_DELETE']}>
-            <div className="tooltip" data-tip="Delete">
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableDelete}
-                onClick={() => {
-                  onClickPageDelete(info.getValue(), info?.row?.original?.title);
-                }}
-              />
-            </div>
-          </RoleRenderer>
+          {
+            allowedStatusDelete.includes(info.row?.original?.status) ? (
+              <RoleRenderer allowedRoles={['PAGE_DELETE']}>
+                <div className="tooltip" data-tip="Delete">
+                  <img
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableDelete}
+                    onClick={() => {
+                      onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                    }}
+                  />
+                </div>
+              </RoleRenderer>
+            ) : (
+              <div className='w-[34px]'/>
+            )
+          }
         </div>
       ),
     },

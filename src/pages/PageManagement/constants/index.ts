@@ -8,3 +8,5 @@ export const dataTypeList = [
     label: 'Single',
   },
 ];
+
+export const allowedStatusDelete: string[] = ['DRAFT', 'APPROVED', 'REJECTED', 'DELETE_REJECTED'];
