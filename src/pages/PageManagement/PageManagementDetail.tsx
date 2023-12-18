@@ -940,10 +940,10 @@ export default function PageManagementDetail() {
         border={true}
         TopSideButtons={rightTopButton()}
       >
-        {(pageDetailList?.lastComment && pageDetailList?.status === 'DELETE_REJECTED') && (
+        {(pageDetailList?.lastComment && (pageDetailList?.status === 'DELETE_REJECTED' || pageDetailList?.status === 'REJECTED')) && (
           <div className='flex flex-row gap-3 bg-[#FBF8FF] p-4 rounded-lg my-6 max-w-[700px]'>
             <Typography size='s' weight='bold' className='min-w-[140px]'>Rejected Comment:</Typography>
-            <Typography size='s' className='text-reddist'>Pada menu ini tidak perlu komponen card. Komponen card bisa diubah menggunakan komponen banner.</Typography>
+            <Typography size='s' className='text-reddist'>{pageDetailList.lastComment}</Typography>
           </div>          
         )}
         {pageDetailList?.lastEdited && (
