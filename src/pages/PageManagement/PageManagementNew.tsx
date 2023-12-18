@@ -12,7 +12,6 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import CancelIcon from '../../assets/cancel.png';
 import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
-import FormList from '../../components/molecules/FormList';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
@@ -22,8 +21,10 @@ import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { dataTypeList } from './contants';
+import { dataTypeList } from './constants';
 import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
+import { InputText } from '@/components/atoms/Input/InputText';
+import { TextArea } from '@/components/atoms/Input/TextArea';
 
 export default function PageManagementNew() {
   const {
@@ -33,7 +34,9 @@ export default function PageManagementNew() {
     getValues,
     watch,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    reValidateMode: 'onSubmit',
+  });
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
 
@@ -262,15 +265,17 @@ export default function PageManagementNew() {
                   },
                 }}
                 render={({ field }) => (
-                  <FormList.TextField
+                  <InputText
                     {...field}
+                    direction='row'
+                    inputWidth={350}
                     labelTitle={t('user.page-management-new.pageNameLabel')}
                     labelRequired
-                    placeholder={t('user.page-management-new.pageNamePlaceholder')}
-                    error={!!errors?.pageName?.message}
+                    labelStyle="font-bold"
+                    placeholder={t('user.add.placeholder-user-fullname')}
+                    roundStyle="xl"
+                    isError={!!errors?.pageName}
                     helperText={errors?.pageName?.message}
-                    border={false}
-                    inputWidth={350}
                   />
                 )}
               />
@@ -285,15 +290,17 @@ export default function PageManagementNew() {
                   },
                 }}
                 render={({ field }) => (
-                  <FormList.TextField
+                  <InputText
                     {...field}
+                    direction='row'
+                    inputWidth={350}
                     labelTitle={t('user.page-management-new.metaTitleLabel')}
                     labelRequired
+                    labelStyle="font-bold"
                     placeholder={t('user.page-management-new.metaTitlePlaceholder')}
-                    error={!!errors?.metaTitle?.message}
+                    roundStyle="xl"
+                    isError={!!errors?.metaTitle}
                     helperText={errors?.metaTitle?.message}
-                    border={false}
-                    inputWidth={350}
                   />
                 )}
               />
@@ -310,15 +317,17 @@ export default function PageManagementNew() {
                   },
                 }}
                 render={({ field }) => (
-                  <FormList.TextField
+                  <InputText
                     {...field}
+                    direction='row'
+                    inputWidth={350}
                     labelTitle={t('user.page-management-new.slugLabel')}
                     labelRequired
+                    labelStyle="font-bold"
                     placeholder={t('user.page-management-new.slugPlaceholder')}
-                    error={!!errors?.slug?.message}
+                    roundStyle="xl"
+                    isError={!!errors?.slug}
                     helperText={errors?.slug?.message}
-                    border={false}
-                    inputWidth={350}
                   />
                 )}
               />
@@ -333,15 +342,17 @@ export default function PageManagementNew() {
                   },
                 }}
                 render={({ field }) => (
-                  <FormList.TextField
+                  <InputText
                     {...field}
+                    direction='row'
+                    inputWidth={350}
                     labelTitle={t('user.page-management-new.metaDescriptionLabel')}
                     labelRequired
+                    labelStyle="font-bold"
                     placeholder={t('user.page-management-new.metaDescriptionPlaceholder')}
-                    error={!!errors?.metaDescription?.message}
+                    roundStyle="xl"
+                    isError={!!errors?.metaDescription}
                     helperText={errors?.metaDescription?.message}
-                    border={false}
-                    inputWidth={350}
                   />
                 )}
               />
@@ -350,21 +361,15 @@ export default function PageManagementNew() {
               <Controller
                 name="shortDesc"
                 control={control}
-                rules={{
-                  required: {
-                    value: false,
-                    message: 'Short description is required',
-                  },
-                }}
                 render={({ field }) => (
-                  <FormList.TextAreaField
+                  <TextArea
                     {...field}
-                    labelTitle="Short Description"
-                    placeholder="Input Short Description"
-                    error={!!errors?.shortDesc?.message}
-                    helperText={errors?.shortDesc?.message}
-                    border={false}
+                    direction='row'
                     inputWidth={350}
+                    labelTitle={t('user.page-management-new.shortDescriptionLabel')}
+                    labelStyle="font-bold"
+                    placeholder={t('user.page-management-new.shortDescriptionPlaceholder')}
+                    roundStyle="xl"
                   />
                 )}
               />
@@ -379,10 +384,9 @@ export default function PageManagementNew() {
                     {...field}
                     direction='row'
                     inputWidth={350}
-                    labelWidth={228}      
-                    labelTitle="Page"
-                    labelStyle="font-bold text-base"
-                    labelEmpty="Choose Page"
+                    labelTitle={t('user.page-management-new.dataTypeLabel')}
+                    labelStyle="font-bold"
+                    labelRequired
                     items={dataTypeList}
                     defaultValue={field.value}
                     onSelect={(event: React.SyntheticEvent, value: string | number | boolean) => {
