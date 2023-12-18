@@ -26,7 +26,7 @@ import { FilterButton } from '@/components/molecules/FilterButton/index.';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
-import { forbiddenStatusDelete } from './contants';
+import { allowedStatusDelete } from './constants';
 
 const ArchiveButton = memo(function ArchiveButton() {
   return (
@@ -312,7 +312,7 @@ export default function PageManagementList() {
             </div>
           </Link>
           {
-            !forbiddenStatusDelete.includes(info.row?.original?.status) ? (
+            allowedStatusDelete.includes(info.row?.original?.status) ? (
               <RoleRenderer allowedRoles={['PAGE_DELETE']}>
                 <div className="tooltip" data-tip="Delete">
                   <img

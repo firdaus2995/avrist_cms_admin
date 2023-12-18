@@ -22,7 +22,7 @@ import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { dataTypeList } from './contants';
+import { dataTypeList } from './constants';
 import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
 
 export default function PageManagementNew() {

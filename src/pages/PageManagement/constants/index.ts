@@ -9,4 +9,4 @@ export const dataTypeList = [
   },
 ];
 
-export const forbiddenStatusDelete: string[] = ['WAITING_REVIEW, WAITING_APPROVE', 'DELETE_REVIEW', 'DELETE_APPROVE'];
+export const allowedStatusDelete: string[] = ['DRAFT', 'APPROVED', 'REJECTED', 'DELETE_REJECTED'];
