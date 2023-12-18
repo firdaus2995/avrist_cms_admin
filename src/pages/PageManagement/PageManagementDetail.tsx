@@ -795,155 +795,157 @@ export default function PageManagementDetail() {
         submitTitle={t('user.page-management.detail.labels.restoreYes')}
         icon={undefined}
       />
+      <ModalConfirm
+        open={showModalReview}
+        title={t('user.page-management.detail.labels.reviewPageContent')}
+        cancelTitle={t('user.page-management.detail.labels.restoreNo')}
+        message={t('user.page-management.detail.labels.reviewPageConfirmation') ?? ''}
+        submitTitle={t('user.page-management.detail.labels.restoreYes')}
+        icon={PaperIcon}
+        submitAction={() => {
+          setShowModalReview(false);
+        }}
+        btnSubmitStyle="btn bg-secondary-warning border-none"
+        cancelAction={() => {
+          setShowModalReview(false);
+          setIsAlreadyReview(false);
+        }}
+      />
+      <ModalConfirm
+        open={showModalWarning}
+        title={''}
+        message={t('user.page-management.detail.messages.alreadyReviewWarning') ?? ''}
+        submitTitle={t('user.page-management.detail.labels.restoreYes')}
+        icon={WarningIcon}
+        submitAction={() => {
+          setShowModalWarning(false);
+        }}
+        btnSubmitStyle="btn-error"
+        cancelTitle={''}
+        cancelAction={function (): void {
+          throw new Error('Function not implemented.');
+        }}
+      />
+      <ModalConfirm
+        open={showModalApprove}
+        title={t('user.page-management.detail.labels.approve')}
+        cancelTitle={t('user.page-management.detail.labels.restoreNo')}
+        message={
+          pageDetailList?.status === 'WAITING_APPROVE'
+            ? t('user.page-management.detail.labels.approveConfirmation') ?? ''
+            : t('user.page-management.detail.labels.approveDeleteConfirmation') ?? ''
+        }
+        submitTitle={t('user.page-management.detail.labels.restoreYes')}
+        icon={CheckOrange}
+        submitAction={() => {
+          setShowModalApprove(false);
+          const payload = {
+            id: pageDetailList?.id,
+            status: pageDetailList?.status === 'DELETE_APPROVE' ? 'ARCHIVED' : 'APPROVED',
+            comment: 'Already approve',
+          };
+
+          onUpdateStatus(payload);
+        }}
+        btnSubmitStyle="btn bg-secondary-warning border-none"
+        cancelAction={() => {
+          setShowModalApprove(false);
+        }}
+      />
+      <ModalConfirm
+        open={showArchivedModal}
+        title={t('user.page-management.detail.labels.restoreContentData')}
+        cancelTitle={t('user.page-management.detail.labels.cancel')}
+        message={t('user.page-management.detail.labels.restoreConfirmation') ?? ''}
+        submitTitle={t('user.page-management.detail.labels.restoreYes')}
+        icon={RestoreOrange}
+        submitAction={() => {
+          setShowArchivedModal(false);
+          const payload = {
+            id: pageDetailList?.id,
+          };
+          onRestoreData(payload);
+        }}
+        btnSubmitStyle="btn bg-secondary-warning border-none"
+        cancelAction={() => {
+          setShowArchivedModal(false);
+        }}
+      />
+      <ModalForm
+        open={showModalRejected}
+        submitPosition="justify-center"
+        formTitle=""
+        height={640}
+        submitTitle={t('user.page-management.detail.labels.restoreYes')}
+        submitType="bg-secondary-warning border-none"
+        submitDisabled={rejectComments === ''}
+        cancelTitle={t('user.page-management.detail.labels.restoreNo')}
+        cancelAction={() => {
+          setShowModalRejected(false);
+        }}
+        submitAction={() => {
+          setShowModalRejected(false);
+          const payload = {
+            id: pageDetailList?.id,
+            status: pageDetailList?.status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
+            comment: rejectComments,
+          };
+
+          onUpdateStatus(payload);
+        }}>
+        <div className="flex flex-col justify-center items-center w-full">
+          <img src={PaperIcon} className="w-10" />
+          {pageDetailList?.status === 'WAITING_APPROVE' ? (
+            <p className="font-semibold my-3 text-xl">
+              {t('user.page-management.detail.labels.rejectConfirmation')}
+            </p>
+          ) : (
+            <p className="font-semibold my-3 text-xl">
+              {t('user.page-management.detail.labels.deleteRejectConfirmation')}
+            </p>
+          )}
+          <TextArea
+            name="shortDesc"
+            labelTitle={t('user.page-management.detail.labels.rejectComments')}
+            labelStyle="font-bold"
+            value={rejectComments}
+            labelRequired
+            placeholder={t('user.page-management.detail.labels.enterRejectComments') ?? ''}
+            containerStyle="px-8" 
+            onChange={e => {
+              setRejectComments(e.target.value);
+            }}
+          />
+        </div>
+      </ModalForm>
+      <ModalConfirm
+        open={showLeaveModal}
+        cancelAction={() => {
+          setShowLeaveModal(false);
+        }}
+        title={titleLeaveModalShow ?? ''}
+        cancelTitle={t('no')}
+        message={messageLeaveModalShow ?? ''}
+        submitAction={() => {
+          goBack();
+        }}
+        submitTitle={t('yes')}
+        icon={CancelIcon}
+        btnSubmitStyle="btn-warning"
+      />
+      
       <TitleCard
         title={`${pageDetailList?.title} - ${t('user.page-management.detail.labels.title') ?? ''}`}
         titleComponent={<Badge />}
         border={true}
-        TopSideButtons={rightTopButton()}>
-        <ModalConfirm
-          open={showModalReview}
-          title={t('user.page-management.detail.labels.reviewPageContent')}
-          cancelTitle={t('user.page-management.detail.labels.restoreNo')}
-          message={t('user.page-management.detail.labels.reviewPageConfirmation') ?? ''}
-          submitTitle={t('user.page-management.detail.labels.restoreYes')}
-          icon={PaperIcon}
-          submitAction={() => {
-            setShowModalReview(false);
-          }}
-          btnSubmitStyle="btn bg-secondary-warning border-none"
-          cancelAction={() => {
-            setShowModalReview(false);
-            setIsAlreadyReview(false);
-          }}
-        />
-
-        <ModalConfirm
-          open={showModalWarning}
-          title={''}
-          message={t('user.page-management.detail.messages.alreadyReviewWarning') ?? ''}
-          submitTitle={t('user.page-management.detail.labels.restoreYes')}
-          icon={WarningIcon}
-          submitAction={() => {
-            setShowModalWarning(false);
-          }}
-          btnSubmitStyle="btn-error"
-          cancelTitle={''}
-          cancelAction={function (): void {
-            throw new Error('Function not implemented.');
-          }}
-        />
-
-        <ModalConfirm
-          open={showModalApprove}
-          title={t('user.page-management.detail.labels.approve')}
-          cancelTitle={t('user.page-management.detail.labels.restoreNo')}
-          message={
-            pageDetailList?.status === 'WAITING_APPROVE'
-              ? t('user.page-management.detail.labels.approveConfirmation') ?? ''
-              : t('user.page-management.detail.labels.approveDeleteConfirmation') ?? ''
-          }
-          submitTitle={t('user.page-management.detail.labels.restoreYes')}
-          icon={CheckOrange}
-          submitAction={() => {
-            setShowModalApprove(false);
-            const payload = {
-              id: pageDetailList?.id,
-              status: pageDetailList?.status === 'DELETE_APPROVE' ? 'ARCHIVED' : 'APPROVED',
-              comment: 'Already approve',
-            };
-
-            onUpdateStatus(payload);
-          }}
-          btnSubmitStyle="btn bg-secondary-warning border-none"
-          cancelAction={() => {
-            setShowModalApprove(false);
-          }}
-        />
-
-        <ModalConfirm
-          open={showArchivedModal}
-          title={t('user.page-management.detail.labels.restoreContentData')}
-          cancelTitle={t('user.page-management.detail.labels.cancel')}
-          message={t('user.page-management.detail.labels.restoreConfirmation') ?? ''}
-          submitTitle={t('user.page-management.detail.labels.restoreYes')}
-          icon={RestoreOrange}
-          submitAction={() => {
-            setShowArchivedModal(false);
-            const payload = {
-              id: pageDetailList?.id,
-            };
-            onRestoreData(payload);
-          }}
-          btnSubmitStyle="btn bg-secondary-warning border-none"
-          cancelAction={() => {
-            setShowArchivedModal(false);
-          }}
-        />
-
-        <ModalForm
-          open={showModalRejected}
-          submitPosition="justify-center"
-          formTitle=""
-          height={640}
-          submitTitle={t('user.page-management.detail.labels.restoreYes')}
-          submitType="bg-secondary-warning border-none"
-          submitDisabled={rejectComments === ''}
-          cancelTitle={t('user.page-management.detail.labels.restoreNo')}
-          cancelAction={() => {
-            setShowModalRejected(false);
-          }}
-          submitAction={() => {
-            setShowModalRejected(false);
-            const payload = {
-              id: pageDetailList?.id,
-              status: pageDetailList?.status === 'DELETE_APPROVE' ? 'DELETE_REJECTED' : 'REJECTED',
-              comment: rejectComments,
-            };
-
-            onUpdateStatus(payload);
-          }}>
-          <div className="flex flex-col justify-center items-center w-full">
-            <img src={PaperIcon} className="w-10" />
-            {pageDetailList?.status === 'WAITING_APPROVE' ? (
-              <p className="font-semibold my-3 text-xl">
-                {t('user.page-management.detail.labels.rejectConfirmation')}
-              </p>
-            ) : (
-              <p className="font-semibold my-3 text-xl">
-                {t('user.page-management.detail.labels.deleteRejectConfirmation')}
-              </p>
-            )}
-            <TextArea
-              name="shortDesc"
-              labelTitle={t('user.page-management.detail.labels.rejectComments')}
-              labelStyle="font-bold"
-              value={rejectComments}
-              labelRequired
-              placeholder={t('user.page-management.detail.labels.enterRejectComments') ?? ''}
-              containerStyle="px-8" 
-              onChange={e => {
-                setRejectComments(e.target.value);
-              }}
-            />
-          </div>
-        </ModalForm>
-
-        <ModalConfirm
-          open={showLeaveModal}
-          cancelAction={() => {
-            setShowLeaveModal(false);
-          }}
-          title={titleLeaveModalShow ?? ''}
-          cancelTitle={t('no')}
-          message={messageLeaveModalShow ?? ''}
-          submitAction={() => {
-            goBack();
-          }}
-          submitTitle={t('yes')}
-          icon={CancelIcon}
-          btnSubmitStyle="btn-warning"
-        />
-
+        TopSideButtons={rightTopButton()}
+      >
+        {(pageDetailList?.lastComment && (pageDetailList?.status === 'DELETE_REJECTED' || pageDetailList?.status === 'REJECTED')) && (
+          <div className='flex flex-row gap-3 bg-[#FBF8FF] p-4 rounded-lg my-6 max-w-[700px]'>
+            <Typography size='s' weight='bold' className='min-w-[140px]'>Rejected Comment:</Typography>
+            <Typography size='s' className='text-reddist'>{pageDetailList.lastComment}</Typography>
+          </div>          
+        )}
         {pageDetailList?.lastEdited && (
           <div>
             {t('user.page-management.detail.labels.lastEditedBy')}{' '}
