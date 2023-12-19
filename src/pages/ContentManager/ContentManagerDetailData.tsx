@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { Key, useCallback, useEffect, useState } from 'react';
+import React, { Key, useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { t } from 'i18next';
@@ -37,6 +37,7 @@ import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import CkEditor from '@/components/atoms/Ckeditor';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -600,7 +601,39 @@ export default function ContentManagerDetailData() {
             />
           );
         case 'TEXT_EDITOR':
-          return <FormList.TextEditor key={id} name={name} />;
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue={value}
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange(e);
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+
+                return (
+                  <React.Fragment>
+                    <Typography type="body" size="m" weight="bold">
+                      {t('user.page-management-new.contentLabel')}
+                    </Typography>
+                    <CkEditor
+                      data={field.value}
+                      onChange={onChange}
+                      disabled={!isEdited}
+                    />
+                  </React.Fragment>
+                )
+              }}
+            />
+          )
         case 'PHONE_NUMBER':
           return (
             <Controller

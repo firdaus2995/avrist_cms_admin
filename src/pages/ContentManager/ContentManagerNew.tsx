@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { t } from 'i18next';
 import {
   useCreateContentDataMutation,
@@ -23,6 +23,7 @@ import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import CkEditor from '@/components/atoms/Ckeditor';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -700,7 +701,38 @@ export default function ContentManagerNew() {
             />
           );
         case 'TEXT_EDITOR':
-          return <FormList.TextEditor key={id} name={name} />;
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue={""}
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange(e);
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+
+                return (
+                  <React.Fragment>
+                    <Typography type="body" size="m" weight="bold">
+                      {t('user.page-management-new.contentLabel')}
+                    </Typography>
+                    <CkEditor
+                      data={field.value}
+                      onChange={onChange}
+                    />
+                  </React.Fragment>
+                )
+              }}
+            />
+          )
         case 'PHONE_NUMBER':
           return (
             <Controller
