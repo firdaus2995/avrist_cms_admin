@@ -40,6 +40,7 @@ import {
   useUpdatePageStatusMutation,
 } from '@/services/PageManagement/pageManagementApi';
 import { InputText } from '@/components/atoms/Input/InputText';
+import RectangleBadge from '@/components/molecules/Badge/RectangleBadge';
 
 export default function PageManagementDetail() {
   const {
@@ -941,10 +942,10 @@ export default function PageManagementDetail() {
         TopSideButtons={rightTopButton()}
       >
         {(pageDetailList?.lastComment && (pageDetailList?.status === 'DELETE_REJECTED' || pageDetailList?.status === 'REJECTED')) && (
-          <div className='flex flex-row gap-3 bg-[#FBF8FF] p-4 rounded-lg my-6 max-w-[700px]'>
-            <Typography size='s' weight='bold' className='min-w-[140px]'>Rejected Comment:</Typography>
-            <Typography size='s' className='text-reddist'>{pageDetailList.lastComment}</Typography>
-          </div>          
+          <RectangleBadge
+            title='Rejected Comment:'
+            comment={pageDetailList.lastComment}
+          />
         )}
         {pageDetailList?.lastEdited && (
           <div>
