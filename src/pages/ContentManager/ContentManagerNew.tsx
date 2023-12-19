@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { t } from 'i18next';
 import {
   useCreateContentDataMutation,
@@ -23,7 +23,6 @@ import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
-import CkEditor from '@/components/atoms/Ckeditor';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -720,15 +719,11 @@ export default function ContentManagerNew() {
                 );
 
                 return (
-                  <React.Fragment>
-                    <Typography type="body" size="m" weight="bold">
-                      {t('user.page-management-new.contentLabel')}
-                    </Typography>
-                    <CkEditor
-                      data={field.value}
-                      onChange={onChange}
-                    />
-                  </React.Fragment>
+                  <FormList.TextEditor 
+                    title={t('user.page-management-new.contentLabel')}
+                    value={field.value}
+                    onChange={onChange}
+                  />
                 )
               }}
             />
