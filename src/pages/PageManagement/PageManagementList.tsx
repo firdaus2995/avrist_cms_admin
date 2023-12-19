@@ -26,7 +26,7 @@ import { FilterButton } from '@/components/molecules/FilterButton/index.';
 import { t } from 'i18next';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
-import { allowedStatusDelete } from './constants';
+import { allowedStatusDelete } from '../../constants/common';
 
 const ArchiveButton = memo(function ArchiveButton() {
   return (

@@ -14,7 +14,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { Link } from 'react-router-dom';
 import StatusBadge from '@/components/atoms/StatusBadge';
 import RoleRenderer from '@/components/atoms/RoleRenderer';
-import { allowedStatusDelete } from '@/pages/PageManagement/constants';
+import { allowedStatusDelete } from '@/constants/common';
 
 export default function MainTab(props: { id: any, isUseCategory: any }) {
   const dispatch = useAppDispatch();
