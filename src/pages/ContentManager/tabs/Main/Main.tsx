@@ -14,6 +14,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { Link } from 'react-router-dom';
 import StatusBadge from '@/components/atoms/StatusBadge';
 import RoleRenderer from '@/components/atoms/RoleRenderer';
+import { allowedStatusDelete } from '@/pages/PageManagement/constants';
 
 export default function MainTab(props: { id: any, isUseCategory: any }) {
   const dispatch = useAppDispatch();
@@ -153,25 +154,29 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
       cell: (info: any) => (
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
-            <div className="tooltip" data-tip={t('user.tabs-main.common.action.viewDetail')}>
-              <div
-                role="button"
-                className="p-1 px-4 border rounded-md border-primary bg-white font-medium text-primary text-xs">
+            <div className="tooltip" data-tip={'View Detail'}>
+              <button role="button" className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
                 {t('user.tabs-main.common.action.viewDetail')}
-              </div>
+              </button>
             </div>
           </Link>
-          <RoleRenderer allowedRoles={['CONTENT_MANAGER_DELETE']}>
-            <div className="tooltip" data-tip={t('user.tabs-main.common.action.delete')}>
-              <img
-                className={`cursor-pointer select-none flex items-center justify-center`}
-                src={TableDelete}
-                onClick={() => {
-                  onClickPageDelete(info.getValue(), info?.row?.original?.title);
-                }}
-              />
-            </div>
-          </RoleRenderer>
+          {
+            allowedStatusDelete.includes(info.row?.original?.status) ? (
+              <RoleRenderer allowedRoles={['CONTENT_MANAGER_DELETE']}>
+                <div className="tooltip" data-tip={t('user.tabs-main.common.action.delete')}>
+                  <img
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableDelete}
+                    onClick={() => {
+                      onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                    }}
+                  />
+                </div>
+              </RoleRenderer>
+            ) : (
+              <div className='w-[34px]'/>
+            )
+          }
         </div>
       ),
     },
