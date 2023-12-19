@@ -21,7 +21,7 @@ import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { dataTypeList } from './constants';
+import { dataTypeList } from '../../constants/common';
 import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';

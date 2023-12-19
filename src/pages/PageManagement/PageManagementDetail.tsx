@@ -31,7 +31,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import { useGetEligibleAutoApproveQuery } from '@/services/ContentManager/contentManagerApi';
 import { useGetPageTemplateQuery } from '@/services/PageTemplate/pageTemplateApi';
 import { useGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
-import { dataTypeList } from './constants';
+import { dataTypeList } from '../../constants/common';
 import { errorMessageTypeConverter, getImageData } from '@/utils/logicHelper';
 import {
   useGetPageByIdQuery,
