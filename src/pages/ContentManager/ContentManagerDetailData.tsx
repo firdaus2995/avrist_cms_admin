@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { Key, useCallback, useEffect, useState } from 'react';
+import React, { Key, useCallback, useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useNavigate, useParams } from 'react-router-dom';
 import { t } from 'i18next';
@@ -21,6 +21,7 @@ import TimelineLog from '@/assets/timeline-log.svg';
 import TableDelete from '@/assets/table-delete.svg';
 import PaperSubmit from '../../assets/paper-submit.png';
 import CancelIcon from '@/assets/cancel.png';
+import RectangleBadge from '@/components/molecules/Badge/RectangleBadge';
 import { store, useAppDispatch } from '@/store';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
@@ -46,6 +47,7 @@ export default function ContentManagerDetailData() {
     shortDesc: '',
     categoryName: '',
     status: '',
+    lastComment: '',
     contentData: [],
   });
   const [isEdited, setIsEdited] = useState(false);
@@ -600,7 +602,35 @@ export default function ContentManagerDetailData() {
             />
           );
         case 'TEXT_EDITOR':
-          return <FormList.TextEditor key={id} name={name} />;
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue={value}
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange(e);
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+
+                return (
+                  <FormList.TextEditor 
+                    title={t('user.page-management-new.contentLabel')}
+                    value={field.value}
+                    disabled={!isEdited}
+                    onChange={onChange}
+                  />
+                )
+              }}
+            />
+          )
         case 'PHONE_NUMBER':
           return (
             <Controller
@@ -1075,12 +1105,7 @@ export default function ContentManagerDetailData() {
   };
 
   return (
-    <TitleCard
-      onBackClick={goBack}
-      hasBack={true}
-      title={`${contentDataDetail?.contentDataDetail?.title ?? ''}`}
-      titleComponent={<Badge />}
-      TopSideButtons={rigthTopButton()}>
+    <React.Fragment>
       <ModalLog
         id={idLog}
         open={!!idLog}
@@ -1105,7 +1130,6 @@ export default function ContentManagerDetailData() {
           setIsAlreadyReview(false);
         }}
       />
-
       <ModalConfirm
         open={showModalWarning}
         title={''}
@@ -1121,7 +1145,6 @@ export default function ContentManagerDetailData() {
           throw new Error('Function not implemented.');
         }}
       />
-
       <ModalConfirm
         open={showModalApprove}
         title={t('user.content-manager-detail-data.approve')}
@@ -1148,7 +1171,6 @@ export default function ContentManagerDetailData() {
           setShowModalApprove(false);
         }}
       />
-
       <ModalConfirm
         open={showArchivedModal}
         title={t('user.content-manager-detail-data.restoreContentData')}
@@ -1169,7 +1191,6 @@ export default function ContentManagerDetailData() {
           setShowArchivedModal(false);
         }}
       />
-
       <ModalForm
         open={showModalRejected}
         formTitle=""
@@ -1217,7 +1238,6 @@ export default function ContentManagerDetailData() {
           />
         </div>
       </ModalForm>
-
       <ModalForm
         open={showModalAutoApprove}
         formTitle=""
@@ -1253,7 +1273,6 @@ export default function ContentManagerDetailData() {
           />
         </div>
       </ModalForm>
-
       <ModalConfirm
         open={showLeaveModal}
         cancelAction={() => {
@@ -1267,123 +1286,136 @@ export default function ContentManagerDetailData() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-
-      {contentDataDetail && (
-        <form onSubmit={handleSubmit(onSubmitData)}>
-          <div className="ml-2 mt-6">
-            <div className="grid grid-cols-1 gap-5">
-              {contentDataDetailList?.lastEdited && (
-                <div>
-                  {t('user.content-manager-detail-data.lastEditedBy')}{' '}
-                  <span className="font-bold">{contentDataDetailList?.lastEdited?.editedBy}</span>{' '}
-                  {t('user.content-manager-detail-data.at')}{' '}
-                  <span className="font-bold">
-                    {dayjs(contentDataDetailList?.lastEdited?.editedAt).format(
-                      'DD/MM/YYYY - HH:mm',
-                    )}
-                  </span>
-                </div>
-              )}
-              <div className="flex flex-row">
-                <Typography type="body" size="m" weight="bold" className="mt-5 ml-1 w-48 mr-16">
-                  {t('user.content-manager-detail-data.title')}
-                </Typography>
-                <InputText
-                  name="title"
-                  value={contentDataDetailList?.title}
-                  labelTitle=""
-                  disabled={!isEdited}
-                  roundStyle="xl"
-                  onChange={e => {
-                    handleChange(e.target.name, e.target.value);
-                  }}
-                />
-              </div>
-              {contentDataDetailList?.categoryName !== '' && (
+      
+      <TitleCard
+        onBackClick={goBack}
+        hasBack={true}
+        title={`${contentDataDetail?.contentDataDetail?.title ?? ''}`}
+        titleComponent={<Badge />}
+        TopSideButtons={rigthTopButton()}>
+        {(contentDataDetailList?.lastComment && (contentDataDetailList?.status === 'DELETE_REJECTED' || contentDataDetailList?.status === 'REJECTED')) && (
+          <RectangleBadge
+            title='Rejected Comment:'
+            comment={contentDataDetailList.lastComment}
+          />
+        )}
+        {contentDataDetail && (
+          <form onSubmit={handleSubmit(onSubmitData)}>
+            <div className="ml-2 mt-6">
+              <div className="grid grid-cols-1 gap-5">
+                {contentDataDetailList?.lastEdited && (
+                  <div>
+                    {t('user.content-manager-detail-data.lastEditedBy')}{' '}
+                    <span className="font-bold">{contentDataDetailList?.lastEdited?.editedBy}</span>{' '}
+                    {t('user.content-manager-detail-data.at')}{' '}
+                    <span className="font-bold">
+                      {dayjs(contentDataDetailList?.lastEdited?.editedAt).format(
+                        'DD/MM/YYYY - HH:mm',
+                      )}
+                    </span>
+                  </div>
+                )}
                 <div className="flex flex-row">
-                  <Typography type="body" size="m" weight="bold" className="w-48 ml-1">
-                    {t('user.content-manager-detail-data.category')}
+                  <Typography type="body" size="m" weight="bold" className="mt-5 ml-1 w-48 mr-16">
+                    {t('user.content-manager-detail-data.title')}
                   </Typography>
-                  <Controller
-                    name="category"
-                    control={control}
-                    defaultValue={contentDataDetailList?.categoryName}
-                    rules={{
-                      required: `${t('user.content-manager-detail-data.category')} ${t(
-                        'user.content-manager-detail-data.is-required',
-                      )}`,
-                    }}
-                    render={({ field }) => {
-                      const onChange = useCallback(
-                        (e: any) => {
-                          handleFormChange('categoryName', e);
-                          field.onChange({ target: { value: e } });
-                        },
-                        [id, field, handleFormChange],
-                      );
-                      return (
-                        <FormList.TextInputDropDown
-                          {...field}
-                          key="category"
-                          labelTitle={t('user.content-manager-detail-data.category')}
-                          placeholder={t('user.content-manager-detail-data.title')}
-                          error={!!errors?.category?.message}
-                          helperText={errors?.category?.message}
-                          disabled={!isEdited}
-                          items={categoryList}
-                          onChange={onChange}
-                        />
-                      );
+                  <InputText
+                    name="title"
+                    value={contentDataDetailList?.title}
+                    labelTitle=""
+                    disabled={!isEdited}
+                    roundStyle="xl"
+                    onChange={e => {
+                      handleChange(e.target.name, e.target.value);
                     }}
                   />
                 </div>
-              )}
-              <div className="flex flex-row">
-                <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-16">
-                  {t('user.content-manager-detail-data.shortDescription')}
-                </Typography>
-                <TextArea
-                  name="shortDesc"
-                  labelTitle=""
-                  value={contentDataDetailList?.shortDesc}
-                  disabled={!isEdited}
-                  placeholder={t('user.content-manager-detail-data.description') ?? ''}
-                  containerStyle="rounded-3xl"
-                  onChange={e => {
-                    handleChange(e.target.name, e.target.value);
-                  }}
-                />
+                {contentDataDetailList?.categoryName !== '' && (
+                  <div className="flex flex-row">
+                    <Typography type="body" size="m" weight="bold" className="w-48 ml-1">
+                      {t('user.content-manager-detail-data.category')}
+                    </Typography>
+                    <Controller
+                      name="category"
+                      control={control}
+                      defaultValue={contentDataDetailList?.categoryName}
+                      rules={{
+                        required: `${t('user.content-manager-detail-data.category')} ${t(
+                          'user.content-manager-detail-data.is-required',
+                        )}`,
+                      }}
+                      render={({ field }) => {
+                        const onChange = useCallback(
+                          (e: any) => {
+                            handleFormChange('categoryName', e);
+                            field.onChange({ target: { value: e } });
+                          },
+                          [id, field, handleFormChange],
+                        );
+                        return (
+                          <FormList.TextInputDropDown
+                            {...field}
+                            key="category"
+                            labelTitle={t('user.content-manager-detail-data.category')}
+                            placeholder={t('user.content-manager-detail-data.title')}
+                            error={!!errors?.category?.message}
+                            helperText={errors?.category?.message}
+                            disabled={!isEdited}
+                            items={categoryList}
+                            onChange={onChange}
+                          />
+                        );
+                      }}
+                    />
+                  </div>
+                )}
+                <div className="flex flex-row">
+                  <Typography type="body" size="m" weight="bold" className="w-48 mt-5 ml-1 mr-16">
+                    {t('user.content-manager-detail-data.shortDescription')}
+                  </Typography>
+                  <TextArea
+                    name="shortDesc"
+                    labelTitle=""
+                    value={contentDataDetailList?.shortDesc}
+                    disabled={!isEdited}
+                    placeholder={t('user.content-manager-detail-data.description') ?? ''}
+                    containerStyle="rounded-3xl"
+                    onChange={e => {
+                      handleChange(e.target.name, e.target.value);
+                    }}
+                  />
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="border border-primary my-10" />
+            <div className="border border-primary my-10" />
 
-          {renderFormList()}
-          {isEdited && <Footer />}
-        </form>
-      )}
-      {roles?.includes('CONTENT_MANAGER_REVIEW') ? (
-        contentDataDetailList?.status === 'WAITING_REVIEW' ||
-        contentDataDetailList?.status === 'DELETE_REVIEW' ? (
-          <div className="flex flex-row justify-between">
-            <div className="w-[30vh] mt-5">
-              <CheckBox
-                defaultValue={isAlreadyReview}
-                updateFormValue={e => {
-                  setIsAlreadyReview(e.value);
-                  if (e.value) {
-                    setShowModalReview(true);
-                  }
-                }}
-                labelTitle={t('user.content-manager-detail-data.iAlreadyReview')}
-                updateType={''}
-              />
+            {renderFormList()}
+            {isEdited && <Footer />}
+          </form>
+        )}
+        {roles?.includes('CONTENT_MANAGER_REVIEW') ? (
+          contentDataDetailList?.status === 'WAITING_REVIEW' ||
+          contentDataDetailList?.status === 'DELETE_REVIEW' ? (
+            <div className="flex flex-row justify-between">
+              <div className="w-[30vh] mt-5">
+                <CheckBox
+                  defaultValue={isAlreadyReview}
+                  updateFormValue={e => {
+                    setIsAlreadyReview(e.value);
+                    if (e.value) {
+                      setShowModalReview(true);
+                    }
+                  }}
+                  labelTitle={t('user.content-manager-detail-data.iAlreadyReview')}
+                  updateType={''}
+                />
+              </div>
+              {submitButton()}
             </div>
-            {submitButton()}
-          </div>
-        ) : null
-      ) : null}
-    </TitleCard>
+          ) : null
+        ) : null}
+      </TitleCard>
+    </React.Fragment>
   );
 }

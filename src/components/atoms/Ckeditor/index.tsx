@@ -6,6 +6,7 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 
 interface ICkEditor {
   data?: string;
+  disabled?: boolean;
   onChange?: (data: string) => void;
   isError?: any;
   helperText?: string;
@@ -13,6 +14,7 @@ interface ICkEditor {
 
 export default function CkEditor({
   data,
+  disabled = false,
   onChange,
   isError,
   helperText,
@@ -20,7 +22,7 @@ export default function CkEditor({
   return (
     <div>
       <CKEditor
-        disabled={false}
+        disabled={disabled}
         data={data ?? ''}
         editor={Editor}
         onChange={(_event: any, editor: any) => {
