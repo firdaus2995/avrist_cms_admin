@@ -271,35 +271,36 @@ export const contentManagerApi = createApi({
         document: gql`
           query contentDataDetail(
             $id: Int!
-          ){
+          ) {
             contentDataDetail(id: $id) {
+              id
+              title
+              shortDesc
+              categoryName
+              status
+              lastComment
+              lastEdited {
+                editedBy
+                editedAt
+              }
+              contentData {
                 id
-                title
-                shortDesc
-                categoryName
-                status
-                lastEdited {
-                    editedBy
-                    editedAt
-                }
+                name
+                fieldType
+                config
+                value
                 contentData {
+                  details {
                     id
                     name
                     fieldType
                     config
                     value
-                    contentData {
-                      details {
-                          id
-                          name
-                          fieldType
-                          config
-                          value
-                      }
                   }
                 }
+              }
             }
-        }
+          }
         `,
         variables: payload,
       }),
