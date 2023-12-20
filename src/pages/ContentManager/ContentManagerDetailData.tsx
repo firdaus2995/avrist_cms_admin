@@ -21,6 +21,7 @@ import TimelineLog from '@/assets/timeline-log.svg';
 import TableDelete from '@/assets/table-delete.svg';
 import PaperSubmit from '../../assets/paper-submit.png';
 import CancelIcon from '@/assets/cancel.png';
+import RectangleBadge from '@/components/molecules/Badge/RectangleBadge';
 import { store, useAppDispatch } from '@/store';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import {
@@ -37,8 +38,6 @@ import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
-import CkEditor from '@/components/atoms/Ckeditor';
-import RectangleBadge from '@/components/molecules/Badge/RectangleBadge';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -622,16 +621,12 @@ export default function ContentManagerDetailData() {
                 );
 
                 return (
-                  <React.Fragment>
-                    <Typography type="body" size="m" weight="bold">
-                      {t('user.page-management-new.contentLabel')}
-                    </Typography>
-                    <CkEditor
-                      data={field.value}
-                      onChange={onChange}
-                      disabled={!isEdited}
-                    />
-                  </React.Fragment>
+                  <FormList.TextEditor 
+                    title={t('user.page-management-new.contentLabel')}
+                    value={field.value}
+                    disabled={!isEdited}
+                    onChange={onChange}
+                  />
                 )
               }}
             />
