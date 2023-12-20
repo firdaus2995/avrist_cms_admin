@@ -700,7 +700,34 @@ export default function ContentManagerNew() {
             />
           );
         case 'TEXT_EDITOR':
-          return <FormList.TextEditor key={id} name={name} />;
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue={""}
+              rules={{
+                required: { value: true, message: `${name} is required` },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e, fieldType);
+                    field.onChange(e);
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+
+                return (
+                  <FormList.TextEditor 
+                    title={t('user.page-management-new.contentLabel')}
+                    value={field.value}
+                    onChange={onChange}
+                  />
+                )
+              }}
+            />
+          )
         case 'PHONE_NUMBER':
           return (
             <Controller
