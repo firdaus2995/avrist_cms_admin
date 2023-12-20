@@ -20,6 +20,7 @@ import ModalLog from './components/ModalLog';
 import TimelineLog from '@/assets/timeline-log.svg';
 import PaperSubmit from '../../assets/paper-submit.png';
 import PaginationComponent from '@/components/molecules/Pagination';
+import EyePurpleIcon from '@/assets/eye-purple.svg';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
@@ -956,6 +957,10 @@ export default function PageManagementDetail() {
             </span>
           </div>
         )}
+        <button className="w-[150px] my-6 flex gap-2 btn btn-primary btn-outline">
+          <img className='w-7' src={EyePurpleIcon} />
+          {t('user.page-management.detail.labels.preview')}
+        </button>
         {isEdited ? editContent() : viewContent()}
         {roles?.includes('PAGE_REVIEW') ? (
           pageDetailList?.status === 'WAITING_REVIEW' ||

@@ -348,6 +348,7 @@
           "rejectComments": "Reject Comment",
           "approve": "Approve",
           "cancel": "Cancel",
+          "preview": "Preview",
           "submit": "Submit",
           "editContent": "Edit Content",
           "approveConfirmation": "Do you want to approve this page content?",
