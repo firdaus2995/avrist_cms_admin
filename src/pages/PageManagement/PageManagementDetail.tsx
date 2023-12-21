@@ -65,7 +65,6 @@ export default function PageManagementDetail() {
   const [selected, setSelected] = useState<any>(null);
   const [contentTypeId, setContentTypeId] = useState<any>(null);
   const [content, setContent] = useState<any>(null);
-  const [isDraft, setIsDraft] = useState<any>(false);
   const [idLog, setIdLog] = useState(null);
   const [logTitle, setLogTitle] = useState(null);
 
@@ -277,8 +276,11 @@ export default function PageManagementDetail() {
     }
   };
 
-  const saveData = () => {
+  const saveData = (type?: string) => {
     const pageData = getValues();
+
+    let isDraft: boolean = type === 'draft' ? true : false;
+    
     const payload = {
       id,
       title: pageData?.pageName,
@@ -367,16 +369,14 @@ export default function PageManagementDetail() {
             {t('user.page-management.detail.labels.cancel')}
           </button>
           <button
+            type='button'
+            className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10"
             onClick={() => {
-              setIsDraft(true);
-            }}
-            className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
+              saveData('draft');
+            }}>
             {t('user.page-management.detail.labels.saveAsDraft')}
           </button>
           <button
-            onClick={() => {
-              setIsDraft(false);
-            }}
             type="submit"
             className="btn btn-success text-xs text-white btn-sm w-28 h-10">
             {t('user.page-management.detail.labels.submit')}
