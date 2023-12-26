@@ -67,14 +67,15 @@ const EmailForm = ({
       });
 
       setItemList(tempItemList);
-
-      // Update filteredItemList based on searchTerm
-      const filteredItems = tempItemList.filter((item: any) =>
-        item.label.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-      setFilteredItemList(filteredItems);
     }
-  }, [data, searchTerm]);
+  }, [data]);
+
+  useEffect(() => {
+    const filteredItems = itemList.filter((item: any) =>
+      item.label.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+    setFilteredItemList(filteredItems);
+  }, [searchTerm])
 
   useEffect(() => {
     if (defaultValue && itemList) {
