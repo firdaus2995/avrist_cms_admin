@@ -5,6 +5,7 @@ export default {
     extend: {
       // Custom colors variables - color second options
       colors: {
+        'disabled-input': '#EBEEF2',
         'dark-purple': '#4F2C74',
         purple: '#5E217C',
         'bright-purple': '#81219A',
