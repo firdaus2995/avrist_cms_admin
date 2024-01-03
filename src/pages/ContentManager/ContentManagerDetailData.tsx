@@ -696,7 +696,6 @@ export default function ContentManagerDetailData() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel={transformText(name)}
                     labelTitle={transformText(name)}
                     disabled={!isEdited}
                     placeholder=""
