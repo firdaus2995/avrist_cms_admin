@@ -143,7 +143,7 @@ export default function PageManagementNew() {
   const saveData = (type?: string) => {
     const formData = getValues();
 
-    let isDraft: boolean = type === 'draft' ? true : false;
+    const isDraft: boolean = type === 'draft';
 
     const payload = {
       title: formData?.pageName,

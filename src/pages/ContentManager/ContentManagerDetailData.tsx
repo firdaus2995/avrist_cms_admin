@@ -696,7 +696,6 @@ export default function ContentManagerDetailData() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    fieldTypeLabel={transformText(name)}
                     labelTitle={transformText(name)}
                     disabled={!isEdited}
                     placeholder=""
@@ -741,13 +740,12 @@ export default function ContentManagerDetailData() {
                     <FormList.EmailForm
                       {...field}
                       key={id}
-                      value={value}
+                      defaultValue={value}
                       fieldTypeLabel={transformText(name)}
                       disabled={!isEdited}
                       placeholder=""
                       error={!!errors?.[id]?.message}
                       helperText={errors?.[id]?.message}
-                      items={categoryList}
                       onChange={onChange}
                     />
                   );

@@ -39,7 +39,7 @@ const EmailForm = ({
 
   // TABLE PAGINATION STATE
   const [pageIndex] = useState(0);
-  const [pageLimit] = useState(999);
+  const [pageLimit] = useState(-1);
   const [direction] = useState('asc');
   const [sortBy] = useState('id');
   const [search] = useState('');
@@ -67,14 +67,15 @@ const EmailForm = ({
       });
 
       setItemList(tempItemList);
-
-      // Update filteredItemList based on searchTerm
-      const filteredItems = tempItemList.filter((item: any) =>
-        item.label.toLowerCase().includes(searchTerm.toLowerCase()),
-      );
-      setFilteredItemList(filteredItems);
     }
-  }, [data, searchTerm]);
+  }, [data]);
+
+  useEffect(() => {
+    const filteredItems = itemList.filter((item: any) =>
+      item.label.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+    setFilteredItemList(filteredItems);
+  }, [searchTerm])
 
   useEffect(() => {
     if (defaultValue && itemList) {
@@ -99,7 +100,7 @@ const EmailForm = ({
             focus-within:outline-2 
             focus-within:outline-offset-2 
             focus-within:outline-${themeColor ?? '[#D2D4D7]'} 
-            ${disabled ? 'pointer-events-none ' : ''} 
+            ${disabled ? 'pointer-events-none bg-disabled-input' : ''} 
             ${error ? 'border-reddist' : ''}
           `}>
         <input
@@ -114,7 +115,7 @@ const EmailForm = ({
             setIsOpen(!isOpen);
           }}
           className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
-            disabled ? 'text-[#637488]' : ''
+            disabled ? 'text-[#637488] bg-disabled-input' : ''
           }`}
         />
         <div

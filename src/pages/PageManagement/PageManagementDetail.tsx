@@ -280,7 +280,7 @@ export default function PageManagementDetail() {
   const saveData = (type?: string) => {
     const pageData = getValues();
 
-    let isDraft: boolean = type === 'draft' ? true : false;
+    const isDraft: boolean = type === 'draft'
     
     const payload = {
       id,
