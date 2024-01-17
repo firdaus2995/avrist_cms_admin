@@ -943,7 +943,7 @@ export default function ContentManagerDetailData() {
             onClick={() => {
               const payload = {
                 id: contentDataDetailList?.id,
-                status: 'WAITING_APPROVE',
+                status: contentDataDetailList?.status === 'DELETE_REVIEW' ? 'DELETE_APPROVE' : 'WAITING_APPROVE',
                 comment: 'Already review',
               };
 
