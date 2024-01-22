@@ -49,7 +49,7 @@ const LoginForm = () => {
         storeDataStorage('refreshToken', res.login.refreshToken);
         storeDataStorage('roles', res.login.roles);
 
-        window.location.assign('/admin');
+        window.location.assign('/');
       })
       .catch((error: any) => {
         dispatch(
