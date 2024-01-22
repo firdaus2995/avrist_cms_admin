@@ -108,7 +108,7 @@ const handleTokenRefreshFailure = () => {
       message: 'Failed to renew token',
     }),
   );
-  window.location.assign('/admin/login');
+  window.location.assign('/login');
 };
 
 export default restApiRequest;

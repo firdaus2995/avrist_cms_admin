@@ -58,7 +58,7 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
               message: 'Failed renew token',
             }),
           );
-          window.location.assign('/admin/login');
+          window.location.assign('/login');
         }
       } catch (err) {
         store.dispatch(setAccessToken(''));
@@ -72,7 +72,7 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
             message: 'Failed renew token',
           }),
         );
-        window.location.assign('/admin/login');
+        window.location.assign('/login');
       } finally {
         release();
       }
