@@ -12,6 +12,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { t } from 'i18next';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import { baseRedirectAdmin } from '@/constants/common';
 
 const schema = yup.object().shape({
   username: yup.string().required(t('form.login.userid-required') ?? 'User ID is required'),
@@ -49,7 +50,7 @@ const LoginForm = () => {
         storeDataStorage('refreshToken', res.login.refreshToken);
         storeDataStorage('roles', res.login.roles);
 
-        window.location.assign('/');
+        window.location.assign(baseRedirectAdmin);
       })
       .catch((error: any) => {
         dispatch(

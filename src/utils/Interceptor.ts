@@ -10,6 +10,7 @@ import { loginApi } from '../services/Login/loginApi';
 import { storeDataStorage } from './SessionStorage';
 import { openToast } from '../components/atoms/Toast/slice';
 import { setEventTriggered } from '@/services/Event/eventErrorSlice';
+import { baseRedirectAdminLogin } from '@/constants/common';
 const baseUrl = import.meta.env.VITE_BASE_URL;
 const mutex = new Mutex();
 
@@ -58,7 +59,7 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
               message: 'Failed renew token',
             }),
           );
-          window.location.assign('/login');
+          window.location.assign(baseRedirectAdminLogin);
         }
       } catch (err) {
         store.dispatch(setAccessToken(''));
@@ -72,7 +73,7 @@ const customFetchBase: BaseQueryFn = async (args, api, extraOptions) => {
             message: 'Failed renew token',
           }),
         );
-        window.location.assign('/login');
+        window.location.assign(baseRedirectAdminLogin);
       } finally {
         release();
       }

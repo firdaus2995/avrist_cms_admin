@@ -6,6 +6,7 @@ import { loginApi } from '../services/Login/loginApi';
 import { storeDataStorage } from './SessionStorage';
 import { openToast } from '../components/atoms/Toast/slice';
 import { setRefreshToken, setAccessToken, setRoles } from '../services/Login/slice';
+import { baseRedirectAdminLogin } from '@/constants/common';
 
 const baseUrl = import.meta.env.VITE_API_URL;
 const mutex = new Mutex();
@@ -108,7 +109,7 @@ const handleTokenRefreshFailure = () => {
       message: 'Failed to renew token',
     }),
   );
-  window.location.assign('/login');
+  window.location.assign(baseRedirectAdminLogin);
 };
 
 export default restApiRequest;
