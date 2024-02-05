@@ -9,7 +9,7 @@ export const dataTypeList = [
   },
 ];
 
-export const baseRedirectAdmin = "/admin";
-export const baseRedirectAdminLogin = "/admin/login";
+export const baseRedirectAdmin = "/corporate-cms";
+export const baseRedirectAdminLogin = "/corporate-cms/login";
 
 export const allowedStatusDelete: string[] = ['DRAFT', 'APPROVED', 'REJECTED', 'DELETE_REJECTED'];
