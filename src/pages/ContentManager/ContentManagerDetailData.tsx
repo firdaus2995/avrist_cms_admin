@@ -621,7 +621,7 @@ export default function ContentManagerDetailData() {
                 );
 
                 return (
-                  <FormList.TextEditor 
+                  <FormList.TextEditor
                     title={t('user.page-management-new.contentLabel')}
                     value={field.value}
                     disabled={!isEdited}
@@ -753,6 +753,47 @@ export default function ContentManagerDetailData() {
               />
             </div>
           );
+        case 'TAGS':
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue={value}
+              rules={{
+                required: { value: true, message: `${name} is required` },
+                maxLength: {
+                  value: configs?.max_length > 0 ? configs?.max_length : 9999,
+                  message: `${configs?.max_length} characters maximum`,
+                },
+                minLength: {
+                  value: configs?.min_length > 0 ? configs?.min_length : 0,
+                  message: `${configs?.min_length} characters minimum`,
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e.target.value, fieldType);
+                    field.onChange({ target: { value: e.target.value } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
+                    placeholder={t('user.content-manager-new.tags-placeholder')}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          )
         case 'LOOPING':
           return (
             <div key={id}>
@@ -788,6 +829,7 @@ export default function ContentManagerDetailData() {
                           case 'TEXT_EDITOR':
                           case 'PHONE_NUMBER':
                           case 'TEXT_FIELD':
+                          case 'TAGS':
                             return (
                               <Controller
                                 name={`${idx}_${val.id}`}
@@ -916,7 +958,7 @@ export default function ContentManagerDetailData() {
             {t('user.content-manager-detail-data.cancel')}
           </button>
           <button
-            onClick={() => {}}
+            onClick={() => { }}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             {t('user.content-manager-detail-data.saveAsDraft')}
           </button>
@@ -991,15 +1033,15 @@ export default function ContentManagerDetailData() {
           <>
             {roles?.includes('CONTENT_MANAGER_EDIT')
               ? !isEdited && (
-                  <button
-                    onClick={() => {
-                      setIsEdited(true);
-                    }}
-                    className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                    <img src={Edit} className="mr-3" />
-                    {t('user.content-manager-detail-data.editContent')}
-                  </button>
-                )
+                <button
+                  onClick={() => {
+                    setIsEdited(true);
+                  }}
+                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                  <img src={Edit} className="mr-3" />
+                  {t('user.content-manager-detail-data.editContent')}
+                </button>
+              )
               : null}
           </>
         );
@@ -1284,7 +1326,7 @@ export default function ContentManagerDetailData() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-      
+
       <TitleCard
         onBackClick={goBack}
         hasBack={true}
@@ -1394,7 +1436,7 @@ export default function ContentManagerDetailData() {
         )}
         {roles?.includes('CONTENT_MANAGER_REVIEW') ? (
           contentDataDetailList?.status === 'WAITING_REVIEW' ||
-          contentDataDetailList?.status === 'DELETE_REVIEW' ? (
+            contentDataDetailList?.status === 'DELETE_REVIEW' ? (
             <div className="flex flex-row justify-between">
               <div className="w-[30vh] mt-5">
                 <CheckBox
