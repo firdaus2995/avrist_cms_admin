@@ -429,6 +429,7 @@
       "category": "Category",
       "short-description": "Short Description",
       "short-placeholder": "Enter Short Description",
+      "tags-placeholder": "untuk Multiple Tags, tolong dipisah dengan koma",
       "email-form": "EMAIL_FORM",
       "add-data": "Add Data",
       "cancel": "Cancel",
