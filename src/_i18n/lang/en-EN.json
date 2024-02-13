@@ -445,6 +445,7 @@
       "category": "Category",
       "short-description": "Short Description",
       "short-placeholder": "Enter Short Description",
+      "tags-placeholder": "for Multiple Tags, please separate by comma",
       "email-form": "EMAIL_FORM",
       "add-data": "Add Data",
       "cancel": "Cancel",

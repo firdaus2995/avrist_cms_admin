@@ -719,7 +719,7 @@ export default function ContentManagerNew() {
                 );
 
                 return (
-                  <FormList.TextEditor 
+                  <FormList.TextEditor
                     title={t('user.page-management-new.contentLabel')}
                     value={field.value}
                     onChange={onChange}
@@ -848,6 +848,47 @@ export default function ContentManagerNew() {
               />
             </div>
           );
+        case 'TAGS':
+          return (
+            <Controller
+              key={id}
+              name={id.toString()}
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `${name} is required` },
+                maxLength: {
+                  value: configs?.max_length > 0 ? configs?.max_length : 9999,
+                  message: `${configs?.max_length} characters maximum`,
+                },
+                minLength: {
+                  value: configs?.min_length > 0 ? configs?.min_length : 0,
+                  message: `${configs?.min_length} characters minimum`,
+                },
+              }}
+              render={({ field }) => {
+                const onChange = useCallback(
+                  (e: any) => {
+                    handleFormChange(id, e.target.value, fieldType);
+                    field.onChange({ target: { value: e.target.value } });
+                  },
+                  [id, fieldType, field, handleFormChange],
+                );
+                return (
+                  <FormList.TextField
+                    {...field}
+                    key={id}
+                    fieldTypeLabel={transformText(name)}
+                    labelTitle={transformText(name)}
+                    placeholder={t('user.content-manager-new.tags-placeholder')}
+                    error={!!errors?.[id]?.message}
+                    helperText={errors?.[id]?.message}
+                    onChange={onChange}
+                  />
+                );
+              }}
+            />
+          )
         case 'LOOPING':
           return (
             <div key={id}>
@@ -1171,6 +1212,37 @@ export default function ContentManagerNew() {
                           />
                         </div>
                       );
+                    case 'TAGS':
+                      return (
+                        <Controller
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue=""
+                          rules={{ required: `${val.name} is required` }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                field.onChange({ target: { value: e.target.value } });
+                              },
+                              [val.id, val.fieldType, field, handleFormChange],
+                            );
+
+                            return (
+                              <FormList.TextField
+                                {...field}
+                                key={val.id}
+                                fieldTypeLabel={transformText(val.name)}
+                                labelTitle={transformText(val.name)}
+                                placeholder={t('user.content-manager-new.tags-placeholder')}
+                                error={!!errors?.[val.id]?.message}
+                                helperText={errors?.[val.id]?.message}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      )
                     default:
                       return <p>err</p>;
                   }
