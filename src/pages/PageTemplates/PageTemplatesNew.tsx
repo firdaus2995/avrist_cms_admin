@@ -25,6 +25,7 @@ import { openToast } from '@/components/atoms/Toast/slice';
 import RoleRenderer from '../../components/atoms/RoleRenderer';
 import WarningIcon from '../../assets/warning.png';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
 
 const initialAttributes = {
   fieldType: '',
@@ -84,6 +85,8 @@ export default function PageTemplatesNew() {
     key: '',
     description: '',
   });
+
+  const [isForm, setIsForm] = useState<any>(false);
 
   const listDataType = [
     {
@@ -256,6 +259,7 @@ export default function PageTemplatesNew() {
       shortDesc: e.pageDescription,
       imageUrl: e.imagePreview,
       dataType: selectedDataType.value,
+      isForm,
       attributes: updatedAttributesData,
       configs: configData,
     };
@@ -293,6 +297,7 @@ export default function PageTemplatesNew() {
       shortDesc: e.pageDescription,
       imageUrl: e.imagePreview,
       dataType: selectedDataType.value,
+      isForm,
       attributes: updatedAttributesData,
       configs: configData,
     };
@@ -350,6 +355,7 @@ export default function PageTemplatesNew() {
       const defaultPageFileName = data?.filenameCode || '';
       const defaultPageId = data?.id || '';
       const defaultImageUrl = data?.imageUrl || '';
+      const isForm = data?.isForm || '';
 
       // ini sepaket ya!
       const findDefaultDataType = listDataType.find(item => item.value === data?.dataType);
@@ -361,6 +367,7 @@ export default function PageTemplatesNew() {
       setValue('pageId', defaultPageId);
       setValue('imagePreview', defaultImageUrl);
       setSelectedDataType(defaultDataType);
+      setIsForm(isForm);
 
       const originalAttributes = data?.attributes;
       const combineAttributes = originalAttributes.map((item: any) => ({
@@ -379,6 +386,7 @@ export default function PageTemplatesNew() {
         setValue('pageId', defaultPageId);
         setValue('imagePreview', defaultImageUrl);
         setSelectedDataType(defaultDataType);
+        setIsForm(isForm);
       }
     }
   }, [pageTemplate, listAttributes]);
@@ -913,6 +921,20 @@ export default function PageTemplatesNew() {
                 );
               }}
             />
+
+            <div className="flex flex-row">
+              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                {t('user.page-template-new.form.isForm.label')}
+              </Typography>
+              <CheckBox
+                defaultValue={isForm}
+                updateFormValue={e => {
+                  setIsForm(e.value);
+                }}
+                labelTitle={''}
+                updateType={''}
+              />
+            </div>
 
             <FormList.FieldButton
               name={t('user.page-template-new.form.attribute.label')}
