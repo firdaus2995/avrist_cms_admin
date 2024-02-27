@@ -816,6 +816,9 @@
             "label": "Description",
             "placeholder": "Enter description"
           }
+        },
+        "isForm": {
+          "label": "Is Form"
         }
       },
       "action": "Action",
