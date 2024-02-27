@@ -163,7 +163,6 @@ export default function ContentManagerDetail() {
                   key={val.isActive}
                   onClick={() => {
                     setActiveTab(val.isActive);
-                    navigate(location.pathname, { state: { activeTabParams: val.isActive } });
                   }}
                   className={`btn ${
                     activeTab === val.isActive ? 'btn-primary' : 'bg-gray-200 text-gray-400'
