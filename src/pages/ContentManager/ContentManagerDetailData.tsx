@@ -86,11 +86,11 @@ export default function ContentManagerDetailData() {
   };
 
   const params = useParams();
-  const [id] = useState<any>(Number(params.dataId));
+  const [id] = useState<number>(Number(params.dataId));
+  const [postTypeId] = useState<number>(Number(params.id));
 
   // TABLE PAGINATION STATE
   const [categoryList, setCategoryList] = useState<any>([]);
-  const [postTypeId] = useState(id);
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(10);
   const [direction] = useState('asc');
