@@ -59,7 +59,7 @@ export default function ContentManagerDetailData() {
   const [rejectComments, setRejectComments] = useState('');
   const [showArchivedModal, setShowArchivedModal] = useState(false);
   const roles = store.getState().loginSlice.roles;
-  const [idLog, setIdLog] = useState(null);
+  const [idLog, setIdLog] = useState<number | null>(null);
   const [logTitle, setLogTitle] = useState(null);
 
   const handleChange = (id: string | number, value: string) => {
