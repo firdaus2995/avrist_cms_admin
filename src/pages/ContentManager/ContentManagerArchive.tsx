@@ -250,9 +250,10 @@ export default function PageManagementArchive() {
           openToast({
             type: 'success',
             title: t('user.content-manager-archive.toasts.successDeleteContent.title'),
-            message: t('user.content-manager-archive.toasts.successDeleteContent.message', { title: d.pageDelete.message }),
+            message: t('user.content-manager-archive.toasts.successDeleteContent.message', { title: d.contentDataHardDelete.message }),
           }),
         );
+        setPageIndex(0);
         await fetchQuery.refetch();
       })
       .catch(() => {
