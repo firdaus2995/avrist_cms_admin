@@ -12,7 +12,7 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import {
   useGetArchiveDataQuery,
   useHardDeleteContentDataMutation,
-  useRestoreDataMutation,
+  useRestoreContentDataMutation,
 } from '@/services/ContentManager/contentManagerApi';
 import { useGetRoleQuery } from '@/services/User/userApi';
 import Typography from '@/components/atoms/Typography';
@@ -75,7 +75,7 @@ export default function PageManagementArchive() {
   const { data: fetchedRole } = fetchRoleQuery;
 
   // RTK RESTORE
-  const [restoreData, { isLoading }] = useRestoreDataMutation();
+  const [restoreData, { isLoading }] = useRestoreContentDataMutation();
 
   useEffect(() => {
     if (data) {
@@ -135,12 +135,10 @@ export default function PageManagementArchive() {
           openToast({
             type: 'success',
             title: t('user.content-manager-archive.toasts.successRestore.title'),
-            message: t('user.content-manager-archive.toasts.successRestore.message', { title: result.pageRestore.message }),
+            message: t('user.content-manager-archive.toasts.successRestore.message', { title: result.contentDataRestore.message }),
           }),
         );
-        if (listData?.length === 1) {
-          setPageIndex(pageIndex - 1);
-        }
+        setPageIndex(0);
         await fetchQuery.refetch();
       })
       .catch((error: any) => {
