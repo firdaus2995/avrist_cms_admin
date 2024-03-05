@@ -49,9 +49,9 @@ const TextInputDropDown = ({
   };
 
   return (
-    <div className="relative w-full" style={{ flex: '1' }}>
+    <div className="relative w-full">
       <div
-        style={{ width: inputWidth ?? '100%', height: inputHeight ?? '' }}
+
         className={`
             flex
             flex-row
@@ -82,7 +82,9 @@ const TextInputDropDown = ({
         />
         <div
           onClick={() => {
-            setIsOpen(!isOpen);
+            if(!disabled) {
+              setIsOpen(!isOpen);
+            }
           }}
           className={`
             flex items-center 
