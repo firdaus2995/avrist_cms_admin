@@ -1372,7 +1372,7 @@ export default function ContentManagerDetailData() {
                 </div>
                 {contentDataDetailList?.categoryName !== '' && (
                   <div className="flex flex-row">
-                    <Typography type="body" size="m" weight="bold" className="w-48 ml-1">
+                    <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-16">
                       {t('user.content-manager-detail-data.category')}
                     </Typography>
                     <Controller
