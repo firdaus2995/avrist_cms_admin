@@ -21,8 +21,6 @@ const TextInputDropDown = ({
   inputStyle,
   disabled,
   themeColor,
-  inputWidth,
-  inputHeight,
   roundStyle = 'xl',
   error,
   helperText,
