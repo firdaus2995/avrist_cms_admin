@@ -720,7 +720,7 @@ export default function ContentManagerNew() {
 
                 return (
                   <FormList.TextEditor
-                    title={t('user.page-management-new.contentLabel')}
+                    title={name}
                     value={field.value}
                     onChange={onChange}
                   />
