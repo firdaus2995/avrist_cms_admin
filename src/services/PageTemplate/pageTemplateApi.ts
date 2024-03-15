@@ -69,6 +69,7 @@ export const pageTemplateApi: any = createApi({
             $shortDesc: String!
             $imageUrl: String!
             $dataType: String!
+            $isForm: Boolean!
             $attributes: [PageTemplateAttributeRequest]
             $configs: [PageTemplateConfigRequest]
           ) {
@@ -80,6 +81,7 @@ export const pageTemplateApi: any = createApi({
                 shortDesc: $shortDesc
                 imageUrl: $imageUrl
                 dataType: $dataType
+                isForm: $isForm
                 attributes: $attributes
                 configs: $configs
               }
@@ -88,6 +90,7 @@ export const pageTemplateApi: any = createApi({
               filenameCode
               name
               shortDesc
+              isForm
               attributes {
                 fieldType
                 fieldId
@@ -118,6 +121,7 @@ export const pageTemplateApi: any = createApi({
             $dataType: String!
             $attributes: [PageTemplateAttributeRequest]
             $configs: [PageTemplateConfigRequest]
+            $isForm: Boolean!
           ) {
             pageTemplateCreate(
               request: {
@@ -128,6 +132,7 @@ export const pageTemplateApi: any = createApi({
                 dataType: $dataType
                 attributes: $attributes
                 configs: $configs
+                isForm: $isForm
               }
             ) {
               id
@@ -139,6 +144,7 @@ export const pageTemplateApi: any = createApi({
                 fieldId
                 description
               }
+              ifForm
               configs {
                 key
                 description
@@ -177,6 +183,7 @@ export const pageTemplateApi: any = createApi({
               }
               imageUrl
               dataType
+              isForm
             }
           }
         `,
