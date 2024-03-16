@@ -816,7 +816,7 @@
       "page-template": {
         "list": {
           "title": "Page Templates",
-          "button-add": "Add New Page Template"
+          "button-add": "Page Registration"
         },
         "table": {
           "page-id": "Page ID",
