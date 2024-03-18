@@ -823,7 +823,6 @@ export default function ContentManagerDetailData() {
                         switch (val.fieldType) {
                           case 'EMAIL':
                           case 'DOCUMENT':
-                          case 'IMAGE':
                           case 'TEXT_AREA':
                           case 'TEXT_EDITOR':
                           case 'PHONE_NUMBER':
@@ -906,6 +905,58 @@ export default function ContentManagerDetailData() {
                                 }}
                               />
                             );
+                          case 'IMAGE':
+                            return (
+                              <Controller
+                                name={`${idx}_${val.id}`}
+                                control={control}
+                                defaultValue={val.value}
+                                rules={{
+                                  required: { value: true, message: `${name} is required` },
+                                  validate: value => {
+                                    // Parse the input value as JSON
+                                    const parsedValue = JSON?.parse(value);
+                                    if (parsedValue && parsedValue.length > 0) {
+                                      // Check if parsedValue is an array and every item has imageUrl and altText properties
+                                      if (
+                                        Array.isArray(parsedValue) &&
+                                        parsedValue.every(item => item.imageUrl && item.altText)
+                                      ) {
+                                        return true; // Validation passed
+                                      } else {
+                                        return 'All items must have imageUrl and altText'; // Validation failed
+                                      }
+                                    } else {
+                                      return `${val.name} is required`; // Validation failed for empty value
+                                    }
+                                  },
+                                }}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(id, e, fieldType);
+                                      field.onChange({ target: { value: e } });
+                                    },
+                                    [val.id, val.fieldType, field, handleFormChange],
+                                  );
+                                  return (
+                                    <FormList.FileUploaderV2
+                                      {...field}
+                                      key={val.id}
+                                      fieldTypeLabel={transformText(val?.name)}
+                                      labelTitle={transformText(val?.name)}
+                                      disabled={!isEdited}
+                                      isDocument={false}
+                                      multiple={configs?.media_type === 'multiple_media'}
+                                      error={!!errors?.[val.id]?.message}
+                                      helperText={errors?.[val.id]?.message}
+                                      onChange={onChange}
+                                      editMode={isEdited}
+                                    />
+                                  );
+                                }}
+                              />
+                            )
                           case 'YOUTUBE_URL':
                             return (
                               <Controller
