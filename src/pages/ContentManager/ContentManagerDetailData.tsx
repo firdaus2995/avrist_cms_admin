@@ -761,7 +761,6 @@ export default function ContentManagerDetailData() {
               control={control}
               defaultValue={value}
               rules={{
-                required: { value: true, message: `${name} is required` },
                 maxLength: {
                   value: configs?.max_length > 0 ? configs?.max_length : 9999,
                   message: `${configs?.max_length} characters maximum`,
@@ -824,12 +823,10 @@ export default function ContentManagerDetailData() {
                         switch (val.fieldType) {
                           case 'EMAIL':
                           case 'DOCUMENT':
-                          case 'IMAGE':
                           case 'TEXT_AREA':
                           case 'TEXT_EDITOR':
                           case 'PHONE_NUMBER':
                           case 'TEXT_FIELD':
-                          case 'TAGS':
                             return (
                               <Controller
                                 name={`${idx}_${val.id}`}
@@ -869,6 +866,97 @@ export default function ContentManagerDetailData() {
                                 }}
                               />
                             );
+                          case 'TAGS':
+                            return (
+                              <Controller
+                                name={`${idx}_${val.id}`}
+                                control={control}
+                                defaultValue={val.value}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(
+                                        val.id,
+                                        e.target.value,
+                                        val.fieldType,
+                                        true,
+                                        id,
+                                        idx,
+                                        val.id,
+                                      );
+                                      field.onChange({ target: { value: e.target.value } });
+                                    },
+                                    [val.id, val.fieldType, field, handleFormChange],
+                                  );
+
+                                  return (
+                                    <FormList.TextField
+                                      {...field}
+                                      key={val.id}
+                                      fieldTypeLabel={transformText(val?.name)}
+                                      labelTitle={transformText(val?.name)}
+                                      disabled={!isEdited}
+                                      placeholder=""
+                                      error={!!errors?.[val.id]?.message}
+                                      helperText={errors?.[val.id]?.message}
+                                      onChange={onChange}
+                                    />
+                                  );
+                                }}
+                              />
+                            );
+                          case 'IMAGE':
+                            return (
+                              <Controller
+                                name={`${idx}_${val.id}`}
+                                control={control}
+                                defaultValue={val.value}
+                                rules={{
+                                  required: { value: true, message: `${name} is required` },
+                                  validate: value => {
+                                    // Parse the input value as JSON
+                                    const parsedValue = JSON?.parse(value);
+                                    if (parsedValue && parsedValue.length > 0) {
+                                      // Check if parsedValue is an array and every item has imageUrl and altText properties
+                                      if (
+                                        Array.isArray(parsedValue) &&
+                                        parsedValue.every(item => item.imageUrl && item.altText)
+                                      ) {
+                                        return true; // Validation passed
+                                      } else {
+                                        return 'All items must have imageUrl and altText'; // Validation failed
+                                      }
+                                    } else {
+                                      return `${val.name} is required`; // Validation failed for empty value
+                                    }
+                                  },
+                                }}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(id, e, fieldType);
+                                      field.onChange({ target: { value: e } });
+                                    },
+                                    [val.id, val.fieldType, field, handleFormChange],
+                                  );
+                                  return (
+                                    <FormList.FileUploaderV2
+                                      {...field}
+                                      key={val.id}
+                                      fieldTypeLabel={transformText(val?.name)}
+                                      labelTitle={transformText(val?.name)}
+                                      disabled={!isEdited}
+                                      isDocument={false}
+                                      multiple={configs?.media_type === 'multiple_media'}
+                                      error={!!errors?.[val.id]?.message}
+                                      helperText={errors?.[val.id]?.message}
+                                      onChange={onChange}
+                                      editMode={isEdited}
+                                    />
+                                  );
+                                }}
+                              />
+                            )
                           case 'YOUTUBE_URL':
                             return (
                               <Controller

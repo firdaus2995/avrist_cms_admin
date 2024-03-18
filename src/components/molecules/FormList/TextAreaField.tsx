@@ -19,20 +19,13 @@ export default function TextAreaField({
   helperText,
   rows,
   textAreaStyle,
-  fieldTypeLabel = '',
+  // fieldTypeLabel = '',
   border = true,
   labelRequired = false,
   maxLength,
 }: any) {
   return (
     <div>
-      <Typography
-        type="body"
-        size="m"
-        weight="bold"
-        className={`w-48 ml-1 mr-9 mt-2 ${fieldTypeLabel ? 'visible' : 'hidden'}`}>
-        {fieldTypeLabel}
-      </Typography>
       <div className="flex flex-row">
         <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
           {labelTitle}

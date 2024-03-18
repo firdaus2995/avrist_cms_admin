@@ -355,7 +355,7 @@ export default function PageTemplatesNew() {
       const defaultPageFileName = data?.filenameCode || '';
       const defaultPageId = data?.id || '';
       const defaultImageUrl = data?.imageUrl || '';
-      const isForm = data?.isForm || '';
+      const isForm = data?.isForm || false;
 
       // ini sepaket ya!
       const findDefaultDataType = listDataType.find(item => item.value === data?.dataType);
