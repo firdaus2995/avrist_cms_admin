@@ -834,12 +834,12 @@
     "page-template-list": {
       "page-template": {
         "list": {
-          "title": "Page Templates",
+          "title": "Page Template",
           "button-add": "Page Registration"
         },
         "table": {
           "page-id": "Page ID",
-          "page-name": "Page Name",
+          "page-name": "Template Name",
           "uploaded-by": "Uploaded By",
           "action": "Action",
           "view-detail": "View Detail",
