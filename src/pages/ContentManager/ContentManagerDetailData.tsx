@@ -761,7 +761,6 @@ export default function ContentManagerDetailData() {
               control={control}
               defaultValue={value}
               rules={{
-                required: { value: true, message: `${name} is required` },
                 maxLength: {
                   value: configs?.max_length > 0 ? configs?.max_length : 9999,
                   message: `${configs?.max_length} characters maximum`,
@@ -829,13 +828,51 @@ export default function ContentManagerDetailData() {
                           case 'TEXT_EDITOR':
                           case 'PHONE_NUMBER':
                           case 'TEXT_FIELD':
-                          case 'TAGS':
                             return (
                               <Controller
                                 name={`${idx}_${val.id}`}
                                 control={control}
                                 defaultValue={val.value}
                                 rules={{ required: `${name} is required` }}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(
+                                        val.id,
+                                        e.target.value,
+                                        val.fieldType,
+                                        true,
+                                        id,
+                                        idx,
+                                        val.id,
+                                      );
+                                      field.onChange({ target: { value: e.target.value } });
+                                    },
+                                    [val.id, val.fieldType, field, handleFormChange],
+                                  );
+
+                                  return (
+                                    <FormList.TextField
+                                      {...field}
+                                      key={val.id}
+                                      fieldTypeLabel={transformText(val?.name)}
+                                      labelTitle={transformText(val?.name)}
+                                      disabled={!isEdited}
+                                      placeholder=""
+                                      error={!!errors?.[val.id]?.message}
+                                      helperText={errors?.[val.id]?.message}
+                                      onChange={onChange}
+                                    />
+                                  );
+                                }}
+                              />
+                            );
+                          case 'TAGS':
+                            return (
+                              <Controller
+                                name={`${idx}_${val.id}`}
+                                control={control}
+                                defaultValue={val.value}
                                 render={({ field }) => {
                                   const onChange = useCallback(
                                     (e: any) => {
