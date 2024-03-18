@@ -6,7 +6,7 @@ export default function FileUploaderV2({
   labelTitle,
   containerStyle = '',
   direction,
-  fieldTypeLabel,
+  // fieldTypeLabel,
   isDocument,
   multiple,
   onChange,
@@ -29,13 +29,6 @@ export default function FileUploaderV2({
 }: any) {
   return (
     <div>
-      <Typography
-        type="body"
-        size="m"
-        weight="bold"
-        className={`w-48 ml-1 mr-9 mt-2 ${fieldTypeLabel ? 'visible' : 'hidden'}`}>
-        {fieldTypeLabel}
-      </Typography>
       <div className="flex flex-row">
         <div style={{
           width: labelWidth,
