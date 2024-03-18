@@ -144,7 +144,7 @@ export const pageTemplateApi: any = createApi({
                 fieldId
                 description
               }
-              ifForm
+              isForm
               configs {
                 key
                 description
