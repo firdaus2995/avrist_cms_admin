@@ -458,7 +458,7 @@ export default function ContentTypeNew() {
                 key={idx}
                 role="button"
                 onClick={() => {
-                  if (val.code === 'text_field' || val.code === 'text_area') {
+                  if (val.code === 'text_field' || val.code === 'text_area' || val.code === 'tags') {
                     val.config = '{"min_length":"","max_length":""}';
                   } else if (val.code === 'image' || val.code === 'document') {
                     val.config = '{"media_type":""}';
@@ -509,7 +509,7 @@ export default function ContentTypeNew() {
                       config: '',
                     };
 
-                    if (val.code === 'text_field' || val.code === 'text_area') {
+                    if (val.code === 'text_field' || val.code === 'text_area' || val.code === 'tags') {
                       data.config = '{"min_length":"","max_length":""}';
                     } else if (val.code === 'image' || val.code === 'document') {
                       data.config = '{"media_type":""}';
@@ -531,7 +531,7 @@ export default function ContentTypeNew() {
                       config: '',
                     };
 
-                    if (val.code === 'text_field' || val.code === 'text_area') {
+                    if (val.code === 'text_field' || val.code === 'text_area' || val.code === 'tags') {
                       data.config = '{"min_length":"","max_length":""}';
                     } else if (val.code === 'image' || val.code === 'document') {
                       data.config = '{"media_type":""}';
@@ -625,7 +625,7 @@ export default function ContentTypeNew() {
                 }}
               />
             </div>
-            {openedAttribute?.code === 'text_field' || openedAttribute?.code === 'text_area' ? (
+            {openedAttribute?.code === 'text_field' || openedAttribute?.code === 'text_area' || openedAttribute?.code === 'tags' ? (
               <div className="flex flex-row gap-4 my-5">
                 <InputText
                   labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
@@ -801,7 +801,7 @@ export default function ContentTypeNew() {
                                 }}
                               />
                             </div>
-                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
+                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' || val?.fieldType === 'TAGS'? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
                                   labelTitle={t(
@@ -1022,7 +1022,8 @@ export default function ContentTypeNew() {
               />
             </div>
             {openedAttribute?.fieldType === 'TEXT_FIELD' ||
-            openedAttribute?.fieldType === 'TEXT_AREA' ? (
+            openedAttribute?.fieldType === 'TEXT_AREA' ||
+            openedAttribute?.fieldType === 'TAGS' ? (
               <div className="flex flex-row gap-4 my-5">
                 <InputText
                   labelTitle={t('user.content-type-edit.modal.addAttribute.minLengthLabel')}
@@ -1196,7 +1197,7 @@ export default function ContentTypeNew() {
                                 }}
                               />
                             </div>
-                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
+                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' || val?.fieldType === 'TAGS'? (
                               <div className="flex flex-row gap-4 my-5">
                                 <InputText
                                   labelTitle={t(
