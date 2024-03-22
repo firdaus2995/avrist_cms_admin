@@ -59,7 +59,7 @@ export default function ContentManagerNew() {
   const [isAutoApprove, setIsAutoApprove] = useState<boolean>(false);
 
   const [contentTempData, setContentTempData] = useState<any[]>([]);
-  const [stringifyData, setStringifyData] = useState<any[]>([]);
+  // const [stringifyData, setStringifyData] = useState<any[]>([]);
   const [isDraft, setIsDraft] = useState<boolean>(false);
 
   const handleFormChange = (
@@ -207,24 +207,18 @@ export default function ContentManagerNew() {
   function convertLoopingToArrays(data: any) {
     return data.map((field: any) => {
       if (field.fieldType === 'LOOPING' && field.contentData) {
-        const contentDataValue = field.contentData[0]?.value;
-        if (contentDataValue) {
-          field.contentData[0].value = Array.isArray(contentDataValue)
-            ? JSON.stringify(contentDataValue)
-            : JSON.stringify([contentDataValue]);
-        }
+        field.contentData.forEach((item: { value: any }) => {
+          const contentDataValue = item?.value;
+          if (contentDataValue) {
+            item.value = Array.isArray(contentDataValue)
+              ? JSON.stringify(contentDataValue)
+              : JSON.stringify([contentDataValue]);
+          }
+        });
       }
       return field;
     });
   }
-
-  useEffect(() => {
-    if (contentTempData) {
-      const convertedData = convertContentData(contentTempData);
-      const newData = convertLoopingToArrays(convertedData);
-      setStringifyData(newData);
-    }
-  }, [contentTempData]);
 
   const onLeave = () => {
     setShowLeaveModal(false);
@@ -232,6 +226,7 @@ export default function ContentManagerNew() {
   };
 
   const saveDraft = () => {
+    const convertedData = convertContentData(contentTempData);
     const value = getValues();
     setIsDraft(false);
     const payload = {
@@ -240,8 +235,9 @@ export default function ContentManagerNew() {
       isDraft: true,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
-      contentData: stringifyData,
+      contentData: convertedData,
     };
+
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -277,6 +273,8 @@ export default function ContentManagerNew() {
   }
 
   const saveData = () => {
+    const convertedData = convertContentData(contentTempData);
+    const stringifyData = convertLoopingToArrays(convertedData);
     const value = getValues();
     const payload = {
       title: value.title,
@@ -287,7 +285,7 @@ export default function ContentManagerNew() {
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
-
+    // console.log(payload);return
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -705,7 +703,7 @@ export default function ContentManagerNew() {
               key={id}
               name={id.toString()}
               control={control}
-              defaultValue={""}
+              defaultValue={''}
               rules={{
                 required: { value: true, message: `${name} is required` },
               }}
@@ -718,16 +716,10 @@ export default function ContentManagerNew() {
                   [id, fieldType, field, handleFormChange],
                 );
 
-                return (
-                  <FormList.TextEditor
-                    title={name}
-                    value={field.value}
-                    onChange={onChange}
-                  />
-                )
+                return <FormList.TextEditor title={name} value={field.value} onChange={onChange} />;
               }}
             />
-          )
+          );
         case 'PHONE_NUMBER':
           return (
             <Controller
@@ -887,7 +879,7 @@ export default function ContentManagerNew() {
                 );
               }}
             />
-          )
+          );
         case 'LOOPING':
           return (
             <div key={id}>
@@ -1240,7 +1232,7 @@ export default function ContentManagerNew() {
                             );
                           }}
                         />
-                      )
+                      );
                     default:
                       return <p>err</p>;
                   }
