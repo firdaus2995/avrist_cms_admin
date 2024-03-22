@@ -14,71 +14,71 @@
       }
     },
     "user": {
-      "DataHasBeenExistException":"Email already exists",
-      "DataIsUsedException" : "This data is being used, you can’t delete this data",
+      "DataHasBeenExistException": "Email already exists",
+      "DataIsUsedException": "This data is being used, you can’t delete this data",
       "UnableToChangeOwnUserStatusException": "Failed to update data! You can't change your own data! Please contact another user with eligible role",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "role": {
-      "DataHasBeenExistException":"Data already exists",
-      "DataIsUsedException" : "This data is being used, you can’t delete this data",
+      "DataHasBeenExistException": "Data already exists",
+      "DataIsUsedException": "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
       "ConflictException": "Role is being used by User"
     },
     "page-template": {
-      "DataHasBeenExistException":"Data already exists",
-      "DataIsUsedException" : "This data is being used, you can’t delete this data",
+      "DataHasBeenExistException": "Data already exists",
+      "DataIsUsedException": "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "page-management": {
-      "DataHasBeenExistException":"Data already exists",
-      "DataIsUsedException" : "You can't delete this page because this page is being used in an active menu",
+      "DataHasBeenExistException": "Data already exists",
+      "DataIsUsedException": "You can't delete this page because this page is being used in an active menu",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
       "restore": {
         "UnexpectedErrorException": "Something went wrong. Please try again!"
       }
     },
     "menu": {
-      "DataHasBeenExistException":"Data already exists",
-      "DataIsUsedException" : "This data is being used, you can’t delete this data",
+      "DataHasBeenExistException": "Data already exists",
+      "DataIsUsedException": "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
       "add": {
-        "DataHasBeenExistException":"Data already exists",
-        "DataIsUsedException" : "Page is already linked to another Menu! Please choose another Page!",
+        "DataHasBeenExistException": "Data already exists",
+        "DataIsUsedException": "Page is already linked to another Menu! Please choose another Page!",
         "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
       },
       "edit": {
-        "DataHasBeenExistException":"Data already exists",
-        "DataIsUsedException" : "Page is already linked to another Menu! Please choose another Page!",
+        "DataHasBeenExistException": "Data already exists",
+        "DataIsUsedException": "Page is already linked to another Menu! Please choose another Page!",
         "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
       }
     },
     "global-config": {
-      "DataHasBeenExistException":"Data already exists",
-      "DataIsUsedException" : "This data is being used, you can’t delete this data",
+      "DataHasBeenExistException": "Data already exists",
+      "DataIsUsedException": "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "email-form-builder": {
-      "DataHasBeenExistException":"Data already exists",
-      "DataIsUsedException" : "This data is being used, you can’t delete this data",
+      "DataHasBeenExistException": "Data already exists",
+      "DataIsUsedException": "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     },
     "content-type": {
-      "DataHasBeenExistException":"Name already exists",
+      "DataHasBeenExistException": "Name already exists",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later",
       "delete": {
-        "DataIsUsedException" : "Post Type is being used by Post Data, you can't delete this data",
+        "DataIsUsedException": "Post Type is being used by Post Data, you can't delete this data",
         "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
       },
       "edit": {
-        "DataHasBeenExistException":"Name already exists",
-        "DataIsUsedException" : "Post Type is being used by Post Data, you can't edit this data",
+        "DataHasBeenExistException": "Name already exists",
+        "DataIsUsedException": "Post Type is being used by Post Data, you can't edit this data",
         "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
       }
     },
     "content-manager": {
-      "DataHasBeenExistException":"Data already exists",
-      "DataIsUsedException" : "This data is being used, you can’t delete this data",
+      "DataHasBeenExistException": "Data already exists",
+      "DataIsUsedException": "This data is being used, you can’t delete this data",
       "UnexpectedErrorException": "There was an Unexpected Error, Please try again later"
     }
   },
@@ -163,7 +163,7 @@
       "key-required": "Key is required",
       "field-id-required": "Field ID is required",
       "field-type-required": "Field type is required"
-    }, 
+    },
     "cancel": "Cancel",
     "yes": "Yes"
   },
@@ -537,7 +537,7 @@
         },
         "confirmModal": {
           "title": "Are you sure?",
-          "message": "Do you want to delete data {{title}}?"
+          "message": "Do you want to delete data {{title}} ?"
         },
         "tableHeaders": {
           "title": "Title",
@@ -1247,12 +1247,13 @@
       },
       "confirm": {
         "title": "Are you sure?",
-        "message": "Do you want to delete data {title}?",
+        "message": "Do you want to delete data {{title}} ?",
         "no": "No",
         "yes": "Yes"
       },
       "toast": {
         "successDelete": "Success Delete Category",
+        "successDeleteCategory": "Category has been successfully deleted.",
         "failedDelete": "Failed Delete Category",
         "somethingWrong": "Something went wrong!"
       },
@@ -1351,7 +1352,7 @@
       },
       "mainTab": {
         "titleConfirm": "Are you sure?",
-        "deleteDataMessage": "Do you want to delete data {{title}}?",
+        "deleteDataMessage": "Do you want to delete data {{title}} ?",
         "successfullyDeletedMessage": "Success! Your data has been successfully deleted!"
       },
       "modalLog": {
@@ -1406,7 +1407,6 @@
   "no": "No",
   "yes": "Yes",
   "cancel": "Cancel",
-  
 
   "components": {
     "atoms": {

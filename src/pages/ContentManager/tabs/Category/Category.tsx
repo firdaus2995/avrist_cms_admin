@@ -20,7 +20,9 @@ import { openToast } from '@/components/atoms/Toast/slice';
 export default function CategoryTab(_props: { id: any }) {
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-category.categoryName')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">{t('user.tabs-category.categoryName')}</span>
+      ),
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
@@ -32,7 +34,11 @@ export default function CategoryTab(_props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-category.categoryDescription')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">
+          {t('user.tabs-category.categoryDescription')}
+        </span>
+      ),
       accessorKey: 'shortDesc',
       enableSorting: false,
       cell: (info: any) => (
@@ -137,7 +143,7 @@ export default function CategoryTab(_props: { id: any }) {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
@@ -152,6 +158,11 @@ export default function CategoryTab(_props: { id: any }) {
 
   // FUNCTION FOR DELETE PAGE
   const submitDeleteCategory = () => {
+    if (!idDelete) {
+      console.error('idDelete is not defined');
+      return;
+    }
+
     deleteCategory({ id: idDelete })
       .unwrap()
       .then(async d => {
@@ -160,18 +171,24 @@ export default function CategoryTab(_props: { id: any }) {
           openToast({
             type: 'success',
             title: t('user.tabs-category.toast.successDelete'),
-            message: d.pageDelete.message,
+            message: t('user.tabs-category.toast.successDeleteCategory'),
           }),
         );
         if (listData?.length === 1) {
           setPageIndex(pageIndex - 1);
         }
-        await fetchQuery.refetch();
+        try {
+          await fetchQuery.refetch();
+        } catch (refetchError) {
+          console.error('Failed to refetch data', refetchError);
+        }
       })
-      .catch((err) => {
+      .catch(err => {
+        console.error('Failed to delete category', err);
         setShowConfirm(false);
         if (err.message.includes('DataIsUsedException')) {
-          setShowIsUsed(true); return;
+          setShowIsUsed(true);
+          return;
         }
         dispatch(
           openToast({

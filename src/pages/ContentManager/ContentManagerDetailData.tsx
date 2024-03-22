@@ -627,10 +627,10 @@ export default function ContentManagerDetailData() {
                     disabled={!isEdited}
                     onChange={onChange}
                   />
-                )
+                );
               }}
             />
-          )
+          );
         case 'PHONE_NUMBER':
           return (
             <Controller
@@ -792,7 +792,7 @@ export default function ContentManagerDetailData() {
                 );
               }}
             />
-          )
+          );
         case 'LOOPING':
           return (
             <div key={id}>
@@ -956,7 +956,7 @@ export default function ContentManagerDetailData() {
                                   );
                                 }}
                               />
-                            )
+                            );
                           case 'YOUTUBE_URL':
                             return (
                               <Controller
@@ -1046,7 +1046,7 @@ export default function ContentManagerDetailData() {
             {t('user.content-manager-detail-data.cancel')}
           </button>
           <button
-            onClick={() => { }}
+            onClick={() => {}}
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             {t('user.content-manager-detail-data.saveAsDraft')}
           </button>
@@ -1073,7 +1073,10 @@ export default function ContentManagerDetailData() {
             onClick={() => {
               const payload = {
                 id: contentDataDetailList?.id,
-                status: contentDataDetailList?.status === 'DELETE_REVIEW' ? 'DELETE_APPROVE' : 'WAITING_APPROVE',
+                status:
+                  contentDataDetailList?.status === 'DELETE_REVIEW'
+                    ? 'DELETE_APPROVE'
+                    : 'WAITING_APPROVE',
                 comment: 'Already review',
               };
 
@@ -1121,15 +1124,15 @@ export default function ContentManagerDetailData() {
           <>
             {roles?.includes('CONTENT_MANAGER_EDIT')
               ? !isEdited && (
-                <button
-                  onClick={() => {
-                    setIsEdited(true);
-                  }}
-                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                  <img src={Edit} className="mr-3" />
-                  {t('user.content-manager-detail-data.editContent')}
-                </button>
-              )
+                  <button
+                    onClick={() => {
+                      setIsEdited(true);
+                    }}
+                    className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                    <img src={Edit} className="mr-3" />
+                    {t('user.content-manager-detail-data.editContent')}
+                  </button>
+                )
               : null}
           </>
         );
@@ -1389,7 +1392,9 @@ export default function ContentManagerDetailData() {
             {t('user.content-manager-detail-data.modalMessages.autoApproveTitle')}
           </p>
           <p className="font-base mt-2 text-xl text-center">
-            {t('user.content-manager-detail-data.modalMessages.autoApproveSubtitle', { title: contentDataDetailList?.title })}
+            {t('user.content-manager-detail-data.modalMessages.autoApproveSubtitle', {
+              title: contentDataDetailList?.title,
+            })}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}
@@ -1421,12 +1426,11 @@ export default function ContentManagerDetailData() {
         title={`${contentDataDetail?.contentDataDetail?.title ?? ''}`}
         titleComponent={<Badge />}
         TopSideButtons={rigthTopButton()}>
-        {(contentDataDetailList?.lastComment && (contentDataDetailList?.status === 'DELETE_REJECTED' || contentDataDetailList?.status === 'REJECTED')) && (
-          <RectangleBadge
-            title='Rejected Comment:'
-            comment={contentDataDetailList.lastComment}
-          />
-        )}
+        {contentDataDetailList?.lastComment &&
+          (contentDataDetailList?.status === 'DELETE_REJECTED' ||
+            contentDataDetailList?.status === 'REJECTED') && (
+            <RectangleBadge title="Rejected Comment:" comment={contentDataDetailList.lastComment} />
+          )}
         {contentDataDetail && (
           <form onSubmit={handleSubmit(onSubmitData)}>
             <div className="ml-2 mt-6">
@@ -1524,7 +1528,7 @@ export default function ContentManagerDetailData() {
         )}
         {roles?.includes('CONTENT_MANAGER_REVIEW') ? (
           contentDataDetailList?.status === 'WAITING_REVIEW' ||
-            contentDataDetailList?.status === 'DELETE_REVIEW' ? (
+          contentDataDetailList?.status === 'DELETE_REVIEW' ? (
             <div className="flex flex-row justify-between">
               <div className="w-[30vh] mt-5">
                 <CheckBox

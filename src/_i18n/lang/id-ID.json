@@ -14,71 +14,71 @@
       }
     },
     "user": {
-      "DataHasBeenExistException":"Email sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "DataHasBeenExistException": "Email sudah ada",
+      "DataIsUsedException": "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnableToChangeOwnUserStatusException": "Gagal memperbarui data! Anda tidak dapat mengubah data Anda sendiri! Silakan hubungi pengguna lain dengan role yang memenuhi syarat",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
     },
     "role": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "DataHasBeenExistException": "Data sudah ada",
+      "DataIsUsedException": "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
       "ConflictException": "Peran sedang digunakan oleh Pengguna lainnya"
     },
     "page-template": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "DataHasBeenExistException": "Data sudah ada",
+      "DataIsUsedException": "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
     },
     "page-management": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Anda tidak dapat menghapus halaman ini karena halaman ini sedang digunakan dalam menu aktif",
+      "DataHasBeenExistException": "Data sudah ada",
+      "DataIsUsedException": "Anda tidak dapat menghapus halaman ini karena halaman ini sedang digunakan dalam menu aktif",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
       "restore": {
         "UnexpectedErrorException": "Ada yang salah. Silakan coba lagi!"
       }
     },
     "menu": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "DataHasBeenExistException": "Data sudah ada",
+      "DataIsUsedException": "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
       "add": {
-        "DataHasBeenExistException":"Data sudah ada",
-        "DataIsUsedException" : "Halaman sudah tertaut ke Menu lain! Silakan pilih Halaman lain!",
+        "DataHasBeenExistException": "Data sudah ada",
+        "DataIsUsedException": "Halaman sudah tertaut ke Menu lain! Silakan pilih Halaman lain!",
         "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
       },
       "edit": {
-        "DataHasBeenExistException":"Data sudah ada",
-        "DataIsUsedException" : "Halaman sudah tertaut ke Menu lain! Silakan pilih Halaman lain!",
+        "DataHasBeenExistException": "Data sudah ada",
+        "DataIsUsedException": "Halaman sudah tertaut ke Menu lain! Silakan pilih Halaman lain!",
         "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
       }
     },
     "global-config": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "DataHasBeenExistException": "Data sudah ada",
+      "DataIsUsedException": "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
     },
     "email-form-builder": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "DataHasBeenExistException": "Data sudah ada",
+      "DataIsUsedException": "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
     },
     "content-type": {
-      "DataHasBeenExistException":"Nama sudah Ada",
+      "DataHasBeenExistException": "Nama sudah Ada",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti",
       "delete": {
-        "DataIsUsedException" : "Post Type sedang digunakan oleh Post Data, you can't delete this data",
+        "DataIsUsedException": "Post Type sedang digunakan oleh Post Data, you can't delete this data",
         "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
       },
       "edit": {
-        "DataHasBeenExistException":"Name already Exist",
-        "DataIsUsedException" : "Post Type sedang digunakan oleh Post Data, you can't edit this data",
+        "DataHasBeenExistException": "Name already Exist",
+        "DataIsUsedException": "Post Type sedang digunakan oleh Post Data, you can't edit this data",
         "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
       }
     },
     "content-manager": {
-      "DataHasBeenExistException":"Data sudah ada",
-      "DataIsUsedException" : "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
+      "DataHasBeenExistException": "Data sudah ada",
+      "DataIsUsedException": "Data ini sedang digunakan, Anda tidak dapat menghapus data ini",
       "UnexpectedErrorException": "Terjadi Kesalahan Tidak Terduga, Silakan coba lagi nanti"
     }
   },
@@ -521,7 +521,7 @@
         },
         "confirmModal": {
           "title": "Are you sure?",
-          "message": "Do you want to delete data {{title}}?"
+          "message": "Do you want to delete data {{title}} ?"
         },
         "tableHeaders": {
           "title": "Title",
@@ -1229,12 +1229,13 @@
       },
       "confirm": {
         "title": "Are you sure?",
-        "message": "Do you want to delete data {title}?",
+        "message": "Do you want to delete data {{title}} ?",
         "no": "No",
         "yes": "Yes"
       },
       "toast": {
         "successDelete": "Success Delete Category",
+        "successDeleteCategory": "Category has been successfully deleted.",
         "failedDelete": "Failed Delete Category",
         "somethingWrong": "Something went wrong!"
       },
@@ -1333,7 +1334,7 @@
       },
       "mainTab": {
         "titleConfirm": "Are you sure?",
-        "deleteDataMessage": "Do you want to delete data {{title}}?",
+        "deleteDataMessage": "Do you want to delete data {{title}} ?",
         "successfullyDeletedMessage": "Success! Your data has been successfully deleted!"
       },
       "modalLog": {
@@ -1341,7 +1342,7 @@
       }
     }
   },
-  
+
   "action": {
     "action": "Aksi",
     "view": "Lihat",
