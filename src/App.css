@@ -9,6 +9,7 @@
   background: transparent;
   z-index: 1000;
 }
+
 .input-date::-webkit-datetime-edit-day-field:focus,
 .input-date::-webkit-datetime-edit-month-field:focus,
 .input-date::-webkit-datetime-edit-year-field:focus {
@@ -16,8 +17,18 @@
   color: black;
   outline: none;
 }
-.input-date[value=""]:not(:focus) { color: transparent; }
+
+.input-date[value=""]:not(:focus) {
+  color: transparent;
+}
 
 .ck-editor__editable {
   min-height: 200px;
+}
+
+ul,
+ol {
+  list-style: revert !important;
+  margin: revert !important;
+  padding: revert !important;
 }
