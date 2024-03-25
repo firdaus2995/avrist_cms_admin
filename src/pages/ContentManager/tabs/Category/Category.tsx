@@ -165,7 +165,7 @@ export default function CategoryTab(_props: { id: any }) {
 
     deleteCategory({ id: idDelete })
       .unwrap()
-      .then(async d => {
+      .then(async _d => {
         setShowConfirm(false);
         dispatch(
           openToast({
