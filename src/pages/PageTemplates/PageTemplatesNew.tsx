@@ -454,7 +454,7 @@ export default function PageTemplatesNew() {
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate max-w-[480px]">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
@@ -529,7 +529,7 @@ export default function PageTemplatesNew() {
       accessorKey: 'description',
       enableSorting: false,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate max-w-[480px]">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
