@@ -904,7 +904,7 @@ export default function ContentManagerNew() {
                   )}
                 </div>
                 {attributeList?.map((val: { name: any; id: any; fieldType: any; config: any }) => {
-                  const configs = JSON.parse(val?.config);
+                  const configs = val?.config ? JSON.parse(val?.config) : {};
 
                   switch (val.fieldType) {
                     case 'TEXT_FIELD':
