@@ -828,7 +828,8 @@
       },
       "add-config": "Add Config",
       "category": "Category",
-      "edit-content": "Edit Content"
+      "edit-content": "Edit Content",
+      "edit-content-registration": "Edit Content Registration"
     },
 
     "page-template-list": {

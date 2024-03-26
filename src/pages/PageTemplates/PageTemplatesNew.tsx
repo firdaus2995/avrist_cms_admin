@@ -462,7 +462,12 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-new.action')}</span>,
+      header: () =>
+        mode === 'detail' ? (
+          <div />
+        ) : (
+          <span className="text-[14px]">{t('user.page-template-new.action')}</span>
+        ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -537,7 +542,12 @@ export default function PageTemplatesNew() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.page-template-new.action')}</span>,
+      header: () =>
+        mode === 'detail' ? (
+          <div />
+        ) : (
+          <span className="text-[14px]">{t('user.page-template-new.action')}</span>
+        ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => {
@@ -615,10 +625,10 @@ export default function PageTemplatesNew() {
         TopSideButtons={
           mode === 'detail' ? (
             <Link to={`/page-template/edit/${params?.id}`}>
-              <button className="border-primary border-[1px] rounded-xl w-36 py-3 hover:bg-slate-100">
+              <button className="border-primary border-[1px] rounded-xl w-60 py-3 hover:bg-slate-100">
                 <div className="flex flex-row gap-2 items-center justify-center text-xs normal-case font-bold text-primary">
                   <img src={EditPurple} className="w-6 h-6 mr-1" />
-                  {t('user.page-template-new.edit-content')}
+                  {t('user.page-template-new.edit-content-registration')}
                 </div>
               </button>
             </Link>
