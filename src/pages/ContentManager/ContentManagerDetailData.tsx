@@ -200,7 +200,7 @@ export default function ContentManagerDetailData() {
       if (item.fieldType === 'LOOPING' && item.contentData) {
         const contentData: any = {};
 
-        for (const detail of item.contentData[0].details) {          
+        for (const detail of item.contentData[0].details) {
           contentData[detail.id] = {
             id: detail.id,
             fieldType: detail.fieldType,
@@ -210,8 +210,8 @@ export default function ContentManagerDetailData() {
                   data.details.find((d: { id: any }) => d.id === detail.id)?.value,
               ),
             ),
-          };          
-        }        
+          };
+        }
 
         const loopItem = {
           id: item.id,
