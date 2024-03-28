@@ -140,7 +140,7 @@ export default function ContentManagerDetailData() {
         if (item.id === id || item.id === parentId) {
           if (!isLooping) {
             return { ...item, value, fieldType };
-          } else if (item.fieldType === 'LOOPING') {
+          } else if (item.fieldType === 'LOOPING') {            
             const updatedContentData = item.contentData.map((data: any, idx: any) => {
               if (idxLoop === idx) {
                 const updatedDetails = data.details.map((detail: any) => {
@@ -200,18 +200,18 @@ export default function ContentManagerDetailData() {
       if (item.fieldType === 'LOOPING' && item.contentData) {
         const contentData: any = {};
 
-        for (const detail of item.contentData[0].details) {
+        for (const detail of item.contentData[0].details) {          
           contentData[detail.id] = {
             id: detail.id,
             fieldType: detail.fieldType,
-            value: JSON.stringify(
+            value: detail.fieldType === 'IMAGE' ? JSON.stringify(detail.value) : JSON.stringify(
               item.contentData.map(
                 (data: { details: any[] }) =>
                   data.details.find((d: { id: any }) => d.id === detail.id)?.value,
               ),
             ),
-          };
-        }
+          };          
+        }        
 
         const loopItem = {
           id: item.id,
@@ -933,8 +933,16 @@ export default function ContentManagerDetailData() {
                                 }}
                                 render={({ field }) => {
                                   const onChange = useCallback(
-                                    (e: any) => {
-                                      handleFormChange(val.id, e, val.fieldType);
+                                    (e: any) => {                                      
+                                      handleFormChange(
+                                        val.id, 
+                                        e, 
+                                        val.fieldType,
+                                        true,
+                                        id,
+                                        idx,
+                                        val.id,
+                                      );
                                       field.onChange({ target: { value: e } });
                                     },
                                     [val.id, val.fieldType, field, handleFormChange],
