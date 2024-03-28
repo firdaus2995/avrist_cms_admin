@@ -934,7 +934,7 @@ export default function ContentManagerDetailData() {
                                 render={({ field }) => {
                                   const onChange = useCallback(
                                     (e: any) => {
-                                      handleFormChange(id, e, fieldType);
+                                      handleFormChange(val.id, e, val.fieldType);
                                       field.onChange({ target: { value: e } });
                                     },
                                     [val.id, val.fieldType, field, handleFormChange],
