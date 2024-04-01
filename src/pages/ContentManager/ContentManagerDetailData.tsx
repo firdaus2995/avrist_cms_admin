@@ -201,10 +201,18 @@ export default function ContentManagerDetailData() {
         const contentData: any = {};
 
         for (const detail of item.contentData[0].details) {
+          const dataImage = detail.fieldType === 'IMAGE' && 
+          item.contentData.map(
+            (data: { details: any[] }) =>
+              data.details.find((d: { id: any }) => d.id === detail.id)?.value,
+          );
+
+          const jsonStringArray = dataImage.map((itemImg: any) => JSON.parse(itemImg)[0]);
+
           contentData[detail.id] = {
             id: detail.id,
             fieldType: detail.fieldType,
-            value: detail.fieldType === 'IMAGE' ? JSON.stringify(detail.value) : JSON.stringify(
+            value: detail.fieldType === 'IMAGE' ? JSON.stringify(jsonStringArray) : JSON.stringify(
               item.contentData.map(
                 (data: { details: any[] }) =>
                   data.details.find((d: { id: any }) => d.id === detail.id)?.value,
