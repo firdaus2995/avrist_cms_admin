@@ -3,8 +3,9 @@ export const copyArray = (array: any) => {
 };
 
 export const checkIsEmail = (value: any) => {
-  const regex: any = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-  return value.match(regex);
+  const regex: any =
+    /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return regex.test(value);
 };
 
 export const checkIsNotEmpty = (value: any) => {
@@ -21,27 +22,29 @@ export const formatFilename = (filename: string) => {
 export const errorMessageTypeConverter = (errorMessage: any, messageConverter?: boolean) => {
   const knownError: string[] = [
     'ConflictException',
-    'DataHasBeenExistException', 
-    'DataIsUsedException', 
-    'UnableToChangeOwnUserStatusException', 
+    'DataHasBeenExistException',
+    'DataIsUsedException',
+    'UnableToChangeOwnUserStatusException',
     'UnauthorizedException',
   ];
-  const splittedErrorMessage: string[] = errorMessage.split(":");
+  const splittedErrorMessage: string[] = errorMessage.split(':');
 
   const type: string = splittedErrorMessage[0];
-  const convertedType: string = type[type.length - 1] === " " ? type.substring(0, (type.length - 1)) : type;
-  
+  const convertedType: string =
+    type[type.length - 1] === ' ' ? type.substring(0, type.length - 1) : type;
+
   if (knownError.find((element: string) => element === convertedType)) {
     if (messageConverter) {
       const message: string = splittedErrorMessage[1];
-      const convertedMessage: string = message[0] === " " ? message.substring(1, message.length) : message;
+      const convertedMessage: string =
+        message[0] === ' ' ? message.substring(1, message.length) : message;
       return `${convertedType}.${convertedMessage}`;
     } else {
       return `${convertedType}`;
-    };
+    }
   } else {
-    return "UnexpectedErrorException";
-  };
+    return 'UnexpectedErrorException';
+  }
 };
 
 export const safeParseJSON = (jsonString: any) => {
@@ -49,7 +52,7 @@ export const safeParseJSON = (jsonString: any) => {
     return JSON.parse(jsonString);
   } catch (e) {
     return [];
-  };
+  }
 };
 
 export const getImageData = (value: any) => {
@@ -60,8 +63,8 @@ export const getImageData = (value: any) => {
       return `${baseUrl}/files/get/${parsedValue[0]?.imageUrl}`;
     } else {
       return `${baseUrl}/files/get/${value}`;
-    };
+    }
   } catch {
     return '';
-  };
+  }
 };
