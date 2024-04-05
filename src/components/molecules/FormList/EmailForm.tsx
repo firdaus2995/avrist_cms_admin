@@ -75,7 +75,7 @@ const EmailForm = ({
       item.label.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredItemList(filteredItems);
-  }, [searchTerm]);
+  }, [data, itemList, searchTerm]);
 
   useEffect(() => {
     if (defaultValue && itemList) {
