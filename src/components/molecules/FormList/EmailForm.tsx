@@ -21,7 +21,7 @@ const EmailForm = ({
   resetValue,
   defaultValue,
 }: any) => {
-  const [searchTerm, setSearchTerm] = useState(defaultValue || '');
+  const [searchTerm, setSearchTerm] = useState(null as any);
   const [isOpen, setIsOpen] = useState(false);
   const [itemList, setItemList] = useState([]);
   const [filteredItemList, setFilteredItemList] = useState(itemList);
@@ -75,7 +75,7 @@ const EmailForm = ({
       item.label.toLowerCase().includes(searchTerm.toLowerCase()),
     );
     setFilteredItemList(filteredItems);
-  }, [searchTerm])
+  }, [searchTerm]);
 
   useEffect(() => {
     if (defaultValue && itemList) {
@@ -167,7 +167,9 @@ const EmailForm = ({
               ))}
             </ul>
           ) : (
-            <p className="px-4 py-2 text-gray-500">{t('components.molecules.no-matching-option')}</p>
+            <p className="px-4 py-2 text-gray-500">
+              {t('components.molecules.no-matching-option')}
+            </p>
           )}
         </div>
       )}
