@@ -140,7 +140,7 @@ export default function ContentManagerDetailData() {
         if (item.id === id || item.id === parentId) {
           if (!isLooping) {
             return { ...item, value, fieldType };
-          } else if (item.fieldType === 'LOOPING') {            
+          } else if (item.fieldType === 'LOOPING') {
             const updatedContentData = item.contentData.map((data: any, idx: any) => {
               if (idxLoop === idx) {
                 const updatedDetails = data.details.map((detail: any) => {
@@ -201,24 +201,33 @@ export default function ContentManagerDetailData() {
         const contentData: any = {};
 
         for (const detail of item.contentData[0].details) {
-          const dataImage = detail.fieldType === 'IMAGE' && 
-          item.contentData.map(
-            (data: { details: any[] }) =>
-              data.details.find((d: { id: any }) => d.id === detail.id)?.value,
-          );
+          const dataImage =
+            detail.fieldType === 'IMAGE' &&
+            item.contentData.map(
+              (data: { details: any[] }) =>
+                data.details.find((d: { id: any }) => d.id === detail.id)?.value,
+            );
 
-          const jsonStringArray = dataImage.map((itemImg: any) => JSON.parse(itemImg)[0]);
+          if (dataImage) {
+            const jsonStringArray = dataImage.map((itemImg: any) => JSON.parse(itemImg)[0]);
 
-          contentData[detail.id] = {
-            id: detail.id,
-            fieldType: detail.fieldType,
-            value: detail.fieldType === 'IMAGE' ? JSON.stringify(jsonStringArray) : JSON.stringify(
-              item.contentData.map(
-                (data: { details: any[] }) =>
-                  data.details.find((d: { id: any }) => d.id === detail.id)?.value,
+            contentData[detail.id] = {
+              id: detail.id,
+              fieldType: detail.fieldType,
+              value: JSON.stringify(jsonStringArray),
+            };
+          } else {
+            contentData[detail.id] = {
+              id: detail.id,
+              fieldType: detail.fieldType,
+              value: JSON.stringify(
+                item.contentData.map(
+                  (data: { details: any[] }) =>
+                    data.details.find((d: { id: any }) => d.id === detail.id)?.value,
+                ),
               ),
-            ),
-          };
+            };
+          }
         }
 
         const loopItem = {
@@ -941,10 +950,10 @@ export default function ContentManagerDetailData() {
                                 }}
                                 render={({ field }) => {
                                   const onChange = useCallback(
-                                    (e: any) => {                                      
+                                    (e: any) => {
                                       handleFormChange(
-                                        val.id, 
-                                        e, 
+                                        val.id,
+                                        e,
                                         val.fieldType,
                                         true,
                                         id,
