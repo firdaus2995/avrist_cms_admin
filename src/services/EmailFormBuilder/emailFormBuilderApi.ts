@@ -10,12 +10,7 @@ export const emailFormBuilderApi = createApi({
       query: () => ({
         document: gql`
           query {
-            formResultList(
-              pageableRequest: {
-                pageIndex: 0
-                limit: 5
-              }
-            ) {
+            formResultList(pageableRequest: { pageIndex: 0, limit: 99 }) {
               total
               resultList {
                 id
@@ -125,7 +120,7 @@ export const emailFormBuilderApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
     updateEmailFormBuilder: builder.mutation<any, any>({
       query: payload => ({
@@ -137,7 +132,7 @@ export const emailFormBuilderApi = createApi({
             $formResult: Int!
           ) {
             postTypeUpdate(
-              id: $id,
+              id: $id
               request: {
                 name: $name
                 postTypeGroup: "EMAIL_FORM"
@@ -153,7 +148,7 @@ export const emailFormBuilderApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
     deleteEmailFormBuilder: builder.mutation<any, any>({
       query: payload => ({
@@ -216,18 +211,8 @@ export const emailFormBuilderApi = createApi({
     createEmailBody: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation createEmailBody(
-            $title: String!
-            $shortDesc: String!
-            $value: String!
-          ) {
-            createEmailBody(
-              request: {
-                title: $title
-                shortDesc: $shortDesc
-                value: $value
-              }
-            ) {
+          mutation createEmailBody($title: String!, $shortDesc: String!, $value: String!) {
+            createEmailBody(request: { title: $title, shortDesc: $shortDesc, value: $value }) {
               id
               title
               shortDesc
@@ -249,11 +234,7 @@ export const emailFormBuilderApi = createApi({
           ) {
             updateEmailBody(
               id: $id
-              request: {
-                title: $title
-                shortDesc: $shortDesc
-                value: $value
-              }
+              request: { title: $title, shortDesc: $shortDesc, value: $value }
             ) {
               id
               title
