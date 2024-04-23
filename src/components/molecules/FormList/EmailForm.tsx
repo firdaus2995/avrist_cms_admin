@@ -133,7 +133,7 @@ const EmailForm = ({
         </div>
       </div>
       {isOpen && (
-        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto">
+        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto z-50">
           {filteredItemList.length > 0 ? (
             <ul>
               {filteredItemList.map((option: any, index: any) => (
