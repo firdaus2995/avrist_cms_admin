@@ -885,6 +885,7 @@ export default function ContentManagerDetailData() {
                           case 'TEXT_EDITOR':
                             return (
                               <Controller
+                                key={val.id}
                                 name={`${idx}_${val.id}`}
                                 control={control}
                                 defaultValue={val.value}
@@ -896,17 +897,18 @@ export default function ContentManagerDetailData() {
                                     (e: any) => {
                                       handleFormChange(
                                         val.id,
-                                        e.target.value,
+                                        e,
                                         val.fieldType,
                                         true,
                                         id,
                                         idx,
                                         val.id,
                                       );
-                                      field.onChange({ target: { value: e.target.value } });
+                                      field.onChange(e);
                                     },
                                     [val.id, val.fieldType, field, handleFormChange],
                                   );
+
                                   return (
                                     <FormList.TextEditor
                                       title={t('user.page-management-new.contentLabel')}
