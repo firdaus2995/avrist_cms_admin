@@ -73,14 +73,49 @@ export default function ContentManagerNew() {
       return prevFormValues.map(item => {
         if (item.id === id || item.id === parentId) {
           if (!isLooping) {
+            if (fieldType === 'IMAGE') {
+              if (typeof value === 'string') {
+                try {
+                  value = JSON.parse(value);
+                } catch (e) {
+                  console.error('Failed to parse value', e);
+                }
+              }
+              if (!value || value.length === 0) {
+                value = JSON.stringify([
+                  {
+                    imageUrl: 'no-image',
+                    altText: 'no-image',
+                  },
+                ]);
+              } else {
+                value = JSON.stringify(value);
+              }
+            }
             return { ...item, value, fieldType };
           } else if (item.fieldType === 'LOOPING') {
             const updatedContentData = item.contentData.map((data: any) => {
               if (data.id === id) {
+                if (fieldType === 'IMAGE' && (!value || value.length === 0)) {
+                  value = [
+                    {
+                      imageUrl: 'no-image',
+                      altText: 'no-image',
+                    },
+                  ];
+                }
                 return { ...data, value };
               } else if (data.contentData) {
                 const updatedNestedContentData = data.contentData.map((nestedData: any) => {
                   if (nestedData.id === id) {
+                    if (fieldType === 'IMAGE' && (!value || value.length === 0)) {
+                      value = [
+                        {
+                          imageUrl: 'no-image',
+                          altText: 'no-image',
+                        },
+                      ];
+                    }
                     return { ...nestedData, value };
                   }
                   return nestedData;
@@ -665,8 +700,6 @@ export default function ContentManagerNew() {
                     } else {
                       return 'All items must have imageUrl and altText'; // Validation failed
                     }
-                  } else {
-                    return `${name} is required`; // Validation failed for empty value
                   }
                 },
               }}
@@ -730,7 +763,7 @@ export default function ContentManagerNew() {
               rules={{
                 required: `${name} is required`,
                 pattern: {
-                  value: /^[0-9\- ]{8,14}$/,
+                  value: /^[-]$|^[0-9\- ]{8,14}$/,
                   message: t('user.content-manager-new.invalid-number'),
                 },
               }}
@@ -768,7 +801,7 @@ export default function ContentManagerNew() {
                 required: `${name} is required`,
                 pattern: {
                   value:
-                    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                    /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
                   message: t('user.content-manager-new.invalid-url'),
                 },
               }}
