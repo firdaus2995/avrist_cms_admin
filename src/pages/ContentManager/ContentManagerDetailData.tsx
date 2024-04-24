@@ -841,7 +841,6 @@ export default function ContentManagerDetailData() {
                           case 'EMAIL':
                           case 'DOCUMENT':
                           case 'TEXT_AREA':
-                          case 'TEXT_EDITOR':
                           case 'PHONE_NUMBER':
                           case 'TEXT_FIELD':
                             return (
@@ -877,6 +876,42 @@ export default function ContentManagerDetailData() {
                                       placeholder=""
                                       error={!!errors?.[val.id]?.message}
                                       helperText={errors?.[val.id]?.message}
+                                      onChange={onChange}
+                                    />
+                                  );
+                                }}
+                              />
+                            );
+                          case 'TEXT_EDITOR':
+                            return (
+                              <Controller
+                                name={`${idx}_${val.id}`}
+                                control={control}
+                                defaultValue={val.value}
+                                rules={{
+                                  required: { value: true, message: `${name} is required` },
+                                }}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(
+                                        val.id,
+                                        e.target.value,
+                                        val.fieldType,
+                                        true,
+                                        id,
+                                        idx,
+                                        val.id,
+                                      );
+                                      field.onChange({ target: { value: e.target.value } });
+                                    },
+                                    [val.id, val.fieldType, field, handleFormChange],
+                                  );
+                                  return (
+                                    <FormList.TextEditor
+                                      title={t('user.page-management-new.contentLabel')}
+                                      value={field.value}
+                                      disabled={!isEdited}
                                       onChange={onChange}
                                     />
                                   );
