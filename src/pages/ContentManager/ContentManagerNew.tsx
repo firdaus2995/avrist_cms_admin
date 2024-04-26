@@ -236,6 +236,8 @@ export default function ContentManagerNew() {
       }
     });
 
+    console.log(data);
+
     return combinedData;
   };
 
@@ -261,7 +263,6 @@ export default function ContentManagerNew() {
   };
 
   const saveDraft = () => {
-    const convertedData = convertContentData(contentTempData);
     const value = getValues();
     setIsDraft(false);
     const payload = {
@@ -270,7 +271,7 @@ export default function ContentManagerNew() {
       isDraft: true,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
-      contentData: convertedData,
+      contentData: convertContentData(contentTempData),
     };
 
     createContentData(payload)
@@ -1116,7 +1117,35 @@ export default function ContentManagerNew() {
                         />
                       );
                     case 'TEXT_EDITOR':
-                      return <FormList.TextEditor key={val.id} name={val.name} />;
+                      return (
+                        <Controller
+                          key={val.id}
+                          name={val.id.toString()}
+                          control={control}
+                          defaultValue={''}
+                          rules={{
+                            required: { value: true, message: `${name} is required` },
+                          }}
+                          render={({ field }) => {
+                            const onChange = useCallback(
+                              (e: any) => {
+                                handleFormChange(val.id, e, val.fieldType, true, id);
+                                field.onChange({ target: { value: e } });
+                              },
+                              [val.id, val.fieldType, field, handleFormChange],
+                            );
+
+                            return (
+                              <FormList.TextEditor
+                                {...field}
+                                title={val.name}
+                                value={field.value}
+                                onChange={onChange}
+                              />
+                            );
+                          }}
+                        />
+                      );
                     case 'PHONE_NUMBER':
                       return (
                         <Controller
