@@ -217,18 +217,38 @@ export default function ContentManagerDetailData() {
               value: JSON.stringify(jsonStringArray),
             };
           } else {
-            contentData[detail.id] = {
-              id: detail.id,
-              fieldType: detail.fieldType,
-              value: JSON.stringify(
-                item.contentData.map(
-                  (data: { details: any[] }) =>
-                    data.details.find((d: { id: any }) => d.id === detail.id)?.value,
-                ),
-              ),
-            };
+            const groupedDetails = new Map();
+            item.contentData.forEach((item: any) => {
+              item.details.forEach((detail: any) => {
+                const { id, fieldType, value } = detail;
+
+                if (!groupedDetails.has(id)) {
+                  groupedDetails.set(id, { id, fieldType, values: [] });
+                }
+
+                groupedDetails.get(id).values.push(value);
+              });
+            });
+
+            contentData[detail.id] = Array.from(groupedDetails.values()).map(group => ({
+              id: group.id,
+              fieldType: group.fieldType,
+              value: JSON.stringify(group.values),
+            }));
           }
         }
+
+        const flattenContentData = (data: any) => {
+          if (data && Array.isArray(data.contentData)) {
+            const contentData = data.contentData.flat();
+
+            return {
+              ...data,
+              contentData,
+            };
+          }
+          return data;
+        };
 
         const loopItem = {
           id: item.id,
@@ -237,7 +257,7 @@ export default function ContentManagerDetailData() {
           contentData: Object.values(contentData),
         };
 
-        convertedData.push(loopItem);
+        convertedData.push(flattenContentData(loopItem));
       } else {
         convertedData.push(item);
       }
@@ -265,7 +285,6 @@ export default function ContentManagerDetailData() {
       categoryName: value?.category || '',
       contentData: convertContentData(contentTempData),
     };
-
     updateContentData(payload)
       .unwrap()
       .then(() => {
@@ -373,20 +392,18 @@ export default function ContentManagerDetailData() {
   };
 
   const deleteLoopingField = (id: any, idx: any) => {
-    const updatedContentDataDetailList = { ...contentDataDetailList };
+    const parseObject = (obj: any) => JSON.parse(JSON.stringify(obj));
+    const updatedContentDataDetailList = parseObject(contentDataDetailList);
 
-    const loopingElement = updatedContentDataDetailList.contentData.find(
-      (element: { id: any }) => element.id === id,
-    );
+    const loopingElement = updatedContentDataDetailList.contentData.find((e: any) => e.id === id);
 
     if (loopingElement) {
-      const targetDetailElement = loopingElement.contentData[idx];
+      const filteredElement = loopingElement.contentData.filter(
+        (_: any, index: number) => index !== idx,
+      );
+      loopingElement.contentData = filteredElement;
 
-      if (targetDetailElement) {
-        loopingElement.contentData.splice(idx, 1);
-
-        setContentDataDetailList(updatedContentDataDetailList);
-      }
+      setContentDataDetailList(updatedContentDataDetailList);
     }
   };
 
@@ -813,278 +830,280 @@ export default function ContentManagerDetailData() {
         case 'LOOPING':
           return (
             <div key={id}>
-              {contentData?.map((value: { details: any[] }, idx: Key) => (
-                <>
-                  <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
-                    {name}
-                  </Typography>
-                  <div key={idx} className="card w-full shadow-md p-5 mt-5">
-                    <div className="p-2 flex items-end justify-end">
-                      <div className="px-4 py-2 bg-light-purple rounded-xl font-semibold text-bright-purple">
-                        {(idx as number) + 1}
-                      </div>
-                      {(idx as number) > 0 && (
-                        <div className="tooltip ml-2" data-tip={t('action.delete')}>
-                          <img
-                            className={`cursor-pointer select-none flex items-center justify-center`}
-                            src={TableDelete}
-                            onClick={() => {
-                              deleteLoopingField(id, idx);
-                            }}
-                          />
+              <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
+                {name}
+              </Typography>
+              <div className="card w-full shadow-md p-5 mt-5">
+                {contentData?.map((value: { details: any[] }, idx: Key) => (
+                  <>
+                    <div key={idx}>
+                      <div className="p-2 flex items-end justify-end">
+                        <div className="px-4 py-2 bg-light-purple rounded-xl font-semibold text-bright-purple">
+                          {(idx as number) + 1}
                         </div>
+                        {(idx as number) > 0 && isEdited && (
+                          <div className="tooltip ml-2" data-tip={t('action.delete')}>
+                            <img
+                              className={`cursor-pointer select-none flex items-center justify-center`}
+                              src={TableDelete}
+                              onClick={() => {
+                                deleteLoopingField(id, idx);
+                              }}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      {value.details.map(
+                        (val: { fieldType: any; id: any; value: any; name: any }) => {
+                          switch (val.fieldType) {
+                            case 'EMAIL':
+                            case 'DOCUMENT':
+                            case 'TEXT_AREA':
+                            case 'PHONE_NUMBER':
+                            case 'TEXT_FIELD':
+                              return (
+                                <Controller
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{ required: `${name} is required` }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e.target.value,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e.target.value } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+
+                                    return (
+                                      <FormList.TextField
+                                        {...field}
+                                        key={val.id}
+                                        fieldTypeLabel={transformText(val?.name)}
+                                        labelTitle={transformText(val?.name)}
+                                        disabled={!isEdited}
+                                        placeholder=""
+                                        error={!!errors?.[val.id]?.message}
+                                        helperText={errors?.[val.id]?.message}
+                                        onChange={onChange}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
+                            case 'TEXT_EDITOR':
+                              return (
+                                <Controller
+                                  key={val.id}
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{
+                                    required: { value: true, message: `${name} is required` },
+                                  }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange(e);
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+
+                                    return (
+                                      <FormList.TextEditor
+                                        title={t('user.page-management-new.contentLabel')}
+                                        value={field.value}
+                                        disabled={!isEdited}
+                                        onChange={onChange}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
+                            case 'TAGS':
+                              return (
+                                <Controller
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e.target.value,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e.target.value } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+
+                                    return (
+                                      <FormList.TextField
+                                        {...field}
+                                        key={val.id}
+                                        fieldTypeLabel={transformText(val?.name)}
+                                        labelTitle={transformText(val?.name)}
+                                        disabled={!isEdited}
+                                        placeholder=""
+                                        error={!!errors?.[val.id]?.message}
+                                        helperText={errors?.[val.id]?.message}
+                                        onChange={onChange}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
+                            case 'IMAGE':
+                              return (
+                                <Controller
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{
+                                    required: { value: true, message: `${name} is required` },
+                                    validate: value => {
+                                      // Parse the input value as JSON
+                                      const parsedValue = JSON?.parse(value);
+                                      if (parsedValue && parsedValue.length > 0) {
+                                        // Check if parsedValue is an array and every item has imageUrl and altText properties
+                                        if (
+                                          Array.isArray(parsedValue) &&
+                                          parsedValue.every(item => item.imageUrl && item.altText)
+                                        ) {
+                                          return true; // Validation passed
+                                        } else {
+                                          return 'All items must have imageUrl and altText'; // Validation failed
+                                        }
+                                      } else {
+                                        return `${val.name} is required`; // Validation failed for empty value
+                                      }
+                                    },
+                                  }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+                                    return (
+                                      <FormList.FileUploaderV2
+                                        {...field}
+                                        key={val.id}
+                                        fieldTypeLabel={transformText(val?.name)}
+                                        labelTitle={transformText(val?.name)}
+                                        disabled={!isEdited}
+                                        isDocument={false}
+                                        multiple={configs?.media_type === 'multiple_media'}
+                                        error={!!errors?.[val.id]?.message}
+                                        helperText={errors?.[val.id]?.message}
+                                        onChange={onChange}
+                                        editMode={isEdited}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
+                            case 'YOUTUBE_URL':
+                              return (
+                                <Controller
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{
+                                    required: `${val.name} is required`,
+                                    pattern: {
+                                      value:
+                                        /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                                      message: 'Invalid URL',
+                                    },
+                                  }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e.target.value,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e.target.value } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+                                    return (
+                                      <FormList.TextField
+                                        {...field}
+                                        key={val.id}
+                                        fieldTypeLabel={transformText(val?.name)}
+                                        labelTitle={transformText(val?.name)}
+                                        disabled={!isEdited}
+                                        placeholder=""
+                                        error={!!errors?.[val.id]?.message}
+                                        helperText={errors?.[val.id]?.message}
+                                        onChange={onChange}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
+                            default:
+                              return <p>err</p>;
+                          }
+                        },
                       )}
                     </div>
-                    {value.details.map(
-                      (val: { fieldType: any; id: any; value: any; name: any }) => {
-                        switch (val.fieldType) {
-                          case 'EMAIL':
-                          case 'DOCUMENT':
-                          case 'TEXT_AREA':
-                          case 'PHONE_NUMBER':
-                          case 'TEXT_FIELD':
-                            return (
-                              <Controller
-                                name={`${idx}_${val.id}`}
-                                control={control}
-                                defaultValue={val.value}
-                                rules={{ required: `${name} is required` }}
-                                render={({ field }) => {
-                                  const onChange = useCallback(
-                                    (e: any) => {
-                                      handleFormChange(
-                                        val.id,
-                                        e.target.value,
-                                        val.fieldType,
-                                        true,
-                                        id,
-                                        idx,
-                                        val.id,
-                                      );
-                                      field.onChange({ target: { value: e.target.value } });
-                                    },
-                                    [val.id, val.fieldType, field, handleFormChange],
-                                  );
-
-                                  return (
-                                    <FormList.TextField
-                                      {...field}
-                                      key={val.id}
-                                      fieldTypeLabel={transformText(val?.name)}
-                                      labelTitle={transformText(val?.name)}
-                                      disabled={!isEdited}
-                                      placeholder=""
-                                      error={!!errors?.[val.id]?.message}
-                                      helperText={errors?.[val.id]?.message}
-                                      onChange={onChange}
-                                    />
-                                  );
-                                }}
-                              />
-                            );
-                          case 'TEXT_EDITOR':
-                            return (
-                              <Controller
-                                key={val.id}
-                                name={`${idx}_${val.id}`}
-                                control={control}
-                                defaultValue={val.value}
-                                rules={{
-                                  required: { value: true, message: `${name} is required` },
-                                }}
-                                render={({ field }) => {
-                                  const onChange = useCallback(
-                                    (e: any) => {
-                                      handleFormChange(
-                                        val.id,
-                                        e,
-                                        val.fieldType,
-                                        true,
-                                        id,
-                                        idx,
-                                        val.id,
-                                      );
-                                      field.onChange(e);
-                                    },
-                                    [val.id, val.fieldType, field, handleFormChange],
-                                  );
-
-                                  return (
-                                    <FormList.TextEditor
-                                      title={t('user.page-management-new.contentLabel')}
-                                      value={field.value}
-                                      disabled={!isEdited}
-                                      onChange={onChange}
-                                    />
-                                  );
-                                }}
-                              />
-                            );
-                          case 'TAGS':
-                            return (
-                              <Controller
-                                name={`${idx}_${val.id}`}
-                                control={control}
-                                defaultValue={val.value}
-                                render={({ field }) => {
-                                  const onChange = useCallback(
-                                    (e: any) => {
-                                      handleFormChange(
-                                        val.id,
-                                        e.target.value,
-                                        val.fieldType,
-                                        true,
-                                        id,
-                                        idx,
-                                        val.id,
-                                      );
-                                      field.onChange({ target: { value: e.target.value } });
-                                    },
-                                    [val.id, val.fieldType, field, handleFormChange],
-                                  );
-
-                                  return (
-                                    <FormList.TextField
-                                      {...field}
-                                      key={val.id}
-                                      fieldTypeLabel={transformText(val?.name)}
-                                      labelTitle={transformText(val?.name)}
-                                      disabled={!isEdited}
-                                      placeholder=""
-                                      error={!!errors?.[val.id]?.message}
-                                      helperText={errors?.[val.id]?.message}
-                                      onChange={onChange}
-                                    />
-                                  );
-                                }}
-                              />
-                            );
-                          case 'IMAGE':
-                            return (
-                              <Controller
-                                name={`${idx}_${val.id}`}
-                                control={control}
-                                defaultValue={val.value}
-                                rules={{
-                                  required: { value: true, message: `${name} is required` },
-                                  validate: value => {
-                                    // Parse the input value as JSON
-                                    const parsedValue = JSON?.parse(value);
-                                    if (parsedValue && parsedValue.length > 0) {
-                                      // Check if parsedValue is an array and every item has imageUrl and altText properties
-                                      if (
-                                        Array.isArray(parsedValue) &&
-                                        parsedValue.every(item => item.imageUrl && item.altText)
-                                      ) {
-                                        return true; // Validation passed
-                                      } else {
-                                        return 'All items must have imageUrl and altText'; // Validation failed
-                                      }
-                                    } else {
-                                      return `${val.name} is required`; // Validation failed for empty value
-                                    }
-                                  },
-                                }}
-                                render={({ field }) => {
-                                  const onChange = useCallback(
-                                    (e: any) => {
-                                      handleFormChange(
-                                        val.id,
-                                        e,
-                                        val.fieldType,
-                                        true,
-                                        id,
-                                        idx,
-                                        val.id,
-                                      );
-                                      field.onChange({ target: { value: e } });
-                                    },
-                                    [val.id, val.fieldType, field, handleFormChange],
-                                  );
-                                  return (
-                                    <FormList.FileUploaderV2
-                                      {...field}
-                                      key={val.id}
-                                      fieldTypeLabel={transformText(val?.name)}
-                                      labelTitle={transformText(val?.name)}
-                                      disabled={!isEdited}
-                                      isDocument={false}
-                                      multiple={configs?.media_type === 'multiple_media'}
-                                      error={!!errors?.[val.id]?.message}
-                                      helperText={errors?.[val.id]?.message}
-                                      onChange={onChange}
-                                      editMode={isEdited}
-                                    />
-                                  );
-                                }}
-                              />
-                            );
-                          case 'YOUTUBE_URL':
-                            return (
-                              <Controller
-                                name={`${idx}_${val.id}`}
-                                control={control}
-                                defaultValue={val.value}
-                                rules={{
-                                  required: `${val.name} is required`,
-                                  pattern: {
-                                    value:
-                                      /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
-                                    message: 'Invalid URL',
-                                  },
-                                }}
-                                render={({ field }) => {
-                                  const onChange = useCallback(
-                                    (e: any) => {
-                                      handleFormChange(
-                                        val.id,
-                                        e.target.value,
-                                        val.fieldType,
-                                        true,
-                                        id,
-                                        idx,
-                                        val.id,
-                                      );
-                                      field.onChange({ target: { value: e.target.value } });
-                                    },
-                                    [val.id, val.fieldType, field, handleFormChange],
-                                  );
-                                  return (
-                                    <FormList.TextField
-                                      {...field}
-                                      key={val.id}
-                                      fieldTypeLabel={transformText(val?.name)}
-                                      labelTitle={transformText(val?.name)}
-                                      disabled={!isEdited}
-                                      placeholder=""
-                                      error={!!errors?.[val.id]?.message}
-                                      helperText={errors?.[val.id]?.message}
-                                      onChange={onChange}
-                                    />
-                                  );
-                                }}
-                              />
-                            );
-                          default:
-                            return <p>err</p>;
-                        }
-                      },
+                    {idx === contentData?.length - 1 && isEdited && (
+                      <div className="flex justify-end mt-8">
+                        <button
+                          onClick={() => {
+                            addNewLoopingField(id);
+                          }}
+                          className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                          <img src={Plus} className="mr-3" />
+                          {t('user.content-manager-detail-data.addData')}
+                        </button>
+                      </div>
                     )}
-                  </div>
-                  {idx === contentData?.length - 1 && isEdited && (
-                    <div className="flex justify-end mt-8">
-                      <button
-                        onClick={() => {
-                          addNewLoopingField(id);
-                        }}
-                        className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                        <img src={Plus} className="mr-3" />
-                        {t('user.content-manager-detail-data.addData')}
-                      </button>
-                    </div>
-                  )}
-                </>
-              ))}
+                  </>
+                ))}
+              </div>
             </div>
           );
         default:
