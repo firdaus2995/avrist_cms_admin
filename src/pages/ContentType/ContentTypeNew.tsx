@@ -397,6 +397,7 @@ export default function ContentTypeNew() {
       dataType: selectedDataType.value,
     };
 
+
     postCreate(payload)
       .unwrap()
       .then(() => {

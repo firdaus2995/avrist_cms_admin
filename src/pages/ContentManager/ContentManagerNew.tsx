@@ -244,11 +244,20 @@ export default function ContentManagerNew() {
   function convertLoopingToArrays(data: any) {
     return data.map((field: any) => {
       if (field.fieldType === 'LOOPING' && field.contentData) {
-        field.contentData.forEach((item: { value: any }) => {
+        field.contentData.forEach((item: { fieldType: any; value: any }) => {
           const contentDataValue = item?.value;
+          console.log('val', item);
           if (contentDataValue) {
             item.value = Array.isArray(contentDataValue)
-              ? JSON.stringify(contentDataValue)
+              ? item.fieldType === 'IMAGE'
+                ? item?.value === '[]'
+                  ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
+                  : JSON.stringify(contentDataValue)
+                : JSON.stringify(contentDataValue)
+              : item.fieldType === 'IMAGE'
+              ? item?.value === '[]'
+                ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
+                : JSON.stringify([contentDataValue])
               : JSON.stringify([contentDataValue]);
           }
         });
@@ -321,7 +330,7 @@ export default function ContentManagerNew() {
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
       contentData: stringifyData,
     };
-    // console.log(payload);return
+
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -687,7 +696,6 @@ export default function ContentManagerNew() {
               name={id.toString()}
               control={control}
               rules={{
-                required: { value: true, message: `${name} is required` },
                 validate: value => {
                   // Parse the input value as JSON
                   const parsedValue = JSON?.parse(value);
@@ -750,7 +758,15 @@ export default function ContentManagerNew() {
                   [id, fieldType, field, handleFormChange],
                 );
 
-                return <FormList.TextEditor title={name} value={field.value} onChange={onChange} />;
+                return (
+                  <FormList.TextEditor
+                    title={name}
+                    value={field.value}
+                    error={!!errors?.[id.toString()]}
+                    helperText={errors?.[id.toString()]?.message}
+                    onChange={onChange}
+                  />
+                );
               }}
             />
           );
@@ -764,7 +780,7 @@ export default function ContentManagerNew() {
               rules={{
                 required: `${name} is required`,
                 pattern: {
-                  value: /^[-]$|^[0-9\- ]{8,14}$/,
+                  value: /^[\d./-]+$/,
                   message: t('user.content-manager-new.invalid-number'),
                 },
               }}
@@ -802,7 +818,7 @@ export default function ContentManagerNew() {
                 required: `${name} is required`,
                 pattern: {
                   value:
-                    /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
+                    /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(-|\.\w{2,})(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
                   message: t('user.content-manager-new.invalid-url'),
                 },
               }}
@@ -1156,7 +1172,7 @@ export default function ContentManagerNew() {
                           rules={{
                             required: `${val.name} is required`,
                             pattern: {
-                              value: /^[0-9\- ]{8,14}$/,
+                              value: /^[\d./-]+$/,
                               message: t('user.content-manager-new.invalid-number'),
                             },
                           }}
@@ -1193,7 +1209,7 @@ export default function ContentManagerNew() {
                             required: `${val.name} is required`,
                             pattern: {
                               value:
-                                /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                              /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(-|\.\w{2,})(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
                               message: t('user.content-manager-new.invalid-url'),
                             },
                           }}
