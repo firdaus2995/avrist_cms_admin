@@ -253,7 +253,6 @@ export default function ContentManagerDetailData() {
 
         convertedData.push(loopItem);
       } else {
-        console.log(item);
         if (item.fieldType === 'IMAGE') {
           const dataValue = JSON.parse(item.value);
           const temp = dataValue
