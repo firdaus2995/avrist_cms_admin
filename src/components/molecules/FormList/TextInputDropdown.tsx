@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ChevronUp from '@/assets/chevronup.png';
 import ChevronDown from '@/assets/chevrondown.png';
 import ErrorSmallIcon from '@/assets/error-small.svg';
@@ -26,8 +26,9 @@ const TextInputDropDown = ({
   helperText,
   onChange,
   items,
+  value,
 }: any) => {
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(value || '');
   const [isOpen, setIsOpen] = useState(false);
 
   const filteredOptions = items.filter((option: { label: string }) =>
@@ -40,6 +41,10 @@ const TextInputDropDown = ({
     setIsOpen(true);
   };
 
+  useEffect(() => {
+    setSearchTerm(value || '');
+  }, [value]);
+
   const handleOptionClick = (option: string) => {
     setSearchTerm(option);
     onChange(option);
@@ -49,7 +54,6 @@ const TextInputDropDown = ({
   return (
     <div className="relative w-full">
       <div
-
         className={`
             flex
             flex-row
@@ -80,7 +84,7 @@ const TextInputDropDown = ({
         />
         <div
           onClick={() => {
-            if(!disabled) {
+            if (!disabled) {
               setIsOpen(!isOpen);
             }
           }}
@@ -110,7 +114,11 @@ const TextInputDropDown = ({
               ))}
             </ul>
           ) : (
-            false && <p className="px-4 py-2 text-gray-500">{t('components.molecules.no-matching-option')}</p>
+            false && (
+              <p className="px-4 py-2 text-gray-500">
+                {t('components.molecules.no-matching-option')}
+              </p>
+            )
           )}
         </div>
       )}

@@ -1576,6 +1576,7 @@ export default function ContentManagerDetailData() {
                             disabled={!isEdited}
                             items={categoryList}
                             onChange={onChange}
+                            value={contentDataDetailList?.categoryName}
                           />
                         );
                       }}
