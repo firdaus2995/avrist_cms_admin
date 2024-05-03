@@ -210,7 +210,7 @@ export default function ContentManagerDetailData() {
           if (dataImage) {
             const jsonStringArray = dataImage.map((itemImg: any) => JSON.parse(itemImg));
             const dataValue: any = [];
-            jsonStringArray.map((data: string | any[], index: any) => {
+            jsonStringArray.map((data: string | any[]) => {
               let temp = {};
               if (data.length > 0) {
                 temp = data
