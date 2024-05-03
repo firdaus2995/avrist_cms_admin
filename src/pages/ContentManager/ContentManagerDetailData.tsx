@@ -195,7 +195,6 @@ export default function ContentManagerDetailData() {
 
   const convertContentData = (inputData: any[]) => {
     const convertedData = [];
-
     for (const item of inputData) {
       if (item.fieldType === 'LOOPING' && item.contentData) {
         const contentData: any = {};
@@ -209,46 +208,41 @@ export default function ContentManagerDetailData() {
             );
 
           if (dataImage) {
-            const jsonStringArray = dataImage.map((itemImg: any) => JSON.parse(itemImg)[0]);
+            const jsonStringArray = dataImage.map((itemImg: any) => JSON.parse(itemImg));
+            const dataValue: any = [];
+            jsonStringArray.map((data: string | any[], index: any) => {
+              let temp = {};
+              if (data.length > 0) {
+                temp = data
+                  ? data[0].imageUrl
+                    ? JSON.stringify(data)
+                    : '[{"imageUrl":"no-image","altText":"no-image"}]'
+                  : '[{"imageUrl":"no-image","altText":"no-image"}]';
+              } else {
+                temp = '[{"imageUrl":"no-image","altText":"no-image"}]';
+              }
+
+              return dataValue.push(temp);
+            });
 
             contentData[detail.id] = {
               id: detail.id,
               fieldType: detail.fieldType,
-              value: JSON.stringify(jsonStringArray),
+              value: JSON.stringify(dataValue),
             };
           } else {
-            const groupedDetails = new Map();
-            item.contentData.forEach((item: any) => {
-              item.details.forEach((detail: any) => {
-                const { id, fieldType, value } = detail;
-
-                if (!groupedDetails.has(id)) {
-                  groupedDetails.set(id, { id, fieldType, values: [] });
-                }
-
-                groupedDetails.get(id).values.push(value);
-              });
-            });
-
-            contentData[detail.id] = Array.from(groupedDetails.values()).map(group => ({
-              id: group.id,
-              fieldType: group.fieldType,
-              value: JSON.stringify(group.values),
-            }));
-          }
-        }
-
-        const flattenContentData = (data: any) => {
-          if (data && Array.isArray(data.contentData)) {
-            const contentData = data.contentData.flat();
-
-            return {
-              ...data,
-              contentData,
+            contentData[detail.id] = {
+              id: detail.id,
+              fieldType: detail.fieldType,
+              value: JSON.stringify(
+                item.contentData.map(
+                  (data: { details: any[] }) =>
+                    data.details.find((d: { id: any }) => d.id === detail.id)?.value,
+                ),
+              ),
             };
           }
-          return data;
-        };
+        }
 
         const loopItem = {
           id: item.id,
@@ -257,9 +251,26 @@ export default function ContentManagerDetailData() {
           contentData: Object.values(contentData),
         };
 
-        convertedData.push(flattenContentData(loopItem));
+        convertedData.push(loopItem);
       } else {
-        convertedData.push(item);
+        if (item.fieldType === 'IMAGE') {
+          const dataValue = JSON.parse(item.value);
+          const temp = dataValue
+            ? dataValue[0]?.imageUrl
+              ? JSON.stringify(dataValue)
+              : '[{"imageUrl":"no-image","altText":"no-image"}]'
+            : '[{"imageUrl":"no-image","altText":"no-image"}]';
+
+          const imageData = {
+            id: item.id,
+            fieldType: item.fieldType,
+            value: temp,
+          };
+
+          convertedData.push(imageData);
+        } else {
+          convertedData.push(item);
+        }
       }
     }
 
@@ -590,7 +601,6 @@ export default function ContentManagerDetailData() {
               control={control}
               defaultValue={value}
               rules={{
-                required: { value: true, message: `${name} is required` },
                 validate: value => {
                   // Parse the input value as JSON
                   const parsedValue = JSON?.parse(value);
@@ -601,11 +611,7 @@ export default function ContentManagerDetailData() {
                       parsedValue.every(item => item.imageUrl && item.altText)
                     ) {
                       return true; // Validation passed
-                    } else {
-                      return 'All items must have imageUrl and altText'; // Validation failed
                     }
-                  } else {
-                    return `${name} is required`; // Validation failed for empty value
                   }
                 },
               }}
@@ -675,7 +681,7 @@ export default function ContentManagerDetailData() {
               rules={{
                 required: `${name} is required`,
                 pattern: {
-                  value: /^[0-9\- ]{8,14}$/,
+                  value: /^[\d./-]+$/,
                   message: 'Invalid number',
                 },
               }}
@@ -714,7 +720,7 @@ export default function ContentManagerDetailData() {
                 required: `${name} is required`,
                 pattern: {
                   value:
-                    /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                    /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(-|\.\w{2,})(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
                   message: 'Invalid URL',
                 },
               }}
@@ -859,7 +865,6 @@ export default function ContentManagerDetailData() {
                             case 'EMAIL':
                             case 'DOCUMENT':
                             case 'TEXT_AREA':
-                            case 'PHONE_NUMBER':
                             case 'TEXT_FIELD':
                               return (
                                 <Controller
@@ -892,8 +897,8 @@ export default function ContentManagerDetailData() {
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[val.id]?.message}
-                                        helperText={errors?.[val.id]?.message}
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -969,8 +974,8 @@ export default function ContentManagerDetailData() {
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[val.id]?.message}
-                                        helperText={errors?.[val.id]?.message}
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -984,7 +989,6 @@ export default function ContentManagerDetailData() {
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
-                                    required: { value: true, message: `${name} is required` },
                                     validate: value => {
                                       // Parse the input value as JSON
                                       const parsedValue = JSON?.parse(value);
@@ -995,11 +999,7 @@ export default function ContentManagerDetailData() {
                                           parsedValue.every(item => item.imageUrl && item.altText)
                                         ) {
                                           return true; // Validation passed
-                                        } else {
-                                          return 'All items must have imageUrl and altText'; // Validation failed
                                         }
-                                      } else {
-                                        return `${val.name} is required`; // Validation failed for empty value
                                       }
                                     },
                                   }}
@@ -1028,8 +1028,8 @@ export default function ContentManagerDetailData() {
                                         disabled={!isEdited}
                                         isDocument={false}
                                         multiple={configs?.media_type === 'multiple_media'}
-                                        error={!!errors?.[val.id]?.message}
-                                        helperText={errors?.[val.id]?.message}
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
                                         onChange={onChange}
                                         editMode={isEdited}
                                       />
@@ -1047,7 +1047,7 @@ export default function ContentManagerDetailData() {
                                     required: `${val.name} is required`,
                                     pattern: {
                                       value:
-                                        /[-a-zA-Z0-9@:%._\\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\\+.~#?&//=]*)?/gi,
+                                        /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(-|\.\w{2,})(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
                                       message: 'Invalid URL',
                                     },
                                   }}
@@ -1075,8 +1075,53 @@ export default function ContentManagerDetailData() {
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[val.id]?.message}
-                                        helperText={errors?.[val.id]?.message}
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        onChange={onChange}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
+                            case 'PHONE_NUMBER':
+                              return (
+                                <Controller
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{
+                                    required: `${val.name} is required`,
+                                    pattern: {
+                                      value: /^[\d./-]+$/,
+                                      message: 'Invalid number',
+                                    },
+                                  }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e.target.value,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e.target.value } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+                                    return (
+                                      <FormList.TextField
+                                        {...field}
+                                        key={val.id}
+                                        fieldTypeLabel={transformText(val?.name)}
+                                        labelTitle={transformText(val?.name)}
+                                        disabled={!isEdited}
+                                        placeholder=""
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
