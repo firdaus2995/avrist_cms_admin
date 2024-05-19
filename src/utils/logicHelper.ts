@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 export const copyArray = (array: any) => {
   return JSON.parse(JSON.stringify(array));
 };
@@ -68,3 +70,156 @@ export const getImageData = (value: any) => {
     return '';
   }
 };
+
+export const transformText = (text: string) => {
+  const words = text.split('_');
+
+  const capitalizedWords = words.map((word: string) => {
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  });
+
+  const result = capitalizedWords.join(' ').replace('Url', 'URL');
+
+  return result;
+};
+
+export const generateOrderData = (inputData: any[]) => {
+  // Filter hanya LOOPING yang memiliki duplicateId
+  const loopingDataWithDuplicate = inputData.filter(
+    (item: { fieldType: string; duplicateId: any }) =>
+      item.fieldType === 'LOOPING' && item.duplicateId,
+  );
+
+  // Inisialisasi orderData
+  const orderData: Array<{ id: any; order: any }> = [];
+
+  // Membuat map untuk melacak urutan berdasarkan duplicateId
+  const orderMap = new Map();
+
+  // Mengisi orderMap dengan urutan berdasarkan duplicateId
+  loopingDataWithDuplicate.forEach((loopingItem: { duplicateId: any; id: any }) => {
+    const duplicateId = loopingItem.duplicateId;
+    if (duplicateId !== null) {
+      if (!orderMap.has(duplicateId)) {
+        orderMap.set(duplicateId, 2); // Mengatur urutan awal
+      }
+      const order = orderMap.get(duplicateId);
+      orderData.push({
+        id: loopingItem.id,
+        order,
+      });
+      // Increment urutan untuk duplicateId selanjutnya
+      orderMap.set(duplicateId, (order as number) + 1);
+    }
+  });
+
+  // Menambahkan orderData untuk LOOPING yang tidak memiliki duplicateId (order 1)
+  const loopingDataWithoutDuplicate = inputData.filter(
+    (item: { fieldType: string; duplicateId: any }) =>
+      item.fieldType === 'LOOPING' && !item.duplicateId,
+  );
+  loopingDataWithoutDuplicate.forEach((loopingItem: { id: any }) => {
+    orderData.push({
+      id: loopingItem.id,
+      order: 1, // Urutan 1
+    });
+  });
+
+  // Mengembalikan orderData yang telah diurutkan
+  return orderData.sort((a, b) => a.order - b.order);
+};
+
+export const convertContentData = (data: any[]) => {
+  const combinedData: any[] = [];
+
+  data.forEach((item: { duplicateId: any; contentData: any[] }) => {
+    if (item.duplicateId) {
+      const existingItem = combinedData.find(combinedItem => combinedItem.id === item.duplicateId);
+
+      if (existingItem) {
+        item.contentData.forEach(
+          (contentItem: { fieldType: any; value: any[]; duplicateId?: number }) => {
+            const existingContentItem = existingItem.contentData.find(
+              (existingContent: { id: any }) => existingContent.id === contentItem.duplicateId,
+            );
+
+            if (existingContentItem) {
+              if (!Array.isArray(existingContentItem.value)) {
+                existingContentItem.value = [existingContentItem.value];
+              }
+              if (!Array.isArray(contentItem.value)) {
+                contentItem.value = [contentItem.value];
+              }
+              existingContentItem.value.push(...contentItem.value);
+            }
+          },
+        );
+      } else {
+        const newItem = { ...item };
+        newItem.contentData = newItem.contentData.map((contentItem: { value: any }) => ({
+          ...contentItem,
+          value: Array.isArray(contentItem.value) ? [...contentItem.value] : [contentItem.value],
+        }));
+        combinedData.push(newItem);
+      }
+    } else {
+      combinedData.push(item);
+    }
+  });
+
+  return combinedData;
+};
+
+export const stringifyContentData = (data: any) => {
+  return data.map((field: any) => {
+    if (field.fieldType === 'LOOPING' && field.contentData) {
+      field.contentData.forEach((item: { fieldType: any; value: any }) => {
+        const contentDataValue = item?.value;
+        if (contentDataValue) {
+          item.value = Array.isArray(contentDataValue)
+            ? item.fieldType === 'IMAGE'
+              ? item?.value === '[]'
+                ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
+                : JSON.stringify(contentDataValue)
+              : JSON.stringify(contentDataValue)
+            : item.fieldType === 'IMAGE'
+            ? item?.value === '[]'
+              ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
+              : JSON.stringify([contentDataValue])
+            : JSON.stringify([contentDataValue]);
+        }
+      });
+    }
+    return field;
+  });
+};
+
+export function addNewDataInLoopingField(data: any[], loopingId: number | string) {
+  let newLoopingField: any;
+  let newAttributeList: any[] = [];
+
+  const existingLoopingIndex: number = data.findIndex(
+    (attribute: { id: string }) => attribute.id === loopingId,
+  );
+
+  if (existingLoopingIndex !== -1) {
+    newLoopingField = {
+      ...data[existingLoopingIndex],
+      id: uuidv4(),
+      duplicateId: data[existingLoopingIndex].duplicateId || loopingId,
+      name: `${data[existingLoopingIndex].name}`,
+      attributeList: data[existingLoopingIndex].attributeList.map((attribute: any) => ({
+        ...attribute,
+        id: uuidv4(),
+        parentId: loopingId,
+        duplicateId: attribute?.duplicateId ?? attribute.id, // used at convertData function to merge values into array
+        value: '', // Initialize value to empty
+      })),
+    };
+
+    newAttributeList = [...data];
+    newAttributeList.splice(existingLoopingIndex + 1, 0, newLoopingField);
+  }
+
+  return [existingLoopingIndex, newLoopingField, newAttributeList];
+}
