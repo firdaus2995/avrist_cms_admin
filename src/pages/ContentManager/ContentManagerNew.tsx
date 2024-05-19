@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useEffect, useState, useCallback } from 'react';
 import { t } from 'i18next';
 import {
@@ -22,7 +23,14 @@ import TableDelete from '@/assets/table-delete.svg';
 import ModalForm from '@/components/molecules/ModalForm';
 import PaperSubmit from '../../assets/paper-submit.png';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
-import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import {
+  addNewDataInLoopingField,
+  convertContentData,
+  errorMessageTypeConverter,
+  generateOrderData,
+  stringifyContentData,
+  transformText,
+} from '@/utils/logicHelper';
 
 export default function ContentManagerNew() {
   const dispatch = useAppDispatch();
@@ -146,18 +154,16 @@ export default function ContentManagerNew() {
   const [loopingDupCount, setLoopingDupCount] = useState<number[]>([]);
 
   // RTK GET DATA
-  const fetchGetPostTypeDetail = useGetPostTypeDetailQuery({
+  const { data: postTypeDetailData } = useGetPostTypeDetailQuery({
     id,
     pageIndex: 0,
     limit: 100,
   });
-  const { data: postTypeDetailData } = fetchGetPostTypeDetail;
 
-  const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
+  const { data: eligibleAutoApprove } = useGetEligibleAutoApproveQuery({
     actionType: 'create',
     dataType: 'content',
   });
-  const { data: eligibleAutoApprove } = fetchGetEligibleAutoApprove;
 
   useEffect(() => {
     if (postTypeDetailData) {
@@ -165,7 +171,7 @@ export default function ContentManagerNew() {
     }
   }, [postTypeDetailData]);
 
-  const fetchGetCategoryList = useGetCategoryListQuery({
+  const { data: categoryListData } = useGetCategoryListQuery({
     postTypeId: id,
     pageIndex,
     limit: pageLimit,
@@ -173,7 +179,6 @@ export default function ContentManagerNew() {
     search,
     sortBy,
   });
-  const { data: categoryListData } = fetchGetCategoryList;
 
   useEffect(() => {
     if (categoryListData) {
@@ -187,84 +192,8 @@ export default function ContentManagerNew() {
     }
   }, [categoryListData]);
 
-  useEffect(() => {
-    const refetch = async () => {
-      await fetchGetCategoryList.refetch();
-    };
-    void refetch();
-  }, []);
-
   // RTK POST DATA
   const [createContentData] = useCreateContentDataMutation();
-
-  const convertContentData = (data: any[]) => {
-    const combinedData: any[] = [];
-
-    data.forEach((item: { duplicateId: any; contentData: any[] }) => {
-      if (item.duplicateId) {
-        const existingItem = combinedData.find(
-          combinedItem => combinedItem.id === item.duplicateId,
-        );
-
-        if (existingItem) {
-          item.contentData.forEach((contentItem: { fieldType: any; value: any[] }) => {
-            const existingContentItem = existingItem.contentData.find(
-              (existingContent: { fieldType: any }) =>
-                existingContent.fieldType === contentItem.fieldType,
-            );
-
-            if (existingContentItem) {
-              if (!Array.isArray(existingContentItem.value)) {
-                existingContentItem.value = [existingContentItem.value];
-              }
-              if (!Array.isArray(contentItem.value)) {
-                contentItem.value = [contentItem.value];
-              }
-              existingContentItem.value.push(...contentItem.value);
-            }
-          });
-        } else {
-          const newItem = { ...item };
-          newItem.contentData = newItem.contentData.map((contentItem: { value: any }) => ({
-            ...contentItem,
-            value: Array.isArray(contentItem.value) ? [...contentItem.value] : [contentItem.value],
-          }));
-          combinedData.push(newItem);
-        }
-      } else {
-        combinedData.push(item);
-      }
-    });
-
-    console.log(data);
-
-    return combinedData;
-  };
-
-  function convertLoopingToArrays(data: any) {
-    return data.map((field: any) => {
-      if (field.fieldType === 'LOOPING' && field.contentData) {
-        field.contentData.forEach((item: { fieldType: any; value: any }) => {
-          const contentDataValue = item?.value;
-          console.log('val', item);
-          if (contentDataValue) {
-            item.value = Array.isArray(contentDataValue)
-              ? item.fieldType === 'IMAGE'
-                ? item?.value === '[]'
-                  ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
-                  : JSON.stringify(contentDataValue)
-                : JSON.stringify(contentDataValue)
-              : item.fieldType === 'IMAGE'
-              ? item?.value === '[]'
-                ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
-                : JSON.stringify([contentDataValue])
-              : JSON.stringify([contentDataValue]);
-          }
-        });
-      }
-      return field;
-    });
-  }
 
   const onLeave = () => {
     setShowLeaveModal(false);
@@ -280,7 +209,7 @@ export default function ContentManagerNew() {
       isDraft: true,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
-      contentData: convertContentData(contentTempData),
+      contentData: stringifyContentData(convertContentData(contentTempData)),
     };
 
     createContentData(payload)
@@ -318,8 +247,6 @@ export default function ContentManagerNew() {
   }
 
   const saveData = () => {
-    const convertedData = convertContentData(contentTempData);
-    const stringifyData = convertLoopingToArrays(convertedData);
     const value = getValues();
     const payload = {
       title: value.title,
@@ -328,9 +255,8 @@ export default function ContentManagerNew() {
       isAutoApprove,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
-      contentData: stringifyData,
+      contentData: stringifyContentData(convertContentData(contentTempData)),
     };
-
     createContentData(payload)
       .unwrap()
       .then(() => {
@@ -353,53 +279,39 @@ export default function ContentManagerNew() {
   };
 
   const addNewLoopingField = (loopingId: any) => {
-    const existingLoopingIndex: number = postTypeDetail.attributeList.findIndex(
-      (attribute: { id: string }) => attribute.id === loopingId,
+    const [existingLoopingIndex, newLoopingField, newAttributeList] = addNewDataInLoopingField(
+      postTypeDetail.attributeList,
+      loopingId,
     );
 
-    if (existingLoopingIndex !== -1) {
-      const newLoopingField = {
-        ...postTypeDetail.attributeList[existingLoopingIndex],
-        id: Math.floor(Math.random() * 100),
-        duplicateId: postTypeDetail.attributeList[existingLoopingIndex].duplicateId || loopingId,
-        name: `${postTypeDetail.attributeList[existingLoopingIndex].name}`,
-        attributeList: postTypeDetail.attributeList[existingLoopingIndex].attributeList.map(
-          (attribute: any) => ({
-            ...attribute,
-            id: Math.floor(Math.random() * 100),
-            parentId: loopingId,
-            value: '', // Initialize value to empty
-          }),
-        ),
-      };
+    // Re render Form
+    setPostTypeDetail((prevPostTypeDetail: { attributeList: any }) => ({
+      ...prevPostTypeDetail,
+      attributeList: newAttributeList,
+    }));
 
-      const newAttributeList = [...postTypeDetail.attributeList];
-      newAttributeList.splice(existingLoopingIndex + 1, 0, newLoopingField);
+    setLoopingDupCount(prevCount => ({
+      ...prevCount,
+      [postTypeDetail.attributeList[existingLoopingIndex as number].duplicateId || loopingId]:
+        (prevCount[
+          postTypeDetail.attributeList[existingLoopingIndex as number].duplicateId || loopingId
+        ] || 0) + 1,
+    }));
 
-      setPostTypeDetail((prevPostTypeDetail: { attributeList: any }) => ({
-        ...prevPostTypeDetail,
-        attributeList: newAttributeList,
-      }));
-
-      setLoopingDupCount(prevCount => ({
-        ...prevCount,
-        [postTypeDetail.attributeList[existingLoopingIndex].duplicateId || loopingId]:
-          (prevCount[postTypeDetail.attributeList[existingLoopingIndex].duplicateId || loopingId] ||
-            0) + 1,
-      }));
-
-      setContentTempData(prevContentTempData => [
-        ...prevContentTempData,
-        {
-          ...newLoopingField,
-          contentData: newLoopingField.attributeList.map((attribute: any) => ({
-            id: attribute.id,
-            value: '',
-            fieldType: attribute.fieldType,
-          })),
-        },
-      ]);
-    }
+    // Update temporary data (used in saveData function)
+    setContentTempData(prevContentTempData => [
+      ...prevContentTempData,
+      {
+        ...newLoopingField,
+        contentData: newLoopingField.attributeList.map((attribute: any) => ({
+          id: attribute.id,
+          value: '',
+          duplicateId: attribute?.duplicateId ?? attribute.id,
+          fieldType: attribute.fieldType,
+        })),
+      },
+    ]);
+    // }
   };
 
   useEffect(() => {
@@ -434,66 +346,26 @@ export default function ContentManagerNew() {
     setOrderList(order);
   }, [postTypeDetail?.attributeList]);
 
-  function generateOrderData(inputData: any[]) {
-    // Filter hanya LOOPING yang memiliki duplicateId
-    const loopingDataWithDuplicate = inputData.filter(
-      (item: { fieldType: string; duplicateId: any }) =>
-        item.fieldType === 'LOOPING' && item.duplicateId,
-    );
-
-    // Inisialisasi orderData
-    const orderData: Array<{ id: any; order: any }> = [];
-
-    // Membuat map untuk melacak urutan berdasarkan duplicateId
-    const orderMap = new Map();
-
-    // Mengisi orderMap dengan urutan berdasarkan duplicateId
-    loopingDataWithDuplicate.forEach((loopingItem: { duplicateId: any; id: any }) => {
-      const duplicateId = loopingItem.duplicateId;
-      if (duplicateId !== null) {
-        if (!orderMap.has(duplicateId)) {
-          orderMap.set(duplicateId, 2); // Mengatur urutan awal
-        }
-        const order = orderMap.get(duplicateId);
-        orderData.push({
-          id: loopingItem.id,
-          order,
-        });
-        // Increment urutan untuk duplicateId selanjutnya
-        orderMap.set(duplicateId, (order as number) + 1);
-      }
-    });
-
-    // Menambahkan orderData untuk LOOPING yang tidak memiliki duplicateId (order 1)
-    const loopingDataWithoutDuplicate = inputData.filter(
-      (item: { fieldType: string; duplicateId: any }) =>
-        item.fieldType === 'LOOPING' && !item.duplicateId,
-    );
-    loopingDataWithoutDuplicate.forEach((loopingItem: { id: any }) => {
-      orderData.push({
-        id: loopingItem.id,
-        order: 1, // Urutan 1
-      });
-    });
-
-    // Mengembalikan orderData yang telah diurutkan
-    return orderData.sort((a, b) => a.order - b.order);
-  }
-
   const deleteLoopingField = (id: any) => {
-    const existingLoopingIndex = postTypeDetail.attributeList.findIndex(
+    // find delete id in postTypeDetail
+    const postTypeLoopingIndex = postTypeDetail.attributeList.findIndex(
       (attribute: { id: any }) => attribute.id === id,
     );
 
-    if (existingLoopingIndex !== -1) {
-      const loopingToDelete = postTypeDetail.attributeList[existingLoopingIndex];
+    // find delete id in contentTempData
+    const contentDataLoopingIndex = contentTempData.findIndex(
+      (data: { id: any }) => data.id === id,
+    );
+
+    if (postTypeLoopingIndex !== -1) {
+      const loopingToDelete = postTypeDetail.attributeList[postTypeLoopingIndex];
 
       // Mendapatkan duplicateId dari looping yang akan dihapus
       const duplicateId = loopingToDelete.duplicateId;
 
       // Hapus looping dari postTypeDetail.attributeList
       const updatedAttributeList = [...postTypeDetail.attributeList];
-      updatedAttributeList.splice(existingLoopingIndex, 1);
+      updatedAttributeList.splice(postTypeLoopingIndex, 1);
 
       // Set state dengan atribut yang telah diperbarui
       setPostTypeDetail((prevPostTypeDetail: any) => ({
@@ -507,20 +379,14 @@ export default function ContentManagerNew() {
         updatedLoopingDupCount[duplicateId] -= 1;
         setLoopingDupCount(updatedLoopingDupCount);
       }
+
+      // remove deleted id in current contentTempData
+      setContentTempData(prevState => [
+        ...prevState.slice(0, contentDataLoopingIndex),
+        ...prevState.slice(contentDataLoopingIndex + 1),
+      ]);
     }
   };
-
-  function transformText(text: string) {
-    const words = text.split('_');
-
-    const capitalizedWords = words.map((word: string) => {
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    });
-
-    const result = capitalizedWords.join(' ').replace('Url', 'URL');
-
-    return result;
-  }
 
   const renderFormList = () => {
     // DEFAULT VALUE
@@ -953,306 +819,14 @@ export default function ContentManagerNew() {
                     </div>
                   )}
                 </div>
-                {attributeList?.map((val: { name: any; id: any; fieldType: any; config: any }) => {
-                  const configs = val?.config ? JSON.parse(val?.config) : {};
+                {attributeList?.map(
+                  (val: { name: any; id: any; fieldType: any; config: any; duplicateId?: any }) => {
+                    const configs = val?.config ? JSON.parse(val?.config) : {};
 
-                  switch (val.fieldType) {
-                    case 'TEXT_FIELD':
-                      return (
-                        <Controller
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          rules={{ required: `${val.name} is required` }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
-                              },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
-
-                            return (
-                              <FormList.TextField
-                                {...field}
-                                key={val.id}
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                placeholder=""
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'TEXT_AREA':
-                      return (
-                        <Controller
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          rules={{
-                            required: { value: true, message: `${val.name} is required` },
-                            maxLength: {
-                              value: configs?.max_length > 0 ? configs?.max_length : 9999,
-                              message: `${configs?.max_length} characters maximum`,
-                            },
-                            minLength: {
-                              value: configs?.min_length > 0 ? configs?.min_length : 0,
-                              message: `${configs?.min_length} characters minimum`,
-                            },
-                          }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
-                              },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
-                            return (
-                              <FormList.TextAreaField
-                                {...field}
-                                key={val.id}
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                placeholder=""
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'EMAIL':
-                      return (
-                        <Controller
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          rules={{ required: `${val.name} is required` }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
-                              },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
-
-                            return (
-                              <FormList.TextField
-                                {...field}
-                                key={val.id}
-                                type="email"
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                placeholder=""
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'DOCUMENT':
-                      return (
-                        <Controller
-                          key={val.id}
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          rules={{
-                            required: { value: true, message: `${val.name} is required` },
-                          }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e, val.fieldType, true, id);
-                                field.onChange({ target: { value: e } });
-                              },
-                              [id, fieldType, field, handleFormChange],
-                            );
-                            return (
-                              <FormList.FileUploaderV2
-                                {...field}
-                                key={val.id}
-                                id={val.id}
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                isDocument={true}
-                                multiple={configs?.media_type === 'multiple_media'}
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                                editMode={true}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'IMAGE':
-                      return (
-                        <Controller
-                          key={val.id}
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          rules={{
-                            required: { value: true, message: `${val.name} is required` },
-                          }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e, val.fieldType, true, id);
-                                field.onChange({ target: { value: e } });
-                              },
-                              [id, fieldType, field, handleFormChange],
-                            );
-                            return (
-                              <FormList.FileUploaderV2
-                                {...field}
-                                key={val.id}
-                                id={val.id}
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                isDocument={false}
-                                multiple={configs?.media_type === 'multiple_media'}
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                                editMode={true}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'TEXT_EDITOR':
-                      return (
-                        <Controller
-                          key={val.id}
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue={''}
-                          rules={{
-                            required: { value: true, message: `${name} is required` },
-                          }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e, val.fieldType, true, id);
-                                field.onChange({ target: { value: e } });
-                              },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
-
-                            return (
-                              <FormList.TextEditor
-                                {...field}
-                                title={val.name}
-                                value={field.value}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'PHONE_NUMBER':
-                      return (
-                        <Controller
-                          key={val.id}
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          rules={{
-                            required: `${val.name} is required`,
-                            pattern: {
-                              value: /^[\d./-]+$/,
-                              message: t('user.content-manager-new.invalid-number'),
-                            },
-                          }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
-                              },
-                              [id, fieldType, field, handleFormChange],
-                            );
-                            return (
-                              <FormList.TextField
-                                {...field}
-                                key={val.id}
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                placeholder=""
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'YOUTUBE_URL':
-                      return (
-                        <Controller
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          rules={{
-                            required: `${val.name} is required`,
-                            pattern: {
-                              value:
-                              /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(-|\.\w{2,})(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
-                              message: t('user.content-manager-new.invalid-url'),
-                            },
-                          }}
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
-                              },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
-                            return (
-                              <FormList.TextField
-                                {...field}
-                                key={val.id}
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                placeholder=""
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    case 'EMAIL_FORM':
-                      return (
-                        <div className="flex flex-row mt-16">
-                          <div>
-                            <Typography
-                              type="body"
-                              size="m"
-                              weight="bold"
-                              className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                              {t('user.content-manager-new.email-form')}
-                            </Typography>
-                            <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-                              {val.name}
-                            </Typography>
-                          </div>
+                    switch (val.fieldType) {
+                      case 'TEXT_FIELD':
+                        return (
                           <Controller
-                            key={val.id}
                             name={val.id.toString()}
                             control={control}
                             defaultValue=""
@@ -1260,61 +834,355 @@ export default function ContentManagerNew() {
                             render={({ field }) => {
                               const onChange = useCallback(
                                 (e: any) => {
-                                  handleFormChange(val.id, e.value, val.fieldType, true, id);
-                                  field.onChange({ target: { value: e.value } });
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
                                 },
-                                [val.id, val.fieldType, handleFormChange],
+                                [val.id, val.fieldType, field, handleFormChange],
                               );
+
                               return (
-                                <FormList.EmailForm
+                                <FormList.TextField
                                   {...field}
                                   key={val.id}
                                   fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
                                   placeholder=""
                                   error={!!errors?.[val.id]?.message}
                                   helperText={errors?.[val.id]?.message}
-                                  items={categoryList}
                                   onChange={onChange}
                                 />
                               );
                             }}
                           />
-                        </div>
-                      );
-                    case 'TAGS':
-                      return (
-                        <Controller
-                          name={val.id.toString()}
-                          control={control}
-                          defaultValue=""
-                          render={({ field }) => {
-                            const onChange = useCallback(
-                              (e: any) => {
-                                handleFormChange(val.id, e.target.value, val.fieldType, true, id);
-                                field.onChange({ target: { value: e.target.value } });
+                        );
+                      case 'TEXT_AREA':
+                        return (
+                          <Controller
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: { value: true, message: `${val.name} is required` },
+                              maxLength: {
+                                value: configs?.max_length > 0 ? configs?.max_length : 9999,
+                                message: `${configs?.max_length} characters maximum`,
                               },
-                              [val.id, val.fieldType, field, handleFormChange],
-                            );
+                              minLength: {
+                                value: configs?.min_length > 0 ? configs?.min_length : 0,
+                                message: `${configs?.min_length} characters minimum`,
+                              },
+                            }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
+                                },
+                                [val.id, val.fieldType, field, handleFormChange],
+                              );
+                              return (
+                                <FormList.TextAreaField
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'EMAIL':
+                        return (
+                          <Controller
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{ required: `${val.name} is required` }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
+                                },
+                                [val.id, val.fieldType, field, handleFormChange],
+                              );
 
-                            return (
-                              <FormList.TextField
-                                {...field}
-                                key={val.id}
-                                fieldTypeLabel={transformText(val.name)}
-                                labelTitle={transformText(val.name)}
-                                placeholder={t('user.content-manager-new.tags-placeholder')}
-                                error={!!errors?.[val.id]?.message}
-                                helperText={errors?.[val.id]?.message}
-                                onChange={onChange}
-                              />
-                            );
-                          }}
-                        />
-                      );
-                    default:
-                      return <p>err</p>;
-                  }
-                })}
+                              return (
+                                <FormList.TextField
+                                  {...field}
+                                  key={val.id}
+                                  type="email"
+                                  fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'DOCUMENT':
+                        return (
+                          <Controller
+                            key={val.id}
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: { value: true, message: `${val.name} is required` },
+                            }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e } });
+                                },
+                                [id, fieldType, field, handleFormChange],
+                              );
+                              return (
+                                <FormList.FileUploaderV2
+                                  {...field}
+                                  key={val.id}
+                                  id={val.id}
+                                  fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
+                                  isDocument={true}
+                                  multiple={configs?.media_type === 'multiple_media'}
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                  editMode={true}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'IMAGE':
+                        return (
+                          <Controller
+                            key={val.id}
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: { value: true, message: `${val.name} is required` },
+                            }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e } });
+                                },
+                                [id, fieldType, field, handleFormChange],
+                              );
+                              return (
+                                <FormList.FileUploaderV2
+                                  {...field}
+                                  key={val.id}
+                                  id={val.id}
+                                  fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
+                                  isDocument={false}
+                                  multiple={configs?.media_type === 'multiple_media'}
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                  editMode={true}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'TEXT_EDITOR':
+                        return (
+                          <Controller
+                            key={val.id}
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue={''}
+                            rules={{
+                              required: { value: true, message: `${name} is required` },
+                            }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e } });
+                                },
+                                [val.id, val.fieldType, field, handleFormChange],
+                              );
+
+                              return (
+                                <FormList.TextEditor
+                                  {...field}
+                                  title={val.name}
+                                  value={field.value}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'PHONE_NUMBER':
+                        return (
+                          <Controller
+                            key={val.id}
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: `${val.name} is required`,
+                              pattern: {
+                                value: /^[\d./-]+$/,
+                                message: t('user.content-manager-new.invalid-number'),
+                              },
+                            }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
+                                },
+                                [id, fieldType, field, handleFormChange],
+                              );
+                              return (
+                                <FormList.TextField
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'YOUTUBE_URL':
+                        return (
+                          <Controller
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            rules={{
+                              required: `${val.name} is required`,
+                              pattern: {
+                                value:
+                                  /^([-]|\b(https?:\/\/)?([-\w]+\.)+[-\w]+(-|\.\w{2,})(:\d+)?(\/[-a-zA-Z0-9@:%_.~#?&//=]*)?\b)$/i,
+                                message: t('user.content-manager-new.invalid-url'),
+                              },
+                            }}
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
+                                },
+                                [val.id, val.fieldType, field, handleFormChange],
+                              );
+                              return (
+                                <FormList.TextField
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
+                                  placeholder=""
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      case 'EMAIL_FORM':
+                        return (
+                          <div className="flex flex-row mt-16">
+                            <div>
+                              <Typography
+                                type="body"
+                                size="m"
+                                weight="bold"
+                                className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
+                                {t('user.content-manager-new.email-form')}
+                              </Typography>
+                              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                                {val.name}
+                              </Typography>
+                            </div>
+                            <Controller
+                              key={val.id}
+                              name={val.id.toString()}
+                              control={control}
+                              defaultValue=""
+                              rules={{ required: `${val.name} is required` }}
+                              render={({ field }) => {
+                                const onChange = useCallback(
+                                  (e: any) => {
+                                    handleFormChange(val.id, e.value, val.fieldType, true, id);
+                                    field.onChange({ target: { value: e.value } });
+                                  },
+                                  [val.id, val.fieldType, handleFormChange],
+                                );
+                                return (
+                                  <FormList.EmailForm
+                                    {...field}
+                                    key={val.id}
+                                    fieldTypeLabel={transformText(val.name)}
+                                    placeholder=""
+                                    error={!!errors?.[val.id]?.message}
+                                    helperText={errors?.[val.id]?.message}
+                                    items={categoryList}
+                                    onChange={onChange}
+                                  />
+                                );
+                              }}
+                            />
+                          </div>
+                        );
+                      case 'TAGS':
+                        return (
+                          <Controller
+                            name={val.id.toString()}
+                            control={control}
+                            defaultValue=""
+                            render={({ field }) => {
+                              const onChange = useCallback(
+                                (e: any) => {
+                                  handleFormChange(val.id, e.target.value, val.fieldType, true, id);
+                                  field.onChange({ target: { value: e.target.value } });
+                                },
+                                [val.id, val.fieldType, field, handleFormChange],
+                              );
+
+                              return (
+                                <FormList.TextField
+                                  {...field}
+                                  key={val.id}
+                                  fieldTypeLabel={transformText(val.name)}
+                                  labelTitle={transformText(val.name)}
+                                  placeholder={t('user.content-manager-new.tags-placeholder')}
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
+                                  onChange={onChange}
+                                />
+                              );
+                            }}
+                          />
+                        );
+                      default:
+                        return <p>err</p>;
+                    }
+                  },
+                )}
               </div>
               {showAddDataButton && (
                 <div className="flex justify-end mt-8">
