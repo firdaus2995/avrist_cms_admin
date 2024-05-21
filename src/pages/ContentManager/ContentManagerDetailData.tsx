@@ -37,7 +37,7 @@ import { TextArea } from '@/components/atoms/Input/TextArea';
 import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import { errorMessageTypeConverter, transformText } from '@/utils/logicHelper';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -98,8 +98,7 @@ export default function ContentManagerDetailData() {
   const [sortBy] = useState('id');
 
   // RTK GET DATA
-  const fetchGetContentDataDetail = useGetContentDataDetailQuery({ id });
-  const { data: contentDataDetail } = fetchGetContentDataDetail;
+  const { data: contentDataDetail } = useGetContentDataDetailQuery({ id });
 
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'edit',
@@ -121,10 +120,6 @@ export default function ContentManagerDetailData() {
       setContentDataDetailList(contentDataDetail?.contentDataDetail);
     }
   }, [contentDataDetail]);
-
-  useEffect(() => {
-    void fetchGetContentDataDetail.refetch();
-  }, []);
 
   const handleFormChange = (
     id: string | number,
@@ -269,7 +264,8 @@ export default function ContentManagerDetailData() {
 
           convertedData.push(imageData);
         } else {
-          convertedData.push(item);
+          const { id, fieldType, value } = item;
+          convertedData.push({ id, fieldType, value });
         }
       }
     }
@@ -415,20 +411,9 @@ export default function ContentManagerDetailData() {
       loopingElement.contentData = filteredElement;
 
       setContentDataDetailList(updatedContentDataDetailList);
+      setContentTempData(updatedContentDataDetailList.contentData);
     }
   };
-
-  function transformText(text: string) {
-    const words = text.split('_');
-
-    const capitalizedWords = words.map((word: string) => {
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    });
-
-    const result = capitalizedWords.join(' ').replace('Url', 'URL');
-
-    return result;
-  }
 
   const renderFormList = () => {
     // DEFAULT VALUE
