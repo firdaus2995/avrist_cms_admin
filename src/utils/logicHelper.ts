@@ -171,27 +171,26 @@ export const convertContentData = (data: any[]) => {
 };
 
 export const stringifyContentData = (data: any) => {
-  return data.map((field: any) => {
+  const stringifyData = data.map((field: any) => {
     if (field.fieldType === 'LOOPING' && field.contentData) {
       field.contentData.forEach((item: { fieldType: any; value: any }) => {
         const contentDataValue = item?.value;
-        if (contentDataValue) {
-          item.value = Array.isArray(contentDataValue)
-            ? item.fieldType === 'IMAGE'
-              ? item?.value === '[]'
-                ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
-                : JSON.stringify(contentDataValue)
-              : JSON.stringify(contentDataValue)
-            : item.fieldType === 'IMAGE'
-            ? item?.value === '[]'
-              ? '["[{\\"imageUrl\\":\\"no-image\\",\\"altText\\":\\"no-image\\"}]"]'
-              : JSON.stringify([contentDataValue])
-            : JSON.stringify([contentDataValue]);
+        if (item?.value && Array.isArray(contentDataValue)) {
+          if (item.fieldType === 'IMAGE') {
+            item.value.forEach((img: any, idx: number) => {
+              const jsonValue = JSON.parse(img);
+              if (!jsonValue.length) {
+                item.value[idx] = '[{"imageUrl":"no-image","altText":"no-image"}]';
+              }
+            });
+          }
+          item.value = JSON.stringify(item.value);
         }
       });
     }
     return field;
   });
+  return stringifyData;
 };
 
 export function addNewDataInLoopingField(data: any[], loopingId: number | string) {
