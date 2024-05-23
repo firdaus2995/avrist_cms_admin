@@ -848,11 +848,132 @@ export default function ContentManagerDetailData() {
                         (val: { fieldType: any; id: any; value: any; name: any }) => {
                           switch (val.fieldType) {
                             case 'EMAIL':
+                              return (
+                                <Controller
+                                  key={val.id}
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{ required: `${val.name} is required` }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e.target.value,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e.target.value } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+                                    return (
+                                      <FormList.TextField
+                                        {...field}
+                                        key={id}
+                                        type="email"
+                                        fieldTypeLabel={transformText(name)}
+                                        labelTitle={transformText(name)}
+                                        disabled={!isEdited}
+                                        placeholder=""
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        onChange={onChange}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
                             case 'DOCUMENT':
+                              return (
+                                <Controller
+                                  key={val.id}
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{
+                                    required: { value: true, message: `${val.name} is required` },
+                                  }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+                                    return (
+                                      <FormList.FileUploaderV2
+                                        {...field}
+                                        key={val.id}
+                                        fieldTypeLabel={transformText(val.name)}
+                                        labelTitle={transformText(val.name)}
+                                        isDocument={true}
+                                        multiple={configs?.media_type === 'multiple_media'}
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        onChange={onChange}
+                                        editMode={true}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
                             case 'TEXT_AREA':
+                              return (
+                                <Controller
+                                  key={val.id}
+                                  name={`${idx}_${val.id}`}
+                                  control={control}
+                                  defaultValue={val.value}
+                                  rules={{ required: `${val.name} is required` }}
+                                  render={({ field }) => {
+                                    const onChange = useCallback(
+                                      (e: any) => {
+                                        handleFormChange(
+                                          val.id,
+                                          e.target.value,
+                                          val.fieldType,
+                                          true,
+                                          id,
+                                          idx,
+                                          val.id,
+                                        );
+                                        field.onChange({ target: { value: e.target.value } });
+                                      },
+                                      [val.id, val.fieldType, field, handleFormChange],
+                                    );
+                                    return (
+                                      <FormList.TextAreaField
+                                        {...field}
+                                        key={val.id}
+                                        fieldTypeLabel={transformText(val.name)}
+                                        labelTitle={transformText(val.name)}
+                                        placeholder=""
+                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        onChange={onChange}
+                                      />
+                                    );
+                                  }}
+                                />
+                              );
                             case 'TEXT_FIELD':
                               return (
                                 <Controller
+                                  key={val.id}
                                   name={`${idx}_${val.id}`}
                                   control={control}
                                   defaultValue={val.value}
@@ -931,6 +1052,7 @@ export default function ContentManagerDetailData() {
                             case 'TAGS':
                               return (
                                 <Controller
+                                  key={val.id}
                                   name={`${idx}_${val.id}`}
                                   control={control}
                                   defaultValue={val.value}
@@ -970,6 +1092,7 @@ export default function ContentManagerDetailData() {
                             case 'IMAGE':
                               return (
                                 <Controller
+                                  key={val.id}
                                   name={`${idx}_${val.id}`}
                                   control={control}
                                   defaultValue={val.value}
@@ -1025,6 +1148,7 @@ export default function ContentManagerDetailData() {
                             case 'YOUTUBE_URL':
                               return (
                                 <Controller
+                                  key={val.id}
                                   name={`${idx}_${val.id}`}
                                   control={control}
                                   defaultValue={val.value}
@@ -1071,6 +1195,7 @@ export default function ContentManagerDetailData() {
                             case 'PHONE_NUMBER':
                               return (
                                 <Controller
+                                  key={val.id}
                                   name={`${idx}_${val.id}`}
                                   control={control}
                                   defaultValue={val.value}
@@ -1113,8 +1238,80 @@ export default function ContentManagerDetailData() {
                                   }}
                                 />
                               );
+                            case 'EMAIL_FORM':
+                              return (
+                                <div className="flex flex-row mt-16">
+                                  <div>
+                                    <Typography
+                                      type="body"
+                                      size="m"
+                                      weight="bold"
+                                      className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
+                                      {t('user.content-manager-new.email-form')}
+                                    </Typography>
+                                    <Typography
+                                      type="body"
+                                      size="m"
+                                      weight="bold"
+                                      className="w-56 ml-1">
+                                      {val.name}
+                                    </Typography>
+                                  </div>
+                                  <Controller
+                                    key={val.id}
+                                    name={`${idx}_${val.id}`}
+                                    control={control}
+                                    defaultValue={val.value}
+                                    rules={{
+                                      // required: { value: true, message: `${val.name} is required` },
+                                      validate: value => {
+                                        console.log('Email form', value);
+                                        const parsedValue = JSON?.parse(value);
+                                        if (parsedValue && parsedValue.length > 0) {
+                                          // Check if parsedValue is an array and every item has imageUrl and altText properties
+                                          if (
+                                            Array.isArray(parsedValue) &&
+                                            parsedValue.every(item => item.imageUrl && item.altText)
+                                          ) {
+                                            return true; // Validation passed
+                                          }
+                                        }
+                                      },
+                                    }}
+                                    render={({ field }) => {
+                                      const onChange = useCallback(
+                                        (e: any) => {
+                                          handleFormChange(
+                                            val.id,
+                                            e.value,
+                                            val.fieldType,
+                                            true,
+                                            id,
+                                          );
+                                          field.onChange({ target: { value: e.value } });
+                                        },
+                                        [val.id, val.fieldType, handleFormChange],
+                                      );
+                                      return (
+                                        <FormList.EmailForm
+                                          {...field}
+                                          key={val.id}
+                                          fieldTypeLabel={transformText(val.name)}
+                                          placeholder=""
+                                          error={!!errors?.[`${idx}_${val.id}`]?.message}
+                                          helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                          items={categoryList}
+                                          onChange={onChange}
+                                        />
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              );
                             default:
-                              return <p>err</p>;
+                              return (
+                                <p>{`${val.fieldType} ${val.id} ${val.name} is not defineds`}</p>
+                              );
                           }
                         },
                       )}
