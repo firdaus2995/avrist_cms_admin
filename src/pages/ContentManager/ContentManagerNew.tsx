@@ -248,6 +248,8 @@ export default function ContentManagerNew() {
 
   const saveData = () => {
     const value = getValues();
+    const convertedData = convertContentData(contentTempData);
+    const stringifyData = stringifyContentData(convertedData);
     const payload = {
       title: value.title,
       shortDesc: value.shortDesc,
@@ -255,7 +257,7 @@ export default function ContentManagerNew() {
       isAutoApprove,
       postTypeId: id,
       categoryName: postTypeDetail?.isUseCategory ? value.category : '',
-      contentData: stringifyContentData(convertContentData(contentTempData)),
+      contentData: stringifyData,
     };
     createContentData(payload)
       .unwrap()
