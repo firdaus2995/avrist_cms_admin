@@ -132,7 +132,7 @@ export const generateOrderData = (inputData: any[]) => {
 export const convertContentData = (data: any[]) => {
   const combinedData: any[] = [];
 
-  data.forEach((item: { duplicateId: any; contentData: any[] }) => {
+  data.forEach((item: { duplicateId: any; contentData: any[]; fieldType: string }) => {
     if (item.duplicateId) {
       const existingItem = combinedData.find(combinedItem => combinedItem.id === item.duplicateId);
 
@@ -147,10 +147,7 @@ export const convertContentData = (data: any[]) => {
               if (!Array.isArray(existingContentItem.value)) {
                 existingContentItem.value = [existingContentItem.value];
               }
-              if (!Array.isArray(contentItem.value)) {
-                contentItem.value = [contentItem.value];
-              }
-              existingContentItem.value.push(...contentItem.value);
+              existingContentItem.value.push(contentItem.value);
             }
           },
         );
@@ -163,6 +160,12 @@ export const convertContentData = (data: any[]) => {
         combinedData.push(newItem);
       }
     } else {
+      if (item.fieldType === 'LOOPING') {
+        item.contentData.map((detail: { value: any[] }) => {
+          detail.value = [detail.value];
+          return detail;
+        });
+      }
       combinedData.push(item);
     }
   });
@@ -171,9 +174,9 @@ export const convertContentData = (data: any[]) => {
 };
 
 export const stringifyContentData = (data: any) => {
-  const stringifyData = data.map((field: any) => {
+  return data.map((field: any) => {
     if (field.fieldType === 'LOOPING' && field.contentData) {
-      field.contentData.forEach((item: { fieldType: any; value: any }) => {
+      field.contentData.map((item: { fieldType: any; value: any }) => {
         const contentDataValue = item?.value;
         if (item?.value && Array.isArray(contentDataValue)) {
           if (item.fieldType === 'IMAGE') {
@@ -186,11 +189,11 @@ export const stringifyContentData = (data: any) => {
           }
           item.value = JSON.stringify(item.value);
         }
+        return item;
       });
     }
     return field;
   });
-  return stringifyData;
 };
 
 export function addNewDataInLoopingField(data: any[], loopingId: number | string) {
