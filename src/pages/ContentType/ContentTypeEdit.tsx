@@ -185,6 +185,8 @@ export default function ContentTypeEdit() {
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         attributeList: openedAttribute?.attributeList,
         icon: openedAttribute?.icon,
+        "action": "create",
+        id: 0
       };
       setListItems((list: any) => [...list, data]);
     } else {
@@ -193,7 +195,9 @@ export default function ContentTypeEdit() {
         name: openedAttribute?.label,
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         config: openedAttribute?.config,
-        icon: openedAttribute?.icon,
+        // icon: openedAttribute?.icon,
+        "action": "create",
+        id: 0
       };
       setListItems((list: any) => [...list, data]);
     }
@@ -266,37 +270,56 @@ export default function ContentTypeEdit() {
           </div>
         ))}
         {listItems.map((val: any, idx: undefined) => (
-          <div
-            key={idx}
-            className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
-            <div className="w-1/4 text-left font-semibold">{val.name}</div>
-            <div className="w-1/4 text-center font-semibold">
-              {val.fieldId ? val.fieldId : getFieldId(val.name)}
+          <>
+          {
+            !val?.is_deleted &&
+            <div
+              key={idx}
+              className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
+              <div className="w-1/4 text-left font-semibold">{val.name}</div>
+              <div className="w-1/4 text-center font-semibold">
+                {val.fieldId ? val.fieldId : getFieldId(val.name)}
+              </div>
+              <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
+              <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
+                <>
+                  <img
+                    role="button"
+                    onClick={() => {
+                      setEditedIndex(idx);
+                      openAddModal(val, true);
+                    }}
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableEdit}
+                  />
+                  <img
+                    role="button"
+                    onClick={() => {
+                      const data = {
+                        ...val,
+                        action: 'delete',
+                        is_deleted: true
+                      };
+                      const updatedListItems = listItems.map((item: any, index: undefined) => {
+                        if (index === idx) {
+                          return {
+                            ...item,
+                            ...data,
+                          };
+                        }
+                        return item;
+                      });
+                      
+                      setListItems(updatedListItems);
+                    }}
+                    className={`cursor-pointer select-none flex items-center justify-center`}
+                    src={TableDelete}
+                  />
+                </>
+              </div>
             </div>
-            <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
-            <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
-              <>
-                <img
-                  role="button"
-                  onClick={() => {
-                    setEditedIndex(idx);
-                    openAddModal(val, true);
-                  }}
-                  className={`cursor-pointer select-none flex items-center justify-center`}
-                  src={TableEdit}
-                />
-                <img
-                  role="button"
-                  onClick={() => {
-                    const updated = listItems?.filter((_val: any, index: any) => index !== idx);
-                    setListItems(updated);
-                  }}
-                  className={`cursor-pointer select-none flex items-center justify-center`}
-                  src={TableDelete}
-                />
-              </>
-            </div>
-          </div>
+          }
+          </>
         ))}
         <div className="p-2 flex items-center justify-center">
           <div
@@ -416,13 +439,22 @@ export default function ContentTypeEdit() {
         const { id, parentId, attributeList, ...rest } = item;
         if (loopTypeRequest.length > 0) {
           rest.loopTypeRequest = loopTypeRequest;
-        } else if (attributeList !== null) {
+        } else if (attributeList) {
           rest.loopTypeRequest = attributeList?.map(
             (attribute: { [x: string]: any; id: any; parentId: any }) => {
               const { id, parentId, ...attributeRest } = attribute;
               return attributeRest;
             },
           );
+        } else {
+          const tempData:any = {
+            ...rest,
+            "action": item?.action ?? "edit",
+            id: item.id,
+          }
+          delete tempData?.is_deleted; 
+          return tempData
+          
         }
         return rest;
       },
