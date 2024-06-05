@@ -376,14 +376,20 @@ export default function ContentTypeNew() {
         newItem.attributeList = newItem.attributeList.map(
           (attribute: { [x: string]: any; id: any }) => {
             const { id, ...newAttribute } = attribute;
+            const newLoopData:any = {
+              ...newAttribute,
+              id: 0,
+              action: 'create'
+            }
+            
 
             // 5. Hapus attribut config pada attributeList jika kosong
-            if (newAttribute.config && newAttribute.config.length === 0) {
-              delete newAttribute.config;
+            if (newLoopData.config && newLoopData.config.length === 0) {
+              delete newLoopData.config;
             }
-            delete newAttribute.icon;
+            delete newLoopData.icon;
 
-            return newAttribute;
+            return newLoopData;
           },
         );
 
