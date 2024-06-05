@@ -112,6 +112,7 @@ export default function ContentTypeNew() {
       fieldId: '',
       config: [],
       isDeleted: false,
+      action: 'create'
     },
     {
       fieldType: 'TEXT_AREA',
@@ -119,6 +120,7 @@ export default function ContentTypeNew() {
       fieldId: '',
       config: [],
       isDeleted: false,
+      action: 'create'
     },
   ]);
 
@@ -143,6 +145,8 @@ export default function ContentTypeNew() {
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         attributeList: openedAttribute?.attributeList,
         icon: openedAttribute?.icon,
+        id: 0,
+        action: 'create'
       };
       setListItems((list: any) => [...list, data]);
     } else {
@@ -152,6 +156,8 @@ export default function ContentTypeNew() {
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         config: openedAttribute?.config,
         icon: openedAttribute?.icon,
+        id: 0,
+        action: 'create'
       };
       setListItems((list: any) => [...list, data]);
     }
