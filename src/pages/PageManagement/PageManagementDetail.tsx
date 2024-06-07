@@ -205,9 +205,10 @@ export default function PageManagementDetail() {
             onClick={() => {
               const payload = {
                 id: pageDetailList?.id,
-                status: pageDetailList?.status === 'DELETE_REVIEW' ? 'DELETE_APPROVE' : 'WAITING_APPROVE',
+                status:
+                  pageDetailList?.status === 'DELETE_REVIEW' ? 'DELETE_APPROVE' : 'WAITING_APPROVE',
                 comment: 'Already review',
-              };              
+              };
 
               if (isAlreadyReview) {
                 onUpdateStatus(payload);
@@ -280,8 +281,8 @@ export default function PageManagementDetail() {
   const saveData = (type?: string) => {
     const pageData = getValues();
 
-    const isDraft: boolean = type === 'draft'
-    
+    const isDraft: boolean = type === 'draft';
+
     const payload = {
       id,
       title: pageData?.pageName,
@@ -289,7 +290,7 @@ export default function PageManagementDetail() {
       slug: pageData?.slug,
       metatitle: pageData?.metaTitle,
       metaDescription: pageData?.metaDescription,
-      shortDesc: pageData?.shortDesc,
+      shortDesc: pageData?.shortDesc ?? '',
       content,
       isDraft,
       isAutoApprove,
@@ -342,11 +343,7 @@ export default function PageManagementDetail() {
       <div className="flex flex-row">
         <Typography type="body" size="m" weight="medium" className="my-2 w-48">
           {title}
-          {
-            required && (
-              <span className='text-reddist font-bold'>*</span>
-            )
-          }
+          {required && <span className="text-reddist font-bold">*</span>}
         </Typography>
         <Typography type="body" size="s" weight="regular" className="text-body-text-2 my-2 mr-5">
           {value}
@@ -370,16 +367,14 @@ export default function PageManagementDetail() {
             {t('user.page-management.detail.labels.cancel')}
           </button>
           <button
-            type='button'
+            type="button"
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10"
             onClick={() => {
               saveData('draft');
             }}>
             {t('user.page-management.detail.labels.saveAsDraft')}
           </button>
-          <button
-            type="submit"
-            className="btn btn-success text-xs text-white btn-sm w-28 h-10">
+          <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
             {t('user.page-management.detail.labels.submit')}
           </button>
         </div>
@@ -417,15 +412,15 @@ export default function PageManagementDetail() {
           <>
             {roles?.includes('PAGE_EDIT')
               ? !isEdited && (
-                <button
-                  onClick={() => {
-                    setIsEdited(true);
-                  }}
-                  className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                  <img src={Edit} className="mr-3" />
-                  {t('user.page-management.detail.labels.editContent')}
-                </button>
-              )
+                  <button
+                    onClick={() => {
+                      setIsEdited(true);
+                    }}
+                    className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                    <img src={Edit} className="mr-3" />
+                    {t('user.page-management.detail.labels.editContent')}
+                  </button>
+                )
               : null}
           </>
         );
@@ -525,7 +520,7 @@ export default function PageManagementDetail() {
               render={({ field }) => (
                 <InputText
                   {...field}
-                  direction='row'
+                  direction="row"
                   inputWidth={350}
                   labelTitle={t('user.page-management-new.pageNameLabel')}
                   labelRequired
@@ -550,7 +545,7 @@ export default function PageManagementDetail() {
               render={({ field }) => (
                 <InputText
                   {...field}
-                  direction='row'
+                  direction="row"
                   inputWidth={350}
                   labelTitle={t('user.page-management-new.metaTitleLabel')}
                   labelRequired
@@ -577,7 +572,7 @@ export default function PageManagementDetail() {
               render={({ field }) => (
                 <InputText
                   {...field}
-                  direction='row'
+                  direction="row"
                   inputWidth={350}
                   labelTitle={t('user.page-management-new.slugLabel')}
                   labelRequired
@@ -602,7 +597,7 @@ export default function PageManagementDetail() {
               render={({ field }) => (
                 <InputText
                   {...field}
-                  direction='row'
+                  direction="row"
                   inputWidth={350}
                   labelTitle={t('user.page-management-new.metaDescriptionLabel')}
                   labelRequired
@@ -623,7 +618,7 @@ export default function PageManagementDetail() {
               render={({ field }) => (
                 <TextArea
                   {...field}
-                  direction='row'
+                  direction="row"
                   inputWidth={350}
                   labelTitle={t('user.page-management-new.shortDescriptionLabel')}
                   labelStyle="font-bold"
@@ -635,13 +630,13 @@ export default function PageManagementDetail() {
           </div>
           <div className="flex flex-row justify-start">
             <Controller
-              name='dataType'
+              name="dataType"
               control={control}
               defaultValue={pageDetailList?.dataType}
               render={({ field }) => (
                 <DropDown
                   {...field}
-                  direction='row'
+                  direction="row"
                   inputWidth={350}
                   labelTitle={t('user.page-management-new.dataTypeLabel')}
                   labelStyle="font-bold"
@@ -652,7 +647,7 @@ export default function PageManagementDetail() {
                     if (event) {
                       setValue('dataType', value);
                       field.onChange(value);
-                    };
+                    }
                   }}
                 />
               )}
@@ -693,10 +688,11 @@ export default function PageManagementDetail() {
                 <div key={element.id} className="px-[5%] py-5 flex flex-col basis-2/6 gap-3">
                   <img
                     src={getImageData(element.imageUrl)}
-                    className={`h-[450px] object-cover	cursor-pointer rounded-xl ${selected === element.id
+                    className={`h-[450px] object-cover	cursor-pointer rounded-xl ${
+                      selected === element.id
                         ? 'border-[#5A4180] border-4'
                         : 'border-[#828282] border-2'
-                      }`}
+                    }`}
                     onClick={() => {
                       setSelected(element.id);
                     }}
@@ -708,7 +704,7 @@ export default function PageManagementDetail() {
               ))}
           </div>
           <div className="w-full flex justify-center items-center">
-            <div className='mr-5 font-semibold'>Total {total} Items</div>
+            <div className="mr-5 font-semibold">Total {total} Items</div>
             <PaginationComponent
               total={total}
               page={pageIndex}
@@ -771,9 +767,13 @@ export default function PageManagementDetail() {
         }}>
         <div className="flex flex-col justify-center items-center">
           <img src={PaperSubmit} className="w-10" />
-          <p className="font-bold mt-3 text-xl">{t('user.page-management.detail.labels.autoApproveTitle')}</p>
+          <p className="font-bold mt-3 text-xl">
+            {t('user.page-management.detail.labels.autoApproveTitle')}
+          </p>
           <p className="font-base mt-2 text-xl text-center">
-            {t('user.page-management.detail.labels.autoApproveSubtitle', { title: getValues().pageName })}
+            {t('user.page-management.detail.labels.autoApproveSubtitle', {
+              title: getValues().pageName,
+            })}
           </p>
           <CheckBox
             defaultValue={isAutoApprove}
@@ -781,7 +781,7 @@ export default function PageManagementDetail() {
               setIsAutoApprove(e.value);
             }}
             labelTitle={t('user.page-management.detail.labels.autoApproveLabel')}
-            labelStyle='text-xl'
+            labelStyle="text-xl"
           />
         </div>
       </ModalForm>
@@ -793,7 +793,7 @@ export default function PageManagementDetail() {
         title={t('user.page-management.detail.labels.approve')}
         cancelTitle={t('user.page-management.detail.labels.restoreNo')}
         message={'Test'}
-        submitAction={() => { }}
+        submitAction={() => {}}
         submitTitle={t('user.page-management.detail.labels.restoreYes')}
         icon={undefined}
       />
@@ -913,7 +913,7 @@ export default function PageManagementDetail() {
             value={rejectComments}
             labelRequired
             placeholder={t('user.page-management.detail.labels.enterRejectComments') ?? ''}
-            containerStyle="px-8" 
+            containerStyle="px-8"
             onChange={e => {
               setRejectComments(e.target.value);
             }}
@@ -935,19 +935,17 @@ export default function PageManagementDetail() {
         icon={CancelIcon}
         btnSubmitStyle="btn-warning"
       />
-      
+
       <TitleCard
         title={`${pageDetailList?.title} - ${t('user.page-management.detail.labels.title') ?? ''}`}
         titleComponent={<Badge />}
         border={true}
-        TopSideButtons={rightTopButton()}
-      >
-        {(pageDetailList?.lastComment && (pageDetailList?.status === 'DELETE_REJECTED' || pageDetailList?.status === 'REJECTED')) && (
-          <RectangleBadge
-            title='Rejected Comment:'
-            comment={pageDetailList.lastComment}
-          />
-        )}
+        TopSideButtons={rightTopButton()}>
+        {pageDetailList?.lastComment &&
+          (pageDetailList?.status === 'DELETE_REJECTED' ||
+            pageDetailList?.status === 'REJECTED') && (
+            <RectangleBadge title="Rejected Comment:" comment={pageDetailList.lastComment} />
+          )}
         {pageDetailList?.lastEdited && (
           <div>
             {t('user.page-management.detail.labels.lastEditedBy')}{' '}
@@ -959,13 +957,13 @@ export default function PageManagementDetail() {
           </div>
         )}
         <button className="w-[150px] my-6 flex gap-2 btn btn-primary btn-outline">
-          <img className='w-7' src={EyePurpleIcon} />
+          <img className="w-7" src={EyePurpleIcon} />
           {t('user.page-management.detail.labels.preview')}
         </button>
         {isEdited ? editContent() : viewContent()}
         {roles?.includes('PAGE_REVIEW') ? (
           pageDetailList?.status === 'WAITING_REVIEW' ||
-            pageDetailList?.status === 'DELETE_REVIEW' ? (
+          pageDetailList?.status === 'DELETE_REVIEW' ? (
             <div className="flex flex-row justify-between">
               <div className="w-[30vh] mt-5">
                 <CheckBox
