@@ -136,7 +136,7 @@ export default function PageManagementNew() {
       setShowModalAutoApprove(true);
     } else {
       saveData();
-    };
+    }
   };
 
   // MAIN FUNCTION
@@ -151,14 +151,14 @@ export default function PageManagementNew() {
       slug: formData?.slug,
       metatitle: formData?.metaTitle,
       metaDescription: formData?.metaDescription,
-      shortDesc: formData?.shortDesc,
+      shortDesc: formData?.shortDesc ?? '',
       content,
       imgFilename: pageTemplates.find((template: { id: any }) => template.id === selected)?.name,
       isDraft,
       isAutoApprove,
       pageTemplateId: selected,
       postTypeId: contentTypeId,
-    };    
+    };
 
     createPageData(payload)
       .unwrap()
@@ -224,13 +224,13 @@ export default function PageManagementNew() {
           <p className="font-base my-3 text-l text-center">
             {t('user.page-management-new.autoApproveSubtitle', { title: getValues().pageName })}
           </p>
-            <CheckBox
-              defaultValue={isAutoApprove}
-              updateFormValue={e => {
-                setIsAutoApprove(e.value);
-              }}
-              labelTitle={t('user.page-management-new.autoApproveLabel')}
-            />
+          <CheckBox
+            defaultValue={isAutoApprove}
+            updateFormValue={e => {
+              setIsAutoApprove(e.value);
+            }}
+            labelTitle={t('user.page-management-new.autoApproveLabel')}
+          />
         </div>
       </ModalForm>
       <div className="flex flex-col mt-5 gap-5">
@@ -264,7 +264,7 @@ export default function PageManagementNew() {
                 render={({ field }) => (
                   <InputText
                     {...field}
-                    direction='row'
+                    direction="row"
                     inputWidth={350}
                     labelTitle={t('user.page-management-new.pageNameLabel')}
                     labelRequired
@@ -289,7 +289,7 @@ export default function PageManagementNew() {
                 render={({ field }) => (
                   <InputText
                     {...field}
-                    direction='row'
+                    direction="row"
                     inputWidth={350}
                     labelTitle={t('user.page-management-new.metaTitleLabel')}
                     labelRequired
@@ -316,7 +316,7 @@ export default function PageManagementNew() {
                 render={({ field }) => (
                   <InputText
                     {...field}
-                    direction='row'
+                    direction="row"
                     inputWidth={350}
                     labelTitle={t('user.page-management-new.slugLabel')}
                     labelRequired
@@ -341,7 +341,7 @@ export default function PageManagementNew() {
                 render={({ field }) => (
                   <InputText
                     {...field}
-                    direction='row'
+                    direction="row"
                     inputWidth={350}
                     labelTitle={t('user.page-management-new.metaDescriptionLabel')}
                     labelRequired
@@ -361,7 +361,7 @@ export default function PageManagementNew() {
                 render={({ field }) => (
                   <TextArea
                     {...field}
-                    direction='row'
+                    direction="row"
                     inputWidth={350}
                     labelTitle={t('user.page-management-new.shortDescriptionLabel')}
                     labelStyle="font-bold"
@@ -373,13 +373,13 @@ export default function PageManagementNew() {
             </div>
             <div className="flex flex-row justify-start">
               <Controller
-                name='dataType'
+                name="dataType"
                 control={control}
-                defaultValue='COLLECTION'
+                defaultValue="COLLECTION"
                 render={({ field }) => (
                   <DropDown
                     {...field}
-                    direction='row'
+                    direction="row"
                     inputWidth={350}
                     labelTitle={t('user.page-management-new.dataTypeLabel')}
                     labelStyle="font-bold"
@@ -390,7 +390,7 @@ export default function PageManagementNew() {
                       if (event) {
                         setValue('dataType', value);
                         field.onChange(value);
-                      };
+                      }
                     }}
                   />
                 )}
@@ -491,7 +491,7 @@ export default function PageManagementNew() {
               {t('btn.cancel')}
             </button>
             <button
-              type='button'
+              type="button"
               className="btn btn-outline btn-warning btn-md"
               onClick={handleSubmit((_data: any) => {
                 saveData('draft');

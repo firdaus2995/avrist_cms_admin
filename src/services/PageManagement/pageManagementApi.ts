@@ -38,12 +38,12 @@ export const pageManagementApi = createApi({
               }
             ) {
               total
-              pages {    
+              pages {
                 id
                 title
                 dataType
                 status
-                createdBy 
+                createdBy
                 createdAt
                 updatedAt
               }
@@ -253,13 +253,13 @@ export const pageManagementApi = createApi({
               shortDesc
               content
               pageTemplate {
-                  id
-                  name
-                  imageUrl
-              }        
+                id
+                name
+                imageUrl
+              }
               postType {
-                  id
-                  name
+                id
+                name
               }
               status
             }
@@ -290,7 +290,7 @@ export const pageManagementApi = createApi({
             $slug: String!
             $metatitle: String!
             $metaDescription: String!
-            $shortDesc: String!
+            $shortDesc: String
             $content: String!
             $isDraft: Boolean!
             $isAutoApprove: Boolean!
@@ -322,13 +322,13 @@ export const pageManagementApi = createApi({
               shortDesc
               content
               pageTemplate {
-                  id
-                  name
-                  imageUrl
-              }        
+                id
+                name
+                imageUrl
+              }
               postType {
-                  id
-                  name
+                id
+                name
               }
               status
             }
