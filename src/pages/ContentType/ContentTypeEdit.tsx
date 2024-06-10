@@ -156,6 +156,7 @@ export default function ContentTypeEdit() {
 
   function openAddModal(val: SetStateAction<never[]>, edited: boolean | undefined) {
     setOpenedAttribute(val);
+    setSearch(''); // reset search field
     setIsOpenModalAttribute(false);
     if (edited) {
       setIsOpenModalEditAttribute(true);
@@ -185,8 +186,8 @@ export default function ContentTypeEdit() {
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         attributeList: openedAttribute?.attributeList,
         icon: openedAttribute?.icon,
-        "action": "create",
-        id: 0
+        action: openedAttribute?.action,
+        id: 0,
       };
       setListItems((list: any) => [...list, data]);
     } else {
@@ -196,8 +197,8 @@ export default function ContentTypeEdit() {
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.label),
         config: openedAttribute?.config,
         // icon: openedAttribute?.icon,
-        "action": "create",
-        id: 0
+        action: openedAttribute?.action,
+        id: 0,
       };
       setListItems((list: any) => [...list, data]);
     }
@@ -212,6 +213,7 @@ export default function ContentTypeEdit() {
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
         attributeList: openedAttribute?.attributeList,
         icon: openedAttribute?.icon,
+        action: openedAttribute?.action,
       };
 
       const updatedListItems = listItems.map((item: any, index: undefined) => {
@@ -233,6 +235,7 @@ export default function ContentTypeEdit() {
         fieldId: openedAttribute?.fieldId || getFieldId(openedAttribute?.name),
         config: openedAttribute?.config,
         icon: openedAttribute?.icon,
+        action: openedAttribute?.action,
       };
       const updatedListItems = listItems.map((item: any, index: undefined) => {
         if (index === editedIndex) {
@@ -271,54 +274,52 @@ export default function ContentTypeEdit() {
         ))}
         {listItems.map((val: any, idx: undefined) => (
           <>
-          {
-            !val?.is_deleted &&
-            <div
-              key={idx}
-              className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
-              <div className="w-1/4 text-left font-semibold">{val.name}</div>
-              <div className="w-1/4 text-center font-semibold">
-                {val.fieldId ? val.fieldId : getFieldId(val.name)}
+            {val?.action !== 'delete' && (
+              <div
+                key={idx}
+                className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
+                <div className="w-1/4 text-left font-semibold">{val.name}</div>
+                <div className="w-1/4 text-center font-semibold">
+                  {val.fieldId ? val.fieldId : getFieldId(val.name)}
+                </div>
+                <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
+                <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
+                  <>
+                    <img
+                      role="button"
+                      onClick={() => {
+                        setEditedIndex(idx);
+                        openAddModal({ ...val, action: 'edit' }, true);
+                      }}
+                      className={`cursor-pointer select-none flex items-center justify-center`}
+                      src={TableEdit}
+                    />
+                    <img
+                      role="button"
+                      onClick={() => {
+                        const data = {
+                          ...val,
+                          action: 'delete',
+                        };
+                        const updatedListItems = listItems.map((item: any, index: undefined) => {
+                          if (index === idx) {
+                            return {
+                              ...item,
+                              ...data,
+                            };
+                          }
+                          return item;
+                        });
+
+                        setListItems(updatedListItems);
+                      }}
+                      className={`cursor-pointer select-none flex items-center justify-center`}
+                      src={TableDelete}
+                    />
+                  </>
+                </div>
               </div>
-              <div className="w-1/4 text-right capitalize">{getType(val.fieldType)}</div>
-              <div className="w-1/4 flex flex-row gap-5 items-center justify-center">
-                <>
-                  <img
-                    role="button"
-                    onClick={() => {
-                      setEditedIndex(idx);
-                      openAddModal(val, true);
-                    }}
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableEdit}
-                  />
-                  <img
-                    role="button"
-                    onClick={() => {
-                      const data = {
-                        ...val,
-                        action: 'delete',
-                        is_deleted: true
-                      };
-                      const updatedListItems = listItems.map((item: any, index: undefined) => {
-                        if (index === idx) {
-                          return {
-                            ...item,
-                            ...data,
-                          };
-                        }
-                        return item;
-                      });
-                      
-                      setListItems(updatedListItems);
-                    }}
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableDelete}
-                  />
-                </>
-              </div>
-            </div>
-          }
+            )}
           </>
         ))}
         <div className="p-2 flex items-center justify-center">
@@ -443,20 +444,20 @@ export default function ContentTypeEdit() {
           rest.loopTypeRequest = attributeList?.map(
             (attribute: { [x: string]: any; id: any; parentId: any }) => {
               const { id, parentId, ...attributeRest } = attribute;
-              return attributeRest;
+              if (item?.action && item?.action !== 'create') return { ...attributeRest, id };
+              else return attributeRest;
             },
           );
         } else {
-          const tempData:any = {
+          const tempData: any = {
             ...rest,
-            "action": item?.action ?? "edit",
+            action: item?.action ?? 'edit',
             id: item.id,
-          }
-          delete tempData?.is_deleted; 
-          return tempData
-          
+          };
+          return tempData;
         }
-        return rest;
+        if (item?.action && item?.action !== 'create') return { ...rest, id, action: item?.action };
+        else return rest;
       },
     );
 
@@ -481,7 +482,8 @@ export default function ContentTypeEdit() {
 
         if (newItem.loopTypeRequest) {
           newItem.loopTypeRequest = newItem.loopTypeRequest.map((loopItem: any) => {
-            const newLoopItem = { ...loopItem };
+            // added default action to 'edit' on every looping attributes
+            const newLoopItem = { ...loopItem, action: loopItem?.action ?? 'edit' };
             if (newLoopItem.config && Object.keys(newLoopItem.config).length === 0) {
               delete newLoopItem.config;
             }
@@ -579,7 +581,7 @@ export default function ContentTypeEdit() {
                     val.config = '{"media_type":""}';
                   }
 
-                  openAddModal(val, false);
+                  openAddModal({ ...val, action: 'create' }, false);
                 }}
                 className="flex flex-row justify-between m-2 bg-light-purple-2 p-4">
                 <div className="flex flex-col">
@@ -622,6 +624,7 @@ export default function ContentTypeEdit() {
                       fieldId: val?.fieldId || getFieldId(val?.label),
                       icon: val?.icon,
                       config: '',
+                      action: 'create',
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
@@ -644,6 +647,7 @@ export default function ContentTypeEdit() {
                       fieldId: val?.fieldId || getFieldId(val?.label),
                       icon: val?.icon,
                       config: '',
+                      action: 'create',
                     };
 
                     if (val.code === 'text_field' || val.code === 'text_area') {
@@ -924,7 +928,9 @@ export default function ContentTypeEdit() {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
                                       (attribute: { id: any; config: any }) => {
                                         if (attribute.id === val.id) {
-                                          const updatedAttribute = { ...attribute };
+                                          const updatedAttribute = {
+                                            ...attribute,
+                                          };
                                           const config = JSON.parse(updatedAttribute.config);
                                           config.min_length = e.target.value;
                                           updatedAttribute.config = JSON.stringify(config);
@@ -952,7 +958,9 @@ export default function ContentTypeEdit() {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
                                       (attribute: { id: any; config: any }) => {
                                         if (attribute.id === val.id) {
-                                          const updatedAttribute = { ...attribute };
+                                          const updatedAttribute = {
+                                            ...attribute,
+                                          };
                                           const config = JSON.parse(updatedAttribute.config);
                                           config.max_length = e.target.value;
                                           updatedAttribute.config = JSON.stringify(config);
@@ -993,7 +1001,9 @@ export default function ContentTypeEdit() {
                                         openedAttribute.attributeList.map(
                                           (attribute: { id: any; config: any }) => {
                                             if (attribute.id === val.id) {
-                                              const updatedAttribute = { ...attribute };
+                                              const updatedAttribute = {
+                                                ...attribute,
+                                              };
                                               const config = JSON.parse(updatedAttribute.config);
                                               config.media_type = value;
                                               updatedAttribute.config = JSON.stringify(config);
@@ -1112,6 +1122,7 @@ export default function ContentTypeEdit() {
                 onChange={e => {
                   setOpenedAttribute((prevState: any) => ({
                     ...prevState,
+                    action: prevState?.action ?? 'edit',
                     name: e.target.value,
                   }));
                 }}
@@ -1125,6 +1136,7 @@ export default function ContentTypeEdit() {
                 onChange={e => {
                   setOpenedAttribute((prevState: any) => ({
                     ...prevState,
+                    action: prevState?.action ?? 'edit',
                     fieldId: e.target.value,
                   }));
                 }}
@@ -1144,6 +1156,7 @@ export default function ContentTypeEdit() {
                     updatedConfig.min_length = e.target.value;
                     setOpenedAttribute({
                       ...openedAttribute,
+                      action: openedAttribute?.action ?? 'edit',
                       config: JSON.stringify(updatedConfig),
                     });
                   }}
@@ -1159,6 +1172,7 @@ export default function ContentTypeEdit() {
                     updatedConfig.max_length = e.target.value;
                     setOpenedAttribute({
                       ...openedAttribute,
+                      action: openedAttribute?.action ?? 'edit',
                       config: JSON.stringify(updatedConfig),
                     });
                   }}
@@ -1189,6 +1203,7 @@ export default function ContentTypeEdit() {
                       updatedConfig.media_type = value;
                       setOpenedAttribute({
                         ...openedAttribute,
+                        action: openedAttribute?.action ?? 'edit',
                         config: JSON.stringify(updatedConfig),
                       });
                     }
@@ -1228,6 +1243,7 @@ export default function ContentTypeEdit() {
                               <svg
                                 role="button"
                                 onClick={() => {
+                                  // DELETE Looping Attribute
                                   const updatedAttributeList = openedAttribute.attributeList.filter(
                                     (_attribute: any, index: number) => index !== idx,
                                   );
@@ -1266,10 +1282,11 @@ export default function ContentTypeEdit() {
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
                                   const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (attribute: { id: any }) => {
+                                    (attribute: { id: any; action?: string }) => {
                                       if (attribute.id === val.id) {
                                         return {
                                           ...attribute,
+                                          action: attribute?.action ?? 'edit',
                                           name: e.target.value,
                                         };
                                       }
@@ -1293,10 +1310,11 @@ export default function ContentTypeEdit() {
                                 inputStyle="rounded-3xl"
                                 onChange={e => {
                                   const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (attribute: { id: any }) => {
+                                    (attribute: { id: any; action?: string }) => {
                                       if (attribute.id === val.id) {
                                         return {
                                           ...attribute,
+                                          action: attribute?.action ?? 'edit',
                                           fieldId: e.target.value,
                                         };
                                       }
@@ -1327,9 +1345,12 @@ export default function ContentTypeEdit() {
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any; config: any }) => {
+                                      (attribute: { id: any; config: any; action?: string }) => {
                                         if (attribute.id === val.id) {
-                                          const updatedAttribute = { ...attribute };
+                                          const updatedAttribute = {
+                                            ...attribute,
+                                            action: attribute?.action ?? 'edit',
+                                          };
                                           if (updatedAttribute.config) {
                                             const config = JSON.parse(updatedAttribute.config);
                                             config.min_length = e.target.value;
@@ -1368,9 +1389,12 @@ export default function ContentTypeEdit() {
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any; config: any }) => {
+                                      (attribute: { id: any; config: any; action?: string }) => {
                                         if (attribute.id === val.id) {
-                                          const updatedAttribute = { ...attribute };
+                                          const updatedAttribute = {
+                                            ...attribute,
+                                            action: attribute?.action ?? 'edit',
+                                          };
                                           if (updatedAttribute.config) {
                                             const config = JSON.parse(updatedAttribute.config);
                                             config.max_length = e.target.value;
@@ -1419,9 +1443,16 @@ export default function ContentTypeEdit() {
                                       event.stopPropagation();
                                       const updatedAttributeList =
                                         openedAttribute.attributeList.map(
-                                          (attribute: { id: any; config: any }) => {
+                                          (attribute: {
+                                            id: any;
+                                            config: any;
+                                            action?: string;
+                                          }) => {
                                             if (attribute.id === val.id) {
-                                              const updatedAttribute = { ...attribute };
+                                              const updatedAttribute = {
+                                                ...attribute,
+                                                action: attribute?.action ?? 'edit',
+                                              };
                                               const config = JSON.parse(updatedAttribute.config);
                                               config.media_type = value;
                                               updatedAttribute.config = JSON.stringify(config);
