@@ -156,6 +156,7 @@ export default function ContentTypeEdit() {
 
   function openAddModal(val: SetStateAction<never[]>, edited: boolean | undefined) {
     setOpenedAttribute(val);
+    setSearch(''); // reset search field
     setIsOpenModalAttribute(false);
     if (edited) {
       setIsOpenModalEditAttribute(true);
@@ -273,7 +274,7 @@ export default function ContentTypeEdit() {
         ))}
         {listItems.map((val: any, idx: undefined) => (
           <>
-            {!val?.is_deleted && (
+            {val?.action !== 'delete' && (
               <div
                 key={idx}
                 className="py-2 px-10 flex flex-row justify-between m-4 bg-light-purple-2 rounded-lg hover:border-2 font-medium">
@@ -288,7 +289,7 @@ export default function ContentTypeEdit() {
                       role="button"
                       onClick={() => {
                         setEditedIndex(idx);
-                        openAddModal(val, true);
+                        openAddModal({ ...val, action: 'edit' }, true);
                       }}
                       className={`cursor-pointer select-none flex items-center justify-center`}
                       src={TableEdit}
@@ -299,7 +300,6 @@ export default function ContentTypeEdit() {
                         const data = {
                           ...val,
                           action: 'delete',
-                          is_deleted: true,
                         };
                         const updatedListItems = listItems.map((item: any, index: undefined) => {
                           if (index === idx) {
@@ -444,7 +444,8 @@ export default function ContentTypeEdit() {
           rest.loopTypeRequest = attributeList?.map(
             (attribute: { [x: string]: any; id: any; parentId: any }) => {
               const { id, parentId, ...attributeRest } = attribute;
-              return attributeRest;
+              if (item?.action && item?.action !== 'create') return { ...attributeRest, id };
+              else return attributeRest;
             },
           );
         } else {
@@ -453,10 +454,10 @@ export default function ContentTypeEdit() {
             action: item?.action ?? 'edit',
             id: item.id,
           };
-          delete tempData?.is_deleted;
           return tempData;
         }
-        return rest;
+        if (item?.action && item?.action !== 'create') return { ...rest, id, action: item?.action };
+        else return rest;
       },
     );
 
@@ -512,8 +513,6 @@ export default function ContentTypeEdit() {
       attributeRequests: convertedData,
       dataType: selectedDataType.value,
     };
-
-    console.info(payload);
 
     postUpdate(payload)
       .unwrap()
