@@ -173,19 +173,31 @@ export const convertContentData = (data: any[]) => {
   return combinedData;
 };
 
+const convertFileUploaderValue = (data: any[]) => {
+  if (Array.isArray(data)) {
+    data.forEach((img: any, idx: number) => {
+      const jsonValue = JSON.parse(img);
+      if (!jsonValue.length) {
+        data[idx] = '-';
+      }
+    });
+  }
+  return data;
+};
+
 export const stringifyContentData = (data: any) => {
   return data.map((field: any) => {
-    if (field.fieldType === 'LOOPING' && field.contentData) {
+    if (field.fieldType === 'DOCUMENT') {
+      const _value = JSON.parse(field.value);
+      if (!_value.length) {
+        _value.push('-');
+        field.value = JSON.stringify(_value);
+      }
+    } else if (field.fieldType === 'LOOPING' && field.contentData) {
       field.contentData.map((item: { fieldType: any; value: any }) => {
-        const contentDataValue = item?.value;
-        if (item?.value && Array.isArray(contentDataValue)) {
-          if (item.fieldType === 'IMAGE') {
-            item.value.forEach((img: any, idx: number) => {
-              const jsonValue = JSON.parse(img);
-              if (!jsonValue.length) {
-                item.value[idx] = '[{"imageUrl":"no-image","altText":"no-image"}]';
-              }
-            });
+        if (item?.value && Array.isArray(item?.value)) {
+          if (item.fieldType === 'IMAGE' || item.fieldType === 'DOCUMENT') {
+            item.value = convertFileUploaderValue(item.value);
           }
           item.value = JSON.stringify(item.value);
         }
