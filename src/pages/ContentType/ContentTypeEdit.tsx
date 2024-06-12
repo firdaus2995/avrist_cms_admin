@@ -289,7 +289,7 @@ export default function ContentTypeEdit() {
                       role="button"
                       onClick={() => {
                         setEditedIndex(idx);
-                        openAddModal({ ...val, action: 'edit' }, true);
+                        openAddModal({ ...val, action: val?.action ?? 'edit' }, true);
                       }}
                       className={`cursor-pointer select-none flex items-center justify-center`}
                       src={TableEdit}
@@ -444,10 +444,11 @@ export default function ContentTypeEdit() {
           rest.loopTypeRequest = attributeList?.map(
             (attribute: { [x: string]: any; id: any; parentId: any }) => {
               const { id, parentId, ...attributeRest } = attribute;
-              if (item?.action && item?.action !== 'create') return { ...attributeRest, id };
-              else return attributeRest;
+              return { ...attributeRest, id, action: attribute?.action ?? 'edit' };
             },
           );
+          // add attribute id & action to looping fieldType
+          return { ...rest, id, action: rest?.action ?? 'edit' };
         } else {
           const tempData: any = {
             ...rest,
