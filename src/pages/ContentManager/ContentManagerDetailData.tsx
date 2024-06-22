@@ -81,8 +81,8 @@ export default function ContentManagerDetailData() {
 
   // GO BACK
   const navigate = useNavigate();
-  const goBack = () => {
-    navigate(-1);
+  const redirectPage = () => {
+    navigate('/content-manager');
   };
 
   const params = useParams();
@@ -301,7 +301,7 @@ export default function ContentManagerDetailData() {
             title: 'Success',
           }),
         );
-        goBack();
+        redirectPage();
       })
       .catch((error: any) => {
         dispatch(
@@ -311,7 +311,7 @@ export default function ContentManagerDetailData() {
             message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
-        goBack();
+        redirectPage();
       });
   };
 
@@ -1372,7 +1372,7 @@ export default function ContentManagerDetailData() {
         <div className="flex flex-row p-2 gap-2">
           <button
             onClick={() => {
-              goBack();
+              redirectPage();
             }}
             className="btn btn-outline text-xs btn-sm w-28 h-10">
             {t('user.content-manager-detail-data.cancel')}
@@ -1471,7 +1471,7 @@ export default function ContentManagerDetailData() {
             message: getMessageToast(status),
           }),
         );
-        goBack();
+        redirectPage();
       })
       .catch((error: any) => {
         dispatch(
@@ -1481,7 +1481,7 @@ export default function ContentManagerDetailData() {
             message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
-        goBack();
+        redirectPage();
       });
   };
 
@@ -1496,7 +1496,7 @@ export default function ContentManagerDetailData() {
             message: getMessageToast(status),
           }),
         );
-        goBack();
+        redirectPage();
       })
       .catch((error: any) => {
         dispatch(
@@ -1506,7 +1506,7 @@ export default function ContentManagerDetailData() {
             message: t(`errors.content-manager.${errorMessageTypeConverter(error.message)}`),
           }),
         );
-        goBack();
+        redirectPage();
       });
   };
 
@@ -1540,7 +1540,7 @@ export default function ContentManagerDetailData() {
 
   const onLeave = () => {
     setShowLeaveModal(false);
-    goBack();
+    redirectPage();
   };
 
   return (
@@ -1729,7 +1729,9 @@ export default function ContentManagerDetailData() {
       />
 
       <TitleCard
-        onBackClick={goBack}
+        onBackClick={() => {
+          navigate(-1);
+        }}
         hasBack={true}
         title={`${contentDataDetail?.contentDataDetail?.title ?? ''}`}
         titleComponent={<Badge />}
