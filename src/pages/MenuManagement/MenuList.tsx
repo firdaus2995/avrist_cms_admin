@@ -97,7 +97,6 @@ export default function MenuList () {
 
         return masterPayload;
       }
-
       setMenuGroupName(data?.menuList?.menuGroupName);
       setDataStructure(recursiveMenuGet(data?.menuList?.menus));
 
