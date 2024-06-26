@@ -97,7 +97,6 @@ export default function MenuList () {
 
         return masterPayload;
       }
-      console.log(recursiveMenuGet(data?.menuList?.menus))
       setMenuGroupName(data?.menuList?.menuGroupName);
       setDataStructure(recursiveMenuGet(data?.menuList?.menus));
 
