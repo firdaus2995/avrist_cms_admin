@@ -647,7 +647,7 @@ export default function ContentManagerDetailData() {
 
                 return (
                   <FormList.TextEditor
-                    title={t('user.page-management-new.contentLabel')}
+                    title={name}
                     value={field.value}
                     disabled={!isEdited}
                     onChange={onChange}
@@ -1040,7 +1040,7 @@ export default function ContentManagerDetailData() {
 
                                     return (
                                       <FormList.TextEditor
-                                        title={t('user.page-management-new.contentLabel')}
+                                        title={name}
                                         value={field.value}
                                         disabled={!isEdited}
                                         onChange={onChange}
