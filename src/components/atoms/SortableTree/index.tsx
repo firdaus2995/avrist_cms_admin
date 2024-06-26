@@ -107,7 +107,7 @@ export default function SortableTreeComponent(props: ISortableTree) {
             onChange(data?.node, data?.treeData);
           }}
           canDrag={({ node }) => !node.noDragging}
-          maxDepth={3}
+          maxDepth={4}
           generateNodeProps={rowInfo => ({
             // subtitle: rowInfo.node.subTitle,
             title: rowInfo.node.label,
