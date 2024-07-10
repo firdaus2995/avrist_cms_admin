@@ -5,7 +5,6 @@ import Close from '@/assets/close.png';
 import PreviewEyePurple from '@/assets/preview-eye-white.svg';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { formatFilename } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { t } from 'i18next';
 import { getImageEditable } from '../../../utils/imageUtils';
@@ -150,7 +149,7 @@ export default function FileUploaderBase({
 
   const handleUpload = async (files: File[]) => {
     setIsUploadLoading(true);
-    const fileName = formatFilename(files[0].name);
+    const fileName = files[0].name;
 
     const defaultFileSize = isDocument ? maxDocSize : maxImgSize;
     const maxFileSize = maxSize || defaultFileSize;

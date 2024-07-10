@@ -5,7 +5,7 @@ import AdobePdfIcon from '@/assets/adobe-pdf.svg';
 import Close from '@/assets/close.png';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { copyArray, formatFilename } from '@/utils/logicHelper';
+import { copyArray } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { getImageAxios } from '../../../utils/imageUtils';
 import { t } from 'i18next';
@@ -20,7 +20,7 @@ function bytesToSize(bytes: number): string {
   if (bytes === 0) return '0 Byte';
   const i = Math.floor(Math.log(bytes) / Math.log(1024));
   return (bytes / Math.pow(1024, i)).toFixed(2).toString() + ' ' + sizes[i];
-};
+}
 
 export default function FileUploaderBaseV2({
   isDocument,
@@ -51,7 +51,7 @@ export default function FileUploaderBaseV2({
       };
 
       void loadImages();
-    };
+    }
   }, [JSON.stringify(items)]);
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -70,7 +70,7 @@ export default function FileUploaderBaseV2({
 
   const handleUpload = async (files: File[]) => {
     const body = new FormData();
-    const fileName = formatFilename(files[0].name);
+    const fileName = files[0].name;
 
     const defaultFileSize = isDocument ? maxDocSize : maxImgSize;
     const maxFileSize = maxSize || defaultFileSize;
@@ -95,7 +95,7 @@ export default function FileUploaderBaseV2({
         }),
       );
       return;
-    };
+    }
 
     body.append('file', files[0]);
     body.append('fileType', isDocument ? 'DOCUMENT' : 'IMAGE');
@@ -104,11 +104,10 @@ export default function FileUploaderBaseV2({
     try {
       setIsLoading(true);
 
-      const response = await restApiRequest('POST', '/files/upload', body)
+      const response = await restApiRequest('POST', '/files/upload', body);
       const newFile = { name: fileName, value: files[0], response: response.data.data };
 
       console.log(newFile);
-      
 
       if (multiple) {
         const newData: any = copyArray(items);
@@ -117,7 +116,7 @@ export default function FileUploaderBaseV2({
       } else {
         const newData: any = [newFile.response];
         onFilesChange(newData);
-      };
+      }
 
       if (inputRef.current) {
         inputRef.current.value = '';
@@ -133,10 +132,7 @@ export default function FileUploaderBaseV2({
     setIsLoading(false);
   };
 
-  const renderPreviewItem = ({
-    item, 
-    index,
-  }: any) => {
+  const renderPreviewItem = ({ item, index }: any) => {
     return (
       <div className="flex flex-row items-center h-16 p-2 mt-3 rounded-xl bg-light-purple-2">
         <img
@@ -145,7 +141,9 @@ export default function FileUploaderBaseV2({
         />
         <div className="flex flex-1 h-14 justify-center flex-col">
           <p className="truncate w-52">{imageUrls[index]?.imageName ?? ''}</p>
-          <p className="text-body-text-3 text-xs">{imageUrls[index]?.fileSize ? bytesToSize(imageUrls[index]?.fileSize) : ''}</p>
+          <p className="text-body-text-3 text-xs">
+            {imageUrls[index]?.fileSize ? bytesToSize(imageUrls[index]?.fileSize) : ''}
+          </p>
         </div>
         <div className="h-11">
           <div
@@ -155,15 +153,14 @@ export default function FileUploaderBaseV2({
               const newData: any = copyArray(items);
               newData.splice(index, 1);
               onFilesChange(newData);
-            }}
-          >
+            }}>
             <img src={Close} className="w-5 h-5" />
           </div>
         </div>
       </div>
     );
   };
-  
+
   return (
     <>
       <div
@@ -171,8 +168,9 @@ export default function FileUploaderBaseV2({
         onDragOver={e => {
           e.preventDefault();
         }}
-        className={`min-w-[150px] bg-white border-dashed border-[2px] rounded-xl ${error ? 'border-reddist' : 'border-lavender'}`}
-      >
+        className={`min-w-[150px] bg-white border-dashed border-[2px] rounded-xl ${
+          error ? 'border-reddist' : 'border-lavender'
+        }`}>
         {(!items?.length || multiple) && (
           <label
             htmlFor={id}
@@ -189,11 +187,14 @@ export default function FileUploaderBaseV2({
               disabled={disabled || isLoading}
             />
             <div className="flex flex-col justify-center items-center h-[150px]">
-              <img className="w-12" src={UploadDocumentIcon} alt='upload' />
+              <img className="w-12" src={UploadDocumentIcon} alt="upload" />
               <span className="text-xs text-center mt-5">
                 {label || (
                   <span>
-                    {t('components.molecules.file.dragAndDrop', { type:isDocument ? 'Files' : 'Image' })} <span className="text-primary">{t('components.molecules.file.browse')}</span>
+                    {t('components.molecules.file.dragAndDrop', {
+                      type: isDocument ? 'Files' : 'Image',
+                    })}{' '}
+                    <span className="text-primary">{t('components.molecules.file.browse')}</span>
                   </span>
                 )}
               </span>
@@ -205,16 +206,12 @@ export default function FileUploaderBaseV2({
         isDocument ? '.pdf' : '.jpg, .jpeg, .png'
       }`}</p>
       <div>
-        {
-          items?.map((item: any, index: any) => {
-            return (
-              renderPreviewItem({
-                item, 
-                index,
-              })
-            );
-          })
-        }
+        {items?.map((item: any, index: any) => {
+          return renderPreviewItem({
+            item,
+            index,
+          });
+        })}
       </div>
       <div>
         {isLoading && (
