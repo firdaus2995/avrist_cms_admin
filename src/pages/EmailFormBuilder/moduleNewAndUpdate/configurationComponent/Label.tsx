@@ -1,19 +1,18 @@
-import React from "react";
+import React, { useEffect } from 'react';
 
-import Config from "./Config";
-import { InputText } from "@/components/atoms/Input/InputText";
+import Config from './Config';
+import { InputText } from '@/components/atoms/Input/InputText';
 
 interface ILabel {
   data: any;
   configList: any;
   valueChange: (type: string, value: any) => void;
-};
+}
 
-const TextField: React.FC<ILabel> = ({
-  data,
-  configList,
-  valueChange,
-}) => {
+const TextField: React.FC<ILabel> = ({ data, configList, valueChange }) => {
+  useEffect(() => {
+    valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
+  }, [data?.name]);
   return (
     <React.Fragment>
       <InputText
@@ -29,13 +28,9 @@ const TextField: React.FC<ILabel> = ({
           valueChange('name', event.target.value);
         }}
       />
-      <Config
-        data={data}
-        configList={configList}
-        valueChange={valueChange}
-      />
+      <Config data={data} configList={configList} valueChange={valueChange} />
     </React.Fragment>
-  )
-}
+  );
+};
 
 export default TextField;

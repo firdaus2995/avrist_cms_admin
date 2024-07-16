@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Config from './Config';
 import { InputText } from '@/components/atoms/Input/InputText';
@@ -12,7 +12,11 @@ interface ITNC {
 
 const TNC: React.FC<ITNC> = ({ data, configList, valueChange }) => {
   const [inputTextValue, setInputTextValue] = useState(data?.name);
-  
+
+  useEffect(() => {
+    valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
+  }, [data?.name]);
+
   return (
     <React.Fragment>
       <InputText

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Config from './Config';
 import FormList from '../../../../components/molecules/FormList';
@@ -12,6 +12,10 @@ interface IRadio {
 
 const ImageRadio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
   const [inputTextValue, setInputTextValue] = useState(data?.name);
+
+  useEffect(() => {
+    valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
+  }, [data?.name]);
 
   return (
     <React.Fragment>
