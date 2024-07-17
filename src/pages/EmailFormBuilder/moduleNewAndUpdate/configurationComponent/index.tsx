@@ -12,6 +12,10 @@ import Rating from './Rating';
 import SubmitterEmail from './SubmitterEmail';
 import ImageRadio from './ImageRadio';
 import TNC from './TNC';
+import DatePicker from './DatePicker';
+import RangeDatePicker from './RangeDatePicker';
+import PhoneNumber from './PhoneNumber';
+import CurrencyField from './CurrencyField';
 
 const EFBConfiguration = {
   TextField,
@@ -28,6 +32,10 @@ const EFBConfiguration = {
   SubmitterEmail,
   ImageRadio,
   TNC,
+  DatePicker,
+  RangeDatePicker,
+  PhoneNumber,
+  CurrencyField,
 };
 
 export default EFBConfiguration;

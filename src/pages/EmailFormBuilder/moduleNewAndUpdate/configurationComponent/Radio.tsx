@@ -1,19 +1,18 @@
-import React from "react";
+import React, { useEffect } from 'react';
 
-import Config from "./Config";
-import { InputText } from "@/components/atoms/Input/InputText";
+import Config from './Config';
+import { InputText } from '@/components/atoms/Input/InputText';
 
 interface IRadio {
   data: any;
   configList: any;
   valueChange: (type: string, value: any) => void;
-};
+}
 
-const Radio: React.FC<IRadio> = ({
-  data,
-  configList,
-  valueChange,
-}) => {
+const Radio: React.FC<IRadio> = ({ data, configList, valueChange }) => {
+  useEffect(() => {
+    valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
+  }, [data?.name]);
   return (
     <React.Fragment>
       <InputText
@@ -36,24 +35,20 @@ const Radio: React.FC<IRadio> = ({
         inputStyle="text-sm"
         placeholder='Use ";" to separate each value'
         roundStyle="lg"
-        value={data?.items.join(";")}
+        value={data?.items.join(';')}
         isError={data?.mandatory?.items}
         onChange={(event: any) => {
-          let arrayItem: any = event?.target?.value.split(";");
-          if (arrayItem.length === 1 && arrayItem[0] === "") {
+          let arrayItem: any = event?.target?.value.split(';');
+          if (arrayItem.length === 1 && arrayItem[0] === '') {
             arrayItem = [];
-          };
-          console.log(arrayItem)
+          }
+          console.log(arrayItem);
           valueChange('items', arrayItem);
         }}
       />
-      <Config
-        data={data}
-        configList={configList}
-        valueChange={valueChange}
-      />
+      <Config data={data} configList={configList} valueChange={valueChange} />
     </React.Fragment>
-  )
-}
+  );
+};
 
 export default Radio;

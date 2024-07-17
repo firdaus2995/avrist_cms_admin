@@ -3,24 +3,24 @@ import React, { useEffect } from 'react';
 import Config from './Config';
 import { InputText } from '@/components/atoms/Input/InputText';
 
-interface IDocument {
+interface IDatePicker {
   data: any;
   configList: any;
   valueChange: (type: string, value: any) => void;
 }
 
-const Document: React.FC<IDocument> = ({ data, configList, valueChange }) => {
+const DatePicker: React.FC<IDatePicker> = ({ data, configList, valueChange }) => {
   useEffect(() => {
     valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
   }, [data?.name]);
   return (
     <React.Fragment>
       <InputText
-        labelTitle="Document Name"
+        labelTitle="Date Picker Name"
         labelStyle="font-bold	"
         inputHeight={40}
         inputStyle="text-sm"
-        placeholder="Enter your document name"
+        placeholder="Enter your date picker name"
         roundStyle="lg"
         value={data?.name}
         isError={data?.mandatory?.name}
@@ -33,4 +33,4 @@ const Document: React.FC<IDocument> = ({ data, configList, valueChange }) => {
   );
 };
 
-export default Document;
+export default DatePicker;
