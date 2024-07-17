@@ -10,7 +10,6 @@ import { useForm, Controller } from 'react-hook-form';
 import Drag from './moduleNewAndUpdate/dragAndDropComponent/Drag';
 import Drop from './moduleNewAndUpdate/dragAndDropComponent/Drop';
 import CancelIcon from '../../assets/cancel.png';
-import EyeIcon from '@/assets/eye-purple.svg';
 import Recaptcha from '../../assets/recaptcha.svg';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
 import EFBList from './moduleNewAndUpdate/listComponent';
@@ -66,7 +65,7 @@ export default function EmailFormBuilderEdit() {
   const [activeComponent, setActiveComponent] = useState<any>(null);
   // LIST STATE
   const [listFormTemplate, setListFormTemplate] = useState<any>([]);
-  const [listEmailBody, setListEmailBody] = useState<any>([]);
+  const [, setListEmailBody] = useState<any>([]);
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
@@ -146,6 +145,8 @@ export default function EmailFormBuilderEdit() {
     if (dataAttribute?.getConfig) {
       const arrayFormAttribute: any = JSON.parse(dataAttribute?.getConfig?.value).attributes;
       const objectFormAttribute: any = {};
+
+      console.log(arrayFormAttribute);
 
       for (const element of arrayFormAttribute) {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
@@ -351,27 +352,28 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'TEXT_FIELD',
             name: element.name,
             fieldId: 'TEXT_FIELD',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.hidden}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.hidden}\"}`, //eslint-disable-line
           };
         case 'TEXTAREA':
           return {
             fieldType: 'TEXT_AREA',
             name: element.name,
             fieldId: 'TEXT_AREA',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${
-              element.placeholder
-            }\", \"required\": \"${element.required}\", \"multiple_input\": \"${
-              element.multipleInput
-            }\", \"max_length\": \"${element.maxLength ?? 0}\", \"min_length\": \"${
-              element.minLength ?? 0
-            }\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
+              element.required
+            }\", \"multiple_input\": \"${element.multipleInput}\", \"max_length\": \"${
+              element.maxLength ?? 0
+            }\", \"min_length\": \"${element.minLength ?? 0}\"}`, //eslint-disable-line
           };
         case 'DROPDOWN':
           return {
             fieldType: 'DROPDOWN',
             name: element.name,
             fieldId: 'DROPDOWN',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multipleSelect}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multipleSelect}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
         case 'RADIOBUTTON':
@@ -379,7 +381,8 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'RADIO_BUTTON',
             name: element.name,
             fieldId: 'RADIO_BUTTON',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
         case 'CHECKBOX':
@@ -387,7 +390,8 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'CHECKBOX',
             name: element.name,
             fieldId: 'CHECKBOX',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
         case 'EMAIL':
@@ -395,50 +399,55 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'EMAIL',
             name: element.name,
             fieldId: 'EMAIL',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
           };
         case 'SUBMITTEREMAIL':
           return {
             fieldType: 'EMAIL',
             name: element.name,
             fieldId: 'EMAIL',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
           };
         case 'LABEL':
           return {
             fieldType: 'LABEL',
             name: element.name,
             fieldId: 'LABEL',
-            config: `{\"component_id\": \"${
-              element.componentId
-            }\",\"size\": [\"${element.size.toLowerCase()}\"], \"position\": [\"${element.position.toLowerCase()}\"]}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"size\": [\"${element.size.toLowerCase()}\"], \"position\": [\"${element.position.toLowerCase()}\"]}`, //eslint-disable-line
           };
         case 'NUMBER':
           return {
             fieldType: 'NUMBER',
             name: element.name,
             fieldId: 'NUMBER',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"use_decimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"use_decimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
           };
         case 'DOCUMENT':
           return {
             fieldType: 'DOCUMENT',
             name: element.name,
             fieldId: 'DOCUMENT',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case 'IMAGE':
           return {
             fieldType: 'IMAGE',
             name: element.name,
             fieldId: 'IMAGE',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case 'LINEBREAK':
           return {
             fieldType: 'LINE_BREAK',
             name: 'LINE_BREAK',
             fieldId: 'LINE_BREAK',
+            componentId: element.componentId,
             config: ``, //eslint-disable-line
           };
         case 'RATING':
@@ -446,7 +455,8 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'RATING',
             name: element.name,
             fieldId: 'RATING',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
         case 'IMAGERADIO':
@@ -454,7 +464,8 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'IMAGE_RADIO',
             name: element.name,
             fieldId: 'IMAGE_RADIO',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
         case 'TNC':
@@ -462,39 +473,51 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'TNC',
             name: element.name,
             fieldId: 'TNC',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\"}`, //eslint-disable-line
+            componentId: element.componentId,
+            config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
         case 'DATEPICKER':
           return {
-            fieldType: 'DATEPICKER',
+            fieldType: 'DATE_PICKER',
             name: element.name,
-            fieldId: 'DATEPICKER',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\"}`, //eslint-disable-line
-            value: element.items.join(';'),
+            fieldId: 'DATE_PICKER',
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
+              element.required
+            }\", \"date_validation\": \"${element.date_validation ?? 'all_date'}\"}`, //eslint-disable-line
           };
         case 'RANGEDATEPICKER':
           return {
-            fieldType: 'RANGEDATEPICKER',
+            fieldType: 'RANGE_DATE_PICKER',
             name: element.name,
-            fieldId: 'RANGEDATEPICKER',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\"}`, //eslint-disable-line
-            value: element.items.join(';'),
+            fieldId: 'RANGE_DATE_PICKER',
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`, //eslint-disable-line
           };
         case 'PHONENUMBER':
           return {
-            fieldType: 'PHONENUMBER',
+            fieldType: 'PHONE_NUMBER',
             name: element.name,
-            fieldId: 'PHONENUMBER',
-            config: `{\"component_id\": \"${element.componentId}\",\"required\": \"${element.required}\"}`, //eslint-disable-line
-            value: element.items.join(';'),
+            fieldId: 'PHONE_NUMBER',
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
+              element.required
+            }\", \"min_length\": \"${element.minLength ?? 1}\", \"max_length\": \"${
+              element.maxLength ?? -1
+            }\"}`, //eslint-disable-line
           };
         case 'CURRENCY':
           return {
-            fieldType: 'CURRENCY',
+            fieldType: 'TEXT_CURRENCY',
             name: element.name,
-            fieldId: 'CURRENCY',
-            config: `{\"component_id\": \"${element.componentId}\",\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"use_decimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
+            fieldId: 'TEXT_CURRENCY',
+            componentId: element.componentId,
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
+              element.required
+            }\", \"currency\": \"${element.currency ?? 'idr'}\"}, \"max_decimal\": \"${
+              element.maxDecimal ?? 0
+            }\", \"min_value\": \"${element.minValue ?? 1}\"}`, //eslint-disable-line
           };
         default:
           return false;
@@ -509,12 +532,39 @@ export default function EmailFormBuilderEdit() {
       value: checkCaptcha ? 'true' : 'false',
     });
 
-    if (data?.emailBody) {
+    if (getValues('picTitle') && getValues('picBody')) {
+      backendComponents.unshift({
+        fieldType: 'EMAIL_SUBJECT',
+        name: 'EMAIL_SUBJECT',
+        fieldId: 'EMAIL_SUBJECT',
+        componentId: 'email-subject',
+        value: getValues('picTitle'),
+      });
+
       backendComponents.unshift({
         fieldType: 'EMAIL_BODY',
         name: 'EMAIL_BODY',
         fieldId: 'EMAIL_BODY',
-        value: data?.emailBody.toString(),
+        componentId: 'email-body',
+        value: getValues('picBody'),
+      });
+    }
+
+    if (getValues('submitterTitle') && getValues('submitterBody')) {
+      backendComponents.unshift({
+        fieldType: 'EMAIL_SUBJECT_SUBMITTER',
+        name: 'EMAIL_SUBJECT_SUBMITTER',
+        fieldId: 'EMAIL_SUBJECT_SUBMITTER',
+        componentId: 'email-subject-submitter',
+        value: getValues('submitterTitle'),
+      });
+
+      backendComponents.unshift({
+        fieldType: 'EMAIL_BODY_SUBMITTER',
+        name: 'EMAIL_BODY_SUBMITTER',
+        fieldId: 'EMAIL_BODY_SUBMITTER',
+        componentId: 'email-body-submitter',
+        value: getValues('submitterBody'),
       });
     }
 
@@ -576,11 +626,11 @@ export default function EmailFormBuilderEdit() {
     }));
   };
 
-  const handlerPreviewEmailBody = () => {
-    if (getValues('emailBody')) {
-      setShowPreviewEmailBodyModal(true);
-    }
-  };
+  // const handlerPreviewEmailBody = () => {
+  //   if (getValues('emailBody')) {
+  //     setShowPreviewEmailBodyModal(true);
+  //   }
+  // };
 
   const handlerAddMultipleInput = (value: any) => {
     const items: any = copyArray(pics);
@@ -1551,7 +1601,7 @@ export default function EmailFormBuilderEdit() {
                 />
               )}
             />
-            <div className="flex flex-row gap-5">
+            {/* <div className="flex flex-row gap-5">
               <Controller
                 name="emailBody"
                 control={control}
@@ -1587,7 +1637,7 @@ export default function EmailFormBuilderEdit() {
                   <img src={EyeIcon} />
                 </button>
               )}
-            </div>
+            </div> */}
             <MultipleInput
               labelTitle={t('user.email-form-builder-new.email-form-builder.add.pic-label')}
               labelStyle="font-bold"
@@ -1602,16 +1652,20 @@ export default function EmailFormBuilderEdit() {
               onAdd={handlerAddMultipleInput}
               onDelete={handlerDeleteMultipleInput}
             />
-            <div className="flex flex-row justify-start gap-5">
-              <CheckBox
-                defaultValue={checkSubmitterEmail}
-                updateFormValue={(event: any) => {
-                  handlerSubmitterEmail(event.value);
-                }}
-                labelTitle={t('user.email-form-builder-new.email-form-builder.add.also-send-label')}
-                labelContainerStyle="justify-start"
-                containerStyle="ml-[225px] "
-              />
+            <div className={`flex flex-row justify-start ${pics.length < 2 ? '' : 'gap-5'}`}>
+              <div className="ml-[225px]">
+                <CheckBox
+                  defaultValue={checkSubmitterEmail}
+                  updateFormValue={(event: any) => {
+                    handlerSubmitterEmail(event.value);
+                  }}
+                  labelTitle={t(
+                    'user.email-form-builder-new.email-form-builder.add.also-send-label',
+                  )}
+                  labelContainerStyle="justify-start"
+                  containerStyle={pics.length < 2 ? 'hidden' : ''}
+                />
+              </div>
               <CheckBox
                 defaultValue={checkCaptcha}
                 updateFormValue={(event: any) => {
@@ -1669,7 +1723,7 @@ export default function EmailFormBuilderEdit() {
             <div className="flex flex-col gap-4">
               <p className="font-bold">Email Body PIC</p>
               <Controller
-                name="title"
+                name="picTitle"
                 control={control}
                 defaultValue=""
                 rules={{ required: t('components.atoms.required') ?? '' }}
@@ -1685,115 +1739,75 @@ export default function EmailFormBuilderEdit() {
                     placeholder="Enter your title"
                     inputWidth={400}
                     maxLength={30}
-                    isError={!!errors?.title}
-                  />
-                )}
-              />
-              <Controller
-                name="shortDesc"
-                control={control}
-                defaultValue=""
-                rules={{ required: t('components.atoms.required') ?? '' }}
-                render={({ field }) => (
-                  <InputText
-                    {...field}
-                    labelTitle="Short Description"
-                    labelStyle="font-semibold"
-                    labelWidth={200}
-                    labelRequired
-                    direction="row"
-                    roundStyle="xl"
-                    placeholder="Enter description"
-                    inputWidth={400}
-                    maxLength={30}
-                    isError={!!errors?.shortDesc}
+                    isError={!!errors?.picTitle}
                   />
                 )}
               />
               <div className="flex flex-col justify-start gap-3">
                 <Typography size="m" weight="semi">
-                  Value<span className="text-reddist">*</span>
+                  Body<span className="text-reddist">*</span>
                 </Typography>
                 <Controller
-                  name="value"
+                  name="picBody"
                   control={control}
                   rules={{ required: t('components.atoms.required') ?? '' }}
                   render={({ field }) => (
                     <CkEditor
                       {...field}
                       onChange={(data: string) => {
-                        setValue('value', data);
+                        setValue('picBody', data);
                       }}
-                      isError={!!errors?.value}
+                      isError={!!errors?.picBody}
                     />
                   )}
                 />
               </div>
             </div>
-            <div className={`flex flex-col gap-4 ${checkSubmitterEmail ? '' : 'hidden'}`}>
-              <p className="font-bold">Email Body Submitter</p>
-              <Controller
-                name="title"
-                control={control}
-                defaultValue=""
-                rules={{ required: t('components.atoms.required') ?? '' }}
-                render={({ field }) => (
-                  <InputText
-                    {...field}
-                    labelTitle="Title"
-                    labelStyle="font-semibold"
-                    labelWidth={200}
-                    labelRequired
-                    direction="row"
-                    roundStyle="xl"
-                    placeholder="Enter your title"
-                    inputWidth={400}
-                    maxLength={30}
-                    isError={!!errors?.title}
-                  />
-                )}
-              />
-              <Controller
-                name="shortDesc"
-                control={control}
-                defaultValue=""
-                rules={{ required: t('components.atoms.required') ?? '' }}
-                render={({ field }) => (
-                  <InputText
-                    {...field}
-                    labelTitle="Short Description"
-                    labelStyle="font-semibold"
-                    labelWidth={200}
-                    labelRequired
-                    direction="row"
-                    roundStyle="xl"
-                    placeholder="Enter description"
-                    inputWidth={400}
-                    maxLength={30}
-                    isError={!!errors?.shortDesc}
-                  />
-                )}
-              />
-              <div className="flex flex-col justify-start gap-3">
-                <Typography size="m" weight="semi">
-                  Value<span className="text-reddist">*</span>
-                </Typography>
+            {checkSubmitterEmail ? (
+              <div className="flex flex-col gap-4">
+                <p className="font-bold">Email Body Submitter</p>
                 <Controller
-                  name="value"
+                  name="submitterTitle"
                   control={control}
+                  defaultValue=""
                   rules={{ required: t('components.atoms.required') ?? '' }}
                   render={({ field }) => (
-                    <CkEditor
+                    <InputText
                       {...field}
-                      onChange={(data: string) => {
-                        setValue('value', data);
-                      }}
-                      isError={!!errors?.value}
+                      labelTitle="Title"
+                      labelStyle="font-semibold"
+                      labelWidth={200}
+                      labelRequired
+                      direction="row"
+                      roundStyle="xl"
+                      placeholder="Enter your title"
+                      inputWidth={400}
+                      maxLength={30}
+                      isError={!!errors?.title}
                     />
                   )}
                 />
+                <div className="flex flex-col justify-start gap-3">
+                  <Typography size="m" weight="semi">
+                    Body<span className="text-reddist">*</span>
+                  </Typography>
+                  <Controller
+                    name="submitterBody"
+                    control={control}
+                    rules={{ required: t('components.atoms.required') ?? '' }}
+                    render={({ field }) => (
+                      <CkEditor
+                        {...field}
+                        onChange={(data: string) => {
+                          setValue('submitterBody', data);
+                        }}
+                        isError={!!errors?.value}
+                      />
+                    )}
+                  />
+                </div>
               </div>
-            </div>
+            ) : null}
           </div>
 
           {/* BUTTONS SECTION */}

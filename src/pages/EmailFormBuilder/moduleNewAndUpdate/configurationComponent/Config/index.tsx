@@ -70,18 +70,48 @@ const Config: React.FC<IConfig> = ({ data, configList, valueChange }) => {
           />
         );
       case 'checkbox':
-        return (
-          <CheckBox
-            key={index}
-            defaultValue={data[element.code]}
-            labelTitle={element.label}
-            labelContainerStyle="justify-start p-1"
-            inputStyle="w-[20px] h-[20px]"
-            updateFormValue={(event: any) => {
-              valueChange(element.code, event.value);
-            }}
-          />
-        );
+        if (element.value.length > 0) {
+          return (
+            <div className="flex flex-col gap-2 mt-2">
+              <p className="font-bold text-sm">{element.label}</p>
+              {element.value.map((item: any, idx: number) => {
+                const code = element.label.toLowerCase();
+                const variableName = code.includes('date')
+                  ? 'date_validation'
+                  : code.includes('currency')
+                  ? 'currency'
+                  : element.code;
+
+                return (
+                  <CheckBox
+                    key={idx}
+                    defaultValue={data[variableName] === item.code}
+                    labelTitle={item.label}
+                    labelContainerStyle="justify-start p-1"
+                    inputStyle="w-[20px] h-[20px]"
+                    updateFormValue={() => {
+                      valueChange(variableName, item.code);
+                    }}
+                  />
+                );
+              })}
+            </div>
+          );
+        } else {
+          return (
+            <CheckBox
+              key={index}
+              defaultValue={data[element.code]}
+              labelTitle={element.label}
+              labelContainerStyle="justify-start p-1"
+              inputStyle="w-[20px] h-[20px]"
+              updateFormValue={(event: any) => {
+                valueChange(element.code, event.value);
+              }}
+            />
+          );
+        }
+
       case 'number_field_multiple':
         return (
           <div className="flex flex-row gap-3">

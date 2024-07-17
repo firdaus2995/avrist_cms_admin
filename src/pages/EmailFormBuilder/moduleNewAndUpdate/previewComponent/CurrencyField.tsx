@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import DeleteComponentIcon from '../../../../assets/efb/preview-delete.svg';
 
 interface ICurrencyField {
   name: string;
   placeholder: string;
+  currency?: string;
   isActive: boolean;
   onClick: () => void;
   onDelete: () => void;
@@ -13,11 +14,16 @@ interface ICurrencyField {
 const CurrencyField: React.FC<ICurrencyField> = ({
   name,
   placeholder,
+  currency,
   isActive,
   onClick,
   onDelete,
 }) => {
   const [val, setVal] = useState('');
+
+  useEffect(() => {
+    setVal('');
+  }, [currency]);
 
   const handleInputChange = (e: any) => {
     const inputValue = e.target.value;
@@ -31,16 +37,21 @@ const CurrencyField: React.FC<ICurrencyField> = ({
   };
 
   const formatCurrency = (value: any) => {
-    // Allow only digits and commas
-    value = value.replace(/[^\d,]/g, '');
+    if (currency === 'idr') {
+      value = value.replace(/[^\d,]/g, '');
+      const parts = value.split('.');
 
-    // Split the input value into integer and decimal parts
-    const parts = value.split('.');
+      const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
-    // Format the integer part with thousand separators
-    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return integerPart;
+    } else {
+      value = value.replace(/[^\d.]/g, '');
+      const parts = value.split(',');
 
-    return integerPart;
+      const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+      return integerPart;
+    }
   };
 
   return (
@@ -52,7 +63,10 @@ const CurrencyField: React.FC<ICurrencyField> = ({
       <p className="font-bold text-sm">{name}</p>
       <div className="flex flex-row gap-2 w-full">
         <div className="flex flex-row gap-2 items-center w-full">
-          <p className="text-sm font-bold">IDR</p>
+          <span className="w-[35px]">
+            <p className="text-sm font-bold">{currency?.toUpperCase()}</p>
+          </span>
+
           <input
             type="text"
             placeholder={placeholder}
