@@ -406,8 +406,8 @@ export default function EmailFormBuilderNew() {
             componentId: element.componentId,
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
-            }\", \"currency\": \"${element.currency ?? 'idr'}\"}, \"max_decimal\": \"${
-              element.maxDecimal ?? 0
+            }\", \"currency\": \"${element.currency ?? 'idr'}\", \"max_decimal\": \"${
+              element.maxDecimal ?? -1
             }\", \"min_value\": \"${element.minValue ?? 1}\"}`, //eslint-disable-line
           };
         default:
@@ -1165,7 +1165,7 @@ export default function EmailFormBuilderNew() {
             <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
               <EFBPreview.CurrencyField
                 name={element.name}
-                currency={element.text_currency}
+                currency={element.currency}
                 placeholder={element.placeholder}
                 isActive={activeComponent?.index === index}
                 onClick={() => {
