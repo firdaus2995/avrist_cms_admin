@@ -178,7 +178,12 @@ const convertFileUploaderValue = (data: any[]) => {
     data.forEach((img: any, idx: number) => {
       const jsonValue = JSON.parse(img);
       if (!jsonValue.length) {
-        data[idx] = '-';
+        data[idx] = JSON.stringify([
+          {
+            imageUrl: 'no-image',
+            altText: 'no-image',
+          },
+        ]);
       }
     });
   }
