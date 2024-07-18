@@ -131,7 +131,7 @@ export default function EmailFormBuilderNew() {
       const arrayFormAttribute: any = JSON.parse(dataAttribute?.getConfig?.value).attributes;
       const objectFormAttribute: any = {};
 
-      console.log(arrayFormAttribute);
+      console.log(JSON.parse(dataAttribute?.getConfig?.value));
 
       for (const element of arrayFormAttribute) {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
@@ -398,7 +398,7 @@ export default function EmailFormBuilderNew() {
               element.maxLength ?? -1
             }\"}`, //eslint-disable-line
           };
-        case 'CURRENCY':
+        case 'TEXTCURRENCY':
           return {
             fieldType: 'TEXT_CURRENCY',
             name: element.name,
@@ -407,8 +407,8 @@ export default function EmailFormBuilderNew() {
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"currency\": \"${element.currency ?? 'idr'}\", \"max_decimal\": \"${
-              element.maxDecimal ?? -1
-            }\", \"min_value\": \"${element.minValue ?? 1}\"}`, //eslint-disable-line
+              element.max_decimal ?? 0
+            }\", \"min_value\": \"${element.min_value ?? 1}\"}`, //eslint-disable-line
           };
         default:
           return false;
@@ -803,7 +803,7 @@ export default function EmailFormBuilderNew() {
           },
         };
         break;
-      case 'CURRENCY':
+      case 'TEXTCURRENCY':
         component = {
           uuid: uuidv4(),
           type: item,
@@ -1160,7 +1160,7 @@ export default function EmailFormBuilderNew() {
               />
             </DragDrop>
           );
-        case 'CURRENCY':
+        case 'TEXTCURRENCY':
           return (
             <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
               <EFBPreview.CurrencyField
@@ -1355,7 +1355,7 @@ export default function EmailFormBuilderNew() {
             }}
           />
         );
-      case 'CURRENCY':
+      case 'TEXTCURRENCY':
         return (
           <EFBConfiguration.CurrencyField
             data={activeComponent?.data}

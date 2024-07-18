@@ -17,7 +17,8 @@ interface IConfig {
 }
 
 const Config: React.FC<IConfig> = ({ data, configList, valueChange }) => {
-  return configList.map((element: any, index: number) => {
+  console.log(configList);
+  return configList?.map((element: any, index: number) => {
     switch (element.type) {
       case 'text_field':
         return (

@@ -10,6 +10,8 @@ interface ICurrencyField {
 }
 
 const CurrencyField: React.FC<ICurrencyField> = ({ data, configList, valueChange }) => {
+  console.log(data);
+  console.log(configList);
   useEffect(() => {
     valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
   }, [data?.name]);

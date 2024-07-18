@@ -21,8 +21,6 @@ const CurrencyField: React.FC<ICurrencyField> = ({
 }) => {
   const [val, setVal] = useState('');
 
-  console.log(currency);
-
   useEffect(() => {
     setVal('');
   }, [currency]);
