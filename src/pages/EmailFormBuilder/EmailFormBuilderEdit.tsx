@@ -515,8 +515,8 @@ export default function EmailFormBuilderEdit() {
             componentId: element.componentId,
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
-            }\", \"currency\": \"${element.currency ?? 'idr'}\"}, \"max_decimal\": \"${
-              element.maxDecimal ?? 0
+            }\", \"currency\": \"${element.currency ?? 'idr'}\", \"max_decimal\": \"${
+              element.maxDecimal ?? -1
             }\", \"min_value\": \"${element.minValue ?? 1}\"}`, //eslint-disable-line
           };
         default:
@@ -529,6 +529,7 @@ export default function EmailFormBuilderEdit() {
       fieldType: 'ENABLE_CAPTCHA',
       name: 'ENABLE_CAPTCHA',
       fieldId: 'ENABLE_CAPTCHA',
+      componentId: 'enable-captcha',
       value: checkCaptcha ? 'true' : 'false',
     });
 
@@ -573,6 +574,7 @@ export default function EmailFormBuilderEdit() {
         fieldType: 'EMAIL_FORM_PIC',
         name: 'EMAIL_FORM_PIC',
         fieldId: 'EMAIL_FORM_PIC',
+        componentId: 'email-form-pic',
         value: pics.join(';'),
       });
     }
@@ -876,12 +878,11 @@ export default function EmailFormBuilderEdit() {
           uuid: uuidv4(),
           type: item,
           name: 'Date Picker Name',
-          componentId: 'date-picker-name',
-          items: [],
+          placeholder: 'Enter your field',
+          multipleInput: false,
           required: false,
           mandatory: {
             name: false,
-            items: false,
           },
         };
         break;
@@ -891,11 +892,10 @@ export default function EmailFormBuilderEdit() {
           type: item,
           name: 'Range Date Picker Name',
           componentId: 'range-date-picker-name',
-          items: [],
+          placeholder: 'Enter your field',
           required: false,
           mandatory: {
             name: false,
-            items: false,
           },
         };
         break;
@@ -905,11 +905,10 @@ export default function EmailFormBuilderEdit() {
           type: item,
           name: 'Phone Number Name',
           componentId: 'phone-number-name',
-          items: [],
+          placeholder: 'Enter your field',
           required: false,
           mandatory: {
             name: false,
-            items: false,
           },
         };
         break;
@@ -919,11 +918,10 @@ export default function EmailFormBuilderEdit() {
           type: item,
           name: 'Currency Field Name',
           componentId: 'currency-field-name',
-          items: [],
+          placeholder: 'Enter your field',
           required: false,
           mandatory: {
             name: false,
-            items: false,
           },
         };
         break;
@@ -1276,6 +1274,7 @@ export default function EmailFormBuilderEdit() {
             <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
               <EFBPreview.CurrencyField
                 name={element.name}
+                currency={element.currency}
                 placeholder={element.placeholder}
                 isActive={activeComponent?.index === index}
                 onClick={() => {
