@@ -79,6 +79,15 @@ export default function EmailFormBuilderEdit() {
   const [showCaptchaModal, setShowCaptchaModal] = useState<boolean>(false);
   const [titleCaptchaModalShow, setTitleCaptchaModalShow] = useState<string | null>('');
   const [messageCaptchaModalShow, setMessageCaptchaModalShow] = useState<string | null>('');
+  // NEW EMAIL BODY
+  const [emailPic, setEmailPic] = useState({
+    title: '',
+    body: '',
+  });
+  const [emailSubmitter, setEmailSubmitter] = useState({
+    title: '',
+    body: '',
+  });
 
   // RTK GET ATTRIBUTE
   const { data: dataAttribute } = useGetEmailFormAttributeListQuery(
@@ -142,11 +151,32 @@ export default function EmailFormBuilderEdit() {
   }, [watch]);
 
   useEffect(() => {
+    if (dataDetail) {
+      const emailFormBuilderDetail = dataDetail.postTypeDetail;
+      if (emailFormBuilderDetail) {
+        setEmailPic({
+          ...emailPic,
+          title: emailFormBuilderDetail.emailSubject,
+          body: emailFormBuilderDetail.emailBody,
+        });
+        setEmailSubmitter({
+          ...emailSubmitter,
+          title: emailFormBuilderDetail.emailSubjectSubmitter,
+          body: emailFormBuilderDetail.emailBodySubmitter,
+        });
+      }
+    }
+  }, [dataDetail, useForm]);
+
+  setValue('picTitle', emailPic.title);
+  setValue('picBody', emailPic.body);
+  setValue('submitterTitle', emailSubmitter.title);
+  setValue('submitterBody', emailSubmitter.body);
+
+  useEffect(() => {
     if (dataAttribute?.getConfig) {
       const arrayFormAttribute: any = JSON.parse(dataAttribute?.getConfig?.value).attributes;
       const objectFormAttribute: any = {};
-
-      console.log(arrayFormAttribute);
 
       for (const element of arrayFormAttribute) {
         objectFormAttribute[element.code.replaceAll('_', '').toUpperCase()] = element.config;
@@ -168,12 +198,12 @@ export default function EmailFormBuilderEdit() {
         }
       }
 
-      console.log(objectFormAttribute);
-
       setFormAttribute(arrayFormAttribute);
       setObjectFormAttribute(objectFormAttribute);
     }
-  }, [dataAttribute]);
+  }, [dataAttribute, components]);
+
+  console.log(objectFormAttribute);
 
   useEffect(() => {
     if (dataFormTemplate) {
@@ -258,6 +288,18 @@ export default function EmailFormBuilderEdit() {
             }),
             ...(!!Object.getOwnPropertyDescriptor(config, 'position') && {
               position: config?.position[0].toUpperCase(),
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'date_validation') && {
+              date_validation: config?.date_validation,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'currency') && {
+              currency: config?.currency,
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'max_decimal') && {
+              max_decimal: parseInt(config?.max_decimal),
+            }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'min_value') && {
+              min_value: parseInt(config?.min_value),
             }),
 
             ...((element?.fieldType === 'CHECKBOX' ||
@@ -402,14 +444,6 @@ export default function EmailFormBuilderEdit() {
             componentId: element.componentId,
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
           };
-        case 'SUBMITTEREMAIL':
-          return {
-            fieldType: 'EMAIL',
-            name: element.name,
-            fieldId: 'EMAIL',
-            componentId: element.componentId,
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
-          };
         case 'LABEL':
           return {
             fieldType: 'LABEL',
@@ -500,24 +534,24 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'PHONE_NUMBER',
             name: element.name,
             fieldId: 'PHONE_NUMBER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? 'phone-number-name',
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"min_length\": \"${element.minLength ?? 1}\", \"max_length\": \"${
               element.maxLength ?? -1
             }\"}`, //eslint-disable-line
           };
-        case 'CURRENCY':
+        case 'TEXTCURRENCY':
           return {
             fieldType: 'TEXT_CURRENCY',
             name: element.name,
             fieldId: 'TEXT_CURRENCY',
-            componentId: element.componentId,
+            componentId: element.componentId ?? 'currency-field-name',
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"currency\": \"${element.currency ?? 'idr'}\", \"max_decimal\": \"${
-              element.maxDecimal ?? -1
-            }\", \"min_value\": \"${element.minValue ?? 1}\"}`, //eslint-disable-line
+              element.max_decimal ?? 0
+            }\", \"min_value\": \"${element.min_value ?? 1}\"}`, //eslint-disable-line
           };
         default:
           return false;
@@ -532,6 +566,16 @@ export default function EmailFormBuilderEdit() {
       componentId: 'enable-captcha',
       value: checkCaptcha ? 'true' : 'false',
     });
+
+    if (pics.length > 0) {
+      backendComponents.unshift({
+        fieldType: 'EMAIL_FORM_PIC',
+        name: 'EMAIL_FORM_PIC',
+        fieldId: 'EMAIL_FORM_PIC',
+        componentId: 'email-form-pic',
+        value: pics.join(';'),
+      });
+    }
 
     if (getValues('picTitle') && getValues('picBody')) {
       backendComponents.unshift({
@@ -566,16 +610,6 @@ export default function EmailFormBuilderEdit() {
         fieldId: 'EMAIL_BODY_SUBMITTER',
         componentId: 'email-body-submitter',
         value: getValues('submitterBody'),
-      });
-    }
-
-    if (pics.length > 0) {
-      backendComponents.unshift({
-        fieldType: 'EMAIL_FORM_PIC',
-        name: 'EMAIL_FORM_PIC',
-        fieldId: 'EMAIL_FORM_PIC',
-        componentId: 'email-form-pic',
-        value: pics.join(';'),
       });
     }
 
@@ -648,7 +682,6 @@ export default function EmailFormBuilderEdit() {
 
   const handlerSubmitterEmail = (value: any) => {
     if (value) {
-      handlerAddComponent('SUBMITTEREMAIL');
       setCheckSubmitterEmail(true);
     } else {
       const indexSubmitterEmail: number = components.findIndex((element: any) => {
@@ -766,19 +799,6 @@ export default function EmailFormBuilderEdit() {
           },
         };
         break;
-      case 'SUBMITTEREMAIL':
-        component = {
-          uuid: uuidv4(),
-          type: item,
-          name: 'Submitter Email Name',
-          placeholder: 'Enter your email',
-          required: true,
-          submitter: true,
-          mandatory: {
-            name: false,
-          },
-        };
-        break;
       case 'LABEL':
         component = {
           uuid: uuidv4(),
@@ -866,6 +886,7 @@ export default function EmailFormBuilderEdit() {
           type: item,
           name: 'TnC Name',
           items: [],
+          componentId: 'tnc-name',
           required: false,
           mandatory: {
             name: false,
@@ -879,6 +900,7 @@ export default function EmailFormBuilderEdit() {
           type: item,
           name: 'Date Picker Name',
           placeholder: 'Enter your field',
+          componentId: 'date-picker-name',
           multipleInput: false,
           required: false,
           mandatory: {
@@ -912,7 +934,7 @@ export default function EmailFormBuilderEdit() {
           },
         };
         break;
-      case 'CURRENCY':
+      case 'TEXTCURRENCY':
         component = {
           uuid: uuidv4(),
           type: item,
@@ -1082,19 +1104,6 @@ export default function EmailFormBuilderEdit() {
                 }}
                 onDelete={() => {
                   handlerDeleteComponent(index);
-                }}
-              />
-            </DragDrop>
-          );
-        case 'SUBMITTEREMAIL':
-          return (
-            <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
-              <EFBPreview.SubmitterEmail
-                name={element.name}
-                placeholder={element.placeholder}
-                isActive={activeComponent?.index === index}
-                onClick={() => {
-                  handlerFocusComponent(element, index);
                 }}
               />
             </DragDrop>
@@ -1269,7 +1278,7 @@ export default function EmailFormBuilderEdit() {
               />
             </DragDrop>
           );
-        case 'CURRENCY':
+        case 'TEXTCURRENCY':
           return (
             <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
               <EFBPreview.CurrencyField
@@ -1354,16 +1363,7 @@ export default function EmailFormBuilderEdit() {
             }}
           />
         );
-      case 'SUBMITTEREMAIL':
-        return (
-          <EFBConfiguration.SubmitterEmail
-            data={activeComponent?.data}
-            configList={objectFormAttribute.EMAIL}
-            valueChange={(type: string, value: any) => {
-              functionChangeState(type, value);
-            }}
-          />
-        );
+
       case 'LABEL':
         return (
           <EFBConfiguration.Label
@@ -1464,7 +1464,7 @@ export default function EmailFormBuilderEdit() {
             }}
           />
         );
-      case 'CURRENCY':
+      case 'TEXTCURRENCY':
         return (
           <EFBConfiguration.CurrencyField
             data={activeComponent?.data}
@@ -1724,7 +1724,6 @@ export default function EmailFormBuilderEdit() {
               <Controller
                 name="picTitle"
                 control={control}
-                defaultValue=""
                 rules={{ required: t('components.atoms.required') ?? '' }}
                 render={({ field }) => (
                   <InputText
@@ -1735,6 +1734,7 @@ export default function EmailFormBuilderEdit() {
                     labelRequired
                     direction="row"
                     roundStyle="xl"
+                    value={getValues('picTitle')}
                     placeholder="Enter your title"
                     inputWidth={400}
                     maxLength={30}
@@ -1753,6 +1753,7 @@ export default function EmailFormBuilderEdit() {
                   render={({ field }) => (
                     <CkEditor
                       {...field}
+                      data={field.value}
                       onChange={(data: string) => {
                         setValue('picBody', data);
                       }}
