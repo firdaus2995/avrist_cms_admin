@@ -166,12 +166,13 @@ export default function EmailFormBuilderEdit() {
         });
       }
     }
-  }, [dataDetail, useForm]);
-
-  setValue('picTitle', emailPic.title);
-  setValue('picBody', emailPic.body);
-  setValue('submitterTitle', emailSubmitter.title);
-  setValue('submitterBody', emailSubmitter.body);
+    if (!getValues('picTitle')) {
+      setValue('picTitle', emailPic.title);
+      setValue('picBody', emailPic.body);
+      setValue('submitterTitle', emailSubmitter.title);
+      setValue('submitterBody', emailSubmitter.body);
+    }
+  }, [dataDetail, getValues('picTitle')]);
 
   useEffect(() => {
     if (dataAttribute?.getConfig) {
@@ -203,7 +204,7 @@ export default function EmailFormBuilderEdit() {
     }
   }, [dataAttribute, components]);
 
-  console.log(objectFormAttribute);
+  console.log('objectFormAttribute');
 
   useEffect(() => {
     if (dataFormTemplate) {
@@ -394,7 +395,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'TEXT_FIELD',
             name: element.name,
             fieldId: 'TEXT_FIELD',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.hidden}\"}`, //eslint-disable-line
           };
         case 'TEXTAREA':
@@ -402,7 +403,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'TEXT_AREA',
             name: element.name,
             fieldId: 'TEXT_AREA',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"multiple_input\": \"${element.multipleInput}\", \"max_length\": \"${
@@ -414,7 +415,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'DROPDOWN',
             name: element.name,
             fieldId: 'DROPDOWN',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multipleSelect}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -423,7 +424,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'RADIO_BUTTON',
             name: element.name,
             fieldId: 'RADIO_BUTTON',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -432,7 +433,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'CHECKBOX',
             name: element.name,
             fieldId: 'CHECKBOX',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -441,7 +442,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'EMAIL',
             name: element.name,
             fieldId: 'EMAIL',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
           };
         case 'LABEL':
@@ -449,7 +450,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'LABEL',
             name: element.name,
             fieldId: 'LABEL',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"size\": [\"${element.size.toLowerCase()}\"], \"position\": [\"${element.position.toLowerCase()}\"]}`, //eslint-disable-line
           };
         case 'NUMBER':
@@ -457,7 +458,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'NUMBER',
             name: element.name,
             fieldId: 'NUMBER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"use_decimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
           };
         case 'DOCUMENT':
@@ -465,7 +466,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'DOCUMENT',
             name: element.name,
             fieldId: 'DOCUMENT',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case 'IMAGE':
@@ -473,7 +474,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'IMAGE',
             name: element.name,
             fieldId: 'IMAGE',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case 'LINEBREAK':
@@ -481,7 +482,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'LINE_BREAK',
             name: 'LINE_BREAK',
             fieldId: 'LINE_BREAK',
-            componentId: element.componentId,
+            componentId: element.componentId ?? 'line-break',
             config: ``, //eslint-disable-line
           };
         case 'RATING':
@@ -489,7 +490,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'RATING',
             name: element.name,
             fieldId: 'RATING',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -498,7 +499,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'IMAGE_RADIO',
             name: element.name,
             fieldId: 'IMAGE_RADIO',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -507,7 +508,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'TNC',
             name: element.name,
             fieldId: 'TNC',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -516,7 +517,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'DATE_PICKER',
             name: element.name,
             fieldId: 'DATE_PICKER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"date_validation\": \"${element.date_validation ?? 'all_date'}\"}`, //eslint-disable-line
@@ -526,7 +527,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'RANGE_DATE_PICKER',
             name: element.name,
             fieldId: 'RANGE_DATE_PICKER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`, //eslint-disable-line
           };
         case 'PHONENUMBER':
@@ -534,7 +535,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'PHONE_NUMBER',
             name: element.name,
             fieldId: 'PHONE_NUMBER',
-            componentId: element.componentId ?? 'phone-number-name',
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"min_length\": \"${element.minLength ?? 1}\", \"max_length\": \"${
@@ -546,7 +547,7 @@ export default function EmailFormBuilderEdit() {
             fieldType: 'TEXT_CURRENCY',
             name: element.name,
             fieldId: 'TEXT_CURRENCY',
-            componentId: element.componentId ?? 'currency-field-name',
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"currency\": \"${element.currency ?? 'idr'}\", \"max_decimal\": \"${
@@ -613,10 +614,12 @@ export default function EmailFormBuilderEdit() {
       });
     }
 
+    const filteredBackendComponents = backendComponents.filter((item: any) => item !== false);
+
     const payload = {
       id,
       name: data?.formName,
-      attributeRequests: backendComponents,
+      attributeRequests: filteredBackendComponents,
       formResult: data?.formTemplate,
     };
 
