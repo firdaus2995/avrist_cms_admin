@@ -445,6 +445,14 @@ export default function EmailFormBuilderEdit() {
             componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
           };
+        case 'SUBMITTEREMAIL':
+          return {
+            fieldType: 'EMAIL',
+            name: element.name,
+            fieldId: 'EMAIL',
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
+            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
+          };
         case 'LABEL':
           return {
             fieldType: 'LABEL',
@@ -685,6 +693,7 @@ export default function EmailFormBuilderEdit() {
 
   const handlerSubmitterEmail = (value: any) => {
     if (value) {
+      handlerAddComponent('SUBMITTEREMAIL');
       setCheckSubmitterEmail(true);
     } else {
       const indexSubmitterEmail: number = components.findIndex((element: any) => {
@@ -894,6 +903,20 @@ export default function EmailFormBuilderEdit() {
           mandatory: {
             name: false,
             items: false,
+          },
+        };
+        break;
+      case 'SUBMITTEREMAIL':
+        component = {
+          uuid: uuidv4(),
+          type: item,
+          name: 'Submitter Email Name',
+          placeholder: 'Enter the submitter email',
+          componentId: 'submitter-email-name',
+          required: true,
+          submitter: true,
+          mandatory: {
+            name: false,
           },
         };
         break;
@@ -1233,6 +1256,20 @@ export default function EmailFormBuilderEdit() {
               }}
             />
           );
+        case 'SUBMITTEREMAIL':
+          return (
+            <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
+              <EFBPreview.SubmitterEmail
+                name={element.name}
+                placeholder={element.placeholder}
+                isActive={activeComponent?.index === index}
+                onClick={() => {
+                  handlerFocusComponent(element, index);
+                }}
+              />
+            </DragDrop>
+          );
+
         case 'DATEPICKER':
           return (
             <DragDrop key={element.uuid} index={index} moveComponent={handlerReorderComponent}>
@@ -1432,6 +1469,16 @@ export default function EmailFormBuilderEdit() {
           <EFBConfiguration.TNC
             data={activeComponent?.data}
             configList={objectFormAttribute[activeComponent?.data?.type]}
+            valueChange={(type: string, value: any) => {
+              functionChangeState(type, value);
+            }}
+          />
+        );
+      case 'SUBMITTEREMAIL':
+        return (
+          <EFBConfiguration.SubmitterEmail
+            data={activeComponent?.data}
+            configList={objectFormAttribute.EMAIL}
             valueChange={(type: string, value: any) => {
               functionChangeState(type, value);
             }}

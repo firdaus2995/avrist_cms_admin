@@ -243,7 +243,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'TEXT_FIELD',
             name: element.name,
             fieldId: 'TEXT_FIELD',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.hidden}\"}`, //eslint-disable-line
           };
         case 'TEXTAREA':
@@ -251,7 +251,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'TEXT_AREA',
             name: element.name,
             fieldId: 'TEXT_AREA',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"multiple_input\": \"${element.multipleInput}\", \"max_length\": \"${
@@ -263,7 +263,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'DROPDOWN',
             name: element.name,
             fieldId: 'DROPDOWN',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_select\": \"${element.multipleSelect}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -272,7 +272,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'RADIO_BUTTON',
             name: element.name,
             fieldId: 'RADIO_BUTTON',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -281,7 +281,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'CHECKBOX',
             name: element.name,
             fieldId: 'CHECKBOX',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"allow_other_value\": \"${element.allowOtherValue}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -290,7 +290,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'EMAIL',
             name: element.name,
             fieldId: 'EMAIL',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"false\"}`, //eslint-disable-line
           };
         case 'SUBMITTEREMAIL':
@@ -298,7 +298,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'EMAIL',
             name: element.name,
             fieldId: 'EMAIL',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
           };
         case 'LABEL':
@@ -306,7 +306,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'LABEL',
             name: element.name,
             fieldId: 'LABEL',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"size\": [\"${element.size.toLowerCase()}\"], \"position\": [\"${element.position.toLowerCase()}\"]}`, //eslint-disable-line
           };
         case 'NUMBER':
@@ -314,7 +314,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'NUMBER',
             name: element.name,
             fieldId: 'NUMBER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"use_decimal\": \"${element.useDecimal}\"}`, //eslint-disable-line
           };
         case 'DOCUMENT':
@@ -322,7 +322,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'DOCUMENT',
             name: element.name,
             fieldId: 'DOCUMENT',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case 'IMAGE':
@@ -330,7 +330,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'IMAGE',
             name: element.name,
             fieldId: 'IMAGE',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\", \"multiple_upload\": \"${element.multipleUpload}\"}`, //eslint-disable-line
           };
         case 'LINEBREAK':
@@ -338,7 +338,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'LINE_BREAK',
             name: 'LINE_BREAK',
             fieldId: 'LINE_BREAK',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: ``, //eslint-disable-line
           };
         case 'RATING':
@@ -346,7 +346,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'RATING',
             name: element.name,
             fieldId: 'RATING',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -355,7 +355,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'IMAGE_RADIO',
             name: element.name,
             fieldId: 'IMAGE_RADIO',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -364,7 +364,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'TNC',
             name: element.name,
             fieldId: 'TNC',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"required\": \"${element.required}\"}`, //eslint-disable-line
             value: element.items.join(';'),
           };
@@ -373,7 +373,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'DATE_PICKER',
             name: element.name,
             fieldId: 'DATE_PICKER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"date_validation\": \"${element.date_validation ?? 'all_date'}\"}`, //eslint-disable-line
@@ -383,7 +383,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'RANGE_DATE_PICKER',
             name: element.name,
             fieldId: 'RANGE_DATE_PICKER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\"}`, //eslint-disable-line
           };
         case 'PHONENUMBER':
@@ -391,7 +391,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'PHONE_NUMBER',
             name: element.name,
             fieldId: 'PHONE_NUMBER',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"min_length\": \"${element.minLength ?? 1}\", \"max_length\": \"${
@@ -403,7 +403,7 @@ export default function EmailFormBuilderNew() {
             fieldType: 'TEXT_CURRENCY',
             name: element.name,
             fieldId: 'TEXT_CURRENCY',
-            componentId: element.componentId,
+            componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${
               element.required
             }\", \"currency\": \"${element.currency ?? 'idr'}\", \"max_decimal\": \"${
@@ -538,13 +538,13 @@ export default function EmailFormBuilderNew() {
 
   const handlerSubmitterEmail = (value: any) => {
     if (value) {
-      // handlerAddComponent('SUBMITTEREMAIL');
+      handlerAddComponent('SUBMITTEREMAIL');
       setCheckSubmitterEmail(true);
     } else {
-      // const indexSubmitterEmail: number = components.findIndex((element: any) => {
-      //   return element.type === 'SUBMITTEREMAIL';
-      // });
-      // handlerDeleteComponent(indexSubmitterEmail);
+      const indexSubmitterEmail: number = components.findIndex((element: any) => {
+        return element.type === 'SUBMITTEREMAIL';
+      });
+      handlerDeleteComponent(indexSubmitterEmail);
       setCheckSubmitterEmail(false);
     }
   };
@@ -1543,7 +1543,7 @@ export default function EmailFormBuilderNew() {
               onAdd={handlerAddMultipleInput}
               onDelete={handlerDeleteMultipleInput}
             />
-            <div className={`flex flex-row justify-start ${pics.length < 2 ? '' : 'gap-5'}`}>
+            <div className={`flex flex-row justify-star`}>
               <div className="ml-[225px]">
                 <CheckBox
                   defaultValue={checkSubmitterEmail}
@@ -1554,7 +1554,6 @@ export default function EmailFormBuilderNew() {
                     'user.email-form-builder-new.email-form-builder.add.also-send-label',
                   )}
                   labelContainerStyle="justify-start"
-                  containerStyle={pics.length < 2 ? 'hidden' : ''}
                 />
               </div>
               <CheckBox
