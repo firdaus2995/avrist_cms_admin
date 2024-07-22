@@ -1712,7 +1712,6 @@ export default function EmailFormBuilderEdit() {
                     'user.email-form-builder-new.email-form-builder.add.also-send-label',
                   )}
                   labelContainerStyle="justify-start"
-                  containerStyle={pics.length < 2 ? 'hidden' : ''}
                 />
               </div>
               <CheckBox
@@ -1848,6 +1847,7 @@ export default function EmailFormBuilderEdit() {
                     render={({ field }) => (
                       <CkEditor
                         {...field}
+                        data={field.value}
                         onChange={(data: string) => {
                           setValue('submitterBody', data);
                         }}

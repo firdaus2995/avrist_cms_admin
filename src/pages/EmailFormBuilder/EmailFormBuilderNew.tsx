@@ -1543,7 +1543,7 @@ export default function EmailFormBuilderNew() {
               onAdd={handlerAddMultipleInput}
               onDelete={handlerDeleteMultipleInput}
             />
-            <div className={`flex flex-row justify-star`}>
+            <div className={`flex flex-row justify-start`}>
               <div className="ml-[225px]">
                 <CheckBox
                   defaultValue={checkSubmitterEmail}
