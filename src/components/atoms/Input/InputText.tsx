@@ -1,4 +1,4 @@
-import React, { HTMLInputTypeAttribute } from 'react';
+import React, { HTMLInputTypeAttribute, useRef, useEffect } from 'react';
 
 import ErrorSmallIcon from '../../../assets/error-small.svg';
 import { t } from 'i18next';
@@ -56,6 +56,29 @@ export const InputText: React.FC<IInputText> = ({
   suffix,
   readOnly,
 }) => {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    const handleWheel = (event: WheelEvent) => {
+      if (inputRef.current && inputRef.current === document.activeElement) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    };
+
+    // Attach event listener on component mount
+    if (inputRef.current) {
+      inputRef.current.addEventListener('wheel', handleWheel, { passive: false });
+    }
+
+    return () => {
+      // Cleanup: remove event listener on component unmount
+      if (inputRef.current) {
+        inputRef.current.removeEventListener('wheel', handleWheel);
+      }
+    };
+  }, []); // Empty dependency array ensures effect runs only once on mount
+
   return (
     <div className={`${direction === 'row' ? '' : 'w-full'}`}>
       <div
@@ -87,6 +110,7 @@ export const InputText: React.FC<IInputText> = ({
             themeColor ?? '[#D2D4D7]'
           } ${disabled ? 'bg-[#E9EEF4] ' : ''} ${isError && 'border-reddist'}`}>
           <input
+            ref={inputRef}
             name={name}
             type={type ?? 'text'}
             value={value}
