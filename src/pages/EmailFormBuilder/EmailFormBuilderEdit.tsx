@@ -166,13 +166,16 @@ export default function EmailFormBuilderEdit() {
         });
       }
     }
+  }, [dataDetail]);
+
+  useEffect(() => {
     if (!getValues('picTitle')) {
       setValue('picTitle', emailPic.title);
       setValue('picBody', emailPic.body);
       setValue('submitterTitle', emailSubmitter.title);
       setValue('submitterBody', emailSubmitter.body);
     }
-  }, [dataDetail, getValues('picTitle')]);
+  }, [emailPic, emailSubmitter, getValues, setValue]);
 
   useEffect(() => {
     if (dataAttribute?.getConfig) {
