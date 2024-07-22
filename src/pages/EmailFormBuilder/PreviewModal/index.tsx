@@ -13,16 +13,12 @@ import { copyArray } from '@/utils/logicHelper';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 
 interface IPreviewModal {
-  open: boolean,
-  id: number | null,
-  toggle: () => void,
+  open: boolean;
+  id: number | null;
+  toggle: () => void;
 }
 
-export default function PreviewModal({
-  open, 
-  toggle, 
-  id,
-}: IPreviewModal) {
+export default function PreviewModal({ open, toggle, id }: IPreviewModal) {
   const nameId: any = uuidv4();
 
   const [listData, setListData] = useState([]);
@@ -322,6 +318,81 @@ export default function PreviewModal({
               inputStyle="w-[20px] h-[20px]"
             />
           );
+        case 'DATE_PICKER': {
+          return (
+            <InputText
+              key={index}
+              disabled
+              labelTitle={name}
+              labelStyle="font-bold	"
+              labelRequired={required}
+              value={name}
+              placeholder={'name'}
+              roundStyle="xl"
+            />
+          );
+        }
+        case 'RANGE_DATE_PICKER': {
+          return (
+            <div>
+              <p className="text-sm font-bold my-2 flex flex-row gap-1">
+                {name}
+                <span className="text-reddist">{required ? '*' : ''}</span>
+              </p>
+              <div className="flex flex-row gap-2">
+                <div className="flex flex-row gap-2 items-center h-full w-full">
+                  <p className="text-sm font-bold">From</p>
+                  <input
+                    key={index}
+                    disabled
+                    placeholder={'yyyy/mm/dd'}
+                    className="bg-[#E9EEF4] border border-other-grey rounded-xl py-2 px-4 w-full"
+                  />
+                </div>
+                <div className="flex flex-row gap-2 items-center h-full w-full">
+                  <p className="text-sm font-bold h-full">To</p>
+                  <input
+                    key={index}
+                    disabled
+                    placeholder={'yyyy/mm/dd'}
+                    className="bg-[#E9EEF4] border border-other-grey rounded-xl py-2 px-4 w-full"
+                  />
+                </div>
+              </div>
+            </div>
+          );
+        }
+        case 'PHONE_NUMBER':
+          return (
+            <InputText
+              key={index}
+              disabled
+              labelTitle={name}
+              labelStyle="font-bold	"
+              labelRequired={required}
+              value={name}
+              placeholder={'name'}
+              roundStyle="xl"
+            />
+          );
+        case 'TEXT_CURRENCY':
+          return (
+            <div>
+              <p className="text-sm font-bold my-2 flex flex-row gap-1">
+                {name}
+                <span className="text-reddist">{required ? '*' : ''}</span>
+              </p>
+              <div className="flex flex-row gap-2 items-center h-full w-full">
+                <p className="text-sm font-bold h-full">{dataConfig?.currency.toUpperCase()}</p>
+                <input
+                  key={index}
+                  disabled
+                  placeholder={'Harga'}
+                  className="bg-[#E9EEF4] border border-other-grey rounded-xl py-2 px-4 w-full"
+                />
+              </div>
+            </div>
+          );
         default:
           return <div key={index}>err: {JSON.stringify(data.postTypeDetail.postTypeGroup)}</div>;
       }
@@ -358,20 +429,24 @@ export default function PreviewModal({
             </div>
           ) : (
             <>
-              <div className='p-[16px] mr-2 bg-toast-error rounded-lg'>
-                <div className='flex flex-col gap-2'>
+              <div className="p-[16px] mr-2 bg-toast-error rounded-lg">
+                <div className="flex flex-col gap-2">
                   <Typography type="body" size="m" weight="bold" className="text-reddist">
-                    {t('user.email-form-builder-list.email-form-builder.list.preview-disclaimer-title')}
+                    {t(
+                      'user.email-form-builder-list.email-form-builder.list.preview-disclaimer-title',
+                    )}
                   </Typography>
                   <Typography type="body" size="s" weight="regular" className="text-reddist">
-                    {t('user.email-form-builder-list.email-form-builder.list.preview-disclaimer-body')}
+                    {t(
+                      'user.email-form-builder-list.email-form-builder.list.preview-disclaimer-body',
+                    )}
                   </Typography>
                 </div>
               </div>
               <div className="mb-10 p-1 mr-2">{renderFormList()}</div>
               <div className="flex justify-center items-center">
                 <div className="btn btn-primary flex flex-row gap-2 rounded-xl w-80">Submit</div>
-              </div>            
+              </div>
             </>
           )}
         </div>
