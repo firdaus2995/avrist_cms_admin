@@ -27,6 +27,7 @@ const TextInputDropDown = ({
   onChange,
   items,
   value,
+  onItemClick,
 }: any) => {
   const [searchTerm, setSearchTerm] = useState(value || '');
   const [isOpen, setIsOpen] = useState(false);
@@ -71,7 +72,7 @@ const TextInputDropDown = ({
         <input
           id={id}
           type="text"
-          placeholder="Search, select or create an option..."
+          placeholder="Search and select an option..."
           value={searchTerm}
           onChange={handleInputChange}
           disabled={disabled}
@@ -99,7 +100,7 @@ const TextInputDropDown = ({
         </div>
       </div>
       {isOpen && (
-        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto">
+        <div className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto z-10">
           {filteredOptions.length > 0 ? (
             <ul>
               {filteredOptions.map((option: any, index: any) => (
@@ -107,6 +108,7 @@ const TextInputDropDown = ({
                   key={index}
                   onClick={() => {
                     handleOptionClick(option.label);
+                    onItemClick(option.label);
                   }}
                   className="px-4 py-2 rounded-xl cursor-pointer hover:bg-light-purple m-1">
                   {option.label}

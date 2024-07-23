@@ -20,6 +20,7 @@ import Plus from '@/assets/plus-purple.svg';
 import CancelIcon from '@/assets/cancel.png';
 import TableDelete from '@/assets/table-delete.svg';
 import ModalForm from '@/components/molecules/ModalForm';
+import CloseSolid from '../../assets/close-solid.svg';
 import PaperSubmit from '../../assets/paper-submit.png';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import {
@@ -144,6 +145,7 @@ export default function ContentManagerNew() {
 
   // TABLE PAGINATION STATE
   const [categoryList, setCategoryList] = useState<any>([]);
+  const [selectedCategories, setSelectedCategories] = useState<any>([]);
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(10);
   const [direction] = useState('asc');
@@ -207,7 +209,7 @@ export default function ContentManagerNew() {
       shortDesc: value.shortDesc,
       isDraft: true,
       postTypeId: id,
-      categoryName: postTypeDetail?.isUseCategory ? value.category : '',
+      categoryName: selectedCategories ?? [''],
       contentData: stringifyContentData(convertContentData(contentTempData)),
     };
 
@@ -255,7 +257,7 @@ export default function ContentManagerNew() {
       isDraft: false,
       isAutoApprove,
       postTypeId: id,
-      categories: postTypeDetail?.isUseCategory ? [value.category] : '',
+      categories: postTypeDetail?.isUseCategory ? selectedCategories : [''],
       contentData: stringifyData,
     };
     createContentData(payload)
@@ -1307,36 +1309,59 @@ export default function ContentManagerNew() {
             />
             {postTypeDetail?.isUseCategory && (
               <div className="flex flex-row">
-                <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+                <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-16">
                   {t('user.content-manager-new.category')}
                 </Typography>
-                <Controller
-                  name="category"
-                  control={control}
-                  defaultValue=""
-                  rules={{ required: t('user.content-manager-new.category-required') ?? '' }}
-                  render={({ field }) => {
-                    const onChange = useCallback(
-                      (e: any) => {
-                        handleFormChange('categoryName', e);
-                        field.onChange({ target: { value: e } });
-                      },
-                      [id, field, handleFormChange],
-                    );
-                    return (
-                      <FormList.TextInputDropDown
-                        {...field}
-                        key="category"
-                        labelTitle={t('user.content-manager-new.category')}
-                        placeholder={t('user.content-manager-new.title')}
-                        error={!!errors?.category?.message}
-                        helperText={errors?.category?.message}
-                        items={categoryList}
-                        onChange={onChange}
+                <div className="flex flex-col gap-2 w-full">
+                  <Controller
+                    name="category"
+                    control={control}
+                    rules={{
+                      required: `${t('user.content-manager-detail-data.category')} ${t(
+                        'user.content-manager-detail-data.is-required',
+                      )}`,
+                    }}
+                    render={({ field }) => {
+                      const onChange = useCallback(
+                        (e: any) => {
+                          if (e) {
+                            const newItems = new Set(selectedCategories);
+                            newItems.add(e);
+                            setSelectedCategories(Array.from(newItems));
+                          }
+                        },
+                        [id, field, handleFormChange],
+                      );
+                      return (
+                        <FormList.TextInputDropDown
+                          {...field}
+                          key="category"
+                          labelTitle={t('user.content-manager-detail-data.category')}
+                          placeholder={t('user.content-manager-detail-data.title')}
+                          error={!!errors?.category?.message}
+                          helperText={errors?.category?.message}
+                          items={categoryList}
+                          onItemClick={onChange}
+                        />
+                      );
+                    }}
+                  />
+                  {selectedCategories?.map((item: any, index: number) => (
+                    <div
+                      key={index}
+                      className="relative flex items-center h-[46px] px-[16px] py-[10px] bg-light-purple-2 rounded-xl z-0 w-auto">
+                      {item}
+                      <img
+                        className="absolute top-[-5px] right-[-5px] cursor-pointer"
+                        src={CloseSolid}
+                        onClick={() => {
+                          const filteredItem = selectedCategories.filter((i: any) => i !== item);
+                          setSelectedCategories(filteredItem);
+                        }}
                       />
-                    );
-                  }}
-                />
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
             <Controller
