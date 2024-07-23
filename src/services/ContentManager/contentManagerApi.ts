@@ -19,7 +19,7 @@ export const contentManagerApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
     getContentData: builder.query<any, any>({
       query: payload => ({
@@ -46,7 +46,10 @@ export const contentManagerApi = createApi({
                 id
                 title
                 shortDesc
-                categoryName
+                categories {
+                  categoryName
+                  categoryDescription
+                }
                 status
               }
             }
@@ -65,25 +68,27 @@ export const contentManagerApi = createApi({
             $sortBy: String
             $direction: String
             $archive: Boolean
-          ){
-            contentDataList(postTypeId: $id,
-            pageableRequest: {
-              pageIndex: $pageIndex
-              limit: $limit
-              sortBy: $sortBy
-              direction: $direction
-              isArchive: $archive
-            }) {
-                total
-                contentDataList {
-                    id
-                    title
-                    shortDesc
-                    categoryName
-                    status
-                }
+          ) {
+            contentDataList(
+              postTypeId: $id
+              pageableRequest: {
+                pageIndex: $pageIndex
+                limit: $limit
+                sortBy: $sortBy
+                direction: $direction
+                isArchive: $archive
+              }
+            ) {
+              total
+              contentDataList {
+                id
+                title
+                shortDesc
+                categoryName
+                status
+              }
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -122,17 +127,15 @@ export const contentManagerApi = createApi({
     restoreData: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation contentDataRestore(
-            $id: Int!
-          ){
-            contentDataRestore(id: $id) {    
-                id
-                title
-                shortDesc
-                categoryName
-                status
+          mutation contentDataRestore($id: Int!) {
+            contentDataRestore(id: $id) {
+              id
+              title
+              shortDesc
+              categoryName
+              status
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -140,17 +143,9 @@ export const contentManagerApi = createApi({
     createCategory: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation categoryCreate(
-            $postTypeId: Int!
-            $name: String!
-            $shortDesc: String!
-          ) {
+          mutation categoryCreate($postTypeId: Int!, $name: String!, $shortDesc: String!) {
             categoryCreate(
-              request: {
-                postTypeId: $postTypeId
-                name: $name
-                shortDesc: $shortDesc
-              }
+              request: { postTypeId: $postTypeId, name: $name, shortDesc: $shortDesc }
             ) {
               id
               name
@@ -160,7 +155,7 @@ export const contentManagerApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
     createContentData: builder.mutation<any, any>({
       query: payload => ({
@@ -199,18 +194,8 @@ export const contentManagerApi = createApi({
     editCategory: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation categoryUpdate(
-            $id: Int!
-            $name: String!
-            $shortDesc: String!
-          ) {
-            categoryUpdate(
-              id: $id
-              request: {
-                name: $name
-                shortDesc: $shortDesc
-              }
-            ) {
+          mutation categoryUpdate($id: Int!, $name: String!, $shortDesc: String!) {
+            categoryUpdate(id: $id, request: { name: $name, shortDesc: $shortDesc }) {
               id
               name
               shortDesc
@@ -219,18 +204,16 @@ export const contentManagerApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
     deleteContentData: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation contentDataDelete(
-              $id: Int!
-            ){
-            contentDataDelete(id: $id) {    
-                message
+          mutation contentDataDelete($id: Int!) {
+            contentDataDelete(id: $id) {
+              message
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -244,24 +227,26 @@ export const contentManagerApi = createApi({
             $limit: Int!
             $sortBy: String
             $direction: String
-          ){
-            contentDataMyTaskList(postTypeId: $postTypeId,
-            pageableRequest: {
+          ) {
+            contentDataMyTaskList(
+              postTypeId: $postTypeId
+              pageableRequest: {
                 pageIndex: $pageIndex
                 limit: $limit
                 sortBy: $sortBy
                 direction: $direction
-            }) {
-                total
-                contentDataList {
-                    id
-                    title
-                    shortDesc
-                    categoryName
-                    status
-                }
+              }
+            ) {
+              total
+              contentDataList {
+                id
+                title
+                shortDesc
+                categoryName
+                status
+              }
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -269,14 +254,15 @@ export const contentManagerApi = createApi({
     getContentDataDetail: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query contentDataDetail(
-            $id: Int!
-          ) {
+          query contentDataDetail($id: Int!) {
             contentDataDetail(id: $id) {
               id
               title
               shortDesc
-              categoryName
+              categories {
+                categoryName
+                categoryDescription
+              }
               status
               lastComment
               lastEdited {
@@ -308,21 +294,21 @@ export const contentManagerApi = createApi({
     getContentDataLogApproval: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query contentDataLogApproval($id: Int!){
-            contentDataLogApproval(id: $id) {    
-                logs {
-                    date
-                    value {
-                        status
-                        comment
-                        actionText
-                        user
-                        role
-                        createdAt
-                    }
+          query contentDataLogApproval($id: Int!) {
+            contentDataLogApproval(id: $id) {
+              logs {
+                date
+                value {
+                  status
+                  comment
+                  actionText
+                  user
+                  role
+                  createdAt
                 }
+              }
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -338,24 +324,25 @@ export const contentManagerApi = createApi({
             $postTypeId: Int!
             $categoryName: String!
             $contentData: [ContentDataAttributeRequest]!
-          ){
+          ) {
             contentDataUpdate(
-                id: $postTypeId,
-                request: {
-                    title: $title
-                    shortDesc: $shortDesc
-                    isDraft: $isDraft
-                    isAutoApprove: $isAutoApprove
-                    categoryName: $categoryName
-                    contentData: $contentData
-            }) {    
-                id
-                title
-                shortDesc
-                categoryName
-                status
+              id: $postTypeId
+              request: {
+                title: $title
+                shortDesc: $shortDesc
+                isDraft: $isDraft
+                isAutoApprove: $isAutoApprove
+                categoryName: $categoryName
+                contentData: $contentData
+              }
+            ) {
+              id
+              title
+              shortDesc
+              categoryName
+              status
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -363,20 +350,11 @@ export const contentManagerApi = createApi({
     updateContentDataStatus: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation contentDataUpdateStatus(
-            $id: Int!
-            $status: String!
-            $comment: String!
-          ){
-            contentDataUpdateStatus(
-                request: {
-                    id: $id
-                    status: $status
-                    comment: $comment
-            }) {    
+          mutation contentDataUpdateStatus($id: Int!, $status: String!, $comment: String!) {
+            contentDataUpdateStatus(request: { id: $id, status: $status, comment: $comment }) {
               message
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -384,11 +362,11 @@ export const contentManagerApi = createApi({
     restoreContentData: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation contentDataRestore($id: Int!){
+          mutation contentDataRestore($id: Int!) {
             contentDataRestore(id: $id) {
-                message
+              message
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -396,11 +374,11 @@ export const contentManagerApi = createApi({
     hardDeleteContentData: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation contentDataHardDelete($id: Int!){
-            contentDataHardDelete(id: $id) {    
-                message
+          mutation contentDataHardDelete($id: Int!) {
+            contentDataHardDelete(id: $id) {
+              message
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -408,11 +386,11 @@ export const contentManagerApi = createApi({
     deleteCategory: builder.mutation<any, any>({
       query: payload => ({
         document: gql`
-          mutation categoryDelete($id: Int!){
-            categoryDelete(id: $id) {    
-                message
+          mutation categoryDelete($id: Int!) {
+            categoryDelete(id: $id) {
+              message
             }
-        }
+          }
         `,
         variables: payload,
       }),
@@ -420,30 +398,23 @@ export const contentManagerApi = createApi({
     getEligibleAutoApprove: builder.query<any, any>({
       query: payload => ({
         document: gql`
-          query isUserEligibleAutoApprove(
-            $actionType: String!
-            $dataType: String!
-            ){
-            isUserEligibleAutoApprove(
-              request: {
-                actionType: $actionType
-                dataType: $dataType
-            }) {    
-                result
+          query isUserEligibleAutoApprove($actionType: String!, $dataType: String!) {
+            isUserEligibleAutoApprove(request: { actionType: $actionType, dataType: $dataType }) {
+              result
             }
-        }
+          }
         `,
         variables: payload,
       }),
     }),
-  })
-})
+  }),
+});
 
 export const {
   useGetCategoryDetailQuery,
   useGetContentDataQuery,
   useGetArchiveDataQuery,
-  useGetCategoryListQuery, 
+  useGetCategoryListQuery,
   useRestoreDataMutation,
   useCreateCategoryMutation,
   useCreateContentDataMutation,

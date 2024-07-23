@@ -7,7 +7,10 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import TimelineLog from '@/assets/timeline-log.svg';
 import WarningIcon from '@/assets/warning.png';
 import ModalLog from '../../components/ModalLog';
-import { useDeleteContentDataMutation, useGetContentDataQuery } from '@/services/ContentManager/contentManagerApi';
+import {
+  useDeleteContentDataMutation,
+  useGetContentDataQuery,
+} from '@/services/ContentManager/contentManagerApi';
 import { SortingState } from '@tanstack/react-table';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
@@ -16,7 +19,7 @@ import StatusBadge from '@/components/atoms/StatusBadge';
 import RoleRenderer from '@/components/atoms/RoleRenderer';
 import { allowedStatusDelete } from '@/constants/common';
 
-export default function MainTab(props: { id: any, isUseCategory: any }) {
+export default function MainTab(props: { id: any; isUseCategory: any }) {
   const dispatch = useAppDispatch();
   const { id, isUseCategory } = props;
   const { t } = useTranslation();
@@ -48,7 +51,8 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
   const [logTitle, setLogTitle] = useState(null);
 
   // RTK DELETE
-  const [deleteContentData, { isLoading: deleteContentDataLoading }] = useDeleteContentDataMutation();
+  const [deleteContentData, { isLoading: deleteContentDataLoading }] =
+    useDeleteContentDataMutation();
 
   useEffect(() => {
     if (data) {
@@ -58,19 +62,21 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
   }, [data]);
 
   useEffect(() => {
-    void fetchQuery.refetch()
-  }, [])
+    void fetchQuery.refetch();
+  }, []);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
   }, []);
+
+  console.log(data);
 
   const COLUMNS = [
     {
@@ -112,7 +118,9 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.title')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">{t('user.tabs-main.common.title')}</span>
+      ),
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -124,7 +132,11 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.shortDescription')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">
+          {t('user.tabs-main.common.shortDescription')}
+        </span>
+      ),
       accessorKey: 'shortDesc',
       enableSorting: false,
       cell: (info: any) => (
@@ -136,7 +148,9 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.categoryName')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">{t('user.tabs-main.common.categoryName')}</span>
+      ),
       accessorKey: 'categoryName',
       enableSorting: false,
       cell: (info: any) => (
@@ -148,35 +162,37 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-main.common.action.action')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">{t('user.tabs-main.common.action.action')}</span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex gap-3">
           <Link to={`detail/${info.getValue()}`}>
             <div className="tooltip" data-tip={'View Detail'}>
-              <button role="button" className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
+              <button
+                role="button"
+                className="h-[34px] border-box border-[1px] border-purple rounded-[6px] text-purple px-3 text-xs">
                 {t('user.tabs-main.common.action.viewDetail')}
               </button>
             </div>
           </Link>
-          {
-            allowedStatusDelete.includes(info.row?.original?.status) ? (
-              <RoleRenderer allowedRoles={['CONTENT_MANAGER_DELETE']}>
-                <div className="tooltip" data-tip={t('user.tabs-main.common.action.delete')}>
-                  <img
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableDelete}
-                    onClick={() => {
-                      onClickPageDelete(info.getValue(), info?.row?.original?.title);
-                    }}
-                  />
-                </div>
-              </RoleRenderer>
-            ) : (
-              <div className='w-[34px]'/>
-            )
-          }
+          {allowedStatusDelete.includes(info.row?.original?.status) ? (
+            <RoleRenderer allowedRoles={['CONTENT_MANAGER_DELETE']}>
+              <div className="tooltip" data-tip={t('user.tabs-main.common.action.delete')}>
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableDelete}
+                  onClick={() => {
+                    onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                  }}
+                />
+              </div>
+            </RoleRenderer>
+          ) : (
+            <div className="w-[34px]" />
+          )}
         </div>
       ),
     },
@@ -196,8 +212,8 @@ export default function MainTab(props: { id: any, isUseCategory: any }) {
     setShowConfirm(true);
   };
 
-   // FUNCTION FOR DELETE PAGE
-   const submitDeletePage = () => {
+  // FUNCTION FOR DELETE PAGE
+  const submitDeletePage = () => {
     deleteContentData({ id: idDelete })
       .unwrap()
       .then(async _d => {
