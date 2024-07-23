@@ -289,7 +289,7 @@ export default function ContentManagerDetailData() {
       isDraft: false,
       isAutoApprove,
       postTypeId: id,
-      categoryName: value?.category || '',
+      categories: [value?.category] || '',
       contentData: convertContentData(contentTempData),
     };
     updateContentData(payload)

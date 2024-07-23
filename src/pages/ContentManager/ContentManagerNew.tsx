@@ -255,7 +255,7 @@ export default function ContentManagerNew() {
       isDraft: false,
       isAutoApprove,
       postTypeId: id,
-      categoryName: postTypeDetail?.isUseCategory ? value.category : '',
+      categories: postTypeDetail?.isUseCategory ? [value.category] : '',
       contentData: stringifyData,
     };
     createContentData(payload)
