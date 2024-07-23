@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { isDesktop, isTablet, isMobile } from 'react-device-detect';
 import { Link, useLocation } from 'react-router-dom';
 import { Outlet, useNavigate } from 'react-router';
-import { ErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary } from 'react-error-boundary';
 
 import NotifCheck from '../../../assets/notif-check.svg';
 import NoNotifications from '../../../assets/no-notifications.svg';
@@ -18,7 +18,12 @@ import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { copyArray } from '@/utils/logicHelper';
 import { useAppDispatch, useAppSelector } from '../../../store';
 import { setActivatedNotificationPage } from '@/services/Notification/notificationSlice';
-import { useDeleteNotificationMutation, useGetNotificationQuery, useReadNotificationMutation, useSeeNotificationMutation } from '@/services/Notification/notificationApi';
+import {
+  useDeleteNotificationMutation,
+  useGetNotificationQuery,
+  useReadNotificationMutation,
+  useSeeNotificationMutation,
+} from '@/services/Notification/notificationApi';
 import { t } from 'i18next';
 import { setEventTriggered } from '@/services/Event/eventErrorSlice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
@@ -29,8 +34,8 @@ const Layout: React.FC<any> = props => {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const { open } = useAppSelector(s => s.layoutSlice);
-  const { activatedNotificationPage } = useAppSelector(s => s.notificationSlice)
-  const { eventTriggered } = useAppSelector(s => s.eventErrorSlice)
+  const { activatedNotificationPage } = useAppSelector(s => s.notificationSlice);
+  const { eventTriggered } = useAppSelector(s => s.eventErrorSlice);
 
   const [notifications, setNotifications] = useState<any>([]);
   const [isSelectedAll, setIsSelectedAll] = useState<any>(false);
@@ -41,7 +46,7 @@ const Layout: React.FC<any> = props => {
   const [isSingle, setIsSingle] = useState<any>(false);
 
   // RTK SEE NOTIFICATION
-  const [ seeNotification ] = useSeeNotificationMutation();
+  const [seeNotification] = useSeeNotificationMutation();
 
   // RTK GET NOTIFICATION
   const fetchNotification = useGetNotificationQuery({
@@ -49,19 +54,19 @@ const Layout: React.FC<any> = props => {
   });
 
   // RTK READ NOTIFICATION
-  const [ readNotification ] = useReadNotificationMutation();
+  const [readNotification] = useReadNotificationMutation();
 
   // RTK DELETE NOTIFICATION
-  const [ deleteNotification ] = useDeleteNotificationMutation();
+  const [deleteNotification] = useDeleteNotificationMutation();
 
   useEffect(() => {
     if (eventTriggered === 'INTERNAL_ERROR') {
       navigate('internal-server-error');
-    } else if (eventTriggered  === 'NOT_FOUND') {
+    } else if (eventTriggered === 'NOT_FOUND') {
       navigate('data-not-found');
-    };
+    }
     dispatch(setEventTriggered(false));
-  }, [eventTriggered])
+  }, [eventTriggered]);
 
   useEffect(() => {
     dispatch(setActivatedNotificationPage(false));
@@ -75,15 +80,15 @@ const Layout: React.FC<any> = props => {
         if (backendData) {
           setTotal(backendData?.data?.notificationList.total);
           setNotifications(backendData?.data?.notificationList?.notifications);
-        };
+        }
       } catch (error) {
-        console.error("Error while fetching data:", error);
-      };
+        console.error('Error while fetching data:', error);
+      }
     };
 
     if (activatedNotificationPage) {
       void loadFirst();
-    };
+    }
   }, [activatedNotificationPage]);
 
   useEffect(() => {
@@ -94,28 +99,30 @@ const Layout: React.FC<any> = props => {
           const updatedNotifications = [...notifications];
 
           // Iterasi melalui notifikasi dari backendData
-          backendData?.data?.notificationList?.notifications.forEach((backendNotification: { id: any; }) => {
-            // Cari notifikasi dengan ID yang sama dalam array updatedNotifications
-            const existingNotification = updatedNotifications.find(
-              notification => notification.id === backendNotification.id
-            );
+          backendData?.data?.notificationList?.notifications.forEach(
+            (backendNotification: { id: any }) => {
+              // Cari notifikasi dengan ID yang sama dalam array updatedNotifications
+              const existingNotification = updatedNotifications.find(
+                notification => notification.id === backendNotification.id,
+              );
 
-            if (!existingNotification) {
-              // Jika notifikasi dengan ID yang sama tidak ditemukan, tambahkan notifikasi ini
-              updatedNotifications.push({ ...backendNotification });
-            }
-          });
+              if (!existingNotification) {
+                // Jika notifikasi dengan ID yang sama tidak ditemukan, tambahkan notifikasi ini
+                updatedNotifications.push({ ...backendNotification });
+              }
+            },
+          );
           setTotal(backendData?.data?.notificationList.total);
           setNotifications(updatedNotifications);
-        };    
+        }
       } catch (error) {
-        console.error("Error while fetching data:", error);
-      };
+        console.error('Error while fetching data:', error);
+      }
     };
 
     if (limit > 10) {
       void loadMore();
-    };
+    }
   }, [limit]);
 
   useEffect(() => {
@@ -124,15 +131,15 @@ const Layout: React.FC<any> = props => {
         return element;
       } else {
         return false;
-      };
+      }
     });
 
     setSelected(selected);
     if (selected.length === notifications.length) {
       setIsSelectedAll(true);
     } else {
-      setIsSelectedAll(false)
-    };
+      setIsSelectedAll(false);
+    }
   }, [JSON.stringify(notifications)]);
 
   const goBack = () => {
@@ -141,37 +148,39 @@ const Layout: React.FC<any> = props => {
 
   const handlerReadNotificationAll = async () => {
     const payload = {
-      notificationId: "all",
+      notificationId: 'all',
     };
     try {
-      void await readNotification(payload);
+      void (await readNotification(payload));
       const backendData: any = await fetchNotification.refetch();
       if (backendData) {
         setTotal(backendData?.data?.notificationList.total);
         setNotifications(backendData?.data?.notificationList?.notifications);
-      };
+      }
     } catch (error) {
       console.log(error);
-    };
+    }
   };
 
   const handlerDeleteNotificationSelected = async () => {
-    const payload = selected.map((element: any) => {
-      return element.id;
-    }).join('|');
+    const payload = selected
+      .map((element: any) => {
+        return element.id;
+      })
+      .join('|');
     try {
-      void await deleteNotification({notificationId: payload});
+      void (await deleteNotification({ notificationId: payload }));
       const backendData: any = await fetchNotification.refetch();
       if (backendData) {
         setTotal(backendData?.data?.notificationList.total);
         setNotifications(backendData?.data?.notificationList?.notifications);
-      };
+      }
     } catch (error) {
       console.log(error);
-    };    
+    }
   };
 
-  const handlerSelectAll = (value: any, ) => {
+  const handlerSelectAll = (value: any) => {
     const newNotifications = copyArray(notifications);
     newNotifications.forEach((element: any) => {
       element.isSelected = value;
@@ -191,15 +200,15 @@ const Layout: React.FC<any> = props => {
       notificationId: id.toString(),
     };
     try {
-      void await readNotification(payload);
+      void (await readNotification(payload));
       const backendData: any = await fetchNotification.refetch();
       if (backendData) {
         setTotal(backendData?.data?.notificationList.total);
         setNotifications(backendData?.data?.notificationList?.notifications);
-      };
+      }
     } catch (error) {
       console.log(error);
-    };
+    }
   };
 
   const handlerDeleteNotificationSingle = async (id: any) => {
@@ -207,15 +216,15 @@ const Layout: React.FC<any> = props => {
       notificationId: id.toString(),
     };
     try {
-      void await deleteNotification(payload);
+      void (await deleteNotification(payload));
       const backendData: any = await fetchNotification.refetch();
       if (backendData) {
         setTotal(backendData?.data?.notificationList.total);
         setNotifications(backendData?.data?.notificationList?.notifications);
-      };
+      }
     } catch (error) {
       console.log(error);
-    };
+    }
   };
 
   const handlerFetchMore = () => {
@@ -224,16 +233,17 @@ const Layout: React.FC<any> = props => {
 
   const ReadAllButton = () => {
     return (
-      <div 
+      <div
         className="flex flex-row gap-3 cursor-pointer"
         onClick={() => {
           void handlerReadNotificationAll();
-        }}
-      >
+        }}>
         <img className="w-[18px]" src={NotifCheck} />
-        <span className='text-[16px] font-semibold text-purple'>{t('user.notification.mark-all-as-read')}</span>
+        <span className="text-[16px] font-semibold text-purple">
+          {t('user.notification.mark-all-as-read')}
+        </span>
       </div>
-    )
+    );
   };
 
   return (
@@ -263,7 +273,7 @@ const Layout: React.FC<any> = props => {
         submitAction={() => {
           if (isSingle) {
             void handlerDeleteNotificationSingle(selected[0]?.id);
-          }else{
+          } else {
             void handlerDeleteNotificationSelected();
           }
           setShowModalDelete(false);
@@ -274,115 +284,109 @@ const Layout: React.FC<any> = props => {
         }}
       />
       <div
-        className={`${open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'} pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full ease-in-out duration-300`}
-      >
+        className={`${
+          open ? 'lg:pl-[300px] md:pl-[300px]' : 'lg:pl-[100px]'
+        } pr-[32px] md:pl-[100px] pl-[32px] pt-[100px] h-full ease-in-out duration-300`}>
         <ErrorBoundary FallbackComponent={InternalServerError} key={location.pathname}>
-          {
-            activatedNotificationPage ? (
-              <TitleCard
-                hasBack={true}
-                backTitle={t('components.organism.back') ?? ''}
-                onBackClick={goBack}
-                title={t('components.organism.notification')}
-                TopSideButtons={<ReadAllButton />}
-              >
-                <div className="flex flex-row justify-between">
-                  <div className="flex flex-row">
-                    <CheckBox
-                      defaultValue={isSelectedAll}
-                      labelTitle={t('user.notification.selected-all')}
-                      updateFormValue={(event: any) => {
-                        handlerSelectAll(event.value);
-                      }}
-                    />
-                  </div>
-                  {
-                    selected.length > 0 && (
-                      <div className="flex flex-row items-center justify-end gap-3 cursor-pointer">
-                        <img className="w-[18px] h-[18px]" src={DeleteSmall} />
-                        <p 
-                          className="text-[14px] text-body-text-2"
-                          onClick={() => {
-                            setIsSingle(false);
-                            setShowModalDelete(true);
-                          }}
-                        >
-                          {t('user.notification.delete')} {t('user.notification.selected')}
-                        </p>
-                      </div>
-                    )
-                  }
+          {activatedNotificationPage ? (
+            <TitleCard
+              hasBack={true}
+              backTitle={t('components.organism.back') ?? ''}
+              onBackClick={goBack}
+              title={t('components.organism.notification')}
+              TopSideButtons={<ReadAllButton />}>
+              <div className="flex flex-row justify-between">
+                <div className="flex flex-row">
+                  <CheckBox
+                    defaultValue={isSelectedAll}
+                    labelTitle={t('user.notification.selected-all')}
+                    updateFormValue={(event: any) => {
+                      handlerSelectAll(event.value);
+                    }}
+                  />
                 </div>
-                {
-                  notifications.length > 0 ? (
-                    <InfiniteScroll
-                      className="flex flex-col"
-                      dataLength={notifications.length}
-                      next={handlerFetchMore}
-                      loader={''}
-                      hasMore={limit < total}
-                      height={900}
-                    >
-                      {
-                        notifications.map((element: any, index: number) => (
-                          <div 
-                            key={index} 
-                            className="flex flex-row border-b-[1px] border-[#D6D6D6] py-4"
-                          >
-                            <div className="flex items-center">
-                              <CheckBox
-                                defaultValue={element.isSelected}
-                                labelTitle=""
-                                updateFormValue={(event: any) => {
-                                  handlerSelectOne(event.value, index);
-                                }}        
-                              />
-                            </div>
-                            <Link
-                              to={element.link} 
-                              className="flex flex-col flex-1 gap-[4px] cursor-pointer"
-                              onClick={() => {
-                                void handlerReadNotificationSingle(element.id)
-                              }}
-                            >
-                              <h2 className={`text-[14px] font-bold ${element.isRead ? 'text-body-text-4' : 'text-purple'}`}>{element.title}</h2>
-                              <h4 className='text-[16px] text-body-text-2'>{element.content}</h4>
-                              <h6 className='text-[14px] text-body-text-1'>{`${dayjs(element.createdAt).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format('HH:mm')}`}</h6>
-                            </Link>  
-                            <div className="flex items-center justify-end min-w-[100px]">
-                              {
-                                element.isSelected && (
-                                  <div 
-                                    className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer"
-                                    onClick={() => {
-                                      setIsSingle(true);
-                                      setShowModalDelete(true);
-                                    }}
-                                  >
-                                    <img className="w-[18px] h-[18px]" src={DeleteSmall} />
-                                    <p className="text-[14px] text-body-text-2">{t('user.notification.delete')}</p>
-                                  </div>
-                                )
-                              }
-                            </div>
+                {selected.length > 0 && (
+                  <div className="flex flex-row items-center justify-end gap-3 cursor-pointer">
+                    <img className="w-[18px] h-[18px]" src={DeleteSmall} />
+                    <p
+                      className="text-[14px] text-body-text-2"
+                      onClick={() => {
+                        setIsSingle(false);
+                        setShowModalDelete(true);
+                      }}>
+                      {t('user.notification.delete')} {t('user.notification.selected')}
+                    </p>
+                  </div>
+                )}
+              </div>
+              {notifications.length > 0 ? (
+                <InfiniteScroll
+                  className="flex flex-col"
+                  dataLength={notifications.length}
+                  next={handlerFetchMore}
+                  loader={''}
+                  hasMore={limit < total}
+                  height={900}>
+                  {notifications.map((element: any, index: number) => (
+                    <div key={index} className="flex flex-row border-b-[1px] border-[#D6D6D6] py-4">
+                      <div className="flex items-center">
+                        <CheckBox
+                          defaultValue={element.isSelected}
+                          labelTitle=""
+                          updateFormValue={(event: any) => {
+                            handlerSelectOne(event.value, index);
+                          }}
+                        />
+                      </div>
+                      <Link
+                        to={element.link}
+                        className="flex flex-col flex-1 gap-[4px] cursor-pointer"
+                        onClick={() => {
+                          void handlerReadNotificationSingle(element.id);
+                        }}>
+                        <h2
+                          className={`text-[14px] font-bold ${
+                            element.isRead ? 'text-body-text-4' : 'text-purple'
+                          }`}>
+                          {element.title}
+                        </h2>
+                        <h4 className="text-[16px] text-body-text-2">{element.content}</h4>
+                        <h6 className="text-[14px] text-body-text-1">{`${dayjs(
+                          element.createdAt,
+                        ).format('MMM DD, YYYY')} at ${dayjs(element.createdAt).format(
+                          'HH:mm',
+                        )}`}</h6>
+                      </Link>
+                      <div className="flex items-center justify-end min-w-[100px]">
+                        {element.isSelected && (
+                          <div
+                            className="flex flex-row items-center p-2 gap-2 border-[1px] border-[#D6D6D6] rounded-xl cursor-pointer"
+                            onClick={() => {
+                              setIsSingle(true);
+                              setShowModalDelete(true);
+                            }}>
+                            <img className="w-[18px] h-[18px]" src={DeleteSmall} />
+                            <p className="text-[14px] text-body-text-2">
+                              {t('user.notification.delete')}
+                            </p>
                           </div>
-                        ))
-                      }
-                    </InfiniteScroll>
-                  ) : (
-                    <div className="flex justify-center p-[150px]">
-                      <img className="w-[150px]" src={NoNotifications} />
+                        )}
+                      </div>
                     </div>
-                  )
-                }
-              </TitleCard>
-            ) : (
-              <React.Fragment>
-                <Outlet />
-                {props.children}
-              </React.Fragment>
-            )
-          }
+                  ))}
+                </InfiniteScroll>
+              ) : (
+                <div className="flex justify-center p-[150px]">
+                  <img className="w-[150px]" src={NoNotifications} />
+                </div>
+              )}
+            </TitleCard>
+          ) : (
+            <React.Fragment>
+              <Outlet />
+              {props.children}
+            </React.Fragment>
+          )}
         </ErrorBoundary>
       </div>
     </div>
