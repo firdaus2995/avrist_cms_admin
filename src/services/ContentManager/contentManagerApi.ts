@@ -166,7 +166,7 @@ export const contentManagerApi = createApi({
             $isDraft: Boolean!
             $isAutoApprove: Boolean
             $postTypeId: Int!
-            $categoryName: String!
+            $categories: [String]!
             $contentData: [ContentDataAttributeRequest]!
           ) {
             contentDataCreate(
@@ -176,14 +176,16 @@ export const contentManagerApi = createApi({
                 isDraft: $isDraft
                 isAutoApprove: $isAutoApprove
                 postTypeId: $postTypeId
-                categoryName: $categoryName
+                categories: $categories
                 contentData: $contentData
               }
             ) {
               id
               title
               shortDesc
-              categoryName
+              categories {
+                categoryName
+              }
               status
             }
           }
@@ -322,7 +324,7 @@ export const contentManagerApi = createApi({
             $isDraft: Boolean!
             $isAutoApprove: Boolean!
             $postTypeId: Int!
-            $categoryName: String!
+            $categories: [String]!
             $contentData: [ContentDataAttributeRequest]!
           ) {
             contentDataUpdate(
@@ -332,14 +334,16 @@ export const contentManagerApi = createApi({
                 shortDesc: $shortDesc
                 isDraft: $isDraft
                 isAutoApprove: $isAutoApprove
-                categoryName: $categoryName
+                categories: $categories
                 contentData: $contentData
               }
             ) {
               id
               title
               shortDesc
-              categoryName
+              categories {
+                categoryName
+              }
               status
             }
           }
