@@ -13,6 +13,7 @@ import FormList from '@/components/molecules/FormList';
 import Typography from '@/components/atoms/Typography';
 import StatusBadge from '@/components/atoms/StatusBadge';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
+import CloseSolid from '../../assets/close-solid.svg';
 import PaperIcon from '../../assets/paper.png';
 import WarningIcon from '@/assets/warning.png';
 import ModalForm from '@/components/molecules/ModalForm';
@@ -73,7 +74,6 @@ export default function ContentManagerDetailData() {
   const {
     control,
     handleSubmit,
-    getValues,
     formState: { errors },
   } = useForm();
 
@@ -91,11 +91,14 @@ export default function ContentManagerDetailData() {
 
   // TABLE PAGINATION STATE
   const [categoryList, setCategoryList] = useState<any>([]);
+  const [selectedCategories, setSelectedCategories] = useState<any>([]);
   const [pageIndex] = useState(0);
   const [pageLimit] = useState(10);
   const [direction] = useState('asc');
   const [search] = useState('');
   const [sortBy] = useState('id');
+
+  console.log(categoryList);
 
   // RTK GET DATA
   const { data: contentDataDetail } = useGetContentDataDetailQuery({ id });
@@ -118,8 +121,14 @@ export default function ContentManagerDetailData() {
   useEffect(() => {
     if (contentDataDetail) {
       setContentDataDetailList(contentDataDetail?.contentDataDetail);
+
+      setSelectedCategories(
+        contentDataDetail?.contentDataDetail.categories.map((item: any) => item.categoryName),
+      );
     }
   }, [contentDataDetail]);
+
+  console.log(selectedCategories);
 
   const handleFormChange = (
     id: string | number,
@@ -282,14 +291,13 @@ export default function ContentManagerDetailData() {
   }
 
   const saveData = () => {
-    const value = getValues();
     const payload = {
       title: contentDataDetailList?.title,
       shortDesc: contentDataDetailList?.shortDesc,
       isDraft: false,
       isAutoApprove,
       postTypeId: id,
-      categories: [value?.category] || '',
+      categories: selectedCategories || '',
       contentData: convertContentData(contentTempData),
     };
     updateContentData(payload)
@@ -1772,44 +1780,64 @@ export default function ContentManagerDetailData() {
                     }}
                   />
                 </div>
-                {contentDataDetailList?.categoryName !== '' && (
+                {contentDataDetailList?.categories?.length > 0 && (
                   <div className="flex flex-row">
                     <Typography type="body" size="m" weight="bold" className="w-48 ml-1 mr-16">
                       {t('user.content-manager-detail-data.category')}
                     </Typography>
-                    <Controller
-                      name="category"
-                      control={control}
-                      defaultValue={contentDataDetailList?.categoryName}
-                      rules={{
-                        required: `${t('user.content-manager-detail-data.category')} ${t(
-                          'user.content-manager-detail-data.is-required',
-                        )}`,
-                      }}
-                      render={({ field }) => {
-                        const onChange = useCallback(
-                          (e: any) => {
-                            handleFormChange('categoryName', e);
-                            field.onChange({ target: { value: e } });
-                          },
-                          [id, field, handleFormChange],
-                        );
-                        return (
-                          <FormList.TextInputDropDown
-                            {...field}
-                            key="category"
-                            labelTitle={t('user.content-manager-detail-data.category')}
-                            placeholder={t('user.content-manager-detail-data.title')}
-                            error={!!errors?.category?.message}
-                            helperText={errors?.category?.message}
-                            disabled={!isEdited}
-                            items={categoryList}
-                            onChange={onChange}
-                            value={contentDataDetailList?.categoryName}
+                    <div className="flex flex-col gap-2 w-full">
+                      <Controller
+                        name="category"
+                        control={control}
+                        rules={{
+                          required: `${t('user.content-manager-detail-data.category')} ${t(
+                            'user.content-manager-detail-data.is-required',
+                          )}`,
+                        }}
+                        render={({ field }) => {
+                          const onChange = useCallback(
+                            (e: any) => {
+                              if (e) {
+                                const newItems = new Set(selectedCategories);
+                                newItems.add(e);
+                                setSelectedCategories(Array.from(newItems));
+                              }
+                            },
+                            [id, field, handleFormChange],
+                          );
+                          return (
+                            <FormList.TextInputDropDown
+                              {...field}
+                              key="category"
+                              labelTitle={t('user.content-manager-detail-data.category')}
+                              placeholder={t('user.content-manager-detail-data.title')}
+                              error={!!errors?.category?.message}
+                              helperText={errors?.category?.message}
+                              disabled={!isEdited}
+                              items={categoryList}
+                              onItemClick={onChange}
+                            />
+                          );
+                        }}
+                      />
+                      {selectedCategories?.map((item: any, index: number) => (
+                        <div
+                          key={index}
+                          className="relative flex items-center h-[46px] px-[16px] py-[10px] bg-light-purple-2 rounded-xl z-0 w-auto">
+                          {item}
+                          <img
+                            className="absolute top-[-5px] right-[-5px] cursor-pointer"
+                            src={CloseSolid}
+                            onClick={() => {
+                              const filteredItem = selectedCategories.filter(
+                                (i: any) => i !== item,
+                              );
+                              setSelectedCategories(filteredItem);
+                            }}
                           />
-                        );
-                      }}
-                    />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 )}
                 <div className="flex flex-row">
