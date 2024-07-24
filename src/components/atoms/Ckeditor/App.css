@@ -1,0 +1,23 @@
+/* Container to hold the editor and overlay */
+.editor-container {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+/* Wrapper to position the overlay correctly */
+.editor-wrapper {
+  position: relative;
+}
+
+/* Transparent grey overlay */
+.editor-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(233, 238, 244, 0.5); /* Light grey with transparency */
+  pointer-events: none; /* Disable interactions */
+  z-index: 10; /* Ensure it is above the editor */
+}

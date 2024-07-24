@@ -816,6 +816,7 @@ export default function ContentManagerDetailData() {
                     {...field}
                     key={id}
                     fieldTypeLabel={transformText(name)}
+                    disabled={!isEdited}
                     labelTitle={transformText(name)}
                     placeholder={t('user.content-manager-new.tags-placeholder')}
                     error={!!errors?.[id]?.message}
@@ -1366,13 +1367,24 @@ export default function ContentManagerDetailData() {
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             {t('user.content-manager-detail-data.saveAsDraft')}
           </button>
-          <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            {t('user.content-manager-detail-data.submit')}
-          </button>
+          {selectedCategories.length < 1 ? (
+            <button
+              type="button"
+              className="btn btn-success text-xs text-white btn-sm w-28 h-10"
+              onClick={() => {
+                alert('Pilih salah satu kategori!');
+              }}>
+              {t('user.content-manager-detail-data.submit')}
+            </button>
+          ) : (
+            <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
+              {t('user.content-manager-detail-data.submit')}
+            </button>
+          )}
         </div>
       </div>
     );
-  }, []);
+  }, [selectedCategories]);
 
   const submitButton = () => {
     return (
@@ -1826,7 +1838,9 @@ export default function ContentManagerDetailData() {
                           className="relative flex items-center h-[46px] px-[16px] py-[10px] bg-light-purple-2 rounded-xl z-0 w-auto">
                           {item}
                           <img
-                            className="absolute top-[-5px] right-[-5px] cursor-pointer"
+                            className={`absolute top-[-5px] right-[-5px] cursor-pointer ${
+                              !isEdited ? 'hidden' : ''
+                            }`}
                             src={CloseSolid}
                             onClick={() => {
                               const filteredItem = selectedCategories.filter(
