@@ -30,6 +30,7 @@ import {
   useGetContentDataDetailQuery,
   useGetEligibleAutoApproveQuery,
   useRestoreContentDataMutation,
+  useCreateCategoryMutation,
   useUpdateContentDataMutation,
   useUpdateContentDataStatusMutation,
 } from '@/services/ContentManager/contentManagerApi';
@@ -118,6 +119,12 @@ export default function ContentManagerDetailData() {
   const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
   const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
+  // RTK CREATE CONTENT MANAGER CATEGORY
+  const [createContentCategory] = useCreateCategoryMutation();
+
+  // CREATE CATEGORY STATE
+  const [newCategoryName, setNewCategoryName] = useState('');
+
   useEffect(() => {
     if (contentDataDetail) {
       setContentDataDetailList(contentDataDetail?.contentDataDetail);
@@ -176,7 +183,7 @@ export default function ContentManagerDetailData() {
     },
     { skip: contentDataDetailList?.categoryName === '' },
   );
-  const { data: categoryListData } = fetchGetCategoryList;
+  const { data: categoryListData, refetch: refetchCategory } = fetchGetCategoryList;
 
   useEffect(() => {
     if (categoryListData) {
@@ -289,10 +296,6 @@ export default function ContentManagerDetailData() {
   }
 
   const saveData = () => {
-    setSelectedCategories(
-      contentDataDetail?.contentDataDetail.categories.map((item: any) => item.categoryName),
-    );
-
     const payload = {
       title: contentDataDetailList?.title,
       shortDesc: contentDataDetailList?.shortDesc,
@@ -302,6 +305,7 @@ export default function ContentManagerDetailData() {
       categories: selectedCategories || '',
       contentData: convertContentData(contentTempData),
     };
+
     updateContentData(payload)
       .unwrap()
       .then(() => {
@@ -322,6 +326,40 @@ export default function ContentManagerDetailData() {
           }),
         );
         redirectPage();
+      });
+  };
+
+  const onSaveNewCategory = () => {
+    const payload = {
+      postTypeId,
+      name: newCategoryName,
+      shortDesc: '-',
+    };
+    createContentCategory(payload)
+      .unwrap()
+      .then(() => {
+        if (newCategoryName) {
+          const updatedCategories = [...selectedCategories, newCategoryName];
+          setSelectedCategories(updatedCategories);
+          setNewCategoryName('');
+        }
+        void refetchCategory();
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('content-manager.category.add.success-msg', { name: newCategoryName }),
+          }),
+        );
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('content-manager.category.add.failed-msg', { name: newCategoryName }),
+          }),
+        );
       });
   };
 
@@ -431,6 +469,7 @@ export default function ContentManagerDetailData() {
         const newItems = new Set(selectedCategories);
         newItems.add(e);
         setSelectedCategories(Array.from(newItems));
+        setNewCategoryName('');
         void trigger('category'); // Trigger validation for category field
       }
     },
@@ -1812,6 +1851,15 @@ export default function ContentManagerDetailData() {
                             )}`,
                         }}
                         render={({ field }) => {
+                          const onChange = (val: string) => {
+                            setNewCategoryName(val);
+                          };
+
+                          const onCreateCategory = (e: any) => {
+                            e.preventDefault();
+                            onSaveNewCategory();
+                          };
+
                           return (
                             <FormList.TextInputDropDown
                               {...field}
@@ -1824,7 +1872,9 @@ export default function ContentManagerDetailData() {
                               }
                               disabled={!isEdited}
                               items={categoryList}
+                              onChange={onChange}
                               onItemClick={onCategoryChange}
+                              onCreate={onCreateCategory}
                             />
                           );
                         }}

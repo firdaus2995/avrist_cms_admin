@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { t } from 'i18next';
 import {
+  useCreateCategoryMutation,
   useCreateContentDataMutation,
   useGetCategoryListQuery,
   useGetEligibleAutoApproveQuery,
@@ -143,6 +144,7 @@ export default function ContentManagerNew() {
 
   const params = useParams();
   const [id] = useState<any>(Number(params.id));
+  const [postTypeId] = useState<number>(Number(params.id));
 
   // TABLE PAGINATION STATE
   const [categoryList, setCategoryList] = useState<any>([]);
@@ -167,13 +169,19 @@ export default function ContentManagerNew() {
     dataType: 'content',
   });
 
+  // RTK CREATE CONTENT MANAGER CATEGORY
+  const [createContentCategory] = useCreateCategoryMutation();
+
+  // CREATE CATEGORY STATE
+  const [newCategoryName, setNewCategoryName] = useState('');
+
   useEffect(() => {
     if (postTypeDetailData) {
       setPostTypeDetail(postTypeDetailData?.postTypeDetail);
     }
   }, [postTypeDetailData]);
 
-  const { data: categoryListData } = useGetCategoryListQuery({
+  const { data: categoryListData, refetch: refetchCategory } = useGetCategoryListQuery({
     postTypeId: id,
     pageIndex,
     limit: pageLimit,
@@ -200,6 +208,40 @@ export default function ContentManagerNew() {
   const onLeave = () => {
     setShowLeaveModal(false);
     goBack();
+  };
+
+  const onSaveNewCategory = () => {
+    const payload = {
+      postTypeId,
+      name: newCategoryName,
+      shortDesc: '-',
+    };
+    createContentCategory(payload)
+      .unwrap()
+      .then(() => {
+        if (newCategoryName) {
+          const updatedCategories = [...selectedCategories, newCategoryName];
+          setSelectedCategories(updatedCategories);
+          setNewCategoryName('');
+        }
+        void refetchCategory();
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: t('content-manager.category.add.success-msg', { name: newCategoryName }),
+          }),
+        );
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: t('toast-failed'),
+            message: t('content-manager.category.add.failed-msg', { name: newCategoryName }),
+          }),
+        );
+      });
   };
 
   const saveDraft = () => {
@@ -1337,6 +1379,14 @@ export default function ContentManagerNew() {
                         )}`,
                     }}
                     render={({ field }) => {
+                      const onChange = (val: string) => {
+                        setNewCategoryName(val);
+                      };
+
+                      const onCreateCategory = (e: any) => {
+                        e.preventDefault();
+                        onSaveNewCategory();
+                      };
                       return (
                         <FormList.TextInputDropDown
                           {...field}
@@ -1346,7 +1396,9 @@ export default function ContentManagerNew() {
                           error={selectedCategories.length < 1 && !!errors?.category?.message}
                           helperText={selectedCategories.length < 1 && errors?.category?.message}
                           items={categoryList}
+                          onChange={onChange}
                           onItemClick={onCategoryChange}
+                          onCreate={onCreateCategory}
                         />
                       );
                     }}

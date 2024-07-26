@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import ChevronUp from '@/assets/chevronup.png';
 import ChevronDown from '@/assets/chevrondown.png';
+import Plus from '@/assets/plus-dark.svg';
 import ErrorSmallIcon from '@/assets/error-small.svg';
 import { t } from 'i18next';
 
@@ -28,6 +29,7 @@ const TextInputDropDown = ({
   items,
   value,
   onItemClick,
+  onCreate,
 }: any) => {
   const [searchTerm, setSearchTerm] = useState(value || '');
   const [isOpen, setIsOpen] = useState(false);
@@ -42,13 +44,19 @@ const TextInputDropDown = ({
     setIsOpen(true);
   };
 
+  const handleCreate = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    onCreate(e);
+    setSearchTerm('');
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     setSearchTerm(value || '');
   }, [value]);
 
   const handleOptionClick = (option: string) => {
     setSearchTerm('');
-    onChange('');
+    onChange(option);
     setIsOpen(false);
     console.log(option);
   };
@@ -84,6 +92,18 @@ const TextInputDropDown = ({
             disabled ? 'text-[#637488]' : ''
           }`}
         />
+        {onCreate && searchTerm.length > 0 && (
+          <div
+            onClick={handleCreate}
+            className={`
+            flex items-center 
+            justify-center cursor-pointer 
+            w-10 h-10 rounded-lg 
+            mr-2 hover:bg-slate-300
+          `}>
+            <img src={Plus} className="w-6 h-6" />
+          </div>
+        )}
         <div
           onClick={() => {
             if (!disabled) {

@@ -9,7 +9,10 @@ import { InputText } from '@/components/atoms/Input/InputText';
 import { TextArea } from '@/components/atoms/Input/TextArea';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { useEditCategoryMutation, useGetCategoryDetailQuery } from '@/services/ContentManager/contentManagerApi';
+import {
+  useEditCategoryMutation,
+  useGetCategoryDetailQuery,
+} from '@/services/ContentManager/contentManagerApi';
 
 export default function CategoryEdit() {
   const { t } = useTranslation();
@@ -21,26 +24,27 @@ export default function CategoryEdit() {
   const [description, setDescription] = useState('');
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
-  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
   // RTK GET CONTENT MANAGER CATEGORY
-  const fetchCategoryDetailQuery = useGetCategoryDetailQuery({id: categoryid}, {
-    refetchOnMountOrArgChange: true,
-  });
+  const fetchCategoryDetailQuery = useGetCategoryDetailQuery(
+    { id: categoryid },
+    {
+      refetchOnMountOrArgChange: true,
+    },
+  );
   const { data } = fetchCategoryDetailQuery;
   // RTK EDIT CONTENT MANAGER CATEGORY
-  const [ editContentCategory, {
-    isLoading,
-  }] = useEditCategoryMutation();
+  const [editContentCategory, { isLoading }] = useEditCategoryMutation();
 
   useEffect(() => {
-    if (data) {      
+    if (data) {
       const categoryDetail = data?.categoryDetail;
       setName(categoryDetail.name);
       setDescription(categoryDetail.shortDesc);
-    };
-  }, [data])
+    }
+  }, [data]);
 
   const onSave = () => {
     const payload = {
@@ -59,6 +63,9 @@ export default function CategoryEdit() {
           }),
         );
         navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       })
       .catch(() => {
         dispatch(
@@ -97,7 +104,7 @@ export default function CategoryEdit() {
             labelStyle="font-bold	"
             value={description}
             direction="row"
-            textAreaStyle='rounded-xl'
+            textAreaStyle="rounded-xl"
             inputWidth={300}
             rows={4}
             placeholder={t('user.tabs-category-edit.content-manager.category.edit.title') ?? ''}
@@ -127,18 +134,22 @@ export default function CategoryEdit() {
       <TitleCard title={t('content-manager.category.edit.title')} topMargin="mt-2">
         {renderForm()}
         <div className="mt-[200px] flex justify-end items-end gap-2">
-          <button className="btn btn-outline btn-md" onClick={(event: any) => {
-            event.preventDefault();
-            setLeaveTitleModalShow(t('modal.confirmation'));
-            setMessageLeaveModalShow(t('modal.leave-confirmation'));
-            setShowLeaveModal(true);          
-          }}>
+          <button
+            className="btn btn-outline btn-md"
+            onClick={(event: any) => {
+              event.preventDefault();
+              setLeaveTitleModalShow(t('modal.confirmation'));
+              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setShowLeaveModal(true);
+            }}>
             {isLoading ? 'Loading...' : t('btn.cancel')}
           </button>
-          <button className="btn btn-success btn-md text-white" onClick={(event: any) => {
-            event.preventDefault();
-            onSave();
-          }}>
+          <button
+            className="btn btn-success btn-md text-white"
+            onClick={(event: any) => {
+              event.preventDefault();
+              onSave();
+            }}>
             {isLoading ? 'Loading...' : t('btn.save')}
           </button>
         </div>
