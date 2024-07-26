@@ -306,7 +306,7 @@ export default function EmailFormBuilderEdit() {
               min_value: parseInt(config?.min_value),
             }),
             ...(!!Object.getOwnPropertyDescriptor(config, 'hidden') && {
-              hidden: config?.hidden,
+              hidden: config?.hidden === 'true' ?? false,
             }),
 
             ...((element?.fieldType === 'CHECKBOX' ||
