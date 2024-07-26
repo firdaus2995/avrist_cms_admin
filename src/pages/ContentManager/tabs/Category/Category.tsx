@@ -174,6 +174,9 @@ export default function CategoryTab(_props: { id: any }) {
             message: t('user.tabs-category.toast.successDeleteCategory'),
           }),
         );
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
         if (listData?.length === 1) {
           setPageIndex(pageIndex - 1);
         }

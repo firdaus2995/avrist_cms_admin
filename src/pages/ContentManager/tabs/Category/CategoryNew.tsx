@@ -21,13 +21,11 @@ export default function CategoryNew() {
   const [description, setDescription] = useState('');
   // LEAVE MODAL
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
-  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>("");
-  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>("");
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
 
   // RTK CREATE CONTENT MANAGER CATEGORY
-  const [ createContentCategory, {
-    isLoading,
-  }] = useCreateCategoryMutation();
+  const [createContentCategory, { isLoading }] = useCreateCategoryMutation();
 
   const onSave = () => {
     const payload = {
@@ -46,6 +44,9 @@ export default function CategoryNew() {
           }),
         );
         navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       })
       .catch(() => {
         dispatch(
@@ -84,10 +85,12 @@ export default function CategoryNew() {
             labelStyle="font-bold"
             value={description}
             direction="row"
-            textAreaStyle='rounded-xl'
+            textAreaStyle="rounded-xl"
             inputWidth={300}
             rows={4}
-            placeholder={t('user.tabs-category-new.content-manager.category.description-placeholder') ?? ''}
+            placeholder={
+              t('user.tabs-category-new.content-manager.category.description-placeholder') ?? ''
+            }
             onChange={(event: any) => {
               setDescription(event.target.value);
             }}
@@ -114,18 +117,22 @@ export default function CategoryNew() {
       <TitleCard title={t('content-manager.category.add.title')} topMargin="mt-2">
         {renderForm()}
         <div className="mt-[200px] flex justify-end items-end gap-2">
-          <button className="btn btn-outline btn-md" onClick={(event: any) => {
-            event.preventDefault();
-            setLeaveTitleModalShow(t('modal.confirmation'));
-            setMessageLeaveModalShow(t('modal.leave-confirmation'));
-            setShowLeaveModal(true);          
-          }}>
+          <button
+            className="btn btn-outline btn-md"
+            onClick={(event: any) => {
+              event.preventDefault();
+              setLeaveTitleModalShow(t('modal.confirmation'));
+              setMessageLeaveModalShow(t('modal.leave-confirmation'));
+              setShowLeaveModal(true);
+            }}>
             {isLoading ? t('loading') + '...' : t('btn.cancel')}
           </button>
-          <button className="btn btn-success btn-md text-white" onClick={(event: any) => {
-            event.preventDefault();
-            onSave();
-          }}>
+          <button
+            className="btn btn-success btn-md text-white"
+            onClick={(event: any) => {
+              event.preventDefault();
+              onSave();
+            }}>
             {isLoading ? t('loading') + '...' : t('btn.save')}
           </button>
         </div>
