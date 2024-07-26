@@ -305,6 +305,9 @@ export default function EmailFormBuilderEdit() {
             ...(!!Object.getOwnPropertyDescriptor(config, 'min_value') && {
               min_value: parseInt(config?.min_value),
             }),
+            ...(!!Object.getOwnPropertyDescriptor(config, 'hidden') && {
+              hidden: config?.hidden,
+            }),
 
             ...((element?.fieldType === 'CHECKBOX' ||
               element?.fieldType === 'RADIO_BUTTON' ||
@@ -399,7 +402,7 @@ export default function EmailFormBuilderEdit() {
             name: element.name,
             fieldId: 'TEXT_FIELD',
             componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.hidden}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\",\"hidden\": \"${element.hidden}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multipleInput}\"}`, //eslint-disable-line
           };
         case 'TEXTAREA':
           return {

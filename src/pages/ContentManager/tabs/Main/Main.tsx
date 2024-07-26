@@ -151,12 +151,15 @@ export default function MainTab(props: { id: any; isUseCategory: any }) {
       header: () => (
         <span className="text-[14px] font-black">{t('user.tabs-main.common.categoryName')}</span>
       ),
-      accessorKey: 'categoryName',
+      accessorKey: 'categories',
       enableSorting: false,
       cell: (info: any) => (
         <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? info.getValue()
+          {info.getValue() && info.getValue().length > 0 && info.getValue() !== null
+            ? info
+                .getValue()
+                .map((item: any) => item.categoryName)
+                .join(',')
             : '-'}
         </p>
       ),
@@ -199,7 +202,7 @@ export default function MainTab(props: { id: any; isUseCategory: any }) {
   ];
 
   if (!isUseCategory) {
-    const categoryColumnIndex = COLUMNS.findIndex(column => column.accessorKey === 'categoryName');
+    const categoryColumnIndex = COLUMNS.findIndex(column => column.accessorKey === 'categories');
     if (categoryColumnIndex !== -1) {
       COLUMNS.splice(categoryColumnIndex, 1);
     }
