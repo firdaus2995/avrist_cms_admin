@@ -42,6 +42,7 @@ import { errorMessageTypeConverter, transformText } from '@/utils/logicHelper';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
+  const { trigger } = useForm();
   const [contentDataDetailList, setContentDataDetailList] = useState<any>({
     id: null,
     title: '',
@@ -83,6 +84,7 @@ export default function ContentManagerDetailData() {
   const navigate = useNavigate();
   const redirectPage = () => {
     navigate('/content-manager');
+    window.location.reload();
   };
 
   const params = useParams();
@@ -97,8 +99,6 @@ export default function ContentManagerDetailData() {
   const [direction] = useState('asc');
   const [search] = useState('');
   const [sortBy] = useState('id');
-
-  console.log(categoryList);
 
   // RTK GET DATA
   const { data: contentDataDetail } = useGetContentDataDetailQuery({ id });
@@ -127,8 +127,6 @@ export default function ContentManagerDetailData() {
       );
     }
   }, [contentDataDetail]);
-
-  console.log(selectedCategories);
 
   const handleFormChange = (
     id: string | number,
@@ -291,6 +289,10 @@ export default function ContentManagerDetailData() {
   }
 
   const saveData = () => {
+    setSelectedCategories(
+      contentDataDetail?.contentDataDetail.categories.map((item: any) => item.categoryName),
+    );
+
     const payload = {
       title: contentDataDetailList?.title,
       shortDesc: contentDataDetailList?.shortDesc,
@@ -422,6 +424,18 @@ export default function ContentManagerDetailData() {
       setContentTempData(updatedContentDataDetailList.contentData);
     }
   };
+
+  const onCategoryChange = useCallback(
+    (e: any) => {
+      if (e) {
+        const newItems = new Set(selectedCategories);
+        newItems.add(e);
+        setSelectedCategories(Array.from(newItems));
+        void trigger('category'); // Trigger validation for category field
+      }
+    },
+    [selectedCategories, trigger],
+  );
 
   const renderFormList = () => {
     // DEFAULT VALUE
@@ -1367,20 +1381,9 @@ export default function ContentManagerDetailData() {
             className="btn btn-outline border-secondary-warning text-xs text-secondary-warning btn-sm w-28 h-10">
             {t('user.content-manager-detail-data.saveAsDraft')}
           </button>
-          {selectedCategories.length < 1 ? (
-            <button
-              type="button"
-              className="btn btn-success text-xs text-white btn-sm w-28 h-10"
-              onClick={() => {
-                alert('Pilih salah satu kategori!');
-              }}>
-              {t('user.content-manager-detail-data.submit')}
-            </button>
-          ) : (
-            <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-              {t('user.content-manager-detail-data.submit')}
-            </button>
-          )}
+          <button type="submit" className="btn btn-success text-xs text-white btn-sm w-28 h-10">
+            {t('user.content-manager-detail-data.submit')}
+          </button>
         </div>
       </div>
     );
@@ -1802,32 +1805,26 @@ export default function ContentManagerDetailData() {
                         name="category"
                         control={control}
                         rules={{
-                          required: `${t('user.content-manager-detail-data.category')} ${t(
-                            'user.content-manager-detail-data.is-required',
-                          )}`,
+                          validate: () =>
+                            selectedCategories.length > 0 ||
+                            `${t('user.content-manager-detail-data.category')} ${t(
+                              'user.content-manager-detail-data.is-required',
+                            )}`,
                         }}
                         render={({ field }) => {
-                          const onChange = useCallback(
-                            (e: any) => {
-                              if (e) {
-                                const newItems = new Set(selectedCategories);
-                                newItems.add(e);
-                                setSelectedCategories(Array.from(newItems));
-                              }
-                            },
-                            [id, field, handleFormChange],
-                          );
                           return (
                             <FormList.TextInputDropDown
                               {...field}
                               key="category"
                               labelTitle={t('user.content-manager-detail-data.category')}
                               placeholder={t('user.content-manager-detail-data.title')}
-                              error={!!errors?.category?.message}
-                              helperText={errors?.category?.message}
+                              error={selectedCategories.length < 1 && !!errors?.category?.message}
+                              helperText={
+                                selectedCategories.length < 1 && errors?.category?.message
+                              }
                               disabled={!isEdited}
                               items={categoryList}
-                              onItemClick={onChange}
+                              onItemClick={onCategoryChange}
                             />
                           );
                         }}
@@ -1847,6 +1844,7 @@ export default function ContentManagerDetailData() {
                                 (i: any) => i !== item,
                               );
                               setSelectedCategories(filteredItem);
+                              void trigger('category'); // Trigger validation for category field
                             }}
                           />
                         </div>

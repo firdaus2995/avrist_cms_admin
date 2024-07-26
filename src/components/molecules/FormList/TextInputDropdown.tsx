@@ -47,9 +47,10 @@ const TextInputDropDown = ({
   }, [value]);
 
   const handleOptionClick = (option: string) => {
-    setSearchTerm(option);
-    onChange(option);
+    setSearchTerm('');
+    onChange('');
     setIsOpen(false);
+    console.log(option);
   };
 
   return (

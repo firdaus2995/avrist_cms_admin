@@ -244,7 +244,7 @@ export default function EmailFormBuilderNew() {
             name: element.name,
             fieldId: 'TEXT_FIELD',
             componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
-            config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.hidden}\"}`, //eslint-disable-line
+            config: `{\"placeholder\": \"${element.placeholder}\",\"hidden\": \"${element.hidden}\", \"required\": \"${element.required}\", \"multiple_input\": \"${element.multipleInput}\"}`, //eslint-disable-line
           };
         case 'TEXTAREA':
           return {

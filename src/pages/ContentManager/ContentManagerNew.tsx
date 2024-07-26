@@ -33,6 +33,7 @@ import {
 } from '@/utils/logicHelper';
 
 export default function ContentManagerNew() {
+  const { trigger } = useForm();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const goBack = () => {
@@ -390,6 +391,18 @@ export default function ContentManagerNew() {
       ]);
     }
   };
+
+  const onCategoryChange = useCallback(
+    (e: any) => {
+      if (e) {
+        const newItems = new Set(selectedCategories);
+        newItems.add(e);
+        setSelectedCategories(Array.from(newItems));
+        void 'category'; // Trigger validation for category field
+      }
+    },
+    [selectedCategories, trigger],
+  );
 
   const renderFormList = () => {
     // DEFAULT VALUE
@@ -1317,31 +1330,23 @@ export default function ContentManagerNew() {
                     name="category"
                     control={control}
                     rules={{
-                      required: `${t('user.content-manager-detail-data.category')} ${t(
-                        'user.content-manager-detail-data.is-required',
-                      )}`,
+                      validate: () =>
+                        selectedCategories.length > 0 ||
+                        `${t('user.content-manager-detail-data.category')} ${t(
+                          'user.content-manager-detail-data.is-required',
+                        )}`,
                     }}
                     render={({ field }) => {
-                      const onChange = useCallback(
-                        (e: any) => {
-                          if (e) {
-                            const newItems = new Set(selectedCategories);
-                            newItems.add(e);
-                            setSelectedCategories(Array.from(newItems));
-                          }
-                        },
-                        [id, field, handleFormChange],
-                      );
                       return (
                         <FormList.TextInputDropDown
                           {...field}
                           key="category"
                           labelTitle={t('user.content-manager-detail-data.category')}
                           placeholder={t('user.content-manager-detail-data.title')}
-                          error={!!errors?.category?.message}
-                          helperText={errors?.category?.message}
+                          error={selectedCategories.length < 1 && !!errors?.category?.message}
+                          helperText={selectedCategories.length < 1 && errors?.category?.message}
                           items={categoryList}
-                          onItemClick={onChange}
+                          onItemClick={onCategoryChange}
                         />
                       );
                     }}
@@ -1357,6 +1362,7 @@ export default function ContentManagerNew() {
                         onClick={() => {
                           const filteredItem = selectedCategories.filter((i: any) => i !== item);
                           setSelectedCategories(filteredItem);
+                          void trigger('category'); // Trigger validation for category field
                         }}
                       />
                     </div>
