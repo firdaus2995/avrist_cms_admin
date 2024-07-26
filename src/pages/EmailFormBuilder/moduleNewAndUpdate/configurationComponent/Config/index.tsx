@@ -81,6 +81,8 @@ const Config: React.FC<IConfig> = ({ data, configList, valueChange }) => {
                   ? 'date_validation'
                   : code.includes('currency')
                   ? 'currency'
+                  : code.includes('hidden')
+                  ? 'hidden'
                   : element.code;
 
                 return (
