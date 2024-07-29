@@ -178,7 +178,7 @@ export default function CategoryTab(_props: { id: any }) {
           window.location.reload();
         }, 100);
         if (listData?.length === 1) {
-          setPageIndex(pageIndex - 1);
+          setPageIndex(0);
         }
         try {
           await fetchQuery.refetch();
