@@ -1775,7 +1775,7 @@ export default function EmailFormBuilderEdit() {
           {/* EMAIL BODY SECTION */}
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4">
-              <p className="font-bold">Email Body PIC</p>
+              <p className="font-bold">Email Template to PIC</p>
               <Controller
                 name="picTitle"
                 control={control}
@@ -1783,23 +1783,22 @@ export default function EmailFormBuilderEdit() {
                 render={({ field }) => (
                   <InputText
                     {...field}
-                    labelTitle="Title"
+                    labelTitle="Subject"
                     labelStyle="font-semibold"
                     labelWidth={200}
                     labelRequired
                     direction="row"
                     roundStyle="xl"
                     value={getValues('picTitle')}
-                    placeholder="Enter your title"
+                    placeholder="Enter your subject"
                     inputWidth={400}
-                    maxLength={30}
                     isError={!!errors?.picTitle}
                   />
                 )}
               />
-              <div className="flex flex-col justify-start gap-3">
-                <Typography size="m" weight="semi">
-                  Body<span className="text-reddist">*</span>
+              <div className="flex flex-col justify-start gap-3 pl-1">
+                <Typography size="s" weight="semi">
+                  Email Body<span className="text-reddist">*</span>
                 </Typography>
                 <Controller
                   name="picBody"
@@ -1820,7 +1819,7 @@ export default function EmailFormBuilderEdit() {
             </div>
             {checkSubmitterEmail ? (
               <div className="flex flex-col gap-4">
-                <p className="font-bold">Email Body Submitter</p>
+                <p className="font-bold">Email Template to Submitter</p>
                 <Controller
                   name="submitterTitle"
                   control={control}
@@ -1829,22 +1828,21 @@ export default function EmailFormBuilderEdit() {
                   render={({ field }) => (
                     <InputText
                       {...field}
-                      labelTitle="Title"
+                      labelTitle="Subject"
                       labelStyle="font-semibold"
                       labelWidth={200}
                       labelRequired
                       direction="row"
                       roundStyle="xl"
-                      placeholder="Enter your title"
+                      placeholder="Enter your subject"
                       inputWidth={400}
-                      maxLength={30}
                       isError={!!errors?.title}
                     />
                   )}
                 />
-                <div className="flex flex-col justify-start gap-3">
-                  <Typography size="m" weight="semi">
-                    Body<span className="text-reddist">*</span>
+                <div className="flex flex-col justify-start gap-3 pl-1">
+                  <Typography size="s" weight="semi">
+                    Email Body<span className="text-reddist">*</span>
                   </Typography>
                   <Controller
                     name="submitterBody"
