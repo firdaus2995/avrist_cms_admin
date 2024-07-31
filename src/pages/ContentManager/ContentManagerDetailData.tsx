@@ -670,19 +670,40 @@ export default function ContentManagerDetailData() {
                   [id, fieldType, field, handleFormChange],
                 );
                 return (
-                  <FormList.FileUploaderV2
-                    {...field}
-                    key={id}
-                    fieldTypeLabel={transformText(name)}
-                    labelTitle={transformText(name)}
-                    disabled={!isEdited}
-                    isDocument={false}
-                    multiple={configs?.media_type === 'multiple_media'}
-                    error={!!errors?.[id]?.message}
-                    helperText={errors?.[id]?.message}
-                    onChange={onChange}
-                    editMode={isEdited}
-                  />
+                  <div className="flex flex-col">
+                    <FormList.FileUploaderV2
+                      {...field}
+                      key={id}
+                      fieldTypeLabel={transformText(name)}
+                      labelTitle={transformText(name)}
+                      disabled={!isEdited}
+                      isDocument={false}
+                      multiple={configs?.media_type === 'multiple_media'}
+                      error={!!errors?.[id]?.message}
+                      helperText={errors?.[id]?.message}
+                      onChange={onChange}
+                      editMode={isEdited}
+                      optionalComponent={() => {
+                        return (
+                          <div className="flex flex-col gap-2">
+                            {configs?.width && configs?.height && (
+                              <p className="text-xs font-medium">
+                                Recommended Size: {configs?.width} x {configs?.height}
+                              </p>
+                            )}
+                            {configs?.image_fit && (
+                              <p className="text-xs font-medium">
+                                Image Fit:{' '}
+                                {configs?.image_fit.includes('full')
+                                  ? 'Proportional Full'
+                                  : 'Proportional Crop'}
+                              </p>
+                            )}
+                          </div>
+                        );
+                      }}
+                    />
+                  </div>
                 );
               }}
             />
