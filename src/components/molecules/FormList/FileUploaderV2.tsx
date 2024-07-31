@@ -26,14 +26,16 @@ export default function FileUploaderV2({
   disabledAltText = false,
   isOptional = false,
   labelWidth = 225,
+  optionalComponent = () => {},
 }: any) {
   return (
     <div>
       <div className="flex flex-row">
-        <div style={{
-          width: labelWidth,
-          minWidth: labelWidth,
-        }}>
+        <div
+          style={{
+            width: labelWidth,
+            minWidth: labelWidth,
+          }}>
           {labelTitle ? (
             <Typography type="body" size="m" weight="bold">
               {labelTitle}
@@ -89,6 +91,7 @@ export default function FileUploaderV2({
                 <p className="text-reddist text-sm">{helperText}</p>
               </div>
             )}
+            {optionalComponent ? optionalComponent() : null}
           </div>
         </div>
       </div>
