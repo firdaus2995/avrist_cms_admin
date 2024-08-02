@@ -18,7 +18,8 @@ export const formatFilename = (filename: string) => {
   const sanitizedFilename = filename.replace(/[^\w.-]/g, '');
   const lowercaseFilename = sanitizedFilename.toLowerCase();
   const formattedFilename = lowercaseFilename.replace(/\s+/g, '_');
-  return formattedFilename;
+  const filteredFilename = formattedFilename.replaceAll('_', '');
+  return filteredFilename;
 };
 
 export const errorMessageTypeConverter = (errorMessage: any, messageConverter?: boolean) => {
