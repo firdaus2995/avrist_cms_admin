@@ -818,7 +818,11 @@ export default function ContentTypeEdit() {
                           labelTitle={'Recommended Width'}
                           labelStyle="font-bold"
                           type="number"
-                          value={JSON.parse(openedAttribute?.config)?.width || ''}
+                          value={
+                            openedAttribute?.config.includes('width')
+                              ? JSON.parse(openedAttribute?.config)?.width
+                              : ''
+                          }
                           inputStyle="rounded-3xl"
                           onChange={e => {
                             const updatedConfig = JSON.parse(openedAttribute?.config) || {};
@@ -833,7 +837,11 @@ export default function ContentTypeEdit() {
                           labelTitle={'Recommended Height'}
                           labelStyle="font-bold"
                           type="number"
-                          value={JSON.parse(openedAttribute?.config)?.height || ''}
+                          value={
+                            openedAttribute?.config.includes('height')
+                              ? JSON.parse(openedAttribute?.config)?.height
+                              : ''
+                          }
                           inputStyle="rounded-3xl"
                           onChange={e => {
                             const updatedConfig = JSON.parse(openedAttribute?.config) || {};
@@ -1102,7 +1110,11 @@ export default function ContentTypeEdit() {
                                           labelTitle={'Recommended Width'}
                                           labelStyle="font-bold"
                                           type="number"
-                                          value={JSON.parse(openedAttribute?.config)?.width || ''}
+                                          value={
+                                            openedAttribute?.config.includes('width')
+                                              ? JSON.parse(openedAttribute?.config)?.width
+                                              : ''
+                                          }
                                           inputStyle="rounded-3xl"
                                           onChange={e => {
                                             const updatedAttributeList =
@@ -1134,7 +1146,11 @@ export default function ContentTypeEdit() {
                                           labelTitle={'Recommended Height'}
                                           labelStyle="font-bold"
                                           type="number"
-                                          value={JSON.parse(openedAttribute?.config)?.height || ''}
+                                          value={
+                                            openedAttribute?.config.includes('height')
+                                              ? JSON.parse(openedAttribute?.config)?.height
+                                              : ''
+                                          }
                                           inputStyle="rounded-3xl"
                                           onChange={e => {
                                             const updatedAttributeList =
@@ -1412,7 +1428,11 @@ export default function ContentTypeEdit() {
                           labelTitle={'Recommended Width'}
                           labelStyle="font-bold"
                           type="number"
-                          value={JSON.parse(openedAttribute?.config)?.width || ''}
+                          value={
+                            openedAttribute?.config.includes('width')
+                              ? JSON.parse(openedAttribute?.config)?.width
+                              : ''
+                          }
                           inputStyle="rounded-3xl"
                           onChange={e => {
                             const updatedConfig = JSON.parse(openedAttribute?.config) || {};
@@ -1428,7 +1448,11 @@ export default function ContentTypeEdit() {
                           labelTitle={'Recommended Height'}
                           labelStyle="font-bold"
                           type="number"
-                          value={JSON.parse(openedAttribute?.config)?.height || ''}
+                          value={
+                            openedAttribute?.config.includes('height')
+                              ? JSON.parse(openedAttribute?.config)?.height
+                              : ''
+                          }
                           inputStyle="rounded-3xl"
                           onChange={e => {
                             const updatedConfig = JSON.parse(openedAttribute?.config) || {};
@@ -1747,7 +1771,11 @@ export default function ContentTypeEdit() {
                                           labelTitle={'Recommended Width'}
                                           labelStyle="font-bold"
                                           type="number"
-                                          value={JSON.parse(openedAttribute?.config)?.width || ''}
+                                          value={
+                                            openedAttribute?.config.includes('width')
+                                              ? JSON.parse(openedAttribute?.config)?.width
+                                              : ''
+                                          }
                                           inputStyle="rounded-3xl"
                                           onChange={e => {
                                             const updatedAttributeList =
@@ -1792,7 +1820,11 @@ export default function ContentTypeEdit() {
                                           labelTitle={'Recommended Height'}
                                           labelStyle="font-bold"
                                           type="number"
-                                          value={JSON.parse(openedAttribute?.config)?.height || ''}
+                                          value={
+                                            openedAttribute?.config.includes('height')
+                                              ? JSON.parse(openedAttribute?.config)?.height
+                                              : ''
+                                          }
                                           inputStyle="rounded-3xl"
                                           onChange={e => {
                                             const updatedAttributeList =
