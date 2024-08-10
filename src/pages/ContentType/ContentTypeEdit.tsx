@@ -819,8 +819,10 @@ export default function ContentTypeEdit() {
                           labelStyle="font-bold"
                           type="number"
                           value={
-                            openedAttribute?.config.includes('width')
-                              ? JSON.parse(openedAttribute?.config)?.width
+                            openedAttribute?.config !== null
+                              ? openedAttribute?.config.includes('width')
+                                ? JSON.parse(openedAttribute?.config)?.width
+                                : ''
                               : ''
                           }
                           inputStyle="rounded-3xl"
@@ -838,8 +840,10 @@ export default function ContentTypeEdit() {
                           labelStyle="font-bold"
                           type="number"
                           value={
-                            openedAttribute?.config.includes('height')
-                              ? JSON.parse(openedAttribute?.config)?.height
+                            openedAttribute?.config !== null
+                              ? openedAttribute?.config.includes('height')
+                                ? JSON.parse(openedAttribute?.config)?.height
+                                : ''
                               : ''
                           }
                           inputStyle="rounded-3xl"
@@ -1111,8 +1115,10 @@ export default function ContentTypeEdit() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config.includes('width')
-                                              ? JSON.parse(openedAttribute?.config)?.width
+                                            openedAttribute?.config !== null
+                                              ? openedAttribute?.config.includes('width')
+                                                ? JSON.parse(openedAttribute?.config)?.width
+                                                : ''
                                               : ''
                                           }
                                           inputStyle="rounded-3xl"
@@ -1147,8 +1153,10 @@ export default function ContentTypeEdit() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config.includes('height')
-                                              ? JSON.parse(openedAttribute?.config)?.height
+                                            openedAttribute?.config !== null
+                                              ? openedAttribute?.config.includes('height')
+                                                ? JSON.parse(openedAttribute?.config)?.height
+                                                : ''
                                               : ''
                                           }
                                           inputStyle="rounded-3xl"
@@ -1429,8 +1437,10 @@ export default function ContentTypeEdit() {
                           labelStyle="font-bold"
                           type="number"
                           value={
-                            openedAttribute?.config.includes('width')
-                              ? JSON.parse(openedAttribute?.config)?.width
+                            openedAttribute?.config
+                              ? openedAttribute?.config.includes('width')
+                                ? JSON.parse(openedAttribute?.config)?.width
+                                : ''
                               : ''
                           }
                           inputStyle="rounded-3xl"
@@ -1449,8 +1459,10 @@ export default function ContentTypeEdit() {
                           labelStyle="font-bold"
                           type="number"
                           value={
-                            openedAttribute?.config.includes('height')
-                              ? JSON.parse(openedAttribute?.config)?.height
+                            openedAttribute?.config !== null
+                              ? openedAttribute?.config.includes('height')
+                                ? JSON.parse(openedAttribute?.config)?.height
+                                : ''
                               : ''
                           }
                           inputStyle="rounded-3xl"
@@ -1772,8 +1784,10 @@ export default function ContentTypeEdit() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config.includes('width')
-                                              ? JSON.parse(openedAttribute?.config)?.width
+                                            openedAttribute?.config !== null
+                                              ? openedAttribute?.config.includes('width')
+                                                ? JSON.parse(openedAttribute?.config)?.width
+                                                : ''
                                               : ''
                                           }
                                           inputStyle="rounded-3xl"
@@ -1821,8 +1835,10 @@ export default function ContentTypeEdit() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config.includes('height')
-                                              ? JSON.parse(openedAttribute?.config)?.height
+                                            openedAttribute?.config !== null
+                                              ? openedAttribute?.config.includes('height')
+                                                ? JSON.parse(openedAttribute?.config)?.height
+                                                : ''
                                               : ''
                                           }
                                           inputStyle="rounded-3xl"
