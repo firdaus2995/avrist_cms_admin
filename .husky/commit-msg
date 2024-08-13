@@ -13,7 +13,7 @@ then
   echo "<id_jira>-<number_card>: <message_commit>"
   echo " "
   echo "Example:"
-  echo "AVR-207: Add validate email & password"
+  echo "ACW2-207: Add validate email & password"
   echo " "
   echo "Your commit message was:"
   echo $message
