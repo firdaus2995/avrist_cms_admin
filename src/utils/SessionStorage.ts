@@ -34,5 +34,13 @@ export const getDataStorage = (key: string) => {
   };
 
   const value: any = localStorage.getItem(key);
-  if (value) return JSON.parse(value);
+  // Handle JSON.parse if value not detect JSON.stringify
+  if (value) {
+    try {
+      return JSON.parse(value);
+    } catch {
+      return value;
+    }
+  }
+  // if (value) return JSON.parse(value);
 };
