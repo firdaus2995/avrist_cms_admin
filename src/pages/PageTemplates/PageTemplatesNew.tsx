@@ -665,7 +665,7 @@ export default function PageTemplatesNew() {
           submitAction={onAddNewAttributes}>
           <div className="flex flex-col gap-5 w-full">
             <div className="flex flex-row">
-              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1">
                 {t('user.page-template-new.form.attribute.type.label')}
                 <span className={'text-reddist text-lg'}>{`*`}</span>
               </Typography>
@@ -859,7 +859,7 @@ export default function PageTemplatesNew() {
               }}
             />
             <div className="flex flex-row">
-              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1">
                 {t('user.page-template-list.page-template.table.data-type')}
                 <span className={'text-reddist text-lg'}>{`*`}</span>
               </Typography>
@@ -933,7 +933,7 @@ export default function PageTemplatesNew() {
             />
 
             <div className="flex flex-row">
-              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
+              <Typography type="body" size="s" weight="bold" className="w-56 ml-1">
                 {t('user.page-template-new.form.isForm.label')}
               </Typography>
               <CheckBox
@@ -994,7 +994,7 @@ export default function PageTemplatesNew() {
             {mode !== 'detail' ? (
               <div className="flex justify-end items-end gap-2">
                 <button
-                  className="btn btn-outline btn-md"
+                  className="btn btn-outline btn-md !h-[36px] !min-h-[36px] text-sm"
                   onClick={e => {
                     e.preventDefault();
                     setLeaveTitleModalShow(t('modal.confirmation'));
@@ -1003,7 +1003,7 @@ export default function PageTemplatesNew() {
                   }}>
                   {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.cancel')}
                 </button>
-                <button type="submit" className="btn btn-success btn-md text-white">
+                <button type="submit" className="btn btn-success btn-md !h-[36px] !min-h-[36px] text-sm text-white">
                   {isLoading | isLoadingEdit ? t('loading') + '...' : t('btn.save')}
                 </button>
               </div>

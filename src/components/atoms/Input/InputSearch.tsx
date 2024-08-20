@@ -37,7 +37,7 @@ export const InputSearch: React.FC<IInputSearch> = ({
             if (onBlur) onBlur(event);
           };
         }}
-        className="w-full text-base font-normal" 
+        className="w-full text-sm font-normal" 
         style={{
           outline: 'none',
         }}

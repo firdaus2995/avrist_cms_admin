@@ -47,7 +47,7 @@ export const MultipleInput: React.FC<IMultipleInput> = ({
         }}
         className={`label ${labelStyle}`}
       >
-        <span className={`label-text text-base-content`}>{labelTitle}</span>
+        <span className={`label-text text-sm-content`}>{labelTitle}</span>
       </label>
       <div 
         style={{

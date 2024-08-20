@@ -33,7 +33,7 @@ export const Radio: React.FC<IRadio> = ({
   return (
     <div className={`form-control w-full ${containerStyle}`}>
       <label className="label cursor-pointer">
-        <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
+        <span className={'label-text text-sm-content ' + labelStyle}>{labelTitle}</span>
         <input
           type="radio"
           className="radio checked:bg-[#81219A]"

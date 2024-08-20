@@ -85,11 +85,11 @@ const FileUploader: React.FC<DragAndDropProps> = ({
 
   return (
     <div key={key}>
-      <Typography type="body" size="m" weight="bold" className="w-56 mt-5 ml-1">
+      <Typography type="body" size="s" weight="bold" className="w-56 mt-5 ml-1">
         {name}
       </Typography>
       <div className="flex flex-row">
-        <Typography type="body" size="m" weight="bold" className="w-40 mt-5 ml-1 mr-9">
+        <Typography type="body" size="s" weight="bold" className="w-40 mt-5 ml-1 mr-9">
           {fieldType}
         </Typography>
         <div>

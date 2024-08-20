@@ -37,13 +37,13 @@ export default function FileUploaderV2({
             minWidth: labelWidth,
           }}>
           {labelTitle ? (
-            <Typography type="body" size="m" weight="bold">
+            <Typography type="body" size="s" weight="bold">
               {labelTitle}
               <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
             </Typography>
           ) : null}
           {isOptional ? (
-            <Typography type="body" size="m" weight="bold">
+            <Typography type="body" size="s" weight="bold">
               <p>{`{ Optional }`}</p>
             </Typography>
           ) : null}

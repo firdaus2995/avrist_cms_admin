@@ -42,6 +42,15 @@ const PageTemplateNewPage = React.lazy(
   async () => await import('../pages/PageTemplates/PageTemplatesNew'),
 );
 
+// IMPORT PAGE TEMPLATES PAGE
+const LeadsGenerator = React.lazy(async () => await import('../pages/LeadsGenerator'));
+const LeadsGeneratorCondition = React.lazy(
+  async () => await import('../pages/LeadsGenerator/Condition'),
+);
+const LeadsGeneratorConditionDetail = React.lazy(
+  async () => await import('../pages/LeadsGenerator/Condition/Detail'),
+);
+
 // IMPORT EMAIL FORM BUILDER PAGE
 const EmailFormBuilderListPage = React.lazy(async () => await import('../pages/EmailFormBuilder'));
 const EmailFormBuilderNewPage = React.lazy(
@@ -177,6 +186,16 @@ export default function RoutesComponent() {
           </Route>
           <Route element={<ProtectedPage permission="PAGE_TEMPLATE_EDIT" />}>
             <Route path="page-template/edit/:id" element={<PageTemplateNewPage />} />
+          </Route>
+          {/* LEADS GENERATOR PAGES ROUTE */}
+          <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
+            <Route path="questions" element={<LeadsGenerator />} />
+          </Route>
+          <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
+            <Route path="conditions" element={<LeadsGeneratorCondition />} />
+          </Route>
+          <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
+            <Route path="conditions/:id" element={<LeadsGeneratorConditionDetail />} />
           </Route>
           {/* EMAIL FORM BUILDER PAGES ROUTE */}
           <Route element={<ProtectedPage permission="EMAIL_FORM_READ" />}>

@@ -82,7 +82,7 @@ const DropDown = ({
           }}
           className="label"
         >
-          <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-base-content ml-1'}>{labelRequired ? '*' : ''}</span></span>
+          <span className={`label-text text-sm-content ${labelStyle}`}>{labelTitle}<span className={'text-reddist text-sm-content ml-1'}>{labelRequired ? '*' : ''}</span></span>
         </label>
         <div
           style={{

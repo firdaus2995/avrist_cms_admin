@@ -46,9 +46,9 @@ const Radio = ({
   return (
     <div className="w-full flex flex-col">
       <label className="label">
-        <span className={`label-text text-base-content ${labelStyle}`}>
+        <span className={`label-text text-sm-content ${labelStyle}`}>
           {labelTitle}
-          <span className={'text-reddist text-base-content'}>{labelRequired ? '*' : ''}</span>
+          <span className={'text-reddist text-sm-content'}>{labelRequired ? '*' : ''}</span>
         </span>
       </label>
       <div

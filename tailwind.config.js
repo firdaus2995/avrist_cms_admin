@@ -21,6 +21,7 @@ export default {
         'dark-grey': '#798F9F',
         'other-grey': '#ABB5C4',
         error: '#EC2247',
+        'red-light': '#FBE7E7',
         'error-stroke': '#AE1D1D',
         'secondary-warning': '#FF8E3C',
         'tertiary-warning': '#D96C1E',
@@ -31,6 +32,7 @@ export default {
         'toast-error-border': '#EBD2CE',
         'form-disabled-bg': '#E9EEF4',
         white: '#FFFFFF',
+        table: '#F8F9FF',
       },
       // Custom fonts
       fontFamily: {

@@ -44,7 +44,7 @@ export const TitleCard: React.FC<ITitleCard> = ({
       )}
       <Subtitle styleClass={TopSideButtons !== undefined ? 'inline-block' : ''}>
         <div className="flex flex-row items-center">
-          <Typography type="heading3" size="l" weight="bold">
+          <Typography size="xl" weight="bold">
             {title}
           </Typography>
           {titleComponent}

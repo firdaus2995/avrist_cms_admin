@@ -36,7 +36,7 @@ function ImageRadioField({ name, required, items, nameId }: ImageRadioFieldProps
   return (
     <div className="my-2">
       <label className={`label font-bold`}>
-        <span className={`label-text text-base-content`}>
+        <span className={`label-text text-sm-content`}>
           {name}
           {required && <span className={'text-reddist text-lg ml-1'}>*</span>}
         </span>

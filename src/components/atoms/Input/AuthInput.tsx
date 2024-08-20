@@ -45,7 +45,7 @@ export function PasswordInput({ id, onChange, placeholder, value }: IPasswordInp
         focus:ring-1
         px-4
         py-2
-        text-base
+        text-sm
         border-2
         border-gray-300
         rounded-2xl
@@ -136,7 +136,7 @@ const AuthInput: React.FC<IAuthInputProps> = ({
             focus:ring-1
             px-4
             py-2
-            text-base
+            text-sm
             border-2
             border-gray-300
             rounded-2xl

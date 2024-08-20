@@ -91,12 +91,12 @@ export const InputText: React.FC<IInputText> = ({
             minWidth: direction === 'row' ? labelWidth : '',
           }}
           className={`label`}>
-          <span className={`label-text text-base-content ${labelStyle}`}>
+          <span className={`label-text text-sm-content ${labelStyle}`}>
             {labelTitle}{' '}
             {labelTitleExtension && (
               <span className={labelTitleExtensionStyle}>{labelTitleExtension}</span>
             )}
-            <span className={'text-reddist text-base-content'}>{labelRequired ? '*' : ''}</span>
+            <span className={'text-reddist text-sm-content'}>{labelRequired ? '*' : ''}</span>
           </span>
         </label>
         <div

@@ -9,7 +9,7 @@ export default function TextEditor({
 }: any) {
   return (
     <div className='flex flex-col gap-2'>
-      <Typography type="body" size="m" weight="bold">
+      <Typography type="body" size="s" weight="bold">
         {title}
       </Typography>
       <CkEditor

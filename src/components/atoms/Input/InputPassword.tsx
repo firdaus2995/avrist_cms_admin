@@ -53,7 +53,7 @@ export const InputPassword: React.FC<IInputPassword> = ({
           }}
           className="label"
         >
-          <span className={`label-text text-base-content ${labelStyle}`}>{labelTitle}</span>
+          <span className={`label-text text-sm-content ${labelStyle}`}>{labelTitle}</span>
         </label>
         <div 
           className={`

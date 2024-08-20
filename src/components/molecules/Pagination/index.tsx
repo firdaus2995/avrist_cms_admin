@@ -48,7 +48,7 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
           <div className="flex gap-3 items-center">
             <Menu as="div" className="relative inline-block text-left">
               <div>
-                <Menu.Button className="inline-flex w-[200px] justify-between rounded-xl p-3 text-sm font-medium text-[#333333] border-[1px] border-[#BBBBBB] active:border-purple">
+                <Menu.Button className="inline-flex w-[200px] justify-between rounded-xl h-[36px] px-3 items-center text-sm font-medium text-[#333333] border-[1px] border-[#BBBBBB] active:border-purple">
                   {pageSize} / Page
                   <ChevronDownIcon className="ml-2 -mr-1 h-5 w-5 text-[#798F9F] " aria-hidden="true" />
                 </Menu.Button>
@@ -101,12 +101,12 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
           middlePagesSiblingCount={1}
           setCurrentPage={handlePageChange}
           totalPages={countPage(total, pageSize)}
-          truncableClassName="w-10 px-0.5 text-center text-[14px] items-center flex justify-center rounded-2xl bg-[#E5DFEC] w-[48px] h-[48px] text-white"
+          truncableClassName="w-10 px-0.5 text-center text-[14px] items-center flex justify-center rounded-xl bg-[#E5DFEC] w-[36px] h-[36px] text-white"
           truncableText="..."
         >
           <Pagination.PrevButton 
             type='button' 
-            className="flex justify-center items-center w-[48px] h-[48px]"
+            className="flex justify-center items-center w-[36px] h-[36px]"
           >
             <img src={TablePrev} />
           </Pagination.PrevButton>
@@ -114,13 +114,13 @@ const PaginationComponent: React.FC<TPaginationComponent> = ({
           <Pagination.PageButton
             type='button'
             activeClassName="text-white bg-primary font-semibold"
-            className="flex justify-center items-center w-[48px] h-[48px] cursor-pointer text-sm gap-1 rounded-2xl"
+            className="flex justify-center items-center w-[36px] h-[36px] cursor-pointer text-sm gap-1 rounded-xl"
             inactiveClassName="text-white bg-[#E5DFEC] font-semibold"
           />
 
           <Pagination.NextButton 
             type='button' 
-            className="flex justify-center items-center w-[48px] h-[48px]"
+            className="flex justify-center items-center w-[36px] h-[36px]"
           >
             <img src={TableNext} />
           </Pagination.NextButton>
