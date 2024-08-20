@@ -20,7 +20,7 @@ const dummy: IListItem = {
   date: 'ABC',
 };
 
-const LeadsGeneratorConditions = () => {
+const LeadsGeneratorResult = () => {
   const navigate = useNavigate();
 
   const arrData: () => IListItem[] = () => {
@@ -33,15 +33,15 @@ const LeadsGeneratorConditions = () => {
 
   return (
     <TitleCard
-      title="Conditions"
+      title="Result Template"
       topMargin="mt-2"
       TopSideButtons={
         <div
-          className={styleButton({ variants: 'primary' })}
+          className={styleButton({ variants: 'primary', className: 'min-w-[170px]' })}
           onClick={() => {
-            navigate(`/conditions/new`);
+            navigate(`/result-template/new`);
           }}>
-          Add Condition
+          Add Result Template
         </div>
       }>
       <div className="flex flex-col gap-y-4">
@@ -53,16 +53,19 @@ const LeadsGeneratorConditions = () => {
               No.
             </Typography>
             <Typography type="body" size="s" weight="bold" className="w-[15%]">
-              Condition Title
-            </Typography>
-            <Typography type="body" size="s" weight="bold" className="w-[15%]">
               Result Name
             </Typography>
-            <Typography type="body" size="s" weight="bold" className="w-[35%]">
-              Condition 1
+            <Typography type="body" size="s" weight="bold" className="w-[15%]">
+              Content Type Name
             </Typography>
-            <Typography type="body" size="s" weight="bold" className="w-[10%]">
-              Total Condition
+            <Typography type="body" size="s" weight="bold" className="w-[15%]">
+              Content Data
+            </Typography>
+            <Typography type="body" size="s" weight="bold" className="w-[15%]">
+              Narrative
+            </Typography>
+            <Typography type="body" size="s" weight="bold" className="w-[15%]">
+              Disclaimer
             </Typography>
             <Typography type="body" size="s" weight="bold" className="w-[15%]">
               Date Added
@@ -86,10 +89,13 @@ const LeadsGeneratorConditions = () => {
                 <Typography type="body" size="s" className="w-[15%]">
                   {item.name}
                 </Typography>
-                <Typography type="body" size="s" className="w-[35%]">
+                <Typography type="body" size="s" className="w-[15%]">
                   {item.condition}
                 </Typography>
-                <Typography type="body" size="s" className="w-[10%]">
+                <Typography type="body" size="s" className="w-[15%]">
+                  {item.total}
+                </Typography>
+                <Typography type="body" size="s" className="w-[15%]">
                   {item.total}
                 </Typography>
                 <Typography type="body" size="s" className="w-[15%]">
@@ -99,7 +105,7 @@ const LeadsGeneratorConditions = () => {
                   <div
                     className={`!min-w-[24px] !h-[24px] !rounded-lg ${styleButton({ variants: 'blues' })}`}
                     onClick={() => {
-                      navigate(`/conditions/${idx}`);
+                      navigate(`/result-template/${idx}`);
                     }}>
                     x
                   </div>
@@ -126,4 +132,4 @@ const LeadsGeneratorConditions = () => {
   );
 };
 
-export default LeadsGeneratorConditions;
+export default LeadsGeneratorResult;

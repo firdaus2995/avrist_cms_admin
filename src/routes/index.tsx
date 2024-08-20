@@ -30,11 +30,19 @@ const RolesNewPage = React.lazy(async () => await import('../pages/Roles/RolesNe
 const RolesEditPage = React.lazy(async () => await import('../pages/Roles/RolesEdit'));
 
 const GroupMenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement'));
-const GroupMenuManagementNewPage = React.lazy(async () => await import('../pages/MenuManagement/GroupMenuNew'));
-const GroupMenuManagementEditPage = React.lazy(async () => await import('../pages/MenuManagement/GroupMenuEdit'));
+const GroupMenuManagementNewPage = React.lazy(
+  async () => await import('../pages/MenuManagement/GroupMenuNew'),
+);
+const GroupMenuManagementEditPage = React.lazy(
+  async () => await import('../pages/MenuManagement/GroupMenuEdit'),
+);
 const MenuManagementPage = React.lazy(async () => await import('../pages/MenuManagement/MenuList'));
-const MenuManagementNewPage = React.lazy(async () => await import('../pages/MenuManagement/MenuNew'));
-const MenuManagementEditPage = React.lazy(async () => await import('../pages/MenuManagement/MenuEdit'));
+const MenuManagementNewPage = React.lazy(
+  async () => await import('../pages/MenuManagement/MenuNew'),
+);
+const MenuManagementEditPage = React.lazy(
+  async () => await import('../pages/MenuManagement/MenuEdit'),
+);
 
 // IMPORT PAGE TEMPLATES PAGE
 const PageTemplatePage = React.lazy(async () => await import('../pages/PageTemplates'));
@@ -49,6 +57,12 @@ const LeadsGeneratorCondition = React.lazy(
 );
 const LeadsGeneratorConditionDetail = React.lazy(
   async () => await import('../pages/LeadsGenerator/Condition/Detail'),
+);
+const LeadsGeneratorResult = React.lazy(
+  async () => await import('../pages/LeadsGenerator/ResultTemplate'),
+);
+const LeadsGeneratorResultDetail = React.lazy(
+  async () => await import('../pages/LeadsGenerator/ResultTemplate/Detail'),
 );
 
 // IMPORT EMAIL FORM BUILDER PAGE
@@ -196,6 +210,12 @@ export default function RoutesComponent() {
           </Route>
           <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
             <Route path="conditions/:id" element={<LeadsGeneratorConditionDetail />} />
+          </Route>
+          <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
+            <Route path="result-template" element={<LeadsGeneratorResult />} />
+          </Route>
+          <Route element={<ProtectedPage permission="PAGE_TEMPLATE_READ" />}>
+            <Route path="result-template/:id" element={<LeadsGeneratorResultDetail />} />
           </Route>
           {/* EMAIL FORM BUILDER PAGES ROUTE */}
           <Route element={<ProtectedPage permission="EMAIL_FORM_READ" />}>

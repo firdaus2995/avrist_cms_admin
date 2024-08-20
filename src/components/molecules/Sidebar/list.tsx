@@ -12,21 +12,21 @@ export const sidebarList = [
     title: 'Home',
     icon: HomeIcon,
     path: '/',
-    role: 'HOME_READ'
+    role: 'HOME_READ',
   },
   {
     id: 2,
     title: 'Page Management',
     icon: PageIcon,
     path: '/page-management',
-    role: 'PAGE_READ'
+    role: 'PAGE_READ',
   },
   {
     id: 3,
     title: 'Menu Management',
     icon: MenuIcon,
     path: '/group-menu',
-    role: 'MENU_READ'
+    role: 'MENU_READ',
   },
   {
     id: 4,
@@ -37,19 +37,19 @@ export const sidebarList = [
         id: 41,
         title: 'Content Type Builder',
         path: '/content-type',
-        role: 'CONTENT_TYPE_READ'
+        role: 'CONTENT_TYPE_READ',
       },
       {
         id: 42,
         title: 'Content Manager',
         path: '/content-manager',
-        role: 'CONTENT_MANAGER_READ'
+        role: 'CONTENT_MANAGER_READ',
       },
       {
         id: 43,
         title: 'Global Config Data',
         path: '/global-config-data',
-        role: 'GLOBAL_CONFIG_READ'
+        role: 'GLOBAL_CONFIG_READ',
       },
     ],
   },
@@ -58,7 +58,7 @@ export const sidebarList = [
     title: 'Page Template',
     icon: PageTemplateIcon,
     path: '/page-template',
-    role: 'PAGE_TEMPLATE_READ'
+    role: 'PAGE_TEMPLATE_READ',
   },
   {
     id: 9,
@@ -69,28 +69,28 @@ export const sidebarList = [
         id: 73,
         title: 'Questions',
         path: '/questions',
-        role: 'PAGE_TEMPLATE_READ'
+        role: 'PAGE_TEMPLATE_READ',
       },
       {
         id: 74,
         title: 'Result Template',
-        path: '/result-remplate',
-        role: 'PAGE_TEMPLATE_READ'
+        path: '/result-template',
+        role: 'PAGE_TEMPLATE_READ',
       },
       {
         id: 75,
         title: 'Conditions',
         path: '/conditions',
-        role: 'PAGE_TEMPLATE_READ'
+        role: 'PAGE_TEMPLATE_READ',
       },
     ],
-  },  
+  },
   {
     id: 7,
     title: 'Email Form Builder',
     icon: EmailIcon,
     path: '/email-form-builder',
-    role: 'EMAIL_FORM_READ'
+    role: 'EMAIL_FORM_READ',
   },
   {
     id: 8,
@@ -101,13 +101,13 @@ export const sidebarList = [
         id: 71,
         title: 'User',
         path: '/user',
-        role: 'USER_READ'
+        role: 'USER_READ',
       },
       {
         id: 72,
         title: 'Role',
         path: '/roles',
-        role: 'ROLE_READ'
+        role: 'ROLE_READ',
       },
     ],
   },

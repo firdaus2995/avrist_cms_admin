@@ -4,81 +4,61 @@ interface IProps {
   disabled?: boolean;
 }
 
-const conditionalStyle = (
-  disabled?: boolean,
-  defaultStyle?: string,
-  disabledStyle?: string // text-bodyCaption bg-stroke
-) => {
-  return (
-    (disabled ? disabledStyle ?? "text-bodyCaption bg-stroke" : defaultStyle) ??
-    ""
-  );
+const conditionalStyle = (disabled?: boolean, defaultStyle?: string, disabledStyle?: string) => {
+  return (disabled ? (disabledStyle ?? 'text-dark-grey bg-other-grey') : defaultStyle) ?? '';
 };
 
-const styleButton: (e:IProps) => string = ({
+const styleButton: (e: IProps) => string = ({
   variants,
-  className = "",
+  className = '',
   disabled = false,
 }: IProps) => {
-  let baseStyle = "cursor-pointer flex justify-center items-center min-w-[120px] h-[36px] rounded-xl font-bold text-sm";
+  let baseStyle =
+    'cursor-pointer flex justify-center items-center min-w-[120px] h-[36px] rounded-xl font-bold text-sm';
   switch (variants) {
-    case "secondary":
+    case 'secondary':
+      baseStyle =
+        baseStyle + ` ${conditionalStyle(disabled, 'text-primary bg-white border-primary border')}`;
+      break;
+    case 'third':
       baseStyle =
         baseStyle +
-        ` text-primary ${conditionalStyle(
-          disabled,
-          "bg-white border-primary border",
-          "bg-stroke"
-        )}`;
+        ` ${conditionalStyle(disabled, 'text-dark-grey bg-white border border-dark-grey')}`;
       break;
-    case "third":
+    case 'success':
+      baseStyle = baseStyle + ` ${conditionalStyle(disabled, 'text-white bg-success')}`;
+      break;
+    case 'error':
       baseStyle =
         baseStyle +
-        ` ${conditionalStyle(
-          disabled,
-          "text-dark-grey bg-white border border-dark-grey"
-        )}`;
+        ` ${conditionalStyle(disabled, 'text-dark-reddist bg-red-light border border-dark-reddist')}`;
       break;
-    case "success":
-      baseStyle =
-        baseStyle +
-        ` ${conditionalStyle(
-          disabled,
-          "text-white bg-success"
-        )}`;
+    case 'disable':
+      baseStyle = baseStyle + ' text-bodyCaption bg-stroke';
       break;
-      case "error":
-      baseStyle =
-        baseStyle + ` ${conditionalStyle(disabled, "text-dark-reddist bg-red-light border border-dark-reddist")}`;
-      break;
-    case "disable":
-      baseStyle = baseStyle + " text-bodyCaption bg-stroke";
-      break;
-    case "fourth":
+    case 'fourth':
       baseStyle = `${baseStyle} bg-white text-tertiary-warning border border-solid border-tertiary-warning`;
       break;
-    case "blues":
+    case 'blues':
       baseStyle = `${baseStyle} bg-[#CFE3FB] text-[#829BC7] border border-solid border-[#829BC7]`;
       break;
-    case "primary":
+    case 'primary':
     default:
-      baseStyle =
-        baseStyle +
-        ` ${conditionalStyle(disabled, "btn-primary text-white")}`;
+      baseStyle = baseStyle + ` ${conditionalStyle(disabled, 'btn-primary text-white')}`;
       break;
   }
 
   if (!disabled) {
-    baseStyle = baseStyle + " active:bg-primary active:text-white";
+    baseStyle = baseStyle + ' active:bg-primary active:text-white';
   } else {
-    baseStyle = baseStyle + " cursor-not-allowed";
+    baseStyle = baseStyle + ' cursor-not-allowed';
   }
 
   if (className) {
-    baseStyle = baseStyle + " " + className;
+    baseStyle = baseStyle + ' ' + className;
   }
 
-  return baseStyle;  
-}
+  return baseStyle;
+};
 
 export { styleButton };
