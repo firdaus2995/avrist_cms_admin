@@ -219,7 +219,7 @@ export default function LeadsGeneratorResult() {
         dispatch(
           openToast({
             type: 'success',
-            title: t('user.global-config-data-list.toast.successDeletePage'),
+            title: 'Success Delete Data',
           }),
         );
         if (listData?.length === 1) {
