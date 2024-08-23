@@ -13,7 +13,7 @@ const EmailForm = ({
   disabled,
   themeColor,
   inputWidth,
-  inputHeight,
+  inputHeight = 36,
   roundStyle = 'xl',
   error,
   helperText,
@@ -114,7 +114,7 @@ const EmailForm = ({
           onClick={() => {
             setIsOpen(!isOpen);
           }}
-          className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
+          className={`text-sm w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
             disabled ? 'text-[#637488] bg-disabled-input' : ''
           }`}
         />

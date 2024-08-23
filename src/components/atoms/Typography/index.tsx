@@ -25,8 +25,8 @@ const fontSizeClasses: IFontSizeClasses = {
   body: {
     xl: 'text-xl',
     l: 'text-lg',
-    m: 'text-base',
-    normal: 'text-base',
+    m: 'text-sm',
+    normal: 'text-sm',
     s: 'text-sm',
     xs: 'text-xs',
   },

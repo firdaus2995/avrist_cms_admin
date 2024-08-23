@@ -88,7 +88,7 @@ const TextInputDropDown = ({
           onFocus={() => {
             setIsOpen(true);
           }}
-          className={`w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
+          className={`text-sm w-full h-full rounded-3xl px-1 outline-0 ${inputStyle} ${
             disabled ? 'text-[#637488]' : ''
           }`}
         />

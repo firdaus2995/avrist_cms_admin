@@ -24,16 +24,16 @@ export const LabelText: React.FC<ILabelText> = ({
   return (
     <div className={`flex flex-row`}>
       <label
-        className={`font-bold text-base	${labelStyle}`}
+        className={`font-bold text-sm	${labelStyle}`}
         style={{
           width: labelWidth,
           minWidth: labelWidth,
         }}
       >
-        {labelTitle}<span className={'text-reddist text-base'}>{labelRequired ? '*' : ''}</span>
+        {labelTitle}<span className={'text-reddist text-sm'}>{labelRequired ? '*' : ''}</span>
       </label>
       <div
-        className={`text-base	${valueStyle}`}
+        className={`text-sm	${valueStyle}`}
         style={{
           width: valueWidth,
         }}

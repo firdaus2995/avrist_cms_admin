@@ -23,14 +23,17 @@ export default function TextAreaField({
   border = true,
   labelRequired = false,
   maxLength,
+  wrapperClass = '',
 }: any) {
   return (
-    <div>
+    <div className={wrapperClass}>
       <div className="flex flex-row">
-        <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
-          {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
-        </Typography>
+        {labelTitle && (
+          <Typography type="body" size="s" weight="bold" className="w-56 mt-1 ml-1">
+            {labelTitle}
+            <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+          </Typography>
+        )}
         <div
           className={`form-control w-full ${containerStyle} ${
             direction === 'row' ? 'flex-row' : ''
@@ -51,6 +54,7 @@ export default function TextAreaField({
               onChange(e);
             }}
             className={`
+            text-sm
             textarea
             textarea-bordered
             rounded-${roundStyle} ${themeColor ? `border-${themeColor}` : ''} 

@@ -14,7 +14,7 @@ export default function TextField({
   roundStyle = 'xl',
   themeColor,
   inputWidth,
-  inputHeight,
+  inputHeight = 36,
   name,
   error,
   suffix,
@@ -22,14 +22,17 @@ export default function TextField({
   // fieldTypeLabel,
   border = true,
   labelRequired = false,
+  wrapperClass = '',
 }: any) {
   return (
-    <div>
+    <div className={wrapperClass}>
       <div className="flex flex-row">
-        <Typography type="body" size="m" weight="bold" className="w-56 mt-1 ml-1">
-          {labelTitle}
-          <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
-        </Typography>
+        {labelTitle &&
+          <Typography type="body" size="s" weight="bold" className="w-56 mt-1 ml-1">
+            {labelTitle}
+            <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
+          </Typography>
+        }
         <div
           className={`
             form-control
@@ -58,7 +61,7 @@ export default function TextField({
               disabled={disabled}
               placeholder={placeholder ?? ''}
               onChange={onChange}
-              className={`w-full h-full rounded-xl px-1 outline-0 ${inputStyle} ${
+              className={`text-sm w-full h-full rounded-xl px-1 outline-0 ${inputStyle} ${
                 disabled ? 'text-[#637488]' : ''
               }`}
             />

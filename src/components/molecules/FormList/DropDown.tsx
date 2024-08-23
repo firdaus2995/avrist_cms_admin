@@ -22,7 +22,7 @@ const DropDown = ({
   disabled,
   themeColor,
   inputWidth,
-  inputHeight,
+  inputHeight = 36,
   roundStyle = 'xl',
   error,
   helperText,
@@ -73,7 +73,7 @@ const DropDown = ({
           onClick={() => {
             setIsOpen(!isOpen);
           }}
-          className={`w-full h-full rounded-xl px-1 outline-0 ${inputStyle} ${
+          className={`text-sm w-full h-full rounded-xl px-1 outline-0 ${inputStyle} ${
             disabled ? 'text-[#637488] bg-[#E9EEF4] ' : ''
           }`}
         />
@@ -86,7 +86,7 @@ const DropDown = ({
           className={`
             flex items-center 
             justify-center cursor-pointer 
-            w-10 h-10 rounded-lg 
+            w-[36px] h-[36px] rounded-xl 
             -mr-3 hover:bg-slate-300
             ${isOpen && 'animate-pulse'}
           `}>
@@ -106,7 +106,7 @@ const DropDown = ({
                     handleOptionClick(option.label);
                     onChange(option);
                   }}
-                  className={`px-4 py-2 rounded-xl cursor-pointer hover:bg-light-purple m-1 ${
+                  className={`text-sm px-4 py-2 rounded-xl cursor-pointer hover:bg-light-purple m-1 ${
                     option.label === searchTerm &&
                     'text-primary font-bold flex flex-row justify-between'
                   }`}>

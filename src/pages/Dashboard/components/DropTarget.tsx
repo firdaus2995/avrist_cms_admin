@@ -40,7 +40,7 @@ export const DropTarget: FC<DustbinProps> = ({ allowedDropEffect }) => {
   return (
     <div
       ref={drop}
-      className={`h-48 w-48 m-6 ${backgroundColor} text-white p-4 text-center text-base leading-normal float-left`}
+      className={`h-48 w-48 m-6 ${backgroundColor} text-white p-4 text-center text-sm leading-normal float-left`}
     >
       {`Works with ${allowedDropEffect} drop effect`}
       <br />

@@ -54,7 +54,7 @@ export const CheckBox: React.FC<ICheckBox> = ({
             updateToogleValue();
           }}
         />
-        <span className={'label-text text-base-content ' + labelStyle}>{labelTitle}</span>
+        <span className={'label-text text-sm-content ' + labelStyle}>{labelTitle}</span>
       </label>
     </div>
   );

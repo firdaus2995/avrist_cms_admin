@@ -58,7 +58,7 @@ export const TextArea: React.FC<ITextArea> = ({
             minWidth: direction === 'row' ? labelWidth : '',
           }}
           className="label">
-          <span className={`label-text text-base-content ${labelStyle}`}>
+          <span className={`label-text text-sm-content ${labelStyle}`}>
             {labelTitle}
             <span className={'text-reddist text-lg'}>{labelRequired ? '*' : ''}</span>
           </span>
@@ -79,7 +79,7 @@ export const TextArea: React.FC<ITextArea> = ({
           maxLength={maxLength}
           className={`textarea ${
             isError ? 'border-error' : 'textarea-bordered'
-          } w-full text-base py-3 rounded-${roundStyle} ${textAreaStyle}`}
+          } w-full text-sm py-3 rounded-${roundStyle} ${textAreaStyle}`}
         />
         {
           isError && (direction === 'column' || !direction) && (
