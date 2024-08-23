@@ -1,31 +1,154 @@
-import Typography from '@/components/atoms/Typography';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { t } from 'i18next';
 import FormList from '@/components/molecules/FormList';
 import { styleButton } from '@/utils/styleButton';
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Controller, useForm } from 'react-hook-form';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import CancelIcon from '@/assets/cancel.png';
+import {
+  useCreateResultTemplateMutation,
+  useGetResultTemplateDetailQuery,
+  useUpdateResultTemplateMutation,
+} from '@/services/LeadsGenerator/leadsGeneratorApi';
+import { useAppDispatch } from '@/store';
+import { openToast } from '@/components/atoms/Toast/slice';
 
 const LeadsGeneratorResultDetail = () => {
+  const params = useParams();
+  const [id] = useState<any>(Number(params?.id));
   const navigate = useNavigate();
   const location = useLocation();
   const pathname = location.pathname ?? '';
+  const dispatch = useAppDispatch();
 
   const [isTitle, setTitle] = useState<string>('Edit Result Template');
   const [isEditable, setEditable] = useState<boolean>(false);
+  const [isDraft, setIsDraft] = useState<boolean>(false); // State to handle draft
+
+  // LEAVE MODAL STATE
+  const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
+  const [titleLeaveModalShow, setLeaveTitleModalShow] = useState<string | null>('');
+  const [messageLeaveModalShow, setMessageLeaveModalShow] = useState<string | null>('');
+
+  const [createResultTemplate] = useCreateResultTemplateMutation();
+  const [updateResultTemplate] = useUpdateResultTemplateMutation();
+
+  const fetchQuery = useGetResultTemplateDetailQuery({ id });
+  const { data } = fetchQuery;
+
+  // Form hook
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+    getValues,
+    reset,
+  } = useForm();
 
   useEffect(() => {
+    // Set editable state and title based on the route
     if (pathname.includes('new')) {
       setEditable(true);
       setTitle('Add Result Template');
     }
   }, [pathname]);
 
-  const arrData: () => number[] = () => {
-    const arr: number[] = [];
-    for (let i = 0; i < 3; i++) {
-      arr.push(i);
+  useEffect(() => {
+    if (data?.resultTemplateDetail) {
+      const { name, narrative, disclaimer, images } = data.resultTemplateDetail;
+
+      reset({
+        resultName: name,
+        narrative,
+        disclaimer,
+        images,
+      });
     }
-    return arr;
+  }, [data, reset]);
+
+  // Handle form submission
+  const onSubmitData = () => {
+    if (pathname.includes('new')) {
+      saveData(); // Create new template
+    } else {
+      editData(); // Update existing template
+    }
+  };
+
+  // Update existing result template
+  const editData = () => {
+    const value = getValues();
+    const payload = {
+      id,
+      name: value.resultName,
+      narrative: value.narrative,
+      disclaimer: value.disclaimer,
+      images: value?.images,
+      isDraft, // Include isDraft in payload
+    };
+    updateResultTemplate(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+      });
+  };
+
+  // Create new result template
+  const saveData = () => {
+    const value = getValues();
+    const payload = {
+      name: value.resultName,
+      narrative: value.narrative,
+      isDraft, // Use the isDraft state
+      disclaimer: value.disclaimer,
+      images: value?.images,
+    };
+    createResultTemplate(payload)
+      .unwrap()
+      .then(() => {
+        dispatch(
+          openToast({
+            type: 'success',
+            title: 'Success',
+          }),
+        );
+        goBack();
+      })
+      .catch(() => {
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Failed',
+          }),
+        );
+      });
+  };
+
+  // Navigate back
+  const goBack = () => {
+    navigate(-1);
+  };
+
+  // Handle modal leave action
+  const onLeave = () => {
+    setShowLeaveModal(false);
+    goBack();
   };
 
   return (
@@ -47,125 +170,154 @@ const LeadsGeneratorResultDetail = () => {
           </div>
         )
       }>
-      <div className="flex flex-col gap-y-4">
-        <div className="flex flex-col gap-y-2 w-1/2">
-          <FormList.TextField
-            disabled={!isEditable}
-            // key="fieldId"
-            // labelRequired
-            labelTitle="Result Name"
-            themeColor="primary"
-            placeholder="Result Name"
-            value={''}
-            // error={!!attributesErrors.fieldId}
-            // helperText={attributesErrors.fieldId}
-            // onChange={(e: any) => {
-            //   setNewAttributes({ ...newAttributes, fieldId: e.target.value });
-            // }}
-            border={false}
-          />
-          <div className="flex items-center">
-            <Typography type="body" size="s" weight="bold" className="w-[222px] ml-1">
-              Content Type
-            </Typography>
-            <FormList.DropDown
-              disabled={!isEditable}
-              defaultValue={''}
-              items={[]}
-              onChange={(e: any) => {
-                console.log(e);
-              }}
+      <form onSubmit={handleSubmit(onSubmitData)} className="flex flex-col gap-10">
+        <div className="flex flex-col gap-y-4">
+          <div className="flex flex-col gap-y-2 w-1/2">
+            <Controller
+              name="resultName"
+              control={control}
+              defaultValue=""
+              rules={{ required: 'Result Name is required' }}
+              render={({ field }) => (
+                <FormList.TextField
+                  disabled={!isEditable}
+                  labelTitle="Result Name"
+                  themeColor="primary"
+                  placeholder="Result Name"
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={!!errors.resultName}
+                  helperText={errors.resultName?.message}
+                  border={false}
+                />
+              )}
             />
           </div>
-          <div className="flex items-center">
-            <Typography type="body" size="s" weight="bold" className="w-[222px] ml-1">
-              Content Data
-            </Typography>
-            <FormList.DropDown
-              disabled={!isEditable}
-              defaultValue={''}
-              items={[]}
-              onChange={(e: any) => {
-                console.log(e);
+          <div className="w-2/3">
+            <Controller
+              name="narrative"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: 'Narrative is required',
               }}
+              render={({ field }) => (
+                <FormList.TextEditor
+                  title="Narrative"
+                  value={field.value}
+                  disabled={!isEditable}
+                  error={!!errors.narrative}
+                  helperText={errors.narrative?.message}
+                  onChange={field.onChange}
+                />
+              )}
             />
           </div>
-          <div className="flex flex-wrap gap-2 items-end justify-end">
-            {arrData().map((item: number) => (
-              <div
-                key={item}
-                className="h-[33px] px-4 rounded-full text-[14px] bg-[#F0E4F3] flex items-center justify-center">
-                Testing
-                <div className="ml-4">x</div>
-              </div>
-            ))}
+          <div className="w-2/3">
+            <Controller
+              name="disclaimer"
+              control={control}
+              defaultValue=""
+              rules={{
+                required: { value: true, message: `Disclaimer is required` },
+              }}
+              render={({ field }) => (
+                <FormList.TextEditor
+                  title="Disclaimer"
+                  value={field.value}
+                  disabled={!isEditable}
+                  error={errors.disclaimer}
+                  helperText={errors.disclaimer?.message}
+                  onChange={field.onChange}
+                />
+              )}
+            />
+          </div>
+          <div className="w-2/3">
+            <Controller
+              name="images"
+              control={control}
+              defaultValue="[]"
+              rules={{
+                validate: value => {
+                  try {
+                    const parsedValue = JSON.parse(value);
+
+                    if (Array.isArray(parsedValue) && parsedValue.length > 0) {
+                      if (parsedValue.every(item => item.imageUrl && item.altText)) {
+                        return true;
+                      }
+                    }
+
+                    return 'Images are required and must include valid imageUrl and altText.';
+                  } catch (error) {
+                    return 'Invalid format. Please provide a valid JSON array.';
+                  }
+                },
+              }}
+              render={({ field }) => {
+                return (
+                  <FormList.FileUploaderV2
+                    {...field}
+                    id="images"
+                    fieldTypeLabel="Images"
+                    labelTitle="Images"
+                    isDocument={false}
+                    disabled={!isEditable}
+                    editMode={isEditable}
+                    multiple={true}
+                    error={!!errors?.images}
+                    helperText={errors?.images?.message}
+                    onChange={field.onChange}
+                    border={false}
+                  />
+                );
+              }}
+            />
           </div>
         </div>
-        <div className="">
-          <Typography type="body" size="s" weight="bold" className="w-[222px] ml-1">
-            Narrative
-          </Typography>
-          <div className="flex gap-x-3">
-            <FormList.TextAreaField
-              disabled={!isEditable}
-              // labelRequired
-              wrapperClass="w-1/2"
-              themeColor="primary"
-              placeholder="Narrative"
-              value={''}
-              // error={!!attributesErrors.fieldId}
-              // helperText={attributesErrors.fieldId}
-              onChange={(e: any) => {
-                console.log(e);
-              }}
-              // textAreaStyle="h-[72px]"
-              border={false}
-            />
-            <div className="w-2/5 rounded-xl h-fit py-2 px-3 bg-[#CFE3FB] text-[#829BC7] text-xs">
-              It is informed that in the Narrative, you can use parameters from the selected Content
-              Type ID field, for example: [[fieldIDname]].
-            </div>
-          </div>
-        </div>
-        <div className="w-1/2">
-          <Typography type="body" size="s" weight="bold" className="w-[222px] ml-1">
-            Disclaimer
-          </Typography>
-          <FormList.TextAreaField
-            disabled={!isEditable}
-            // labelRequired
-            themeColor="primary"
-            placeholder="Disclaimere"
-            value={''}
-            // error={!!attributesErrors.fieldId}
-            // helperText={attributesErrors.fieldId}
-            onChange={(e: any) => {
-              console.log(e);
+        <div className="flex gap-2 justify-end items-center mt-10 border-t-2 pt-5">
+          <button
+            onClick={e => {
+              e.preventDefault();
+              setLeaveTitleModalShow('Cancel and Back to Previous Page');
+              setMessageLeaveModalShow('Do you want to cancel all the process?');
+              setShowLeaveModal(true);
             }}
-            // textAreaStyle="h-[72px]"
-            border={false}
-          />
+            className="btn btn-outline text-xs btn-sm w-28 h-10">
+            {t('user.content-manager-new.cancel')}
+          </button>
+          <button
+            type="submit"
+            className={styleButton({ variants: 'secondary', disabled: !isEditable })}
+            onClick={() => {
+              setIsDraft(true); // Set isDraft before submitting
+            }}>
+            Save as Draft
+          </button>
+          <button
+            type="submit"
+            className={styleButton({ variants: 'success', disabled: !isEditable })}
+            onClick={() => {
+              setIsDraft(false); // Ensure isDraft is false for final save
+            }}>
+            Save
+          </button>
         </div>
-      </div>
-      <div className="flex gap-2 justify-end items-center">
-        <div className={styleButton({ variants: 'third' })} onClick={() => {}}>
-          Cancel
-        </div>
-        <div
-          className={styleButton({ variants: 'secondary', disabled: !isEditable })}
-          onClick={() => {
-            setEditable(false);
-          }}>
-          Save as Draft
-        </div>
-        <div
-          className={styleButton({ variants: 'success', disabled: !isEditable })}
-          onClick={() => {
-            setEditable(false);
-          }}>
-          Save
-        </div>
-      </div>
+      </form>
+      <ModalConfirm
+        open={showLeaveModal}
+        cancelAction={() => {
+          setShowLeaveModal(false);
+        }}
+        title={titleLeaveModalShow ?? ''}
+        cancelTitle={t('no')}
+        message={messageLeaveModalShow ?? ''}
+        submitAction={onLeave}
+        submitTitle={t('yes')}
+        icon={CancelIcon}
+        btnSubmitStyle="btn-warning"
+      />
     </TitleCard>
   );
 };
