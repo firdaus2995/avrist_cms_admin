@@ -62,6 +62,7 @@ export const leadsGeneratorApi = createApi({
                 isDraft
                 disclaimer
                 images
+                createdAt
               }
             }
           }

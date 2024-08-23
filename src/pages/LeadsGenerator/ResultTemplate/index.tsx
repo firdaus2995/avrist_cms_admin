@@ -17,6 +17,7 @@ import {
   useDeleteResultTemplateMutation,
   useGetResultTemplateListQuery,
 } from '@/services/LeadsGenerator/leadsGeneratorApi';
+import dayjs from 'dayjs';
 
 const TopRightButton = () => {
   return (
@@ -164,10 +165,24 @@ export default function LeadsGeneratorResult() {
       accessorKey: 'images',
       enableSorting: true,
       cell: (info: any) => (
-        <div className="flex justify-start items-start w-[100px]">
+        <div className="flex justify-start items-start w-[20px]">
           <p className="text-[14px] truncate">
             {info.getValue() && info.getValue() !== '' && info.getValue() !== null
               ? JSON.parse(info.getValue())?.length
+              : '-'}
+          </p>
+        </div>
+      ),
+    },
+    {
+      header: () => <span className="text-[14px]">Date Added</span>,
+      accessorKey: 'createdAt',
+      enableSorting: true,
+      cell: (info: any) => (
+        <div className="flex justify-start items-start w-[100px]">
+          <p className="text-[14px] truncate">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? dayjs(info.getValue()).format('DD/MM/YYYY HH:mm')
               : '-'}
           </p>
         </div>
