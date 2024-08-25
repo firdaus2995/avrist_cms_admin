@@ -33,6 +33,9 @@ export default {
         'form-disabled-bg': '#E9EEF4',
         white: '#FFFFFF',
         table: '#F8F9FF',
+        'bright-purple-2': '#F0E4F3',
+        'bright-purple-3': '#E5DCED',
+        'border-purple': '#C9B7DD',
       },
       // Custom fonts
       fontFamily: {

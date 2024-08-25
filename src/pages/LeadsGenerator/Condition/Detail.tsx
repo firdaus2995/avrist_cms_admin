@@ -1,3 +1,4 @@
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import Typography from '@/components/atoms/Typography';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import FormList from '@/components/molecules/FormList';
@@ -5,20 +6,74 @@ import { styleButton } from '@/utils/styleButton';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-interface IQuestionOption {
-  desc: string;
-  bobot: string;
-}
-
-interface IQuestionProps {
-  question: string;
-  option: IQuestionOption[];
-}
-
-const dummyOption: IQuestionOption = {
-  desc: '',
-  bobot: '',
-};
+const conditionsData = [
+  {
+    id: 1,
+    text: 'Akun wajib aktif dalam waktu 6 bulan setelah dilakukan email blasting',
+    subConditions: [
+      {
+        value: 'Percaya Diri',
+        score: 6,
+      },
+      {
+        value: 'Baik-baik saja',
+        score: 5,
+      },
+      {
+        value: 'Stres',
+        score: 4,
+      },
+      {
+        value: 'Tidak yakin',
+        score: 3,
+      },
+    ],
+  },
+  {
+    id: 2,
+    text: 'Akun tidak boleh di nonaktifkan dalam waktu 3 bulan pertama',
+    subConditions: [
+      {
+        value: 'Percaya Diri',
+        score: 6,
+      },
+      {
+        value: 'Baik-baik saja',
+        score: 5,
+      },
+      {
+        value: 'Stres',
+        score: 4,
+      },
+      {
+        value: 'Tidak yakin',
+        score: 3,
+      },
+    ],
+  },
+  {
+    id: 3,
+    text: 'Pengguna wajib login minimal 1 kali setiap 6 bulan',
+    subConditions: [
+      {
+        value: 'Percaya Diri',
+        score: 6,
+      },
+      {
+        value: 'Baik-baik saja',
+        score: 5,
+      },
+      {
+        value: 'Stres',
+        score: 4,
+      },
+      {
+        value: 'Tidak yakin',
+        score: 3,
+      },
+    ],
+  },
+];
 
 const LeadsGeneratorConditionDetail = () => {
   const navigate = useNavigate();
@@ -27,22 +82,15 @@ const LeadsGeneratorConditionDetail = () => {
 
   const [isTitle, setTitle] = useState<string>('Edit Condition');
   const [isEditable, setEditable] = useState<boolean>(false);
-  const [isUpdate, setUpdate] = useState<boolean>(false);
-  const [isQuestion, setQuestion] = useState<IQuestionProps[]>([
-    {
-      question: '',
-      option: [
-        {
-          desc: '',
-          bobot: '',
-        },
-        {
-          desc: '',
-          bobot: '',
-        },
-      ],
-    },
-  ]);
+
+  const [expandedConditions, setExpandedConditions] = useState<number[]>([]);
+
+  // Toggle the condition when it is clicked
+  const toggleCondition = (id: number) => {
+    setExpandedConditions(prev =>
+      prev.includes(id) ? prev.filter(condId => condId !== id) : [...prev, id],
+    );
+  };
 
   useEffect(() => {
     if (pathname.includes('new')) {
@@ -70,8 +118,8 @@ const LeadsGeneratorConditionDetail = () => {
           </div>
         )
       }>
-      <div className="flex flex-col gap-y-4">
-        <div className="flex flex-col gap-y-2 w-1/2">
+      <div className="flex flex-col gap-y-4 pb-10 border-b-2">
+        <div className="flex flex-col gap-y-2 w-2/3">
           <FormList.TextField
             disabled={!isEditable}
             // key="fieldId"
@@ -101,140 +149,50 @@ const LeadsGeneratorConditionDetail = () => {
             />
           </div>
         </div>
-        {isQuestion.map((item: IQuestionProps, i: number) => (
-          <div className="flex gap-x-2" key={i}>
-            <div className="flex flex-col gap-2 w-1/2 p-4 bg-light-purple-2 rounded-xl">
-              <div className="flex gap-x-2 items-center">
-                <div className="bg-reddist w-[8px] h-[8px] rounded-xl" />
-                <Typography type="body" size="l" weight="bold">
-                  {`Condition ${i + 1}`}
-                </Typography>
-              </div>
-              <FormList.DropDown
-                disabled={!isEditable}
-                defaultValue={item?.question}
-                items={item.option}
-                onChange={(e: any) => {
-                  console.log(e);
-                }}
-              />
-              <div className="flex flex-col gap-3 p-3 border border-light-grey bg-[linear-gradient(180deg,_#EAE1F4_0%,_#F9F5FD_100%)] rounded-xl">
-                <div className="flex gap-x-3">
-                  <Typography type="body" size="s" weight="bold" className="w-[65%]">
-                    Answer
-                  </Typography>
-                  <Typography type="body" size="s" weight="bold" className="w-[24%]">
-                    Answer Weight
-                  </Typography>
-                  <div className="w-[36px]" />
+
+        <div className="p-4 rounded-lg shadow-md w-2/3 bg-light-purple-2">
+          <h3 className="text-lg font-bold mb-4">Conditions</h3>
+          <div className="space-y-2">
+            {conditionsData.map(condition => (
+              <div key={condition.id} className="bg-bright-purple-2 rounded-[12px]">
+                <div
+                  className={`${
+                    expandedConditions.includes(condition.id)
+                      ? 'border-b-2 border-border-purple'
+                      : ''
+                  } flex items-center gap-[12px] px-[12px] py-[8px]`}>
+                  <CheckBox
+                    defaultValue={expandedConditions.includes(condition.id)}
+                    updateFormValue={e => {
+                      toggleCondition(condition.id);
+                    }}
+                    labelTitle={condition.text}
+                    updateType={''}
+                  />
                 </div>
-                <hr className="border-black" />
-                {item.option.map((jtem: IQuestionOption, idx: number) => {
-                  return (
-                    <div className="flex gap-x-3 items-center" key={idx}>
-                      <FormList.DropDown
-                        disabled={!isEditable}
-                        defaultValue={jtem?.desc}
-                        items={item.option}
-                        onChange={(e: any) => {
-                          console.log(e);
-                        }}
-                      />
-                      <FormList.TextField
-                        disabled={!isEditable}
-                        wrapperClass="w-[24%]"
-                        key="fieldId"
-                        // labelRequired
-                        themeColor="primary"
-                        placeholder="Answer Weight"
-                        value={jtem.bobot}
-                        // error={!!attributesErrors.fieldId}
-                        // helperText={attributesErrors.fieldId}
-                        // onChange={(e: any) => {
-                        //   setNewAttributes({ ...newAttributes, fieldId: e.target.value });
-                        // }}
-                        border={false}
-                      />
-                      <div
-                        className={`!min-w-[36px] ${styleButton({ variants: 'error', disabled: !isEditable })}`}
-                        onClick={() => {
-                          const data: IQuestionOption[] = [];
-                          for (let n = 0; n < item.option.length; n++) {
-                            if (idx !== n) {
-                              data.push(item.option[n]);
-                            }
-                          }
-                          isQuestion[i].option = data;
-                          setUpdate(!isUpdate);
-                          // setQuestion((prev) => {
-                          //   let data: IQuestionOption[] = [];
-                          //   for (let n = 0; n < prev[i].option.length; n++) {
-                          //     if (idx !== n) {
-                          //       data.push(prev[i].option[n]);
-                          //     }
-                          //   }
-                          //   prev[i].option = data;
-                          //   return prev;
-                          // });
-                        }}>
-                        x
+                {expandedConditions.includes(condition.id) && (
+                  <div className="pl-6 mt-2 bg-bright-purple-2 rounded-md p-2">
+                    {condition.subConditions.map((subCond, index) => (
+                      <div key={index} className="flex items-center gap-[12px] px-[12px] py-[8px]">
+                        <CheckBox
+                          defaultValue={false}
+                          updateFormValue={_e => {}}
+                          labelTitle={subCond?.value}
+                          updateType={''}
+                        />
+                        <div className="py-[2px] px-3 w-[42px] flex items-center justify-center rounded-xl bg-bright-purple-3 text-primary font-bold">
+                          {subCond?.score}
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
-                <div className="flex justify-between items-center">
-                  <div className="text-xs">
-                    Answers that can be added, up to a max. of 4 (four).
+                    ))}
                   </div>
-                  <div
-                    className={styleButton({ variants: 'secondary', disabled: !isEditable })}
-                    onClick={() => {
-                      isQuestion[i].option = [...item.option, dummyOption];
-                      setUpdate(!isUpdate);
-                      // setQuestion((prev) => {
-                      //   if (prev[i].option.length < 4) {
-                      //     prev[i].option = [...prev[i].option, dummyOption];
-                      //   }
-                      //   return prev;
-                      // });
-                    }}>
-                    + Add Answer
-                  </div>
-                </div>
+                )}
               </div>
-            </div>
-            <div
-              className={`!min-w-[36px] ${styleButton({ variants: 'error', disabled: !isEditable })}`}>
-              x
-            </div>
-            {i + 1 === isQuestion.length && (
-              <div
-                className={`!min-w-[36px] ${styleButton({ variants: 'secondary', disabled: !isEditable })}`}
-                onClick={() => {
-                  setQuestion(prev => [
-                    ...prev,
-                    {
-                      question: '',
-                      option: [
-                        {
-                          desc: '',
-                          bobot: '',
-                        },
-                        {
-                          desc: '',
-                          bobot: '',
-                        },
-                      ],
-                    },
-                  ]);
-                }}>
-                +
-              </div>
-            )}
+            ))}
           </div>
-        ))}
+        </div>
       </div>
-      <div className="flex gap-2 justify-end items-center">
+      <div className="flex gap-2 justify-end items-center pt-5">
         <div className={styleButton({ variants: 'third' })} onClick={() => {}}>
           Cancel
         </div>
