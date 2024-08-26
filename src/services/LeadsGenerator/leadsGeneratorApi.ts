@@ -132,6 +132,54 @@ export const leadsGeneratorApi = createApi({
         variables: payload,
       }),
     }),
+    getQuestions: builder.query<any, void>({
+      query: payload => ({
+        document: gql`
+          query {
+            getQuestion {
+              questions {
+                id
+                name
+                question
+                answers {
+                  answerOrder
+                  answerDesc
+                  weight
+                }
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    updateQuestions: builder.mutation<any, any>({
+      query: payload => ({
+        document: gql`
+          mutation questionCreate(
+            $request: [QuestionRequest!]
+          ) {
+            questionCreate(
+              request: $request
+            ) {
+              questions {
+                id
+                name
+                question
+                isDraft
+                isDelete
+                answers {
+                  answerOrder
+                  answerDesc
+                  weight
+                }
+              }
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
   }),
 });
 
@@ -140,5 +188,21 @@ export const {
   useGetResultTemplateListQuery,
   useDeleteResultTemplateMutation,
   useGetResultTemplateDetailQuery,
-  useUpdateResultTemplateMutation
+  useUpdateResultTemplateMutation,
+  useLazyGetQuestionsQuery,
+  useUpdateQuestionsMutation,
 } = leadsGeneratorApi;
+
+// $id: Int
+// $name: String!
+// $question: String
+// $isDraft: Boolean
+// $isDelete: Boolean
+// $answers: [AnswerRequest]
+
+// id: $id
+// name: $name
+// question: $question
+// isDraft: $isDraft
+// isDelete: $isDelete
+// answers: $answers
