@@ -59,10 +59,7 @@ const LeadsGeneratorConditions = () => {
               Result Name
             </Typography>
             <Typography type="body" size="s" weight="bold" className="w-[35%]">
-              Condition 1
-            </Typography>
-            <Typography type="body" size="s" weight="bold" className="w-[10%]">
-              Total Condition
+              Condition
             </Typography>
             <Typography type="body" size="s" weight="bold" className="w-[15%]">
               Date Added
@@ -88,9 +85,6 @@ const LeadsGeneratorConditions = () => {
                 </Typography>
                 <Typography type="body" size="s" className="w-[35%]">
                   {item.condition}
-                </Typography>
-                <Typography type="body" size="s" className="w-[10%]">
-                  {item.total}
                 </Typography>
                 <Typography type="body" size="s" className="w-[15%]">
                   {item.date}
