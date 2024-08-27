@@ -163,7 +163,7 @@ const LeadsGeneratorConditionDetail = () => {
                   } flex items-center gap-[12px] px-[12px] py-[8px]`}>
                   <CheckBox
                     defaultValue={expandedConditions.includes(condition.id)}
-                    updateFormValue={e => {
+                    updateFormValue={_e => {
                       toggleCondition(condition.id);
                     }}
                     labelTitle={condition.text}
