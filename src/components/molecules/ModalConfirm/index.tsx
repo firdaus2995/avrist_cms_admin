@@ -26,7 +26,15 @@ export default function ModalConfirm(props: IModalConfirm) {
       width={modalWidth ?? 432}
       height={modalHeight ?? 320}>
       <div className="py-2 flex flex-col items-center justify-center gap-3">
-        {icon ? <img src={icon} alt="iconModal" className={`h-[${iconSize}px]`} /> : <div />}
+        {icon ? (
+          typeof icon === 'object' ? (
+            icon
+          ) : (
+            <img src={icon} alt="iconModal" className={`h-[${iconSize}px]`} />
+          )
+        ) : (
+          <div />
+        )}
         <p
           className={`${!titleSize ? 'text-xl' : ''} font-bold text-center`}
           style={{ fontSize: titleSize }}>

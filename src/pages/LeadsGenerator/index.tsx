@@ -4,7 +4,13 @@ import Typography from '@/components/atoms/Typography';
 import FormList from '@/components/molecules/FormList';
 import { colName } from '@/utils/colName';
 import { styleButton } from '@/utils/styleButton';
-import { useLazyGetQuestionsQuery, useUpdateQuestionsMutation } from '@/services/LeadsGenerator/leadsGeneratorApi';
+import {
+  useLazyGetQuestionsQuery,
+  useUpdateQuestionsMutation,
+} from '@/services/LeadsGenerator/leadsGeneratorApi';
+import { addIcon, closeIcon, deleteIcon, docIcon, editIcon, trashIcon } from './svg';
+import ModalConfirm from '@/components/molecules/ModalConfirm';
+import { useNavigate } from 'react-router-dom';
 
 export interface IQuestionProps {
   id?: number;
@@ -32,9 +38,20 @@ const dummyOption: IAnswer = {
 const number = /^\d{1,3}(,\d{3})*(\.\d*)?$|^\d+(\.\d*)?$/;
 
 const LeadsGenerator = () => {
+  const navigate = useNavigate();
   // RTK Query
   const [getQuestions] = useLazyGetQuestionsQuery();
   const [updateQuestoion] = useUpdateQuestionsMutation();
+
+  const [isIdx, setIdx] = useState<number>(0);
+  const [isType, setType] = useState<string>('');
+  const [isEditable, setEditable] = useState<boolean>(false);
+  const [isModal, setModal] = useState({
+    show: false,
+    title: 'Cancel and Back to Previous Page',
+    desc: 'Do you want to cancel all the process?',
+    icon: docIcon(),
+  });
   const [isQuestion, setQuestion] = useState<IQuestionProps[]>([
     {
       name: '',
@@ -57,6 +74,7 @@ const LeadsGenerator = () => {
   ]);
 
   const _handleCatch = () => {
+    setEditable(true);
     setQuestion([
       {
         name: '',
@@ -76,11 +94,12 @@ const LeadsGenerator = () => {
           },
         ],
       },
-    ]);    
-  }
+    ]);
+  };
 
   const _handleResp = (e: any) => {
     try {
+      let val: string = 'Edit Data';
       const list = e?.getQuestion?.questions ?? [
         {
           name: '',
@@ -102,6 +121,14 @@ const LeadsGenerator = () => {
         },
       ];
       setQuestion(list);
+
+      for (let i = 0; i < list.length; i++) {
+        if (list[i].isDraft) {
+          val = 'Edit Draft';
+        }
+      }
+
+      setType(val);
     } catch {
       _handleCatch();
     }
@@ -123,7 +150,7 @@ const LeadsGenerator = () => {
     const length = isQuestion.length;
     for (let i = 0; i < length; i++) {
       const answers = isQuestion[i].answers;
-      const temp: IQuestionProps = { ...isQuestion[i], answers: []};
+      const temp: IQuestionProps = { ...isQuestion[i], answers: [] };
       if (!temp.id) {
         delete temp.id;
       }
@@ -132,9 +159,9 @@ const LeadsGenerator = () => {
           answer: answers[j].answerDesc,
           order: answers[j].answerOrder,
           weight: answers[j].weight,
-        })
+        });
       }
-      temp.isDraft = type === "draft";
+      temp.isDraft = type === 'draft';
       request.push(temp);
     }
 
@@ -164,200 +191,266 @@ const LeadsGenerator = () => {
             ],
           },
         ]);
+      })
+      .finally(() => {
+        setEditable(false);
       });
   };
 
   return (
-    <TitleCard
-      title="Questions"
-      topMargin="mt-2"
-      TopSideButtons={
-        <div className={styleButton({ variants: 'secondary' })} onClick={() => {}}>
-          Edit Data
-        </div>
-      }>
-      <div className="flex flex-col gap-y-4">
-        {isQuestion.map((item: IQuestionProps, i: number) => (
-          <div className="flex gap-x-2" key={i}>
-            <div className="flex flex-col gap-2 w-1/2 p-4 bg-light-purple-2 rounded-xl">
-              <div className="flex gap-x-2 items-center">
-                <div className="bg-reddist w-[8px] h-[8px] rounded-xl" />
-                <Typography type="body" size="l" weight="bold">
-                  {`Question ${i + 1}`}
-                </Typography>
-              </div>
-              <FormList.TextAreaField
-                // disabled
-                // labelRequired
-                themeColor="primary"
-                placeholder={`Question ${i + 1}`}
-                value={item.question}
-                // error={!!attributesErrors.fieldId}
-                // helperText={attributesErrors.fieldId}
-                onChange={(e: any) => {
-                  const temp = JSON.parse(JSON.stringify(isQuestion));
-                  temp[i].question = e.target.value;
-                  setQuestion(temp);
-                }}
-                // textAreaStyle="h-[72px]"
-                border={false}
-              />
-              <div className="flex flex-col gap-3 p-3 border border-light-grey bg-[linear-gradient(180deg,_#EAE1F4_0%,_#F9F5FD_100%)] rounded-xl">
-                <div className="flex gap-x-3">
-                  <Typography type="body" size="s" weight="bold" className="w-[60px]">
-                    Order
+    <>
+      <TitleCard
+        title="Questions"
+        topMargin="mt-2"
+        TopSideButtons={
+          isType && (
+            <div
+              className={styleButton({ variants: 'secondary' })}
+              onClick={() => {
+                setEditable(true);
+              }}>
+              {editIcon()}
+              {` ${isType}`}
+            </div>
+          )
+        }>
+        <div className="flex flex-col gap-y-4">
+          {isQuestion.map((item: IQuestionProps, i: number) => (
+            <div className="flex gap-x-2" key={i}>
+              <div className="flex flex-col gap-2 w-1/2 p-4 bg-light-purple-2 rounded-xl">
+                <div className="flex gap-x-2 items-center">
+                  <div className="bg-reddist w-[8px] h-[8px] rounded-xl" />
+                  <Typography type="body" size="l" weight="bold">
+                    {`Question ${i + 1}`}
                   </Typography>
-                  <Typography type="body" size="s" weight="bold" className="w-[55%]">
-                    Answer
-                  </Typography>
-                  <Typography type="body" size="s" weight="bold" className="w-[22%]">
-                    Answer Weight
-                  </Typography>
-                  <div className="w-[36px]" />
                 </div>
-                <hr className="border-black" />
-                {item.answers.map((jtem: IAnswer, idx: number) => {
-                  return (
-                    <div className="flex gap-x-3 items-center" key={idx}>
-                      <div className="w-[60px] bg-bright-purple rounded-xl text-white flex justify-center items-center">
-                        {colName(idx)}
-                      </div>
-                      <FormList.TextField
-                        // disabled
-                        wrapperClass="w-[55%]"
-                        // key="fieldId"
-                        // labelRequired
-                        themeColor="primary"
-                        placeholder="Answer"
-                        value={jtem.answerDesc}
-                        // error={!!attributesErrors.fieldId}
-                        // helperText={attributesErrors.fieldId}
-                        onChange={(e: any) => {
-                          const temp = JSON.parse(JSON.stringify(isQuestion));
-                          temp[i].answers[idx].answerDesc = e.target.value;
-                          setQuestion(temp);
-                        }}
-                        border={false}
-                      />
-                      <FormList.TextField
-                        // disabled
-                        wrapperClass="w-[22%]"
-                        key="fieldId"
-                        // labelRequired
-                        themeColor="primary"
-                        placeholder="Answer Weight"
-                        value={jtem.weight}
-                        // error={!!attributesErrors.fieldId}
-                        // helperText={attributesErrors.fieldId}
-                        onChange={(e: any) => {
-                          const val = e.target.value;
-                          if (number.test(val)) {
+                <FormList.TextAreaField
+                  disabled={!isEditable}
+                  // labelRequired
+                  themeColor="primary"
+                  placeholder={`Question ${i + 1}`}
+                  value={item.question}
+                  // error={!!attributesErrors.fieldId}
+                  // helperText={attributesErrors.fieldId}
+                  onChange={(e: any) => {
+                    const temp = JSON.parse(JSON.stringify(isQuestion));
+                    temp[i].question = e.target.value;
+                    setQuestion(temp);
+                  }}
+                  // textAreaStyle="h-[72px]"
+                  border={false}
+                />
+                <div className="flex flex-col gap-3 p-3 border border-light-grey bg-[linear-gradient(180deg,_#EAE1F4_0%,_#F9F5FD_100%)] rounded-xl">
+                  <div className="flex gap-x-3">
+                    <Typography type="body" size="s" weight="bold" className="w-[60px]">
+                      Order
+                    </Typography>
+                    <Typography type="body" size="s" weight="bold" className="w-[55%]">
+                      Answer
+                    </Typography>
+                    <Typography type="body" size="s" weight="bold" className="w-[22%]">
+                      Answer Weight
+                    </Typography>
+                    <div className="w-[36px]" />
+                  </div>
+                  <hr className="border-black" />
+                  {item.answers.map((jtem: IAnswer, idx: number) => {
+                    return (
+                      <div className="flex gap-x-3 items-center" key={idx}>
+                        <div className="w-[60px] bg-bright-purple rounded-xl text-white flex justify-center items-center">
+                          {colName(idx)}
+                        </div>
+                        <FormList.TextField
+                          disabled={!isEditable}
+                          wrapperClass="w-[55%]"
+                          // key="fieldId"
+                          // labelRequired
+                          themeColor="primary"
+                          placeholder="Answer"
+                          value={jtem.answerDesc}
+                          // error={!!attributesErrors.fieldId}
+                          // helperText={attributesErrors.fieldId}
+                          onChange={(e: any) => {
                             const temp = JSON.parse(JSON.stringify(isQuestion));
-                            temp[i].answers[idx].weight = val;
+                            temp[i].answers[idx].answerDesc = e.target.value;
                             setQuestion(temp);
-                          }
-                        }}
-                        border={false}
-                      />
-                      <div
-                        className={`!min-w-[36px] ${styleButton({ variants: 'error' })}`}
-                        onClick={() => {
-                          const temp = JSON.parse(JSON.stringify(isQuestion));
-                          const data: IAnswer[] = [];
-                          for (let n = 0; n < item.answers.length; n++) {
-                            if (idx !== n) {
-                              data.push(item.answers[n]);
+                          }}
+                          border={false}
+                        />
+                        <FormList.TextField
+                          disabled={!isEditable}
+                          wrapperClass="w-[22%]"
+                          key="fieldId"
+                          // labelRequired
+                          themeColor="primary"
+                          placeholder="Answer Weight"
+                          value={jtem.weight}
+                          // error={!!attributesErrors.fieldId}
+                          // helperText={attributesErrors.fieldId}
+                          onChange={(e: any) => {
+                            const val = e.target.value;
+                            if (number.test(val)) {
+                              const temp = JSON.parse(JSON.stringify(isQuestion));
+                              temp[i].answers[idx].weight = val;
+                              setQuestion(temp);
                             }
-                          }
-                          temp[i].answers = data;
-                          setQuestion(temp);
-                        }}>
-                        x
+                          }}
+                          border={false}
+                        />
+                        <div
+                          className={`!min-w-[36px] ${styleButton({ variants: 'error', disabled: !isEditable })}`}
+                          onClick={() => {
+                            if (isEditable) {
+                              const temp = JSON.parse(JSON.stringify(isQuestion));
+                              const data: IAnswer[] = [];
+                              for (let n = 0; n < item.answers.length; n++) {
+                                if (idx !== n) {
+                                  data.push(item.answers[n]);
+                                }
+                              }
+                              temp[i].answers = data;
+                              setQuestion(temp);
+                            }
+                          }}>
+                          {closeIcon(!isEditable ? '#798F9F' : undefined)}
+                        </div>
                       </div>
+                    );
+                  })}
+                  <div className="flex justify-between items-center">
+                    <div className="text-xs">
+                      Answers that can be added, up to a max. of 4 (four).
                     </div>
-                  );
-                })}
-                <div className="flex justify-between items-center">
-                  <div className="text-xs">
-                    Answers that can be added, up to a max. of 4 (four).
-                  </div>
-                  <div
-                    className={styleButton({ variants: 'secondary' })}
-                    onClick={() => {
-                      const temp = JSON.parse(JSON.stringify(isQuestion));
-                      temp[i].answers = [...item.answers, dummyOption];
-                      setQuestion(temp);
-                    }}>
-                    + Add Answer
+                    <div
+                      className={styleButton({
+                        variants: 'secondary',
+                        className: 'min-w-[130px]',
+                        disabled: !isEditable || isQuestion[i].answers.length > 3,
+                      })}
+                      onClick={() => {
+                        const temp = JSON.parse(JSON.stringify(isQuestion));
+                        if (temp[i].answers.length < 4 && isEditable) {
+                          temp[i].answers = [...item.answers, dummyOption];
+                          setQuestion(temp);
+                        }
+                      }}>
+                      {addIcon(
+                        !isEditable || isQuestion[i].answers.length > 3 ? '#798F9F' : undefined,
+                      )}
+                      &nbsp;Add Answer
+                    </div>
                   </div>
                 </div>
               </div>
+              {isEditable && (
+                <>
+                  <div
+                    className={`!min-w-[36px] ${styleButton({ variants: 'error' })}`}
+                    onClick={() => {
+                      setIdx(i);
+                      setModal({
+                        show: true,
+                        title: 'Delete Question',
+                        desc: `Do you want to delete Question ${i + 1}?`,
+                        icon: deleteIcon(),
+                      });
+                    }}>
+                    {trashIcon()}
+                  </div>
+                  {i + 1 === isQuestion.length && (
+                    <div
+                      className={`!min-w-[36px] ${styleButton({ variants: 'secondary', disabled: isQuestion[i].question === '' })}`}
+                      onClick={() => {
+                        if (isQuestion[i].question !== '') {
+                          setQuestion(prev => [
+                            ...prev,
+                            {
+                              name: '',
+                              question: '',
+                              isDraft: false,
+                              isDelete: false,
+                              answers: [
+                                {
+                                  answerOrder: '',
+                                  answerDesc: '',
+                                  weight: 0,
+                                },
+                                {
+                                  answerOrder: '',
+                                  answerDesc: '',
+                                  weight: 0,
+                                },
+                              ],
+                            },
+                          ]);
+                        }
+                      }}>
+                      {addIcon(isQuestion[i].question === '' ? '#798F9F' : undefined)}
+                    </div>
+                  )}
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+        {isEditable && (
+          <div className="flex gap-2 justify-end items-center">
+            <div
+              className={styleButton({ variants: 'third' })}
+              onClick={() => {
+                setModal({
+                  show: true,
+                  title: 'Cancel and Back to Previous Page',
+                  desc: 'Do you want to cancel all the process?',
+                  icon: docIcon(),
+                });
+              }}>
+              Cancel
             </div>
             <div
-              className={`!min-w-[36px] ${styleButton({ variants: 'error' })}`}
+              className={styleButton({ variants: 'secondary' })}
               onClick={() => {
-                const data: IQuestionProps[] = [];
-                for (let n = 0; n < isQuestion.length; n++) {
-                  if (i !== n) {
-                    data.push(isQuestion[n]);
-                  }
-                }
-                setQuestion(data);
+                _updateQuestion({ type: 'draft' });
               }}>
-              x
+              Save as Draft
             </div>
-            {i + 1 === isQuestion.length && (
-              <div
-                className={`!min-w-[36px] ${styleButton({ variants: 'secondary' })}`}
-                onClick={() => {
-                  setQuestion(prev => [
-                    ...prev,
-                    {
-                      name: '',
-                      question: '',
-                      isDraft: false,
-                      isDelete: false,
-                      answers: [
-                        {
-                          answerOrder: '',
-                          answerDesc: '',
-                          weight: 0,
-                        },
-                        {
-                          answerOrder: '',
-                          answerDesc: '',
-                          weight: 0,
-                        },
-                      ],
-                    },
-                  ]);
-                }}>
-                +
-              </div>
-            )}
+            <div
+              className={styleButton({ variants: 'success' })}
+              onClick={() => {
+                _updateQuestion({});
+              }}>
+              Save
+            </div>
           </div>
-        ))}
-      </div>
-      <div className="flex gap-2 justify-end items-center">
-        <div className={styleButton({ variants: 'third' })} onClick={() => {}}>
-          Cancel
-        </div>
-        <div
-          className={styleButton({ variants: 'secondary' })}
-          onClick={() => {
-            _updateQuestion({ type: 'draft' });
-          }}>
-          Save as Draft
-        </div>
-        <div
-          className={styleButton({ variants: 'success' })}
-          onClick={() => {
-            _updateQuestion({});
-          }}>
-          Save
-        </div>
-      </div>
-    </TitleCard>
+        )}
+      </TitleCard>
+      <ModalConfirm
+        open={isModal.show}
+        cancelAction={() => {
+          setModal(prev => ({ ...prev, show: false }));
+        }}
+        title={isModal.title}
+        cancelTitle="No"
+        message={isModal.desc}
+        submitAction={() => {
+          if (isModal.title === 'Delete Question') {
+            const data: IQuestionProps[] = [];
+            for (let n = 0; n < isQuestion.length; n++) {
+              if (isIdx !== n) {
+                data.push(isQuestion[n]);
+              }
+            }
+            setQuestion(data);
+          } else {
+            navigate(-1);
+          }
+          setModal(prev => ({ ...prev, show: false }));
+        }}
+        submitTitle="Yes"
+        icon={isModal.icon}
+        btnSubmitStyle="btn-primary"
+      />
+    </>
   );
 };
 
