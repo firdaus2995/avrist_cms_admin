@@ -60,31 +60,31 @@ export const sidebarList = [
     path: '/page-template',
     role: 'PAGE_TEMPLATE_READ',
   },
-  {
-    id: 9,
-    title: 'Leads Generator',
-    icon: UserIcon,
-    list: [
-      {
-        id: 73,
-        title: 'Questions',
-        path: '/questions',
-        role: 'PAGE_TEMPLATE_READ',
-      },
-      {
-        id: 74,
-        title: 'Result Template',
-        path: '/result-template',
-        role: 'PAGE_TEMPLATE_READ',
-      },
-      {
-        id: 75,
-        title: 'Conditions',
-        path: '/conditions',
-        role: 'PAGE_TEMPLATE_READ',
-      },
-    ],
-  },
+  // {
+  //   id: 9,
+  //   title: 'Leads Generator',
+  //   icon: UserIcon,
+  //   list: [
+  //     {
+  //       id: 73,
+  //       title: 'Questions',
+  //       path: '/questions',
+  //       role: 'PAGE_TEMPLATE_READ',
+  //     },
+  //     {
+  //       id: 74,
+  //       title: 'Result Template',
+  //       path: '/result-template',
+  //       role: 'PAGE_TEMPLATE_READ',
+  //     },
+  //     {
+  //       id: 75,
+  //       title: 'Conditions',
+  //       path: '/conditions',
+  //       role: 'PAGE_TEMPLATE_READ',
+  //     },
+  //   ],
+  // },
   {
     id: 7,
     title: 'Email Form Builder',
