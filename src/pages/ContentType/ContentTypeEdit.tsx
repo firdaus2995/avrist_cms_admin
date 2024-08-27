@@ -12,7 +12,7 @@ import Radio from '@/components/molecules/Radio';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import { TitleCard } from '../../components/molecules/Cards/TitleCard';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { copyArray, errorMessageTypeConverter } from '@/utils/logicHelper';
+import { errorMessageTypeConverter } from '@/utils/logicHelper';
 import { InputText } from '@/components/atoms/Input/InputText';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { useAppDispatch } from '../../store';
@@ -1518,155 +1518,79 @@ export default function ContentTypeEdit() {
               <div className="flex flex-col border-t-2 my-5 py-5 items-center justify-center">
                 <>
                   {openedAttribute?.attributeList?.length > 0
-                    ? openedAttribute?.attributeList?.map(
-                        (
-                          val: {
-                            icon: any;
-                            id: any;
-                            fieldType: string;
-                            name: string;
-                            fieldId: any;
-                            config: string;
-                          },
-                          idx: number,
-                        ) => (
-                          <div
-                            key={idx}
-                            className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
-                            <div className="flex flex-row justify-between w-full border-b-2 mb-4">
-                              <div className="flex flex-row w-full mb-4">
-                                <img
-                                  className="ml-5"
-                                  src={`data:image/svg+xml;base64,${val?.icon}`}
-                                />
-                                <div className="font-bold capitalize ml-5">
-                                  {getType(val?.fieldType)}
+                    ? openedAttribute?.attributeList
+                        ?.filter((item: { action: string }) => item?.action !== 'delete')
+                        .map(
+                          (
+                            val: {
+                              icon: any;
+                              id: any;
+                              fieldType: string;
+                              name: string;
+                              fieldId: any;
+                              config: string;
+                            },
+                            idx: number,
+                          ) => (
+                            <div
+                              key={idx}
+                              className="flex flex-col mb-10 w-[80%] border-2 rounded-xl p-2">
+                              <div className="flex flex-row justify-between w-full border-b-2 mb-4">
+                                <div className="flex flex-row w-full mb-4">
+                                  <img
+                                    className="ml-5"
+                                    src={`data:image/svg+xml;base64,${val?.icon}`}
+                                  />
+                                  <div className="font-bold capitalize ml-5">
+                                    {getType(val?.fieldType)}
+                                  </div>
                                 </div>
+                                <svg
+                                  role="button"
+                                  onClick={() => {
+                                    // DELETE Looping Attribute
+                                    const updatedAttributeList = openedAttribute.attributeList.map(
+                                      (attribute: any, index: number) =>
+                                        index === idx
+                                          ? { ...attribute, action: 'delete' }
+                                          : attribute,
+                                    );
+                                    setOpenedAttribute((prevState: any) => ({
+                                      ...prevState,
+                                      attributeList: updatedAttributeList,
+                                    }));
+                                  }}
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  strokeWidth={1.5}
+                                  stroke="currentColor"
+                                  className="w-6 h-6 text-red-500 mt-2 mr-2">
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
+                                  />
+                                </svg>
                               </div>
-                              <svg
-                                role="button"
-                                onClick={() => {
-                                  // DELETE Looping Attribute
-                                  const updatedAttributeList = openedAttribute.attributeList.filter(
-                                    (_attribute: any, index: number) => index !== idx,
-                                  );
-                                  setOpenedAttribute((prevState: any) => ({
-                                    ...prevState,
-                                    attributeList: updatedAttributeList,
-                                  }));
-
-                                  const newOpenedAttribute: any = copyArray(openedAttribute);
-                                  if (newOpenedAttribute?.attributeList?.length > 0) {
-                                    newOpenedAttribute?.attributeList?.splice(idx, 1);
-                                    setOpenedAttribute(newOpenedAttribute);
-                                  }
-                                }}
-                                xmlns="http://www.w3.org/2000/svg"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                strokeWidth={1.5}
-                                stroke="currentColor"
-                                className="w-6 h-6 text-red-500 mt-2 mr-2">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0"
-                                />
-                              </svg>
-                            </div>
-                            <div className="flex flex-col w-1/2">
-                              <InputText
-                                labelTitle={t(
-                                  'user.content-type-edit.modal.addAttribute.nameLabel',
-                                )}
-                                labelStyle="font-bold"
-                                labelRequired
-                                value={val.name}
-                                inputStyle="rounded-3xl"
-                                onChange={e => {
-                                  const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (attribute: { id: any; action?: string }) => {
-                                      if (attribute.id === val.id) {
-                                        return {
-                                          ...attribute,
-                                          action: attribute?.action ?? 'edit',
-                                          name: e.target.value,
-                                        };
-                                      }
-                                      return attribute;
-                                    },
-                                  );
-
-                                  setOpenedAttribute((prevState: any) => ({
-                                    ...prevState,
-                                    attributeList: updatedAttributeList,
-                                  }));
-                                }}
-                              />
-                              <InputText
-                                labelTitle={t(
-                                  'user.content-type-edit.modal.addAttribute.fieldIdLabel',
-                                )}
-                                labelStyle="font-bold"
-                                labelRequired
-                                value={val?.fieldId || getFieldId(val?.name)}
-                                inputStyle="rounded-3xl"
-                                onChange={e => {
-                                  const updatedAttributeList = openedAttribute.attributeList.map(
-                                    (attribute: { id: any; action?: string }) => {
-                                      if (attribute.id === val.id) {
-                                        return {
-                                          ...attribute,
-                                          action: attribute?.action ?? 'edit',
-                                          fieldId: e.target.value,
-                                        };
-                                      }
-                                      return attribute;
-                                    },
-                                  );
-
-                                  setOpenedAttribute((prevState: any) => ({
-                                    ...prevState,
-                                    attributeList: updatedAttributeList,
-                                  }));
-                                }}
-                              />
-                            </div>
-                            {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
-                              <div className="flex flex-row gap-4 my-5">
+                              <div className="flex flex-col w-1/2">
                                 <InputText
                                   labelTitle={t(
-                                    'user.content-type-edit.modal.addAttribute.minLengthLabel',
+                                    'user.content-type-edit.modal.addAttribute.nameLabel',
                                   )}
                                   labelStyle="font-bold"
-                                  type="number"
-                                  value={
-                                    val?.config && JSON.parse(val.config).min_length
-                                      ? JSON.parse(val.config).min_length
-                                      : ''
-                                  }
+                                  labelRequired
+                                  value={val.name}
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any; config: any; action?: string }) => {
+                                      (attribute: { id: any; action?: string }) => {
                                         if (attribute.id === val.id) {
-                                          const updatedAttribute = {
+                                          return {
                                             ...attribute,
                                             action: attribute?.action ?? 'edit',
+                                            name: e.target.value,
                                           };
-                                          if (updatedAttribute.config) {
-                                            const config = JSON.parse(updatedAttribute.config);
-                                            config.min_length = e.target.value;
-                                            updatedAttribute.config = JSON.stringify(config);
-                                          } else {
-                                            // Jika val.config adalah null, buat objek config baru dengan properti min_length
-                                            const newConfig = {
-                                              min_length: e.target.value,
-                                              max_length: '',
-                                            };
-                                            updatedAttribute.config = JSON.stringify(newConfig);
-                                          }
-                                          return updatedAttribute;
                                         }
                                         return attribute;
                                       },
@@ -1680,37 +1604,21 @@ export default function ContentTypeEdit() {
                                 />
                                 <InputText
                                   labelTitle={t(
-                                    'user.content-type-edit.modal.addAttribute.maxLengthLabel',
+                                    'user.content-type-edit.modal.addAttribute.fieldIdLabel',
                                   )}
                                   labelStyle="font-bold"
-                                  type="number"
-                                  value={
-                                    val?.config && JSON.parse(val.config).max_length
-                                      ? JSON.parse(val.config).max_length
-                                      : ''
-                                  }
+                                  labelRequired
+                                  value={val?.fieldId || getFieldId(val?.name)}
                                   inputStyle="rounded-3xl"
                                   onChange={e => {
                                     const updatedAttributeList = openedAttribute.attributeList.map(
-                                      (attribute: { id: any; config: any; action?: string }) => {
+                                      (attribute: { id: any; action?: string }) => {
                                         if (attribute.id === val.id) {
-                                          const updatedAttribute = {
+                                          return {
                                             ...attribute,
                                             action: attribute?.action ?? 'edit',
+                                            fieldId: e.target.value,
                                           };
-                                          if (updatedAttribute.config) {
-                                            const config = JSON.parse(updatedAttribute.config);
-                                            config.max_length = e.target.value;
-                                            updatedAttribute.config = JSON.stringify(config);
-                                          } else {
-                                            // Jika val.config adalah null, buat objek config baru dengan properti min_length
-                                            const newConfig = {
-                                              min_length: '',
-                                              max_length: e.target.value,
-                                            };
-                                            updatedAttribute.config = JSON.stringify(newConfig);
-                                          }
-                                          return updatedAttribute;
                                         }
                                         return attribute;
                                       },
@@ -1723,226 +1631,329 @@ export default function ContentTypeEdit() {
                                   }}
                                 />
                               </div>
-                            ) : val?.fieldType === 'IMAGE' || val?.fieldType === 'DOCUMENT' ? (
-                              <div className="flex flex-col">
+                              {val?.fieldType === 'TEXT_FIELD' || val?.fieldType === 'TEXT_AREA' ? (
                                 <div className="flex flex-row gap-4 my-5">
-                                  <Radio
-                                    labelTitle=""
+                                  <InputText
+                                    labelTitle={t(
+                                      'user.content-type-edit.modal.addAttribute.minLengthLabel',
+                                    )}
                                     labelStyle="font-bold"
-                                    items={[
-                                      {
-                                        label: 'Single Media',
-                                        value: 'single_media',
-                                      },
-                                      {
-                                        label: 'Multiple Media',
-                                        value: 'multiple_media',
-                                      },
-                                    ]}
-                                    onSelect={(
-                                      event: React.ChangeEvent<HTMLInputElement>,
-                                      value: string | number | boolean,
-                                    ) => {
-                                      if (event) {
-                                        event.stopPropagation();
-                                        const updatedAttributeList =
-                                          openedAttribute.attributeList.map(
-                                            (attribute: {
-                                              id: any;
-                                              config: any;
-                                              action?: string;
-                                            }) => {
-                                              if (attribute.id === val.id) {
-                                                const updatedAttribute = {
-                                                  ...attribute,
-                                                  action: attribute?.action ?? 'edit',
-                                                };
+                                    type="number"
+                                    value={
+                                      val?.config && JSON.parse(val.config).min_length
+                                        ? JSON.parse(val.config).min_length
+                                        : ''
+                                    }
+                                    inputStyle="rounded-3xl"
+                                    onChange={e => {
+                                      const updatedAttributeList =
+                                        openedAttribute.attributeList.map(
+                                          (attribute: {
+                                            id: any;
+                                            config: any;
+                                            action?: string;
+                                          }) => {
+                                            if (attribute.id === val.id) {
+                                              const updatedAttribute = {
+                                                ...attribute,
+                                                action: attribute?.action ?? 'edit',
+                                              };
+                                              if (updatedAttribute.config) {
                                                 const config = JSON.parse(updatedAttribute.config);
-                                                config.media_type = value;
+                                                config.min_length = e.target.value;
                                                 updatedAttribute.config = JSON.stringify(config);
-                                                return updatedAttribute;
+                                              } else {
+                                                // Jika val.config adalah null, buat objek config baru dengan properti min_length
+                                                const newConfig = {
+                                                  min_length: e.target.value,
+                                                  max_length: '',
+                                                };
+                                                updatedAttribute.config = JSON.stringify(newConfig);
                                               }
-                                              return attribute;
-                                            },
-                                          );
+                                              return updatedAttribute;
+                                            }
+                                            return attribute;
+                                          },
+                                        );
 
-                                        setOpenedAttribute((prevState: any) => ({
-                                          ...prevState,
-                                          attributeList: updatedAttributeList,
-                                        }));
-                                      }
+                                      setOpenedAttribute((prevState: any) => ({
+                                        ...prevState,
+                                        attributeList: updatedAttributeList,
+                                      }));
                                     }}
-                                    defaultSelected={JSON.parse(val?.config)?.media_type}
+                                  />
+                                  <InputText
+                                    labelTitle={t(
+                                      'user.content-type-edit.modal.addAttribute.maxLengthLabel',
+                                    )}
+                                    labelStyle="font-bold"
+                                    type="number"
+                                    value={
+                                      val?.config && JSON.parse(val.config).max_length
+                                        ? JSON.parse(val.config).max_length
+                                        : ''
+                                    }
+                                    inputStyle="rounded-3xl"
+                                    onChange={e => {
+                                      const updatedAttributeList =
+                                        openedAttribute.attributeList.map(
+                                          (attribute: {
+                                            id: any;
+                                            config: any;
+                                            action?: string;
+                                          }) => {
+                                            if (attribute.id === val.id) {
+                                              const updatedAttribute = {
+                                                ...attribute,
+                                                action: attribute?.action ?? 'edit',
+                                              };
+                                              if (updatedAttribute.config) {
+                                                const config = JSON.parse(updatedAttribute.config);
+                                                config.max_length = e.target.value;
+                                                updatedAttribute.config = JSON.stringify(config);
+                                              } else {
+                                                // Jika val.config adalah null, buat objek config baru dengan properti min_length
+                                                const newConfig = {
+                                                  min_length: '',
+                                                  max_length: e.target.value,
+                                                };
+                                                updatedAttribute.config = JSON.stringify(newConfig);
+                                              }
+                                              return updatedAttribute;
+                                            }
+                                            return attribute;
+                                          },
+                                        );
+
+                                      setOpenedAttribute((prevState: any) => ({
+                                        ...prevState,
+                                        attributeList: updatedAttributeList,
+                                      }));
+                                    }}
                                   />
                                 </div>
-                                {val?.fieldType === 'IMAGE' && (
-                                  <div>
-                                    <div className="grid grid-cols-2">
-                                      <div className="flex flex-row gap-2">
-                                        <InputText
-                                          labelTitle={'Recommended Width'}
-                                          labelStyle="font-bold"
-                                          type="number"
-                                          value={
-                                            openedAttribute?.config !== null
-                                              ? openedAttribute?.config.includes('width')
-                                                ? JSON.parse(openedAttribute?.config)?.width
+                              ) : val?.fieldType === 'IMAGE' || val?.fieldType === 'DOCUMENT' ? (
+                                <div className="flex flex-col">
+                                  <div className="flex flex-row gap-4 my-5">
+                                    <Radio
+                                      labelTitle=""
+                                      labelStyle="font-bold"
+                                      items={[
+                                        {
+                                          label: 'Single Media',
+                                          value: 'single_media',
+                                        },
+                                        {
+                                          label: 'Multiple Media',
+                                          value: 'multiple_media',
+                                        },
+                                      ]}
+                                      onSelect={(
+                                        event: React.ChangeEvent<HTMLInputElement>,
+                                        value: string | number | boolean,
+                                      ) => {
+                                        if (event) {
+                                          event.stopPropagation();
+                                          const updatedAttributeList =
+                                            openedAttribute.attributeList.map(
+                                              (attribute: {
+                                                id: any;
+                                                config: any;
+                                                action?: string;
+                                              }) => {
+                                                if (attribute.id === val.id) {
+                                                  const updatedAttribute = {
+                                                    ...attribute,
+                                                    action: attribute?.action ?? 'edit',
+                                                  };
+                                                  const config = JSON.parse(
+                                                    updatedAttribute.config,
+                                                  );
+                                                  config.media_type = value;
+                                                  updatedAttribute.config = JSON.stringify(config);
+                                                  return updatedAttribute;
+                                                }
+                                                return attribute;
+                                              },
+                                            );
+
+                                          setOpenedAttribute((prevState: any) => ({
+                                            ...prevState,
+                                            attributeList: updatedAttributeList,
+                                          }));
+                                        }
+                                      }}
+                                      defaultSelected={JSON.parse(val?.config)?.media_type}
+                                    />
+                                  </div>
+                                  {val?.fieldType === 'IMAGE' && (
+                                    <div>
+                                      <div className="grid grid-cols-2">
+                                        <div className="flex flex-row gap-2">
+                                          <InputText
+                                            labelTitle={'Recommended Width'}
+                                            labelStyle="font-bold"
+                                            type="number"
+                                            value={
+                                              openedAttribute?.config !== null
+                                                ? openedAttribute?.config.includes('width')
+                                                  ? JSON.parse(openedAttribute?.config)?.width
+                                                  : ''
                                                 : ''
-                                              : ''
-                                          }
-                                          inputStyle="rounded-3xl"
-                                          onChange={e => {
-                                            const updatedAttributeList =
-                                              openedAttribute.attributeList.map(
-                                                (attribute: {
-                                                  id: any;
-                                                  config: any;
-                                                  action?: string;
-                                                }) => {
-                                                  if (attribute.id === val.id) {
-                                                    const updatedAttribute = {
-                                                      ...attribute,
-                                                      action: attribute?.action ?? 'edit',
-                                                    };
-                                                    if (updatedAttribute.config) {
+                                            }
+                                            inputStyle="rounded-3xl"
+                                            onChange={e => {
+                                              const updatedAttributeList =
+                                                openedAttribute.attributeList.map(
+                                                  (attribute: {
+                                                    id: any;
+                                                    config: any;
+                                                    action?: string;
+                                                  }) => {
+                                                    if (attribute.id === val.id) {
+                                                      const updatedAttribute = {
+                                                        ...attribute,
+                                                        action: attribute?.action ?? 'edit',
+                                                      };
+                                                      if (updatedAttribute.config) {
+                                                        const config = JSON.parse(
+                                                          updatedAttribute.config,
+                                                        );
+                                                        config.width = e.target.value;
+                                                        updatedAttribute.config =
+                                                          JSON.stringify(config);
+                                                      } else {
+                                                        const newConfig = {
+                                                          width: e.target.value,
+                                                        };
+                                                        updatedAttribute.config =
+                                                          JSON.stringify(newConfig);
+                                                      }
+                                                      return updatedAttribute;
+                                                    }
+                                                    return attribute;
+                                                  },
+                                                );
+
+                                              setOpenedAttribute((prevState: any) => ({
+                                                ...prevState,
+                                                attributeList: updatedAttributeList,
+                                              }));
+                                            }}
+                                          />
+                                          <InputText
+                                            labelTitle={'Recommended Height'}
+                                            labelStyle="font-bold"
+                                            type="number"
+                                            value={
+                                              openedAttribute?.config !== null
+                                                ? openedAttribute?.config.includes('height')
+                                                  ? JSON.parse(openedAttribute?.config)?.height
+                                                  : ''
+                                                : ''
+                                            }
+                                            inputStyle="rounded-3xl"
+                                            onChange={e => {
+                                              const updatedAttributeList =
+                                                openedAttribute.attributeList.map(
+                                                  (attribute: {
+                                                    id: any;
+                                                    config: any;
+                                                    action?: string;
+                                                  }) => {
+                                                    if (attribute.id === val.id) {
+                                                      const updatedAttribute = {
+                                                        ...attribute,
+                                                        action: attribute?.action ?? 'edit',
+                                                      };
+                                                      if (updatedAttribute.config) {
+                                                        const config = JSON.parse(
+                                                          updatedAttribute.config,
+                                                        );
+                                                        config.height = e.target.value;
+                                                        updatedAttribute.config =
+                                                          JSON.stringify(config);
+                                                      } else {
+                                                        const newConfig = {
+                                                          height: e.target.value,
+                                                        };
+                                                        updatedAttribute.config =
+                                                          JSON.stringify(newConfig);
+                                                      }
+                                                      return updatedAttribute;
+                                                    }
+                                                    return attribute;
+                                                  },
+                                                );
+
+                                              setOpenedAttribute((prevState: any) => ({
+                                                ...prevState,
+                                                attributeList: updatedAttributeList,
+                                              }));
+                                            }}
+                                          />
+                                        </div>
+                                      </div>
+                                      <div className="flex flex-row gap-4 my-5">
+                                        <Radio
+                                          labelTitle="Image Fit"
+                                          labelStyle="font-bold"
+                                          items={[
+                                            {
+                                              label: 'Proportional Crop',
+                                              value: 'proportional_crop',
+                                            },
+                                            {
+                                              label: 'Proportional Full',
+                                              value: 'proportional_full',
+                                            },
+                                          ]}
+                                          onSelect={(
+                                            event: React.ChangeEvent<HTMLInputElement>,
+                                            value: string | number | boolean,
+                                          ) => {
+                                            if (event) {
+                                              event.stopPropagation();
+                                              const updatedAttributeList =
+                                                openedAttribute.attributeList.map(
+                                                  (attribute: {
+                                                    id: any;
+                                                    config: any;
+                                                    action?: string;
+                                                  }) => {
+                                                    if (attribute.id === val.id) {
+                                                      const updatedAttribute = {
+                                                        ...attribute,
+                                                        action: attribute?.action ?? 'edit',
+                                                      };
                                                       const config = JSON.parse(
                                                         updatedAttribute.config,
                                                       );
-                                                      config.width = e.target.value;
+                                                      config.image_fit = value;
                                                       updatedAttribute.config =
                                                         JSON.stringify(config);
-                                                    } else {
-                                                      const newConfig = {
-                                                        width: e.target.value,
-                                                      };
-                                                      updatedAttribute.config =
-                                                        JSON.stringify(newConfig);
+                                                      return updatedAttribute;
                                                     }
-                                                    return updatedAttribute;
-                                                  }
-                                                  return attribute;
-                                                },
-                                              );
+                                                    return attribute;
+                                                  },
+                                                );
 
-                                            setOpenedAttribute((prevState: any) => ({
-                                              ...prevState,
-                                              attributeList: updatedAttributeList,
-                                            }));
+                                              setOpenedAttribute((prevState: any) => ({
+                                                ...prevState,
+                                                attributeList: updatedAttributeList,
+                                              }));
+                                            }
                                           }}
-                                        />
-                                        <InputText
-                                          labelTitle={'Recommended Height'}
-                                          labelStyle="font-bold"
-                                          type="number"
-                                          value={
-                                            openedAttribute?.config !== null
-                                              ? openedAttribute?.config.includes('height')
-                                                ? JSON.parse(openedAttribute?.config)?.height
-                                                : ''
-                                              : ''
-                                          }
-                                          inputStyle="rounded-3xl"
-                                          onChange={e => {
-                                            const updatedAttributeList =
-                                              openedAttribute.attributeList.map(
-                                                (attribute: {
-                                                  id: any;
-                                                  config: any;
-                                                  action?: string;
-                                                }) => {
-                                                  if (attribute.id === val.id) {
-                                                    const updatedAttribute = {
-                                                      ...attribute,
-                                                      action: attribute?.action ?? 'edit',
-                                                    };
-                                                    if (updatedAttribute.config) {
-                                                      const config = JSON.parse(
-                                                        updatedAttribute.config,
-                                                      );
-                                                      config.height = e.target.value;
-                                                      updatedAttribute.config =
-                                                        JSON.stringify(config);
-                                                    } else {
-                                                      const newConfig = {
-                                                        height: e.target.value,
-                                                      };
-                                                      updatedAttribute.config =
-                                                        JSON.stringify(newConfig);
-                                                    }
-                                                    return updatedAttribute;
-                                                  }
-                                                  return attribute;
-                                                },
-                                              );
-
-                                            setOpenedAttribute((prevState: any) => ({
-                                              ...prevState,
-                                              attributeList: updatedAttributeList,
-                                            }));
-                                          }}
+                                          defaultSelected={JSON.parse(val?.config)?.image_fit}
                                         />
                                       </div>
                                     </div>
-                                    <div className="flex flex-row gap-4 my-5">
-                                      <Radio
-                                        labelTitle="Image Fit"
-                                        labelStyle="font-bold"
-                                        items={[
-                                          {
-                                            label: 'Proportional Crop',
-                                            value: 'proportional_crop',
-                                          },
-                                          {
-                                            label: 'Proportional Full',
-                                            value: 'proportional_full',
-                                          },
-                                        ]}
-                                        onSelect={(
-                                          event: React.ChangeEvent<HTMLInputElement>,
-                                          value: string | number | boolean,
-                                        ) => {
-                                          if (event) {
-                                            event.stopPropagation();
-                                            const updatedAttributeList =
-                                              openedAttribute.attributeList.map(
-                                                (attribute: {
-                                                  id: any;
-                                                  config: any;
-                                                  action?: string;
-                                                }) => {
-                                                  if (attribute.id === val.id) {
-                                                    const updatedAttribute = {
-                                                      ...attribute,
-                                                      action: attribute?.action ?? 'edit',
-                                                    };
-                                                    const config = JSON.parse(
-                                                      updatedAttribute.config,
-                                                    );
-                                                    config.image_fit = value;
-                                                    updatedAttribute.config =
-                                                      JSON.stringify(config);
-                                                    return updatedAttribute;
-                                                  }
-                                                  return attribute;
-                                                },
-                                              );
-
-                                            setOpenedAttribute((prevState: any) => ({
-                                              ...prevState,
-                                              attributeList: updatedAttributeList,
-                                            }));
-                                          }
-                                        }}
-                                        defaultSelected={JSON.parse(val?.config)?.image_fit}
-                                      />
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
-                            ) : null}
-                          </div>
-                        ),
-                      )
+                                  )}
+                                </div>
+                              ) : null}
+                            </div>
+                          ),
+                        )
                     : null}
                 </>
 
