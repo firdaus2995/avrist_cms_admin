@@ -1,17 +1,16 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { gql } from 'graphql-request';
-
 import customFetchBase from '../../utils/Interceptor';
 
 export const configApi = createApi({
   reducerPath: 'configApi',
   baseQuery: customFetchBase,
   endpoints: builder => ({
-    getCmsEntityLogo: builder.query<any,any>({
+    getCmsEntityLogo: builder.query<any, any>({
       query: payload => ({
         document: gql`
           query {
-            getConfig(variable: "CMS_ENTITY_LOGO") {    
+            getConfig(variable: "CMS_ENTITY_LOGO") {
               id
               variable
               value
@@ -20,13 +19,13 @@ export const configApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
-    getCmsEntityLoginDescription: builder.query<any,any>({
+    getCmsEntityLoginDescription: builder.query<any, any>({
       query: payload => ({
         document: gql`
           query {
-            getConfig(variable: "CMS_ENTITY_LOGIN_DESCRIPTION") {    
+            getConfig(variable: "CMS_ENTITY_LOGIN_DESCRIPTION") {
               id
               variable
               value
@@ -35,13 +34,13 @@ export const configApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
-    getEmailFormAttributeList: builder.query<any,any>({
+    getEmailFormAttributeList: builder.query<any, any>({
       query: payload => ({
         document: gql`
           query {
-            getConfig(variable: "EMAIL_FORM_ATTRIBUTE_LIST") {    
+            getConfig(variable: "EMAIL_FORM_ATTRIBUTE_LIST") {
               id
               variable
               value
@@ -50,13 +49,13 @@ export const configApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
-    getUserGuide: builder.query<any,any>({
+    getUserGuide: builder.query<any, any>({
       query: payload => ({
         document: gql`
           query {
-            getConfig(variable: "CMS_USERGUIDELINES_URL") {    
+            getConfig(variable: "CMS_USERGUIDELINES_URL") {
               id
               variable
               value
@@ -65,10 +64,10 @@ export const configApi = createApi({
           }
         `,
         variables: payload,
-      })
+      }),
     }),
-  })
-})
+  }),    
+});
 
 export const {
   useGetCmsEntityLogoQuery,
