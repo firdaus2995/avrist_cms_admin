@@ -14,6 +14,7 @@ import {
 } from '@/services/LeadsGenerator/leadsGeneratorApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
+import Typography from '@/components/atoms/Typography';
 
 const LeadsGeneratorResultDetail = () => {
   const params = useParams();
@@ -172,7 +173,7 @@ const LeadsGeneratorResultDetail = () => {
       }>
       <form onSubmit={handleSubmit(onSubmitData)} className="flex flex-col gap-10">
         <div className="flex flex-col gap-y-4">
-          <div className="flex flex-col gap-y-2 w-1/2">
+          <div className="flex flex-col gap-y-2 w-1/2 ml-[-5px]">
             <Controller
               name="resultName"
               control={control}
@@ -192,6 +193,86 @@ const LeadsGeneratorResultDetail = () => {
                 />
               )}
             />
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Default Template
+              </Typography>
+              <Controller
+                name="resultName"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Result Name is required' }}
+                render={({ field }) => (
+                  <input type="checkbox" id="vehicle1" name="vehicle1" value="Yes" />
+                )}
+              />
+            </div>
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Template Type
+              </Typography>
+              <Controller
+                name="resultName"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Result Name is required' }}
+                render={({ field }) => (
+                  <FormList.DropDown
+                    disabled={!isEditable}
+                    themeColor="primary"
+                    error={!!errors.resultName}
+                    helperText={errors.resultName?.message}
+                    defaultValue={field.value}
+                    onChange={field.onChange}
+                    items={[]}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Content Type
+              </Typography>
+              <Controller
+                name="resultName"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Result Name is required' }}
+                render={({ field }) => (
+                  <FormList.DropDown
+                    disabled={!isEditable}
+                    themeColor="primary"
+                    error={!!errors.resultName}
+                    helperText={errors.resultName?.message}
+                    defaultValue={field.value}
+                    onChange={field.onChange}
+                    items={[]}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Category Content
+              </Typography>
+              <Controller
+                name="resultName"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Result Name is required' }}
+                render={({ field }) => (
+                  <FormList.DropDown
+                    disabled={!isEditable}
+                    themeColor="primary"
+                    error={!!errors.resultName}
+                    helperText={errors.resultName?.message}
+                    defaultValue={field.value}
+                    onChange={field.onChange}
+                    items={[]}
+                  />
+                )}
+              />
+            </div>
           </div>
           <div className="w-2/3">
             <Controller
