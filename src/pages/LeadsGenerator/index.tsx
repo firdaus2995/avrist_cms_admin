@@ -13,7 +13,7 @@ import ModalConfirm from '@/components/molecules/ModalConfirm';
 import { useNavigate } from 'react-router-dom';
 
 export interface IQuestionProps {
-  id?: number;
+  id: number | null;
   name: string;
   question: string;
   isDraft: boolean;
@@ -22,17 +22,21 @@ export interface IQuestionProps {
 }
 
 export interface IAnswer {
+  id: number | null;
   answerOrder?: string;
   answerDesc?: string;
   order?: string;
   answer?: string;
   weight: number;
+  action: string;
 }
 
 const dummyOption: IAnswer = {
+  id: null,
   answerOrder: '',
   answerDesc: '',
   weight: 0,
+  action: 'create',
 };
 
 const number = /^\d{1,3}(,\d{3})*(\.\d*)?$|^\d+(\.\d*)?$/;
@@ -54,20 +58,25 @@ const LeadsGenerator = () => {
   });
   const [isQuestion, setQuestion] = useState<IQuestionProps[]>([
     {
+      id: null,
       name: '',
       question: '',
       isDraft: false,
       isDelete: false,
       answers: [
         {
+          id: null,
           answerOrder: '',
           answerDesc: '',
           weight: 0,
+          action: 'create',
         },
         {
+          id: null,
           answerOrder: '',
           answerDesc: '',
           weight: 0,
+          action: 'create',
         },
       ],
     },
@@ -77,20 +86,25 @@ const LeadsGenerator = () => {
     setEditable(true);
     setQuestion([
       {
+        id: null,
         name: '',
         question: '',
         isDraft: false,
         isDelete: false,
         answers: [
           {
+            id: null,
             answerOrder: '',
             answerDesc: '',
             weight: 0,
+            action: 'create',
           },
           {
+            id: null,
             answerOrder: '',
             answerDesc: '',
             weight: 0,
+            action: 'create',
           },
         ],
       },
@@ -108,14 +122,18 @@ const LeadsGenerator = () => {
           isDelete: false,
           answers: [
             {
+              id: null,
               answerOrder: '',
               answerDesc: '',
               weight: 0,
+              action: 'create',
             },
             {
+              id: null,
               answerOrder: '',
               answerDesc: '',
               weight: 0,
+              action: 'create',
             },
           ],
         },
@@ -151,14 +169,14 @@ const LeadsGenerator = () => {
     for (let i = 0; i < length; i++) {
       const answers = isQuestion[i].answers;
       const temp: IQuestionProps = { ...isQuestion[i], answers: [] };
-      if (!temp.id) {
-        delete temp.id;
-      }
       for (let j = 0; j < answers.length; j++) {
         temp.answers.push({
-          answer: answers[j].answerDesc,
-          order: answers[j].answerOrder,
-          weight: answers[j].weight,
+          ...answers[j],
+          id: answers[j]?.id ?? null,
+          // answer: answers[j].answerDesc,
+          // order: answers[j].answerOrder,
+          // weight: answers[j].weight,
+          action: answers[j]?.action ?? 'edit',
         });
       }
       temp.isDraft = type === 'draft';
@@ -173,20 +191,25 @@ const LeadsGenerator = () => {
       .catch(() => {
         setQuestion([
           {
+            id: null,
             name: '',
             question: '',
             isDraft: false,
             isDelete: false,
             answers: [
               {
+                id: null,
                 answerOrder: '',
                 answerDesc: '',
                 weight: 0,
+                action: 'create',
               },
               {
+                id: null,
                 answerOrder: '',
                 answerDesc: '',
                 weight: 0,
+                action: 'create',
               },
             ],
           },
@@ -195,6 +218,16 @@ const LeadsGenerator = () => {
       .finally(() => {
         setEditable(false);
       });
+  };
+
+  const questions: () => IQuestionProps[] = () => {
+    const data: IQuestionProps[] = [];
+    for (let i = 0; i < isQuestion.length; i++) {
+      if (!isQuestion[i].isDelete) {
+        data.push(isQuestion[i]);
+      }
+    }
+    return data;
   };
 
   return (
@@ -215,183 +248,207 @@ const LeadsGenerator = () => {
           )
         }>
         <div className="flex flex-col gap-y-4">
-          {isQuestion.map((item: IQuestionProps, i: number) => (
-            <div className="flex gap-x-2" key={i}>
-              <div className="flex flex-col gap-2 w-1/2 p-4 bg-light-purple-2 rounded-xl">
-                <div className="flex gap-x-2 items-center">
-                  <div className="bg-reddist w-[8px] h-[8px] rounded-xl" />
-                  <Typography type="body" size="l" weight="bold">
-                    {`Question ${i + 1}`}
-                  </Typography>
-                </div>
-                <FormList.TextAreaField
-                  disabled={!isEditable}
-                  // labelRequired
-                  themeColor="primary"
-                  placeholder={`Question ${i + 1}`}
-                  value={item.question}
-                  // error={!!attributesErrors.fieldId}
-                  // helperText={attributesErrors.fieldId}
-                  onChange={(e: any) => {
-                    const temp = JSON.parse(JSON.stringify(isQuestion));
-                    temp[i].question = e.target.value;
-                    setQuestion(temp);
-                  }}
-                  // textAreaStyle="h-[72px]"
-                  border={false}
-                />
-                <div className="flex flex-col gap-3 p-3 border border-light-grey bg-[linear-gradient(180deg,_#EAE1F4_0%,_#F9F5FD_100%)] rounded-xl">
-                  <div className="flex gap-x-3">
-                    <Typography type="body" size="s" weight="bold" className="w-[60px]">
-                      Order
+          {questions().map((item: IQuestionProps, i: number) => {
+            const answers: () => IAnswer[] = () => {
+              const list = item.answers;
+              const data: IAnswer[] = [];
+              for (let i = 0; i < list.length; i++) {
+                if (list[i].action !== 'delete') {
+                  data.push(list[i]);
+                }
+              }
+              return data;
+            };
+            return (
+              <div className="flex gap-x-2" key={i}>
+                <div className="flex flex-col gap-2 w-1/2 p-4 bg-light-purple-2 rounded-xl">
+                  <div className="flex gap-x-2 items-center">
+                    <div className="bg-reddist w-[8px] h-[8px] rounded-xl" />
+                    <Typography type="body" size="l" weight="bold">
+                      {`Question ${i + 1}`}
                     </Typography>
-                    <Typography type="body" size="s" weight="bold" className="w-[55%]">
-                      Answer
-                    </Typography>
-                    <Typography type="body" size="s" weight="bold" className="w-[22%]">
-                      Answer Weight
-                    </Typography>
-                    <div className="w-[36px]" />
                   </div>
-                  <hr className="border-black" />
-                  {item.answers.map((jtem: IAnswer, idx: number) => {
-                    return (
-                      <div className="flex gap-x-3 items-center" key={idx}>
-                        <div className="w-[60px] bg-bright-purple rounded-xl text-white flex justify-center items-center">
-                          {colName(idx)}
-                        </div>
-                        <FormList.TextField
-                          disabled={!isEditable}
-                          wrapperClass="w-[55%]"
-                          // key="fieldId"
-                          // labelRequired
-                          themeColor="primary"
-                          placeholder="Answer"
-                          value={jtem.answerDesc}
-                          // error={!!attributesErrors.fieldId}
-                          // helperText={attributesErrors.fieldId}
-                          onChange={(e: any) => {
-                            const temp = JSON.parse(JSON.stringify(isQuestion));
-                            temp[i].answers[idx].answerDesc = e.target.value;
-                            setQuestion(temp);
-                          }}
-                          border={false}
-                        />
-                        <FormList.TextField
-                          disabled={!isEditable}
-                          wrapperClass="w-[22%]"
-                          key="fieldId"
-                          // labelRequired
-                          themeColor="primary"
-                          placeholder="Answer Weight"
-                          value={jtem.weight}
-                          // error={!!attributesErrors.fieldId}
-                          // helperText={attributesErrors.fieldId}
-                          onChange={(e: any) => {
-                            const val = e.target.value;
-                            if (number.test(val)) {
+                  <FormList.TextAreaField
+                    disabled={!isEditable}
+                    // labelRequired
+                    themeColor="primary"
+                    placeholder={`Question ${i + 1}`}
+                    value={item.question}
+                    // error={!!attributesErrors.fieldId}
+                    // helperText={attributesErrors.fieldId}
+                    onChange={(e: any) => {
+                      const temp = JSON.parse(JSON.stringify(isQuestion));
+                      temp[i].question = e.target.value;
+                      setQuestion(temp);
+                    }}
+                    // textAreaStyle="h-[72px]"
+                    border={false}
+                  />
+                  <div className="flex flex-col gap-3 p-3 border border-light-grey bg-[linear-gradient(180deg,_#EAE1F4_0%,_#F9F5FD_100%)] rounded-xl">
+                    <div className="flex gap-x-3">
+                      <Typography type="body" size="s" weight="bold" className="w-[60px]">
+                        Order
+                      </Typography>
+                      <Typography type="body" size="s" weight="bold" className="w-[55%]">
+                        Answer
+                      </Typography>
+                      <Typography type="body" size="s" weight="bold" className="w-[22%]">
+                        Answer Weight
+                      </Typography>
+                      <div className="w-[36px]" />
+                    </div>
+                    <hr className="border-black" />
+                    {answers().map((jtem: IAnswer, idx: number) => {
+                      return (
+                        <div className="flex gap-x-3 items-center" key={idx}>
+                          <div className="w-[60px] bg-bright-purple rounded-xl text-white flex justify-center items-center">
+                            {colName(idx)}
+                          </div>
+                          <FormList.TextField
+                            disabled={!isEditable}
+                            wrapperClass="w-[55%]"
+                            // key="fieldId"
+                            // labelRequired
+                            themeColor="primary"
+                            placeholder="Answer"
+                            value={jtem.answerDesc}
+                            // error={!!attributesErrors.fieldId}
+                            // helperText={attributesErrors.fieldId}
+                            onChange={(e: any) => {
                               const temp = JSON.parse(JSON.stringify(isQuestion));
-                              temp[i].answers[idx].weight = val;
+                              temp[i].answers[idx].answerDesc = e.target.value;
+                              temp[i].answers[idx].action = 'edit';
                               setQuestion(temp);
-                            }
-                          }}
-                          border={false}
-                        />
-                        <div
-                          className={`!min-w-[36px] ${styleButton({ variants: 'error', disabled: !isEditable })}`}
-                          onClick={() => {
-                            if (isEditable) {
-                              const temp = JSON.parse(JSON.stringify(isQuestion));
-                              const data: IAnswer[] = [];
-                              for (let n = 0; n < item.answers.length; n++) {
-                                if (idx !== n) {
-                                  data.push(item.answers[n]);
-                                }
+                            }}
+                            border={false}
+                          />
+                          <FormList.TextField
+                            disabled={!isEditable}
+                            wrapperClass="w-[22%]"
+                            key="fieldId"
+                            // labelRequired
+                            themeColor="primary"
+                            placeholder="Answer Weight"
+                            value={jtem.weight}
+                            // error={!!attributesErrors.fieldId}
+                            // helperText={attributesErrors.fieldId}
+                            onChange={(e: any) => {
+                              const val = e.target.value;
+                              if (number.test(val)) {
+                                const temp = JSON.parse(JSON.stringify(isQuestion));
+                                temp[i].answers[idx].id = val;
+                                temp[i].answers[idx].action = 'edit';
+                                setQuestion(temp);
                               }
-                              temp[i].answers = data;
-                              setQuestion(temp);
-                            }
-                          }}>
-                          {closeIcon(!isEditable ? '#798F9F' : undefined)}
+                            }}
+                            border={false}
+                          />
+                          {idx > 1 && (
+                            <div
+                              className={`!min-w-[36px] ${styleButton({ variants: 'error', disabled: !isEditable })}`}
+                              onClick={() => {
+                                if (isEditable) {
+                                  const temp = JSON.parse(JSON.stringify(isQuestion));
+                                  const data: IAnswer[] = [];
+                                  for (let n = 0; n < item.answers.length; n++) {
+                                    if (!item.answers[n].id && idx !== n) {
+                                      data.push(item.answers[n]);
+                                    }
+                                    if (item.answers[n].id && item.answers[n].id === jtem.id) {
+                                      data.push({ ...item.answers[n], action: 'delete' });
+                                    }
+                                  }
+                                  temp[i].answers = data;
+                                  setQuestion(temp);
+                                }
+                              }}>
+                              {closeIcon(!isEditable ? '#798F9F' : undefined)}
+                            </div>
+                          )}
                         </div>
+                      );
+                    })}
+                    <div className="flex justify-between items-center">
+                      <div className="text-xs">
+                        Answers that can be added, up to a max. of 4 (four).
                       </div>
-                    );
-                  })}
-                  <div className="flex justify-between items-center">
-                    <div className="text-xs">
-                      Answers that can be added, up to a max. of 4 (four).
-                    </div>
-                    <div
-                      className={styleButton({
-                        variants: 'secondary',
-                        className: 'min-w-[130px]',
-                        disabled: !isEditable || isQuestion[i].answers.length > 3,
-                      })}
-                      onClick={() => {
-                        const temp = JSON.parse(JSON.stringify(isQuestion));
-                        if (temp[i].answers.length < 4 && isEditable) {
-                          temp[i].answers = [...item.answers, dummyOption];
-                          setQuestion(temp);
-                        }
-                      }}>
-                      {addIcon(
-                        !isEditable || isQuestion[i].answers.length > 3 ? '#798F9F' : undefined,
-                      )}
-                      &nbsp;Add Answer
+                      <div
+                        className={styleButton({
+                          variants: 'secondary',
+                          className: 'min-w-[130px]',
+                          disabled: !isEditable || isQuestion[i].answers.length > 3,
+                        })}
+                        onClick={() => {
+                          const temp = JSON.parse(JSON.stringify(isQuestion));
+                          if (temp[i].answers.length < 4 && isEditable) {
+                            temp[i].answers = [...item.answers, dummyOption];
+                            setQuestion(temp);
+                          }
+                        }}>
+                        {addIcon(
+                          !isEditable || isQuestion[i].answers.length > 3 ? '#798F9F' : undefined,
+                        )}
+                        &nbsp;Add Answer
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-              {isEditable && (
-                <>
-                  <div
-                    className={`!min-w-[36px] ${styleButton({ variants: 'error' })}`}
-                    onClick={() => {
-                      setIdx(i);
-                      setModal({
-                        show: true,
-                        title: 'Delete Question',
-                        desc: `Do you want to delete Question ${i + 1}?`,
-                        icon: deleteIcon(),
-                      });
-                    }}>
-                    {trashIcon()}
-                  </div>
-                  {i + 1 === isQuestion.length && (
+                {isEditable && (
+                  <>
                     <div
-                      className={`!min-w-[36px] ${styleButton({ variants: 'secondary', disabled: isQuestion[i].question === '' })}`}
+                      className={`!min-w-[36px] ${styleButton({ variants: 'error' })}`}
                       onClick={() => {
-                        if (isQuestion[i].question !== '') {
-                          setQuestion(prev => [
-                            ...prev,
-                            {
-                              name: '',
-                              question: '',
-                              isDraft: false,
-                              isDelete: false,
-                              answers: [
-                                {
-                                  answerOrder: '',
-                                  answerDesc: '',
-                                  weight: 0,
-                                },
-                                {
-                                  answerOrder: '',
-                                  answerDesc: '',
-                                  weight: 0,
-                                },
-                              ],
-                            },
-                          ]);
-                        }
+                        setIdx(item.id ? item.id : i);
+                        setModal({
+                          show: true,
+                          title: 'Delete Question',
+                          desc: `Do you want to delete Question ${i + 1}?`,
+                          icon: deleteIcon(),
+                        });
                       }}>
-                      {addIcon(isQuestion[i].question === '' ? '#798F9F' : undefined)}
+                      {trashIcon()}
                     </div>
-                  )}
-                </>
-              )}
-            </div>
-          ))}
+                    {i + 1 === isQuestion.length && (
+                      <div
+                        className={`!min-w-[36px] ${styleButton({ variants: 'secondary', disabled: isQuestion[i].question === '' })}`}
+                        onClick={() => {
+                          if (isQuestion[i].question !== '') {
+                            setQuestion(prev => [
+                              ...prev,
+                              {
+                                id: null,
+                                name: '',
+                                question: '',
+                                isDraft: false,
+                                isDelete: false,
+                                answers: [
+                                  {
+                                    id: null,
+                                    answerOrder: '',
+                                    answerDesc: '',
+                                    weight: 0,
+                                    action: 'create',
+                                  },
+                                  {
+                                    id: null,
+                                    answerOrder: '',
+                                    answerDesc: '',
+                                    weight: 0,
+                                    action: 'create',
+                                  },
+                                ],
+                              },
+                            ]);
+                          }
+                        }}>
+                        {addIcon(isQuestion[i].question === '' ? '#798F9F' : undefined)}
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            );
+          })}
         </div>
         {isEditable && (
           <div className="flex gap-2 justify-end items-center">
@@ -436,8 +493,11 @@ const LeadsGenerator = () => {
           if (isModal.title === 'Delete Question') {
             const data: IQuestionProps[] = [];
             for (let n = 0; n < isQuestion.length; n++) {
-              if (isIdx !== n) {
+              if (!isQuestion[n].id && isIdx !== n) {
                 data.push(isQuestion[n]);
+              }
+              if (isQuestion[n].id && isQuestion[n].id === isIdx) {
+                data.push({ ...isQuestion[n], isDelete: true });
               }
             }
             setQuestion(data);

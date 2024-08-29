@@ -15,6 +15,10 @@ export const leadsGeneratorApi = createApi({
             $disclaimer: String!
             $images: String!
             $isDraft: Boolean!
+            $isDefault: Boolean!
+            $type: String!
+            $postTypeId: Int!
+            $categoryId: Int!
           ) {
             resultTemplateCreate(
               request: {
@@ -23,6 +27,10 @@ export const leadsGeneratorApi = createApi({
                 isDraft: $isDraft
                 disclaimer: $disclaimer
                 images: $images
+                isDefault: $isDefault
+                type: $type
+                postTypeId: $postTypeId
+                categoryId: $categoryId
               }
             ) {
               id
@@ -31,6 +39,10 @@ export const leadsGeneratorApi = createApi({
               isDraft
               disclaimer
               images
+              isDefault
+              type
+              postTypeId
+              categoryId
             }
           }
         `,
@@ -109,6 +121,10 @@ export const leadsGeneratorApi = createApi({
             $disclaimer: String!
             $images: String!
             $isDraft: Boolean!
+            $isDefault: Boolean!
+            $type: String!
+            $postTypeId: Int!
+            $categoryId: Int!
           ) {
             resultTemplateUpdate(
               id: $id
@@ -118,6 +134,10 @@ export const leadsGeneratorApi = createApi({
                 isDraft: $isDraft
                 disclaimer: $disclaimer
                 images: $images
+                isDefault: $isDefault
+                type: $type
+                postTypeId: $postTypeId
+                categoryId: $categoryId
               }
             ) {
               id
@@ -126,6 +146,25 @@ export const leadsGeneratorApi = createApi({
               isDraft
               disclaimer
               images
+              isDefault
+              type
+              postTypeId
+              categoryId
+            }
+          }
+        `,
+        variables: payload,
+      }),
+    }),
+    getResultTemplateType: builder.query<any, void>({
+      query: payload => ({
+        document: gql`
+          query {
+            getConfig(variable: "result_template_type") {
+              id
+              variable
+              value
+              description
             }
           }
         `,
@@ -142,6 +181,7 @@ export const leadsGeneratorApi = createApi({
                 name
                 question
                 answers {
+                  id
                   answerOrder
                   answerDesc
                   weight
@@ -329,6 +369,7 @@ export const {
   useDeleteResultTemplateMutation,
   useGetResultTemplateDetailQuery,
   useUpdateResultTemplateMutation,
+  useLazyGetResultTemplateTypeQuery,
   useLazyGetQuestionsQuery,
   useUpdateQuestionsMutation,
   useGetConditionListQuery,

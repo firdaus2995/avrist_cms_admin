@@ -29,8 +29,8 @@ const LeadsGeneratorConditionDetail = () => {
   const [isTitle, setTitle] = useState<string>('Edit Condition');
   const [isEditable, setEditable] = useState<boolean>(false);
   const [expandedConditions, setExpandedConditions] = useState<number[]>([]);
-  const [conditionsData, setConditionsData] = useState([]);
-  const [listResultName, setListResultName] = useState([]);
+  const [conditionsData, setConditionsData] = useState<any[]>([]);
+  const [listResultName, setListResultName] = useState<any[]>([]);
   const [selectedResultName, setSelectedResultName] = useState<any>({});
   const [formTitle, setFormTitle] = useState('');
   const [selectedAnswers, setSelectedAnswers] = useState<Record<number, number[]>>({});
@@ -62,10 +62,16 @@ const LeadsGeneratorConditionDetail = () => {
     if (dataDetail) {
       const { title, resultTemplateId, questions } = dataDetail.conditionDetail;
       setFormTitle(title);
-      const matchedResultName = listResultName?.find(
-        (item: any) => item.value === resultTemplateId,
-      );
-      setSelectedResultName(matchedResultName || {});
+      let matchedResultName: any = {};
+      for (let i = 0; i < listResultName.length; i++) {
+        if (listResultName[i]?.value === resultTemplateId) {
+          matchedResultName = listResultName[i];
+        }
+      }
+      // const matchedResultName = listResultName?.find((item: any) => {
+      //   return item.value === resultTemplateId;
+      // });
+      setSelectedResultName(matchedResultName ?? {});
 
       const answersMap: Record<number, number[]> = {};
       questions.forEach((q: any) => {
@@ -74,9 +80,12 @@ const LeadsGeneratorConditionDetail = () => {
       setSelectedAnswers(answersMap);
 
       const expandedQuestion: any[] = [];
-      questions?.map((item: { questionId: any }) => {
-        expandedQuestion?.push(item?.questionId);
-      });
+      for (let i = 0; i < questions.length; i++) {
+        expandedQuestion.push(questions[i].questionId);
+      }
+      // questions?.map((item: { questionId: any }) => {
+      //   expandedQuestion?.push(item?.questionId);
+      // });
       setExpandedConditions(expandedQuestion);
     }
   }, [dataDetail, listResultName]);

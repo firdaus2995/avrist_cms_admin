@@ -10,10 +10,20 @@ import CancelIcon from '@/assets/cancel.png';
 import {
   useCreateResultTemplateMutation,
   useGetResultTemplateDetailQuery,
+  useLazyGetResultTemplateTypeQuery,
   useUpdateResultTemplateMutation,
 } from '@/services/LeadsGenerator/leadsGeneratorApi';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
+import Typography from '@/components/atoms/Typography';
+import { useLazyGetPostTypeListQuery } from '@/services/ContentType/contentTypeApi';
+import { useLazyGetCategoryListQuery } from '@/services/ContentManager/contentManagerApi';
+import { CheckBox } from '@/components/atoms/Input/CheckBox';
+
+interface IItem {
+  value: string | number;
+  label: string;
+}
 
 const LeadsGeneratorResultDetail = () => {
   const params = useParams();
@@ -25,7 +35,10 @@ const LeadsGeneratorResultDetail = () => {
 
   const [isTitle, setTitle] = useState<string>('Edit Result Template');
   const [isEditable, setEditable] = useState<boolean>(false);
-  const [isDraft, setIsDraft] = useState<boolean>(false); // State to handle draft
+  const [isDraft, setDraft] = useState<boolean>(false); // State to handle draft
+  const [isContent, setContent] = useState<IItem[]>([]);
+  const [isCategory, setCategory] = useState<IItem[]>([]);
+  const [isTemplateType, setTemplateType] = useState<IItem[]>([]);
 
   // LEAVE MODAL STATE
   const [showLeaveModal, setShowLeaveModal] = useState<boolean>(false);
@@ -34,9 +47,10 @@ const LeadsGeneratorResultDetail = () => {
 
   const [createResultTemplate] = useCreateResultTemplateMutation();
   const [updateResultTemplate] = useUpdateResultTemplateMutation();
-
-  const fetchQuery = useGetResultTemplateDetailQuery({ id });
-  const { data } = fetchQuery;
+  const [getTemplateType] = useLazyGetResultTemplateTypeQuery();
+  const [getContentType] = useLazyGetPostTypeListQuery();
+  const [getCategory] = useLazyGetCategoryListQuery();
+  const { data } = useGetResultTemplateDetailQuery({ id });
 
   // Form hook
   const {
@@ -46,6 +60,81 @@ const LeadsGeneratorResultDetail = () => {
     getValues,
     reset,
   } = useForm();
+
+  const _handleLoop: (list: any[], field: string[]) => IItem[] = (list, field) => {
+    const arr: IItem[] = [];
+    const withField = field.length > 0;
+    for (let i = 0; i < list.length; i++) {
+      if (withField) {
+        const obj: any = {};
+        for (let j = 0; j < field.length; j += 2) {
+          obj[field[j]] = list[i][field[j + 1]];
+        }
+        arr.push(obj);
+      } else {
+        arr.push({ label: list[i], value: list[i] });
+      }
+    }
+    return arr;
+  };
+
+  const _getTemplateType = () => {
+    getTemplateType()
+      .unwrap()
+      .then(e => {
+        const val: string = e?.getConfig?.value ? e.getConfig.value : '[]';
+        const parse = JSON.parse(val);
+        const arr: IItem[] = _handleLoop(parse, []);
+        setTemplateType(arr);
+      })
+      .catch(() => {
+        setTemplateType([]);
+      });
+  };
+
+  const _getContentType = () => {
+    getContentType({
+      pageIndex: 0,
+      limit: 999,
+      direction: 'desc',
+      search: '',
+      sortBy: 'id',
+      dataType: '',
+    })
+      .unwrap()
+      .then(e => {
+        const list: any[] = e?.postTypeList?.postTypeList ?? [];
+        const arr: IItem[] = _handleLoop(list, ['label', 'name', 'value', 'id']);
+        setContent(arr);
+      })
+      .catch(() => {
+        setContent([]);
+      });
+  };
+
+  const _getCategory = (postTypeId: string | number) => {
+    getCategory({
+      postTypeId,
+      pageIndex: 0,
+      limit: 999,
+      direction: 'desc',
+      sortBy: 'id',
+    })
+      .unwrap()
+      .then(e => {
+        const list: any[] = e?.categoryList?.categoryList ?? [];
+        const arr: IItem[] = _handleLoop(list, ['label', 'name', 'value', 'id']);
+        setCategory(arr);
+      })
+      .catch(() => {
+        setCategory([]);
+      });
+  };
+
+  useEffect(() => {
+    _getTemplateType();
+    _getContentType();
+  }, []);
 
   useEffect(() => {
     // Set editable state and title based on the route
@@ -87,6 +176,10 @@ const LeadsGeneratorResultDetail = () => {
       disclaimer: value.disclaimer,
       images: value?.images,
       isDraft, // Include isDraft in payload
+      type: value?.type,
+      postTypeId: value?.postTypeId,
+      categoryId: value?.categoryId,
+      isDefault: value?.isDefault ? value?.isDefault : false,
     };
     updateResultTemplate(payload)
       .unwrap()
@@ -118,6 +211,10 @@ const LeadsGeneratorResultDetail = () => {
       isDraft, // Use the isDraft state
       disclaimer: value.disclaimer,
       images: value?.images,
+      type: value?.type,
+      postTypeId: value?.postTypeId,
+      categoryId: value?.categoryId,
+      isDefault: value?.isDefault ? value?.isDefault : false,
     };
     createResultTemplate(payload)
       .unwrap()
@@ -151,6 +248,16 @@ const LeadsGeneratorResultDetail = () => {
     goBack();
   };
 
+  const _findLabel: (e: number, arr: IItem[]) => string = (id, arr) => {
+    let val: string = '';
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].value === id) {
+        val = arr[i].label;
+      }
+    }
+    return val;
+  };
+
   return (
     <TitleCard
       hasBack
@@ -172,7 +279,7 @@ const LeadsGeneratorResultDetail = () => {
       }>
       <form onSubmit={handleSubmit(onSubmitData)} className="flex flex-col gap-10">
         <div className="flex flex-col gap-y-4">
-          <div className="flex flex-col gap-y-2 w-1/2">
+          <div className="flex flex-col gap-y-2 w-1/2 ml-[-5px]">
             <Controller
               name="resultName"
               control={control}
@@ -192,6 +299,99 @@ const LeadsGeneratorResultDetail = () => {
                 />
               )}
             />
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Default Template
+              </Typography>
+              <Controller
+                name="isDefault"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <CheckBox
+                    defaultValue={field.value}
+                    updateFormValue={e => {
+                      field.onChange(e.value);
+                    }}
+                    updateType={''}
+                    labelTitle={undefined}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Template Type
+              </Typography>
+              <Controller
+                name="type"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Template Type is required' }}
+                render={({ field }) => (
+                  <FormList.DropDown
+                    disabled={!isEditable}
+                    themeColor="primary"
+                    error={!!errors.type}
+                    helperText={errors.type?.message}
+                    defaultValue={_findLabel(field.value, isTemplateType)}
+                    onChange={(e: IItem) => {
+                      field.onChange(e.value);
+                    }}
+                    items={isTemplateType}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Content Type
+              </Typography>
+              <Controller
+                name="postTypeId"
+                control={control}
+                defaultValue=""
+                rules={{ required: 'Content Type is required' }}
+                render={({ field }) => (
+                  <FormList.DropDown
+                    disabled={!isEditable}
+                    themeColor="primary"
+                    error={!!errors.postTypeId}
+                    helperText={errors.postTypeId?.message}
+                    defaultValue={_findLabel(field.value, isContent)}
+                    onChange={(e: IItem) => {
+                      field.onChange(e.value);
+                      _getCategory(e.value);
+                    }}
+                    items={isContent}
+                  />
+                )}
+              />
+            </div>
+            <div className="flex items-center">
+              <Typography type="body" size="s" weight="bold" className="w-[225px] ml-1">
+                Category Content
+              </Typography>
+              <Controller
+                name="categoryId"
+                control={control}
+                defaultValue=""
+                // rules={{ required: 'Category Content is required' }}
+                render={({ field }) => (
+                  <FormList.DropDown
+                    disabled={!isEditable || isCategory.length < 1}
+                    themeColor="primary"
+                    error={!!errors.categoryId}
+                    helperText={errors.categoryId?.message}
+                    defaultValue={_findLabel(field.value, isCategory)}
+                    onChange={(e: IItem) => {
+                      field.onChange(e.value);
+                    }}
+                    items={isCategory}
+                  />
+                )}
+              />
+            </div>
           </div>
           <div className="w-2/3">
             <Controller
@@ -291,7 +491,7 @@ const LeadsGeneratorResultDetail = () => {
             type="submit"
             className={styleButton({ variants: 'secondary', disabled: !isEditable })}
             onClick={() => {
-              setIsDraft(true); // Set isDraft before submitting
+              setDraft(true); // Set isDraft before submitting
             }}>
             Save as Draft
           </button>
@@ -299,7 +499,7 @@ const LeadsGeneratorResultDetail = () => {
             type="submit"
             className={styleButton({ variants: 'success', disabled: !isEditable })}
             onClick={() => {
-              setIsDraft(false); // Ensure isDraft is false for final save
+              setDraft(false); // Ensure isDraft is false for final save
             }}>
             Save
           </button>
