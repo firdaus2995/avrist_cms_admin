@@ -215,6 +215,7 @@ export const {
   useGetConfigQuery,
   usePostTypeCreateMutation,
   useGetPostTypeListQuery,
+  useLazyGetPostTypeListQuery,
   useGetPostTypeDetailQuery,
   usePostTypeUpdateMutation,
   useCreateContentDataMutation,

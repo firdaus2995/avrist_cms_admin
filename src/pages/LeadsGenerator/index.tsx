@@ -171,11 +171,12 @@ const LeadsGenerator = () => {
       const temp: IQuestionProps = { ...isQuestion[i], answers: [] };
       for (let j = 0; j < answers.length; j++) {
         temp.answers.push({
+          ...answers[j],
           id: answers[j]?.id ?? null,
-          answer: answers[j].answerDesc,
-          order: answers[j].answerOrder,
-          weight: answers[j].weight,
-          action: answers[j]?.action ?? 'create',
+          // answer: answers[j].answerDesc,
+          // order: answers[j].answerOrder,
+          // weight: answers[j].weight,
+          action: answers[j]?.action ?? 'edit',
         });
       }
       temp.isDraft = type === 'draft';

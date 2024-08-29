@@ -419,6 +419,7 @@ export const {
   useGetContentDataQuery,
   useGetArchiveDataQuery,
   useGetCategoryListQuery,
+  useLazyGetCategoryListQuery,
   useRestoreDataMutation,
   useCreateCategoryMutation,
   useCreateContentDataMutation,
