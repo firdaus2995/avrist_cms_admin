@@ -3,6 +3,7 @@ import { LeftContent } from './components/LeftContent';
 import LoginForm from './components/LoginForm';
 import ResetPasswordForm from './components/ForgotPasswordFrom';
 import NewPasswordForm from './components/NewPasswordForm';
+import { checkVersion } from '@/utils/version';
 
 export default function Login() {
   const location = useLocation();
@@ -22,6 +23,7 @@ export default function Login() {
           {isLoginScreen && <LoginForm />}
           {isForgotPasswordScreen && <ResetPasswordForm />}
           {isNewPasswordScreen && <NewPasswordForm />}
+          <div className="w-full px-10 mt-[-25px] text-end text-primary font-bold text-sm">{checkVersion()}</div>
         </div>
       </div>
     </div>

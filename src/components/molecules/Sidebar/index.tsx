@@ -23,6 +23,7 @@ import { getCredential, removeCredential } from '@/utils/Credential';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
+import { checkVersion } from '@/utils/version';
 
 interface ISidebar {
   open: boolean;
@@ -732,6 +733,9 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
         {renderHeader()}
         {renderListMenu()}
         {renderFooter()}
+        <p className="text-white font-bold text-sm mt-auto">
+          {checkVersion()}
+        </p>
       </div>
     </React.Fragment>
   );
