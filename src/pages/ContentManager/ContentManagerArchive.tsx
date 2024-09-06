@@ -5,7 +5,6 @@ import Table from '@/components/molecules/Table';
 import type { SortingState } from '@tanstack/react-table';
 import { InputSearch } from '@/components/atoms/Input/InputSearch';
 import PaginationComponent from '@/components/molecules/Pagination';
-import dayjs from 'dayjs';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
@@ -108,7 +107,7 @@ export default function PageManagementArchive() {
     if (sortModel?.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
@@ -116,9 +115,11 @@ export default function PageManagementArchive() {
 
   const onClickPageRestore = (id: number, title: string) => {
     setRestoreId(id);
-    setRestoreModalTitle(t('user.content-manager-archive.pageManagementArchive.restoreModal.title') ?? '');
+    setRestoreModalTitle(
+      t('user.content-manager-archive.pageManagementArchive.restoreModal.title') ?? '',
+    );
     setRestoreModalBody(
-      t('user.content-manager-archive.pageManagementArchive.restoreModal.message', { title }) ?? ''
+      t('user.content-manager-archive.pageManagementArchive.restoreModal.message', { title }) ?? '',
     );
     setOpenRestoreModal(true);
   };
@@ -135,7 +136,9 @@ export default function PageManagementArchive() {
           openToast({
             type: 'success',
             title: t('user.content-manager-archive.toasts.successRestore.title'),
-            message: t('user.content-manager-archive.toasts.successRestore.message', { title: result.contentDataRestore.message }),
+            message: t('user.content-manager-archive.toasts.successRestore.message', {
+              title: result.contentDataRestore.message,
+            }),
           }),
         );
         setPageIndex(0);
@@ -155,7 +158,11 @@ export default function PageManagementArchive() {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.title')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.content-manager-archive.pageManagementArchive.tableHeaders.title')}
+        </span>
+      ),
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
@@ -173,7 +180,11 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.shortDescription')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.content-manager-archive.pageManagementArchive.tableHeaders.shortDescription')}
+        </span>
+      ),
       accessorKey: 'shortDesc',
       enableSorting: true,
       cell: (info: any) => (
@@ -185,19 +196,26 @@ export default function PageManagementArchive() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.categoryName')}</span>,
-      accessorKey: 'categoryName',
-      enableSorting: true,
-      cell: (info: any) => (
-        <p className="text-[14px] truncate">
-          {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-            ? dayjs(info.getValue()).format('user.content-manager-archive.DD/MM/YYYY')
-            : '-'}
-        </p>
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.content-manager-archive.pageManagementArchive.tableHeaders.categoryName')}
+        </span>
       ),
+      accessorKey: 'categories',
+      enableSorting: true,
+      cell: (info: any) => {
+        const categories = info.getValue();
+        const categoryName = categories?.[0]?.categoryName || '-';
+
+        return <p className="text-[14px] truncate">{categoryName !== '' ? categoryName : '-'}</p>;
+      },
     },
     {
-      header: () => <span className="text-[14px]">{t('user.content-manager-archive.pageManagementArchive.tableHeaders.action')}</span>,
+      header: () => (
+        <span className="text-[14px]">
+          {t('user.content-manager-archive.pageManagementArchive.tableHeaders.action')}
+        </span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (
@@ -236,8 +254,12 @@ export default function PageManagementArchive() {
 
   const onClickPageDelete = (id: number, title: string) => {
     setIdDelete(id);
-    setTitleConfirm(t('user.content-manager-archive.pageManagementArchive.confirmModal.title') ?? '');
-    setMessageConfirm(t('user.content-manager-archive.pageManagementArchive.confirmModal.message', { title }) ?? '');
+    setTitleConfirm(
+      t('user.content-manager-archive.pageManagementArchive.confirmModal.title') ?? '',
+    );
+    setMessageConfirm(
+      t('user.content-manager-archive.pageManagementArchive.confirmModal.message', { title }) ?? '',
+    );
     setShowConfirm(true);
   };
 
@@ -250,7 +272,9 @@ export default function PageManagementArchive() {
           openToast({
             type: 'success',
             title: t('user.content-manager-archive.toasts.successDeleteContent.title'),
-            message: t('user.content-manager-archive.toasts.successDeleteContent.message', { title: d.contentDataHardDelete.message }),
+            message: t('user.content-manager-archive.toasts.successDeleteContent.message', {
+              title: d.contentDataHardDelete.message,
+            }),
           }),
         );
         setPageIndex(0);
@@ -306,7 +330,9 @@ export default function PageManagementArchive() {
             onBlur={(e: any) => {
               setSearch(e.target.value);
             }}
-            placeholder={t('user.content-manager-archive.pageManagementArchive.searchPlaceholder') ?? ''}
+            placeholder={
+              t('user.content-manager-archive.pageManagementArchive.searchPlaceholder') ?? ''
+            }
           />
         }
         onBackClick={goBack}
