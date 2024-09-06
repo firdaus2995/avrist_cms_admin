@@ -10,7 +10,6 @@ import { t } from 'i18next';
 import { getImageEditable } from '../../../utils/imageUtils';
 import restApiRequest from '../../../utils/restApiRequest';
 import ModalDisplay from '../ModalDisplay';
-import { formatFilename } from '@/utils/logicHelper';
 
 const maxDocSize = import.meta.env.VITE_MAX_FILE_DOC_SIZE;
 const maxImgSize = import.meta.env.VITE_MAX_FILE_IMG_SIZE;
@@ -150,7 +149,7 @@ export default function FileUploaderBase({
 
   const handleUpload = async (files: File[]) => {
     setIsUploadLoading(true);
-    const fileName = formatFilename(files[0].name);
+    const fileName = files[0].name;
 
     const defaultFileSize = isDocument ? maxDocSize : maxImgSize;
     const maxFileSize = maxSize || defaultFileSize;

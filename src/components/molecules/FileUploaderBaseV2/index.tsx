@@ -5,7 +5,7 @@ import AdobePdfIcon from '@/assets/adobe-pdf.svg';
 import Close from '@/assets/close.png';
 import { useAppDispatch } from '@/store';
 import { openToast } from '@/components/atoms/Toast/slice';
-import { copyArray, formatFilename } from '@/utils/logicHelper';
+import { copyArray } from '@/utils/logicHelper';
 import { LoadingCircle } from '../../atoms/Loading/loadingCircle';
 import { getImageAxios } from '../../../utils/imageUtils';
 import { t } from 'i18next';
@@ -69,7 +69,7 @@ export default function FileUploaderBaseV2({
 
   const handleUpload = async (files: File[]) => {
     const body = new FormData();
-    const fileName = formatFilename(files[0].name);
+    const fileName = files[0].name;
 
     const defaultFileSize = isDocument ? maxDocSize : maxImgSize;
     const maxFileSize = maxSize || defaultFileSize;
