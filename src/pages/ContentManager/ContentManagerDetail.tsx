@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
+import { useGetContentDataQuery } from '@/services/ContentManager/contentManagerApi';
 import { useGetPostTypeDetailQuery } from '../../services/ContentType/contentTypeApi';
 import ArchiveBox from '@/assets/archive-box.svg';
+import InfoTooltip from '@/assets/info-sm.svg';
 import MyTaskTab from './tabs/MyTaks/MyTask';
 import MainTab from './tabs/Main/Main';
 import CategoryTab from './tabs/Category/Category';
@@ -30,6 +32,7 @@ export default function ContentManagerDetail() {
   const state = useLocation();
   const [id] = useState<any>(Number(params.id));
   const [name, setName] = useState<any>('');
+  const [dataType, setDataType] = useState('');
   const [activeTab, setActiveTab] = useState(1);
 
   // GO BACK
@@ -59,6 +62,16 @@ export default function ContentManagerDetail() {
   });
   const { data } = fetchQuery;
 
+  // RTK GET CONTENT DATA
+  const fetchContentQuery = useGetContentDataQuery({
+    id,
+    pageIndex: 0,
+    limit: 10,
+    sortBy: 'id',
+    direction: 'asc',
+  });
+  const { data: contentData } = fetchContentQuery;
+
   useEffect(() => {
     if (state?.state?.activeTabParams) {
       setActiveTab(state.state.activeTabParams);
@@ -68,6 +81,7 @@ export default function ContentManagerDetail() {
   useEffect(() => {
     if (data) {
       setName(data?.postTypeDetail?.name);
+      setDataType(data?.postTypeDetail?.dataType);
     }
   }, [data]);
 
@@ -107,22 +121,53 @@ export default function ContentManagerDetail() {
     return (
       <div className="inline-block float-right">
         {activeTab === 1 ? (
-          <Link to="data/new">
-            <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
-              <div className="flex flex-row gap-2 items-center justify-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  strokeWidth={1.5}
-                  stroke="currentColor"
-                  className="w-6 h-6">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                </svg>
-                {t('user.contentManagerDetail.createButton.addNewData')}
-              </div>
-            </button>
-          </Link>
+          <div className="flex flex-row gap-2">
+            {dataType === 'SINGLE' && (
+              <img
+                src={InfoTooltip}
+                className="cursor-help"
+                title="This Content Type is SINGLE, you can only have 1 data."
+              />
+            )}
+
+            {contentData?.contentDataList?.total < 1 || dataType === 'COLLECTION' ? (
+              <Link to="data/new">
+                <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
+                  <div className="flex flex-row gap-2 items-center justify-center">
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      strokeWidth={1.5}
+                      stroke="currentColor"
+                      className="w-6 h-6">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4.5v15m7.5-7.5h-15"
+                      />
+                    </svg>
+                    {t('user.contentManagerDetail.createButton.addNewData')}
+                  </div>
+                </button>
+              </Link>
+            ) : (
+              <button className="btn normal-case btn-primary text-xs whitespace-nowrap" disabled>
+                <div className="flex flex-row gap-2 items-center justify-center">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    strokeWidth={1.5}
+                    stroke="currentColor"
+                    className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                  </svg>
+                  {t('user.contentManagerDetail.createButton.addNewData')}
+                </div>
+              </button>
+            )}
+          </div>
         ) : activeTab === 3 && canAddContentCategory ? (
           <Link to="category/new">
             <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
@@ -174,7 +219,13 @@ export default function ContentManagerDetail() {
           </div>
           {activeTab === 1 && <ArchiveButton />}
         </div>
-        {activeTab === 1 && <MainTab id={id} isUseCategory={data?.postTypeDetail?.isUseCategory} />}
+        {activeTab === 1 && (
+          <MainTab
+            id={id}
+            isUseCategory={data?.postTypeDetail?.isUseCategory}
+            refetchListContent={fetchContentQuery.refetch}
+          />
+        )}
         {activeTab === 2 && <MyTaskTab id={id} />}
         {activeTab === 3 && <CategoryTab id={id} />}
       </TitleCard>
