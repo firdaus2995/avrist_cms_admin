@@ -19,9 +19,13 @@ import StatusBadge from '@/components/atoms/StatusBadge';
 import RoleRenderer from '@/components/atoms/RoleRenderer';
 import { allowedStatusDelete } from '@/constants/common';
 
-export default function MainTab(props: { id: any; isUseCategory: any }) {
+export default function MainTab(props: {
+  id: any;
+  isUseCategory: any;
+  refetchListContent?: () => void;
+}) {
   const dispatch = useAppDispatch();
-  const { id, isUseCategory } = props;
+  const { id, isUseCategory, refetchListContent } = props;
   const { t } = useTranslation();
   const [showConfirm, setShowConfirm] = useState(false);
   const [titleConfirm, setTitleConfirm] = useState('');
@@ -75,8 +79,6 @@ export default function MainTab(props: { id: any; isUseCategory: any }) {
       setDirection('desc');
     }
   }, []);
-
-  console.log(data);
 
   const COLUMNS = [
     {
@@ -228,10 +230,13 @@ export default function MainTab(props: { id: any; isUseCategory: any }) {
             message: 'Success! Your data has been successfully deleted!',
           }),
         );
-        if (listData?.length === 1) {
+        if (listData?.length === 1 && pageIndex > 0) {
           setPageIndex(pageIndex - 1);
         }
         await fetchQuery.refetch();
+        if (refetchListContent) {
+          refetchListContent();
+        }
       })
       .catch(() => {
         setShowConfirm(false);

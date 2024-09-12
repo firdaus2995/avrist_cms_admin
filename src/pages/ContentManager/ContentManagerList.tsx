@@ -59,12 +59,7 @@ export default function ContentManagerList() {
   }, []);
 
   function onRedirect(data: any) {
-    if (data?.dataType?.toLowerCase() === 'single') {
-      const path = `${data?.id}/detail/${data?.singleContentDataId}`;
-      navigate(path);
-    } else {
-      navigate(`${data?.id}`);
-    }
+    navigate(`${data?.id}`);
   }
 
   // TABLE COLUMN
