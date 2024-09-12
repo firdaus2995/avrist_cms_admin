@@ -24,13 +24,7 @@ const Rating: React.FC<IRating> = ({ data, configList, valueChange }) => {
   }, []);
 
   useEffect(() => {
-    valueChange(
-      'componentId',
-      data?.name
-        .toLowerCase()
-        .replace(/[^a-z]/g, '-')
-        .replace(/-+/g, '-'),
-    );
+    valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
   }, [data?.name]);
 
   const handlerAddRatingValue = (value: any) => {
