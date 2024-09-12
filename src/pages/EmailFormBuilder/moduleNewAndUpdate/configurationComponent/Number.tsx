@@ -11,7 +11,13 @@ interface INumber {
 
 const Number: React.FC<INumber> = ({ data, configList, valueChange }) => {
   useEffect(() => {
-    valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
+    valueChange(
+      'componentId',
+      data?.name
+        .toLowerCase()
+        .replace(/[^a-z]/g, '-')
+        .replace(/-+/g, '-'),
+    );
   }, [data?.name]);
   return (
     <React.Fragment>
