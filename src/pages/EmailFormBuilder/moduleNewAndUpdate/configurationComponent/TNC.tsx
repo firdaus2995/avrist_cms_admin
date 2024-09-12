@@ -14,13 +14,7 @@ const TNC: React.FC<ITNC> = ({ data, configList, valueChange }) => {
   const [inputTextValue, setInputTextValue] = useState(data?.name);
 
   useEffect(() => {
-    valueChange(
-      'componentId',
-      data?.name
-        .toLowerCase()
-        .replace(/[^a-z]/g, '-')
-        .replace(/-+/g, '-'),
-    );
+    valueChange('componentId', data?.name.toLowerCase().replace(/[^a-z]/g, '-'));
   }, [data?.name]);
 
   return (
