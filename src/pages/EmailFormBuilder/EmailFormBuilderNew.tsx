@@ -295,9 +295,9 @@ export default function EmailFormBuilderNew() {
           };
         case 'SUBMITTEREMAIL':
           return {
-            fieldType: 'EMAIL',
+            fieldType: 'EMAIL_SUBMITTER',
             name: element.name,
-            fieldId: 'EMAIL',
+            fieldId: 'EMAIL_SUBMITTER',
             componentId: element.componentId ?? element.name.toLowerCase().replace(/[^a-z]/g, '-'),
             config: `{\"placeholder\": \"${element.placeholder}\", \"required\": \"${element.required}\", \"send_submitted_form_to_email\": \"true\"}`, //eslint-disable-line
           };
