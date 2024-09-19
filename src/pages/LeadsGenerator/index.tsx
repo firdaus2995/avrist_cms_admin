@@ -345,7 +345,10 @@ const LeadsGenerator = () => {
                           />
                           {idx > 1 && (
                             <div
-                              className={`!min-w-[36px] ${styleButton({ variants: 'error', disabled: !isEditable })}`}
+                              className={`!min-w-[36px] ${styleButton({
+                                variants: 'error',
+                                disabled: !isEditable,
+                              })}`}
                               onClick={() => {
                                 if (isEditable) {
                                   const temp = JSON.parse(JSON.stringify(isQuestion));
@@ -410,7 +413,10 @@ const LeadsGenerator = () => {
                     </div>
                     {i + 1 === isQuestion.length && (
                       <div
-                        className={`!min-w-[36px] ${styleButton({ variants: 'secondary', disabled: isQuestion[i].question === '' })}`}
+                        className={`!min-w-[36px] ${styleButton({
+                          variants: 'secondary',
+                          disabled: isQuestion[i].question === '',
+                        })}`}
                         onClick={() => {
                           if (isQuestion[i].question !== '') {
                             setQuestion(prev => [
@@ -491,15 +497,9 @@ const LeadsGenerator = () => {
         message={isModal.desc}
         submitAction={() => {
           if (isModal.title === 'Delete Question') {
-            const data: IQuestionProps[] = [];
-            for (let n = 0; n < isQuestion.length; n++) {
-              if (!isQuestion[n].id && isIdx !== n) {
-                data.push(isQuestion[n]);
-              }
-              if (isQuestion[n].id && isQuestion[n].id === isIdx) {
-                data.push({ ...isQuestion[n], isDelete: true });
-              }
-            }
+            const data: IQuestionProps[] = isQuestion.map((item: IQuestionProps) =>
+              item.id === isIdx ? { ...item, isDelete: true } : item,
+            );
             setQuestion(data);
           } else {
             navigate(-1);
