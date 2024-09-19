@@ -138,7 +138,21 @@ const LeadsGenerator = () => {
           ],
         },
       ];
-      setQuestion(list);
+
+      // if the question from API has more than 4 answers, add action 'delete' to the excessive answer
+      const filteredList = list.map((question: IQuestionProps) => {
+        if (question.answers.length > 4) {
+          return {
+            ...question,
+            answers: question.answers.map((answer: IAnswer, index: number) =>
+              index > 3 ? { ...answer, action: 'delete' } : answer,
+            ),
+          };
+        }
+
+        return question;
+      });
+      setQuestion(filteredList);
 
       for (let i = 0; i < list.length; i++) {
         if (list[i].isDraft) {
@@ -317,7 +331,7 @@ const LeadsGenerator = () => {
                             onChange={(e: any) => {
                               const temp = JSON.parse(JSON.stringify(isQuestion));
                               temp[i].answers[idx].answerDesc = e.target.value;
-                              temp[i].answers[idx].action = 'edit';
+                              temp[i].answers[idx].action === 'create' ? 'create' : 'edit';
                               setQuestion(temp);
                             }}
                             border={false}
@@ -352,9 +366,15 @@ const LeadsGenerator = () => {
                               onClick={() => {
                                 if (isEditable) {
                                   const temp = JSON.parse(JSON.stringify(isQuestion));
-                                  const data: IAnswer[] = item.answers.map((i: IAnswer) =>
-                                    i.id === jtem.id ? { ...i, action: 'delete' } : i,
-                                  );
+                                  const data: IAnswer[] = item.answers
+                                    .map((i: IAnswer) => {
+                                      if (i.action === 'create' && i.id === jtem.id) {
+                                        return null;
+                                      }
+
+                                      return i.id === jtem.id ? { ...i, action: 'delete' } : i;
+                                    })
+                                    .filter((j): j is IAnswer => j !== null);
                                   temp[i].answers = data;
                                   setQuestion(temp);
                                 }
@@ -373,17 +393,28 @@ const LeadsGenerator = () => {
                         className={styleButton({
                           variants: 'secondary',
                           className: 'min-w-[130px]',
-                          disabled: !isEditable || isQuestion[i].answers.length > 3,
+                          disabled:
+                            !isEditable ||
+                            isQuestion[i].answers.filter(i => i.action !== 'delete').length > 3,
                         })}
                         onClick={() => {
                           const temp = JSON.parse(JSON.stringify(isQuestion));
-                          if (temp[i].answers.length < 4 && isEditable) {
-                            temp[i].answers = [...item.answers, dummyOption];
+                          if (
+                            temp[i].answers.filter((i: any) => i.action !== 'delete').length < 4 &&
+                            isEditable
+                          ) {
+                            const newOption = { ...dummyOption };
+                            dummyOption.id = temp[i].answers[temp[i].answers.length - 1].id + 1;
+                            newOption.id = dummyOption.id;
+                            temp[i].answers = [...item.answers, newOption];
                             setQuestion(temp);
                           }
                         }}>
                         {addIcon(
-                          !isEditable || isQuestion[i].answers.length > 3 ? '#798F9F' : undefined,
+                          !isEditable ||
+                            isQuestion[i].answers.filter(i => i.action !== 'delete').length > 3
+                            ? '#798F9F'
+                            : undefined,
                         )}
                         &nbsp;Add Answer
                       </div>
