@@ -352,15 +352,9 @@ const LeadsGenerator = () => {
                               onClick={() => {
                                 if (isEditable) {
                                   const temp = JSON.parse(JSON.stringify(isQuestion));
-                                  const data: IAnswer[] = [];
-                                  for (let n = 0; n < item.answers.length; n++) {
-                                    if (!item.answers[n].id && idx !== n) {
-                                      data.push(item.answers[n]);
-                                    }
-                                    if (item.answers[n].id && item.answers[n].id === jtem.id) {
-                                      data.push({ ...item.answers[n], action: 'delete' });
-                                    }
-                                  }
+                                  const data: IAnswer[] = item.answers.map((i: IAnswer) =>
+                                    i.id === jtem.id ? { ...i, action: 'delete' } : i,
+                                  );
                                   temp[i].answers = data;
                                   setQuestion(temp);
                                 }
