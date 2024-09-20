@@ -331,7 +331,8 @@ const LeadsGenerator = () => {
                             onChange={(e: any) => {
                               const temp = JSON.parse(JSON.stringify(isQuestion));
                               temp[i].answers[idx].answerDesc = e.target.value;
-                              temp[i].answers[idx].action === 'create' ? 'create' : 'edit';
+                              temp[i].answers[idx].action =
+                                temp[i].answers[idx].action === 'create' ? 'create' : 'edit';
                               setQuestion(temp);
                             }}
                             border={false}
@@ -404,7 +405,8 @@ const LeadsGenerator = () => {
                             isEditable
                           ) {
                             const newOption = { ...dummyOption };
-                            dummyOption.id = temp[i].answers[temp[i].answers.length - 1].id + 1;
+                            dummyOption.id =
+                              Number(temp[i].answers[temp[i].answers.length - 1]?.id ?? 0) + 1;
                             newOption.id = dummyOption.id;
                             temp[i].answers = [...item.answers, newOption];
                             setQuestion(temp);
