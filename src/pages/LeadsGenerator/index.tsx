@@ -229,8 +229,6 @@ const LeadsGenerator = () => {
       });
   };
 
-  console.log(isQuestion);
-
   const questions: () => IQuestionProps[] = () => {
     const data: IQuestionProps[] = [];
     for (let i = 0; i < isQuestion.length; i++) {
@@ -450,21 +448,21 @@ const LeadsGenerator = () => {
                             setQuestion(prev => [
                               ...prev,
                               {
-                                id: (isQuestion[isQuestion.length - 1].id ?? 0) + 1,
-                                name: `Sample Question`,
+                                id: null,
+                                name: '',
                                 question: '',
                                 isDraft: false,
                                 isDelete: false,
                                 answers: [
                                   {
-                                    id: 1,
+                                    id: null,
                                     answerOrder: 'A',
                                     answerDesc: '',
                                     weight: 0,
                                     action: 'create',
                                   },
                                   {
-                                    id: 2,
+                                    id: null,
                                     answerOrder: 'B',
                                     answerDesc: '',
                                     weight: 0,
