@@ -212,15 +212,26 @@ const LeadsGeneratorConditionDetail = () => {
       resultTemplateId: selectedResultName.value,
       isDraft,
       isDefault: false,
-      questions: Object.keys(selectedAnswers).map(questionId => ({
-        id: dataDetail.conditionDetail.questions.find(
-          (item: any) => item.questionId === Number(questionId),
-        ).id,
-        questionId: Number(questionId),
-        answerIds: selectedAnswers[Number(questionId)],
-        action: 'edit',
+      questions: conditionsData.map(questionItem => ({
+        id:
+          dataDetail.conditionDetail.questions.find(
+            (item: any) => item.questionId === Number(questionItem.id),
+          )?.id ?? null,
+        questionId: Number(questionItem.id),
+        answerIds: selectedAnswers[Number(questionItem.id)],
+        action:
+          dataDetail.conditionDetail.questions.find(
+            (item: any) => item.questionId === Number(questionItem.id),
+          )?.id && selectedAnswers[Number(questionItem.id)]
+            ? 'edit'
+            : !selectedAnswers[Number(questionItem.id)]
+            ? 'delete'
+            : 'create',
       })),
     };
+
+    const filteredQuestion = payload.questions.filter((item: any) => item.id || item.answerIds);
+    payload.questions = filteredQuestion;
 
     updateCondition(payload)
       .unwrap()
@@ -255,8 +266,6 @@ const LeadsGeneratorConditionDetail = () => {
       setTitle('Add Condition');
     }
   }, [pathname]);
-
-  console.log(dataDetail);
 
   return (
     <TitleCard
