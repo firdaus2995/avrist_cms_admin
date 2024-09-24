@@ -214,6 +214,9 @@ const LeadsGeneratorResultDetail = () => {
           }),
         );
         goBack();
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       })
       .catch(() => {
         dispatch(
@@ -332,6 +335,7 @@ const LeadsGeneratorResultDetail = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <CheckBox
+                    disabled={!isEditable}
                     defaultValue={field.value}
                     updateFormValue={e => {
                       field.onChange(e.value);

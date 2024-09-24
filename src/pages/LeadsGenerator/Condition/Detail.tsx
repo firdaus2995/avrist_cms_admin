@@ -213,6 +213,9 @@ const LeadsGeneratorConditionDetail = () => {
       isDraft,
       isDefault: false,
       questions: Object.keys(selectedAnswers).map(questionId => ({
+        id: dataDetail.conditionDetail.questions.find(
+          (item: any) => item.questionId === Number(questionId),
+        ).id,
         questionId: Number(questionId),
         answerIds: selectedAnswers[Number(questionId)],
         action: 'edit',
@@ -229,12 +232,18 @@ const LeadsGeneratorConditionDetail = () => {
           }),
         );
         goBack();
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       })
-      .catch(() => {
+      .catch(err => {
         dispatch(
           openToast({
             type: 'error',
             title: 'Failed',
+            message: err.message.includes('ConflictException')
+              ? 'Question conflicted with other condition!'
+              : '',
           }),
         );
       });
@@ -246,6 +255,8 @@ const LeadsGeneratorConditionDetail = () => {
       setTitle('Add Condition');
     }
   }, [pathname]);
+
+  console.log(dataDetail);
 
   return (
     <TitleCard
@@ -310,6 +321,7 @@ const LeadsGeneratorConditionDetail = () => {
                     updateFormValue={_e => {
                       toggleCondition(condition.id);
                     }}
+                    disabled={!isEditable}
                     labelTitle={condition.text}
                     updateType={''}
                   />
@@ -328,6 +340,7 @@ const LeadsGeneratorConditionDetail = () => {
                             handleAnswerToggle(condition.id, subCond.id);
                           }}
                           labelTitle={subCond.value}
+                          disabled={!isEditable}
                           updateType={''}
                         />
                         <div className="py-[2px] px-3 w-[42px] flex items-center justify-center rounded-xl bg-bright-purple-3 text-primary font-bold">

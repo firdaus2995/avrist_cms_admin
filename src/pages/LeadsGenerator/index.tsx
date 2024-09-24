@@ -195,7 +195,7 @@ const LeadsGenerator = () => {
           // answer: answers[j].answerDesc,
           // order: answers[j].answerOrder,
           // weight: answers[j].weight,
-          action: answers[j]?.action ?? 'edit',
+          action: answers[j]?.action ?? answers[j]?.action === 'create' ? 'create' : 'edit',
         });
       }
       temp.isDraft = type === 'draft';
@@ -228,6 +228,8 @@ const LeadsGenerator = () => {
         setEditable(false);
       });
   };
+
+  console.log(isQuestion);
 
   const questions: () => IQuestionProps[] = () => {
     const data: IQuestionProps[] = [];
@@ -347,7 +349,7 @@ const LeadsGenerator = () => {
                               if (isNumber(val) || val === '') {
                                 const temp = JSON.parse(JSON.stringify(isQuestion));
                                 temp[i].answers[idx].weight = val === '' ? 0 : parseInt(val);
-                                temp[i].answers[idx].action = 'edit';
+                                temp[i].answers[idx].action === 'create' ? 'create' : 'edit';
                                 setQuestion(temp);
                               }
                             }}
@@ -448,22 +450,22 @@ const LeadsGenerator = () => {
                             setQuestion(prev => [
                               ...prev,
                               {
-                                id: null,
-                                name: '',
+                                id: (isQuestion[isQuestion.length - 1].id ?? 0) + 1,
+                                name: `Sample Question`,
                                 question: '',
                                 isDraft: false,
                                 isDelete: false,
                                 answers: [
                                   {
-                                    id: null,
-                                    answerOrder: '',
+                                    id: 1,
+                                    answerOrder: 'A',
                                     answerDesc: '',
                                     weight: 0,
                                     action: 'create',
                                   },
                                   {
-                                    id: null,
-                                    answerOrder: '',
+                                    id: 2,
+                                    answerOrder: 'B',
                                     answerDesc: '',
                                     weight: 0,
                                     action: 'create',
