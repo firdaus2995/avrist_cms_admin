@@ -823,7 +823,7 @@ export default function ContentManagerDetailData() {
                   size="m"
                   weight="bold"
                   className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                  EMAIL_FORM
+                  Email Form
                 </Typography>
                 <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
                   {name}
@@ -843,6 +843,13 @@ export default function ContentManagerDetailData() {
                     },
                     [id, field, handleFormChange],
                   );
+
+                  useEffect(() => {
+                    if (value) {
+                      handleFormChange(id, value, fieldType);
+                      field.onChange({ target: { value: value } });
+                    }
+                  }, [value]);
                   return (
                     <FormList.EmailForm
                       {...field}
