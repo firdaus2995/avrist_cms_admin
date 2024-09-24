@@ -13,7 +13,6 @@ import {
 import { addIcon, closeIcon, deleteIcon, docIcon, editIcon, trashIcon } from './svg';
 import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
-import { useNavigate } from 'react-router-dom';
 import { isNumber } from '@/utils/logicHelper';
 
 export interface IQuestionProps {
@@ -71,7 +70,6 @@ const initialData = [
 
 const LeadsGenerator = () => {
   const dispatch = useAppDispatch();
-  const navigate = useNavigate();
   // RTK Query
   const [getQuestions] = useLazyGetQuestionsQuery();
   const [updateQuestoion] = useUpdateQuestionsMutation();
@@ -402,11 +400,10 @@ const LeadsGenerator = () => {
                             isEditable
                           ) {
                             const newOption = { ...dummyOption };
-                            dummyOption.id =
-                              Number(temp[i].answers[temp[i].answers.length - 1]?.id ?? 0) + 1;
+                            const previousData = temp[i].answers[temp[i].answers.length - 1];
+                            dummyOption.id = Number(previousData?.id ?? 0) + 1;
                             newOption.id = dummyOption.id;
-                            const previousOrder =
-                              temp[i].answers[temp[i].answers.length - 1]?.answerOrder;
+                            const previousOrder = previousData?.answerOrder;
                             const newOrder = String.fromCharCode(previousOrder.charCodeAt(0) + 1);
                             newOption.answerOrder = newOrder;
                             temp[i].answers = [...item.answers, newOption];
