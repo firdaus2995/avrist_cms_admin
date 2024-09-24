@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { t } from 'i18next';
+import { useAppDispatch } from '@/store';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import FormList from '@/components/molecules/FormList';
@@ -9,8 +11,9 @@ import {
   useUpdateQuestionsMutation,
 } from '@/services/LeadsGenerator/leadsGeneratorApi';
 import { addIcon, closeIcon, deleteIcon, docIcon, editIcon, trashIcon } from './svg';
+import { openToast } from '@/components/atoms/Toast/slice';
 import ModalConfirm from '@/components/molecules/ModalConfirm';
-import { useNavigate } from 'react-router-dom';
+import { isNumber } from '@/utils/logicHelper';
 
 export interface IQuestionProps {
   id: number | null;
@@ -39,10 +42,34 @@ const dummyOption: IAnswer = {
   action: 'create',
 };
 
-const number = /^\d{1,3}(,\d{3})*(\.\d*)?$|^\d+(\.\d*)?$/;
+const initialData = [
+  {
+    id: null,
+    name: '',
+    question: '',
+    isDraft: false,
+    isDelete: false,
+    answers: [
+      {
+        id: null,
+        answerOrder: '',
+        answerDesc: '',
+        weight: 0,
+        action: 'create',
+      },
+      {
+        id: null,
+        answerOrder: '',
+        answerDesc: '',
+        weight: 0,
+        action: 'create',
+      },
+    ],
+  },
+];
 
 const LeadsGenerator = () => {
-  const navigate = useNavigate();
+  const dispatch = useAppDispatch();
   // RTK Query
   const [getQuestions] = useLazyGetQuestionsQuery();
   const [updateQuestoion] = useUpdateQuestionsMutation();
@@ -56,31 +83,8 @@ const LeadsGenerator = () => {
     desc: 'Do you want to cancel all the process?',
     icon: docIcon(),
   });
-  const [isQuestion, setQuestion] = useState<IQuestionProps[]>([
-    {
-      id: null,
-      name: '',
-      question: '',
-      isDraft: false,
-      isDelete: false,
-      answers: [
-        {
-          id: null,
-          answerOrder: '',
-          answerDesc: '',
-          weight: 0,
-          action: 'create',
-        },
-        {
-          id: null,
-          answerOrder: '',
-          answerDesc: '',
-          weight: 0,
-          action: 'create',
-        },
-      ],
-    },
-  ]);
+  const [isQuestion, setQuestion] = useState<IQuestionProps[]>(initialData);
+  const [defaultQuestion, setDefaultQuestion] = useState<IQuestionProps[]>(initialData);
 
   const _handleCatch = () => {
     setEditable(true);
@@ -111,7 +115,7 @@ const LeadsGenerator = () => {
     ]);
   };
 
-  const _handleResp = (e: any) => {
+  const _handleResp = (e: any, type?: string) => {
     try {
       let val: string = 'Edit Data';
       const list = e?.getQuestion?.questions ?? [
@@ -152,7 +156,8 @@ const LeadsGenerator = () => {
 
         return question;
       });
-      setQuestion(filteredList);
+      type === 'fetch' && setQuestion(filteredList);
+      defaultQuestion === initialData && setDefaultQuestion(filteredList);
 
       for (let i = 0; i < list.length; i++) {
         if (list[i].isDraft) {
@@ -170,7 +175,7 @@ const LeadsGenerator = () => {
     getQuestions()
       .unwrap()
       .then(e => {
-        _handleResp(e);
+        _handleResp(e, 'fetch');
       })
       .catch(() => {
         _handleCatch();
@@ -190,49 +195,41 @@ const LeadsGenerator = () => {
           // answer: answers[j].answerDesc,
           // order: answers[j].answerOrder,
           // weight: answers[j].weight,
-          action: answers[j]?.action ?? 'edit',
+          action: answers[j]?.action ?? answers[j]?.action === 'create' ? 'create' : 'edit',
         });
       }
       temp.isDraft = type === 'draft';
+      temp.isDelete = temp.isDelete ?? false;
       request.push(temp);
     }
 
     updateQuestoion({ request })
       .unwrap()
       .then(e => {
-        _handleResp(e);
+        _handleResp(e, 'update');
+        dispatch(
+          openToast({
+            type: 'success',
+            title: t('toast-success'),
+            message: type === 'draft' ? 'Save as draft success!' : 'Save success!',
+          }),
+        );
       })
       .catch(() => {
-        setQuestion([
-          {
-            id: null,
-            name: '',
-            question: '',
-            isDraft: false,
-            isDelete: false,
-            answers: [
-              {
-                id: null,
-                answerOrder: '',
-                answerDesc: '',
-                weight: 0,
-                action: 'create',
-              },
-              {
-                id: null,
-                answerOrder: '',
-                answerDesc: '',
-                weight: 0,
-                action: 'create',
-              },
-            ],
-          },
-        ]);
+        dispatch(
+          openToast({
+            type: 'error',
+            title: 'Error',
+            message: 'Error updating question!',
+          }),
+        );
       })
       .finally(() => {
         setEditable(false);
       });
   };
+
+  console.log(isQuestion);
 
   const questions: () => IQuestionProps[] = () => {
     const data: IQuestionProps[] = [];
@@ -349,10 +346,10 @@ const LeadsGenerator = () => {
                             // helperText={attributesErrors.fieldId}
                             onChange={(e: any) => {
                               const val = e.target.value;
-                              if (number.test(val)) {
+                              if (isNumber(val) || val === '') {
                                 const temp = JSON.parse(JSON.stringify(isQuestion));
-                                temp[i].answers[idx].id = val;
-                                temp[i].answers[idx].action = 'edit';
+                                temp[i].answers[idx].weight = val === '' ? 0 : parseInt(val);
+                                temp[i].answers[idx].action === 'create' ? 'create' : 'edit';
                                 setQuestion(temp);
                               }
                             }}
@@ -405,10 +402,14 @@ const LeadsGenerator = () => {
                             isEditable
                           ) {
                             const newOption = { ...dummyOption };
-                            dummyOption.id =
-                              Number(temp[i].answers[temp[i].answers.length - 1]?.id ?? 0) + 1;
+                            const previousData = temp[i].answers[temp[i].answers.length - 1];
+                            dummyOption.id = Number(previousData?.id ?? 0) + 1;
                             newOption.id = dummyOption.id;
+                            const previousOrder = previousData?.answerOrder;
+                            const newOrder = String.fromCharCode(previousOrder.charCodeAt(0) + 1);
+                            newOption.answerOrder = newOrder;
                             temp[i].answers = [...item.answers, newOption];
+
                             setQuestion(temp);
                           }
                         }}>
@@ -449,22 +450,22 @@ const LeadsGenerator = () => {
                             setQuestion(prev => [
                               ...prev,
                               {
-                                id: null,
-                                name: '',
+                                id: (isQuestion[isQuestion.length - 1].id ?? 0) + 1,
+                                name: `Sample Question`,
                                 question: '',
                                 isDraft: false,
                                 isDelete: false,
                                 answers: [
                                   {
-                                    id: null,
-                                    answerOrder: '',
+                                    id: 1,
+                                    answerOrder: 'A',
                                     answerDesc: '',
                                     weight: 0,
                                     action: 'create',
                                   },
                                   {
-                                    id: null,
-                                    answerOrder: '',
+                                    id: 2,
+                                    answerOrder: 'B',
                                     answerDesc: '',
                                     weight: 0,
                                     action: 'create',
@@ -529,7 +530,7 @@ const LeadsGenerator = () => {
             );
             setQuestion(data);
           } else {
-            navigate(-1);
+            setQuestion(defaultQuestion);
           }
           setModal(prev => ({ ...prev, show: false }));
         }}

@@ -72,6 +72,7 @@ export const leadsGeneratorApi = createApi({
                 name
                 narrative
                 isDraft
+                isDefault
                 disclaimer
                 images
                 createdAt
@@ -105,6 +106,13 @@ export const leadsGeneratorApi = createApi({
               isDraft
               disclaimer
               images
+              postTypeId
+              postTypeName
+              postTypeSlug
+              categoryId
+              categoryName
+              type
+              isDefault
             }
           }
         `,
@@ -292,7 +300,6 @@ export const leadsGeneratorApi = createApi({
             $title: String!
             $resultTemplateId: Int!
             $isDraft: Boolean!
-            $isDefault: Boolean!
             $questions: [ConditionQuestionRequest]
           ) {
             conditionCreate(
@@ -300,7 +307,6 @@ export const leadsGeneratorApi = createApi({
                 title: $title
                 resultTemplateId: $resultTemplateId
                 isDraft: $isDraft
-                isDefault: $isDefault
                 questions: $questions
               }
             ) {
@@ -321,6 +327,7 @@ export const leadsGeneratorApi = createApi({
               title
               resultTemplateId
               questions {
+                id
                 conditionId
                 questionId
                 answerIds
@@ -339,7 +346,6 @@ export const leadsGeneratorApi = createApi({
             $title: String!
             $resultTemplateId: Int!
             $isDraft: Boolean!
-            $isDefault: Boolean!
             $questions: [ConditionQuestionRequest]
           ) {
             conditionUpdate(
@@ -348,7 +354,6 @@ export const leadsGeneratorApi = createApi({
                 title: $title
                 resultTemplateId: $resultTemplateId
                 isDraft: $isDraft
-                isDefault: $isDefault
                 questions: $questions
               }
             ) {

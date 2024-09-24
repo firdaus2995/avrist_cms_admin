@@ -146,16 +146,39 @@ const LeadsGeneratorResultDetail = () => {
 
   useEffect(() => {
     if (data?.resultTemplateDetail) {
-      const { name, narrative, disclaimer, images } = data.resultTemplateDetail;
+      const {
+        id,
+        name,
+        narrative,
+        disclaimer,
+        images,
+        categoryId,
+        isDefault,
+        isDraft,
+        type,
+        postTypeId,
+        postTypeName,
+        postTypeSlug,
+      } = data.resultTemplateDetail;
 
       reset({
+        id,
         resultName: name,
         narrative,
         disclaimer,
         images,
+        categoryId,
+        isDefault,
+        isDraft,
+        type,
+        postTypeId,
+        postTypeName,
+        postTypeSlug,
       });
     }
   }, [data, reset]);
+
+  console.log(data);
 
   // Handle form submission
   const onSubmitData = () => {
@@ -191,6 +214,9 @@ const LeadsGeneratorResultDetail = () => {
           }),
         );
         goBack();
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       })
       .catch(() => {
         dispatch(
@@ -309,6 +335,7 @@ const LeadsGeneratorResultDetail = () => {
                 defaultValue=""
                 render={({ field }) => (
                   <CheckBox
+                    disabled={!isEditable}
                     defaultValue={field.value}
                     updateFormValue={e => {
                       field.onChange(e.value);
@@ -352,20 +379,30 @@ const LeadsGeneratorResultDetail = () => {
                 control={control}
                 defaultValue=""
                 rules={{ required: 'Content Type is required' }}
-                render={({ field }) => (
-                  <FormList.DropDown
-                    disabled={!isEditable}
-                    themeColor="primary"
-                    error={!!errors.postTypeId}
-                    helperText={errors.postTypeId?.message}
-                    defaultValue={_findLabel(field.value, isContent)}
-                    onChange={(e: IItem) => {
-                      field.onChange(e.value);
-                      _getCategory(e.value);
-                    }}
-                    items={isContent}
-                  />
-                )}
+                render={({ field }) => {
+                  const postTypeId = data?.resultTemplateDetail?.postTypeId ?? null;
+                  useEffect(() => {
+                    if (postTypeId) {
+                      field.onChange(postTypeId);
+                      _getCategory(postTypeId);
+                    }
+                  }, [postTypeId]);
+
+                  return (
+                    <FormList.DropDown
+                      disabled={!isEditable}
+                      themeColor="primary"
+                      error={!!errors.postTypeId}
+                      helperText={errors.postTypeId?.message}
+                      defaultValue={_findLabel(field.value, isContent)}
+                      onChange={(e: IItem) => {
+                        field.onChange(e.value);
+                        _getCategory(e.value);
+                      }}
+                      items={isContent}
+                    />
+                  );
+                }}
               />
             </div>
             <div className="flex items-center">

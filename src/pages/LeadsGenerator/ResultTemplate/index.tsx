@@ -161,6 +161,22 @@ export default function LeadsGeneratorResult() {
       ),
     },
     {
+      header: () => <span className="text-[14px]">Default Template</span>,
+      accessorKey: 'isDefault',
+      enableSorting: false,
+      cell: (info: any) => (
+        <div className="flex justify-start items-start w-[50px]">
+          <p className="text-[14px] truncate">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? info.getValue() === true
+                ? 'Yes'
+                : 'No'
+              : '-'}
+          </p>
+        </div>
+      ),
+    },
+    {
       header: () => <span className="text-[14px]">Total Image</span>,
       accessorKey: 'images',
       enableSorting: true,
