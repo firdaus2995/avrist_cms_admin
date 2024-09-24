@@ -33,13 +33,19 @@ const DropDown = ({
 }: any) => {
   const [searchTerm, setSearchTerm] = useState(defaultValue || '');
   const [isOpen, setIsOpen] = useState(false);
-
-  const filteredOptions = items;
+  const [filteredOptions, setFilteredOptions] = useState(items);
 
   const handleOptionClick = (option: string) => {
     setSearchTerm(option);
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    const filteredItems = items.filter((item: any) =>
+      item.label.toLowerCase().includes(searchTerm.toLowerCase()),
+    );
+    setFilteredOptions(filteredItems);
+  }, [items, searchTerm]);
 
   useEffect(() => {
     setSearchTerm(defaultValue || '');
@@ -70,6 +76,9 @@ const DropDown = ({
           placeholder="Select an option..."
           value={searchTerm}
           disabled={disabled}
+          onChange={e => {
+            setSearchTerm(e.target.value);
+          }}
           onClick={() => {
             setIsOpen(!isOpen);
           }}
