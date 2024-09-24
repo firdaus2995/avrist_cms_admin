@@ -105,6 +105,13 @@ export const leadsGeneratorApi = createApi({
               isDraft
               disclaimer
               images
+              postTypeId
+              postTypeName
+              postTypeSlug
+              categoryId
+              categoryName
+              type
+              isDefault
             }
           }
         `,
