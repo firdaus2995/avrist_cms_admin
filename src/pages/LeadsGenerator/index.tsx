@@ -214,6 +214,9 @@ const LeadsGenerator = () => {
             message: type === 'draft' ? 'Save as draft success!' : 'Save success!',
           }),
         );
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
       })
       .catch(() => {
         dispatch(
@@ -347,7 +350,8 @@ const LeadsGenerator = () => {
                               if (isNumber(val) || val === '') {
                                 const temp = JSON.parse(JSON.stringify(isQuestion));
                                 temp[i].answers[idx].weight = val === '' ? 0 : parseInt(val);
-                                temp[i].answers[idx].action === 'create' ? 'create' : 'edit';
+                                temp[i].answers[idx].action =
+                                  temp[i].answers[idx].action === 'create' ? 'create' : 'edit';
                                 setQuestion(temp);
                               }
                             }}
@@ -404,7 +408,9 @@ const LeadsGenerator = () => {
                             dummyOption.id = Number(previousData?.id ?? 0) + 1;
                             newOption.id = dummyOption.id;
                             const previousOrder = previousData?.answerOrder;
-                            const newOrder = String.fromCharCode(previousOrder.charCodeAt(0) + 1);
+                            const newOrder = String.fromCharCode(
+                              (previousOrder as string).charCodeAt(0) + 1,
+                            );
                             newOption.answerOrder = newOrder;
                             temp[i].answers = [...item.answers, newOption];
 
