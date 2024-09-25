@@ -443,7 +443,7 @@ const LeadsGenerator = () => {
                       }}>
                       {trashIcon()}
                     </div>
-                    {i + 1 === isQuestion.length && (
+                    {i + 1 === isQuestion.filter(item => !item.isDelete).length && (
                       <div
                         className={`!min-w-[36px] ${styleButton({
                           variants: 'secondary',
@@ -529,9 +529,12 @@ const LeadsGenerator = () => {
         message={isModal.desc}
         submitAction={() => {
           if (isModal.title === 'Delete Question') {
-            const data: IQuestionProps[] = isQuestion.map((item: IQuestionProps) =>
-              item.id === isIdx ? { ...item, isDelete: true } : item,
-            );
+            const data: IQuestionProps[] = isQuestion
+              .map((item: IQuestionProps) =>
+                item.id === isIdx ? { ...item, isDelete: true } : item,
+              )
+              .filter(item => item.id);
+
             setQuestion(data);
           } else {
             setQuestion(defaultQuestion);
