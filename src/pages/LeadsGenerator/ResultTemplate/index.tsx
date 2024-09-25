@@ -166,13 +166,7 @@ export default function LeadsGeneratorResult() {
       enableSorting: false,
       cell: (info: any) => (
         <div className="flex justify-start items-start w-[50px]">
-          <p className="text-[14px] truncate">
-            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-              ? info.getValue() === true
-                ? 'Yes'
-                : 'No'
-              : '-'}
-          </p>
+          <p className="text-[14px] truncate">{info.getValue() ? 'Yes' : 'No'}</p>
         </div>
       ),
     },

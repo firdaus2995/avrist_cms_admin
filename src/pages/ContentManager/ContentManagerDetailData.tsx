@@ -847,7 +847,7 @@ export default function ContentManagerDetailData() {
                   useEffect(() => {
                     if (value) {
                       handleFormChange(id, value, fieldType);
-                      field.onChange({ target: { value: value } });
+                      field.onChange({ target: { value } });
                     }
                   }, [value]);
                   return (

@@ -4,7 +4,7 @@ export const upperCase = /[A-Z]/;
 export const lowerCase = /[a-z]/;
 export const space = /[ ]/;
 export const number = /[0-9]/;
-export const specialChar = /[-!$%^&*()_+|~=`{}\[\]:\/;<>?,.@#"']/;
+export const specialChar = /[-!$%^&*()_+|~=`{}[\]:/;<>?,.@#"']/;
 
 export const copyArray = (array: any) => {
   return JSON.parse(JSON.stringify(array));
