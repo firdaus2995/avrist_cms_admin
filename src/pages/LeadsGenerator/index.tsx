@@ -218,12 +218,13 @@ const LeadsGenerator = () => {
           window.location.reload();
         }, 100);
       })
-      .catch(() => {
+      .catch(err => {
+        setQuestion(defaultQuestion);
         dispatch(
           openToast({
             type: 'error',
-            title: 'Error',
-            message: 'Error updating question!',
+            title: 'Failed',
+            message: err.message.split(': ')[1],
           }),
         );
       })
