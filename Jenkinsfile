@@ -4,14 +4,15 @@ node {
 try{
     notifyBuild('STARTED')
     stage('Clone Repo') {
-        git url: 'https://gitlab.com/bit-avrist-website/avrist-cms-admin-page-web.git',
-            credentialsId: 'rogy-account',
+        git url: 'git@gitlab.com:bit-avrist-website/avrist-cms-admin-page-web.git',
+            credentialsId: 'avrist-sit-fe',
             branch: 'sit'
      }
     stage('Build Static HTML'){
         echo "Build Static HTML in Build Number : ${env.BUILD_NUMBER}"
         sh "cp .env.sit .env"
         sh "yarn"
+        sh "yarn add ./ckeditor5"
         sh "yarn run build"
         echo "Build Successfully"
     }
@@ -50,7 +51,7 @@ def notifyBuild(String buildStatus = 'STARTED'){
   
   // Email notification
   emailext (
-     to: "rogy@barito.tech",
+     to: "syahrul.romadhon@barito.tech",
      subject: subject_email,
      body: details,
      recipientProviders: [[$class: 'DevelopersRecipientProvider']]
