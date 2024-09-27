@@ -172,6 +172,10 @@ const LeadsGenerator = () => {
   };
 
   useEffect(() => {
+    _getQuestion();
+  }, []);
+
+  const _getQuestion = () => {
     getQuestions()
       .unwrap()
       .then(e => {
@@ -180,7 +184,7 @@ const LeadsGenerator = () => {
       .catch(() => {
         _handleCatch();
       });
-  }, []);
+  };
 
   const _updateQuestion = ({ type = '' }: { type?: string }) => {
     const request: IQuestionProps[] = [];
@@ -214,9 +218,7 @@ const LeadsGenerator = () => {
             message: type === 'draft' ? 'Save as draft success!' : 'Save success!',
           }),
         );
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
+        _getQuestion();
       })
       .catch(err => {
         setQuestion(defaultQuestion);

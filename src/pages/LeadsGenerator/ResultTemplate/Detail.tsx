@@ -213,9 +213,10 @@ const LeadsGeneratorResultDetail = () => {
             title: 'Success',
           }),
         );
-        goBack();
+        _getTemplateType();
+        _getContentType();
         setTimeout(() => {
-          window.location.reload();
+          goBack();
         }, 100);
       })
       .catch(() => {
