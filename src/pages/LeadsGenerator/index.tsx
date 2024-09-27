@@ -172,10 +172,13 @@ const LeadsGenerator = () => {
   };
 
   useEffect(() => {
-    _getQuestion();
+    const fetchQuestion = async () => {
+      await _getQuestion();
+    };
+    void fetchQuestion();
   }, []);
 
-  const _getQuestion = () => {
+  const _getQuestion = async () => {
     getQuestions()
       .unwrap()
       .then(e => {
@@ -218,7 +221,7 @@ const LeadsGenerator = () => {
             message: type === 'draft' ? 'Save as draft success!' : 'Save success!',
           }),
         );
-        _getQuestion();
+        void _getQuestion();
       })
       .catch(err => {
         setQuestion(defaultQuestion);
