@@ -175,7 +175,7 @@ export default function CategoryTab(_props: { id: any }) {
           }),
         );
         setTimeout(() => {
-          window.location.reload();
+          void fetchQuery.refetch();
         }, 100);
         if (listData?.length === 1) {
           setPageIndex(0);

@@ -158,7 +158,7 @@ export default function ContentManagerNew() {
   const [loopingDupCount, setLoopingDupCount] = useState<number[]>([]);
 
   // RTK GET DATA
-  const { data: postTypeDetailData } = useGetPostTypeDetailQuery({
+  const { data: postTypeDetailData, refetch: refetchPostTypeDetail } = useGetPostTypeDetailQuery({
     id,
     pageIndex: 0,
     limit: 100,
@@ -180,6 +180,14 @@ export default function ContentManagerNew() {
       setPostTypeDetail(postTypeDetailData?.postTypeDetail);
     }
   }, [postTypeDetailData]);
+
+  useEffect(() => {
+    const refetch = async () => {
+      await refetchPostTypeDetail();
+    };
+
+    void refetch();
+  }, []);
 
   const { data: categoryListData, refetch: refetchCategory } = useGetCategoryListQuery({
     postTypeId: id,

@@ -85,7 +85,7 @@ export default function ContentManagerDetailData() {
   const navigate = useNavigate();
   const redirectPage = () => {
     navigate('/content-manager');
-    window.location.reload();
+    void refetch();
   };
 
   const params = useParams();
@@ -102,7 +102,7 @@ export default function ContentManagerDetailData() {
   const [sortBy] = useState('id');
 
   // RTK GET DATA
-  const { data: contentDataDetail } = useGetContentDataDetailQuery({ id });
+  const { data: contentDataDetail, refetch } = useGetContentDataDetailQuery({ id });
 
   const fetchGetEligibleAutoApprove = useGetEligibleAutoApproveQuery({
     actionType: 'edit',
@@ -128,12 +128,17 @@ export default function ContentManagerDetailData() {
   useEffect(() => {
     if (contentDataDetail) {
       setContentDataDetailList(contentDataDetail?.contentDataDetail);
-
-      setSelectedCategories(
-        contentDataDetail?.contentDataDetail.categories.map((item: any) => item.categoryName),
-      );
+      if (contentDataDetail?.contentDataDetail?.categories[0]?.categoryName) {
+        setSelectedCategories(
+          contentDataDetail?.contentDataDetail.categories.map((item: any) => item.categoryName),
+        );
+      }
     }
   }, [contentDataDetail]);
+
+  useEffect(() => {
+    void refetch();
+  }, []);
 
   const handleFormChange = (
     id: string | number,
@@ -194,6 +199,7 @@ export default function ContentManagerDetailData() {
         };
       });
       setCategoryList(tempCategoryList);
+      void refetchCategory();
     }
   }, [categoryListData]);
 
