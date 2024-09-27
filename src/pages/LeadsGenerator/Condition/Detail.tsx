@@ -45,10 +45,10 @@ const LeadsGeneratorConditionDetail = () => {
   const [updateCondition] = useUpdateConditionMutation();
 
   const fetchDetailQuery = useGetConditionDetailQuery({ id });
-  const { data: dataDetail } = fetchDetailQuery;
+  const { data: dataDetail, refetch: refetchCondition } = fetchDetailQuery;
 
   const fetchQuery = useGetQuestionListQuery({});
-  const { data } = fetchQuery;
+  const { data, refetch: refetchQuestion } = fetchQuery;
 
   const fetchQueryResultTemplate = useGetResultTemplateListQuery({
     pageIndex: 0,
@@ -56,7 +56,16 @@ const LeadsGeneratorConditionDetail = () => {
     direction: 'desc',
     sortBy: 'id',
   });
-  const { data: dataResult } = fetchQueryResultTemplate;
+  const { data: dataResult, refetch: refetchResult } = fetchQueryResultTemplate;
+
+  useEffect(() => {
+    const refetch = async () => {
+      await refetchCondition();
+      await refetchQuestion();
+      await refetchResult();
+    };
+    void refetch();
+  }, []);
 
   useEffect(() => {
     if (dataDetail) {
@@ -242,9 +251,11 @@ const LeadsGeneratorConditionDetail = () => {
             title: 'Success',
           }),
         );
-        goBack();
+        void refetchCondition();
+        void refetchQuestion();
+        void refetchResult();
         setTimeout(() => {
-          window.location.reload();
+          goBack();
         }, 100);
       })
       .catch(err => {

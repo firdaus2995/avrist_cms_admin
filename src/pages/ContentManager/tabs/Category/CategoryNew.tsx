@@ -43,9 +43,8 @@ export default function CategoryNew() {
             message: t('content-manager.category.add.success-msg', { name: payload.name }),
           }),
         );
-        navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
         setTimeout(() => {
-          window.location.reload();
+          navigate(`/content-manager/${id}`, { state: { activeTabParams: 3 } });
         }, 100);
       })
       .catch(() => {
