@@ -4,7 +4,7 @@ import { useAppDispatch } from '@/store';
 import { TitleCard } from '@/components/molecules/Cards/TitleCard';
 import Typography from '@/components/atoms/Typography';
 import FormList from '@/components/molecules/FormList';
-import { colName } from '@/utils/colName';
+// import { colName } from '@/utils/colName';
 import { styleButton } from '@/utils/styleButton';
 import {
   useLazyGetQuestionsQuery,
@@ -154,7 +154,10 @@ const LeadsGenerator = () => {
           };
         }
 
-        return question;
+        return {
+          ...question,
+          answers: question.answers.map((answer: IAnswer) => ({ ...answer, action: 'edit' })),
+        };
       });
       type === 'fetch' && setQuestion(filteredList);
       defaultQuestion === initialData && setDefaultQuestion(filteredList);
@@ -196,13 +199,14 @@ const LeadsGenerator = () => {
       const answers = isQuestion[i].answers;
       const temp: IQuestionProps = { ...isQuestion[i], answers: [] };
       for (let j = 0; j < answers.length; j++) {
+        const tempAction = answers[j]?.action;
         temp.answers.push({
           ...answers[j],
           id: answers[j]?.id ?? null,
           // answer: answers[j].answerDesc,
           // order: answers[j].answerOrder,
           // weight: answers[j].weight,
-          action: answers[j]?.action ?? answers[j]?.action === 'create' ? 'create' : 'edit',
+          action: tempAction === 'create' ? 'create' : tempAction === 'delete' ? 'delete' : 'edit',
         });
       }
       temp.isDraft = type === 'draft';
@@ -271,9 +275,7 @@ const LeadsGenerator = () => {
               const list = item.answers;
               const data: IAnswer[] = [];
               for (let i = 0; i < list.length; i++) {
-                if (list[i].action !== 'delete') {
-                  data.push(list[i]);
-                }
+                data.push(list[i]);
               }
               return data;
             };
@@ -318,9 +320,13 @@ const LeadsGenerator = () => {
                     <hr className="border-black" />
                     {answers().map((jtem: IAnswer, idx: number) => {
                       return (
-                        <div className="flex gap-x-3 items-center" key={idx}>
+                        <div
+                          className={`flex gap-x-3 items-center ${
+                            jtem.action === 'delete' ? 'hidden' : ''
+                          }`}
+                          key={idx}>
                           <div className="w-[60px] bg-bright-purple rounded-xl text-white flex justify-center items-center">
-                            {colName(idx)}
+                            {jtem.answerOrder}
                           </div>
                           <FormList.TextField
                             disabled={!isEditable}
@@ -373,12 +379,20 @@ const LeadsGenerator = () => {
                                 if (isEditable) {
                                   const temp = JSON.parse(JSON.stringify(isQuestion));
                                   const data: IAnswer[] = item.answers
-                                    .map((i: IAnswer) => {
+                                    .map((i: IAnswer, idx: number) => {
                                       if (i.action === 'create' && i.id === jtem.id) {
                                         return null;
                                       }
-
-                                      return i.id === jtem.id ? { ...i, action: 'delete' } : i;
+                                      return i.id === jtem.id
+                                        ? { ...i, action: 'delete' }
+                                        : idx > 1
+                                        ? {
+                                            ...i,
+                                            answerOrder: String.fromCharCode(
+                                              (i.answerOrder as string).charCodeAt(0) - 1,
+                                            ),
+                                          }
+                                        : i;
                                     })
                                     .filter((j): j is IAnswer => j !== null);
                                   temp[i].answers = data;
@@ -410,9 +424,11 @@ const LeadsGenerator = () => {
                             isEditable
                           ) {
                             const newOption = { ...dummyOption };
-                            const previousData = temp[i].answers[temp[i].answers.length - 1];
-                            dummyOption.id = Number(previousData?.id ?? 0) + 1;
-                            newOption.id = dummyOption.id;
+                            const previousData =
+                              temp[i].answers[
+                                temp[i].answers.filter((item: any) => item.action !== 'delete')
+                                  .length - 1
+                              ];
                             const previousOrder = previousData?.answerOrder;
                             const newOrder = String.fromCharCode(
                               (previousOrder as string).charCodeAt(0) + 1,
