@@ -79,6 +79,10 @@ export default function ContentManagerDetail() {
   }, [state]);
 
   useEffect(() => {
+    void fetchContentQuery.refetch();
+  }, []);
+
+  useEffect(() => {
     if (data) {
       setName(data?.postTypeDetail?.name);
       setDataType(data?.postTypeDetail?.dataType);
@@ -130,7 +134,7 @@ export default function ContentManagerDetail() {
               />
             )}
 
-            {contentData?.contentDataList?.total < 1 || dataType === 'COLLECTION' ? (
+            {dataType === 'SINGLE' && contentData?.contentDataList?.total < 1 || dataType === 'COLLECTION' ? (
               <Link to="data/new">
                 <button className="btn normal-case btn-primary text-xs whitespace-nowrap">
                   <div className="flex flex-row gap-2 items-center justify-center">

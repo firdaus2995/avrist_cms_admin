@@ -568,6 +568,11 @@
           "title": "Failed Delete Content",
           "message": "Something went wrong while deleting content data."
         }
+      },
+      "action": {
+        "action": "Action",
+        "edit": "Edit",
+        "delete": "Delete"
       }
     },
 

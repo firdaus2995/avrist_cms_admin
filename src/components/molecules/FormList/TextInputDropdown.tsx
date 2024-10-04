@@ -34,9 +34,7 @@ const TextInputDropDown = ({
   const [searchTerm, setSearchTerm] = useState(value || '');
   const [isOpen, setIsOpen] = useState(false);
 
-  const filteredOptions = items.filter((option: { label: string }) =>
-    option.label.toLowerCase().includes(searchTerm.toLowerCase()),
-  );
+  const filteredOptions = items;
 
   const handleInputChange = (e: { target: { value: React.SetStateAction<string> } }) => {
     setSearchTerm(e.target.value);
