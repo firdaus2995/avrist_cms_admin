@@ -51,15 +51,15 @@ const initialData = [
     isDelete: false,
     answers: [
       {
-        id: null,
-        answerOrder: '',
+        id: 1,
+        answerOrder: 'A',
         answerDesc: '',
         weight: 0,
         action: 'create',
       },
       {
-        id: null,
-        answerOrder: '',
+        id: 2,
+        answerOrder: 'B',
         answerDesc: '',
         weight: 0,
         action: 'create',
@@ -159,7 +159,7 @@ const LeadsGenerator = () => {
           answers: question.answers.map((answer: IAnswer) => ({ ...answer, action: 'edit' })),
         };
       });
-      type === 'fetch' && setQuestion(filteredList);
+      type === 'fetch' && setQuestion(filteredList.length > 0 ? filteredList : initialData);
       defaultQuestion === initialData && setDefaultQuestion(filteredList);
 
       for (let i = 0; i < list.length; i++) {
@@ -281,7 +281,7 @@ const LeadsGenerator = () => {
             };
             return (
               <div className="flex gap-x-2" key={i}>
-                <div className="flex flex-col gap-2 w-1/2 p-4 bg-light-purple-2 rounded-xl">
+                <div className="flex flex-col gap-2 w-[65%] p-4 bg-light-purple-2 rounded-xl">
                   <div className="flex gap-x-2 items-center">
                     <div className="bg-reddist w-[8px] h-[8px] rounded-xl" />
                     <Typography type="body" size="l" weight="bold">
@@ -385,7 +385,7 @@ const LeadsGenerator = () => {
                                       }
                                       return i.id === jtem.id
                                         ? { ...i, action: 'delete' }
-                                        : idx > 1
+                                        : idx > 1 && i.answerOrder === 'D'
                                         ? {
                                             ...i,
                                             answerOrder: String.fromCharCode(
@@ -429,6 +429,8 @@ const LeadsGenerator = () => {
                                 temp[i].answers.filter((item: any) => item.action !== 'delete')
                                   .length - 1
                               ];
+                            newOption.id =
+                              Number(temp[i].answers[temp[i].answers.length - 1]?.id ?? 0) + 1;
                             const previousOrder = previousData?.answerOrder;
                             const newOrder = String.fromCharCode(
                               (previousOrder as string).charCodeAt(0) + 1,
