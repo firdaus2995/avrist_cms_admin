@@ -84,7 +84,7 @@ export default function ContentManagerDetailData() {
   // GO BACK
   const navigate = useNavigate();
   const redirectPage = () => {
-    navigate('/content-manager');
+    navigate(-1);
     void refetch();
   };
 

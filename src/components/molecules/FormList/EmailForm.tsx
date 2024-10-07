@@ -71,10 +71,7 @@ const EmailForm = ({
   }, [data]);
 
   useEffect(() => {
-    const filteredItems = itemList.filter((item: any) =>
-      item.label.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-    setFilteredItemList(filteredItems);
+    setFilteredItemList(itemList);
   }, [data, itemList, searchTerm]);
 
   useEffect(() => {

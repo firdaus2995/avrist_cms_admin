@@ -41,10 +41,9 @@ const DropDown = ({
   };
 
   useEffect(() => {
-    const filteredItems = items.filter((item: any) =>
-      item.label.toLowerCase().includes(searchTerm.toLowerCase()),
-    );
-    setFilteredOptions(filteredItems);
+    if (items) {
+      setFilteredOptions(items);
+    }
   }, [items, searchTerm]);
 
   useEffect(() => {
@@ -107,9 +106,9 @@ const DropDown = ({
           style={{ width: inputWidth ?? '100%' }}
           className="absolute mt-2 bg-white border rounded-xl w-full max-h-64 shadow-lg overflow-auto z-50">
           {filteredOptions.length > 0 ? (
-            <ul>
+            <div>
               {filteredOptions.map((option: any, index: any) => (
-                <li
+                <div
                   key={index}
                   onClick={() => {
                     handleOptionClick(option.label);
@@ -135,9 +134,9 @@ const DropDown = ({
                       />
                     </svg>
                   )}
-                </li>
+                </div>
               ))}
-            </ul>
+            </div>
           ) : (
             <p className="px-4 py-2 text-gray-500">
               {t('components.molecules.no-matching-option')}
