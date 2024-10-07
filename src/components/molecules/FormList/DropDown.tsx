@@ -1,20 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import ChevronUp from '@/assets/chevronup.png';
 import ChevronDown from '@/assets/chevrondown.png';
 import ErrorSmallIcon from '@/assets/error-small.svg';
 import { t } from 'i18next';
-
-// const items = [
-//   { value: 'apple', label: 'Apple' },
-//   { value: 'banana', label: 'Banana' },
-//   { value: 'cherry', label: 'Cherry' },
-//   { value: 'date', label: 'Date' },
-//   { value: 'fig', label: 'Fig' },
-//   { value: 'grape', label: 'Grape' },
-//   { value: 'kiwi', label: 'Kiwi' },
-//   { value: 'lemon', label: 'Lemon' },
-//   { value: 'mango', label: 'Mango' },
-// ];
 
 const DropDown = ({
   id,
@@ -31,28 +19,55 @@ const DropDown = ({
   resetValue,
   defaultValue,
 }: any) => {
-  const [searchTerm, setSearchTerm] = useState(defaultValue || '');
+  const [searchTerm, setSearchTerm] = useState(''); // Keep track of the search input
+  const [selectedValue, setSelectedValue] = useState(defaultValue || ''); // Keep the selected value
   const [isOpen, setIsOpen] = useState(false);
   const [filteredOptions, setFilteredOptions] = useState(items);
 
-  const handleOptionClick = (option: string) => {
-    setSearchTerm(option);
-    setIsOpen(false);
-  };
+  const dropdownRef = useRef<HTMLDivElement | null>(null); // Create a ref for the dropdown
 
+  // Filter the options based on the search term
   useEffect(() => {
-    if (items) {
+    if (searchTerm) {
+      setFilteredOptions(
+        items.filter((option: any) =>
+          option.label.toLowerCase().includes(searchTerm.toLowerCase()),
+        ),
+      );
+    } else {
       setFilteredOptions(items);
     }
   }, [items, searchTerm]);
 
+  // Reset dropdown on resetValue or defaultValue changes
   useEffect(() => {
-    setSearchTerm(defaultValue || '');
+    setSelectedValue(defaultValue || '');
     setIsOpen(false);
   }, [resetValue, defaultValue]);
 
+  // Handle click outside to close dropdown
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  const handleOptionClick = (option: any) => {
+    setSelectedValue(option.label); // Store selected option
+    setSearchTerm(''); // Clear search term after selecting
+    setIsOpen(false);
+    onChange(option); // Notify parent component of the selection
+  };
+
   return (
-    <div className="relative w-full" style={{ flex: '1' }}>
+    <div className="relative w-full" style={{ flex: '1' }} ref={dropdownRef}>
       <div
         style={{ width: inputWidth ?? '100%', height: inputHeight ?? '' }}
         className={`
@@ -67,16 +82,17 @@ const DropDown = ({
             focus-within:outline-offset-2 
             focus-within:outline-${themeColor ?? '[#D2D4D7]'} 
             ${disabled ? 'bg-[#E9EEF4] ' : ''} 
-            ${error ? 'border-reddist' : ''}
-          `}>
+            ${error ? 'border-reddist' : ''}`}>
         <input
           id={id}
           type="text"
           placeholder="Select an option..."
-          value={searchTerm}
+          value={isOpen ? (searchTerm !== '' ? searchTerm : selectedValue) : selectedValue} // Show search term when open, else show selected value
           disabled={disabled}
           onChange={e => {
             setSearchTerm(e.target.value);
+            setSelectedValue(''); // Clear selected value on input change
+            setIsOpen(true); // Open the dropdown when typing
           }}
           onClick={() => {
             setIsOpen(!isOpen);
@@ -91,13 +107,9 @@ const DropDown = ({
               setIsOpen(!isOpen);
             }
           }}
-          className={`
-            flex items-center 
-            justify-center cursor-pointer 
-            w-[36px] h-[36px] rounded-xl 
-            -mr-3 hover:bg-slate-300
-            ${isOpen && 'animate-pulse'}
-          `}>
+          className={`flex items-center justify-center cursor-pointer w-[36px] h-[36px] rounded-xl -mr-3 hover:bg-slate-300 ${
+            isOpen && 'animate-pulse'
+          }`}>
           <img src={isOpen ? ChevronUp : ChevronDown} className="w-6 h-6" />
         </div>
       </div>
@@ -111,15 +123,14 @@ const DropDown = ({
                 <div
                   key={index}
                   onClick={() => {
-                    handleOptionClick(option.label);
-                    onChange(option);
+                    handleOptionClick(option);
                   }}
                   className={`text-sm px-4 py-2 rounded-xl cursor-pointer hover:bg-light-purple m-1 ${
-                    option.label === searchTerm &&
+                    option.label === selectedValue &&
                     'text-primary font-bold flex flex-row justify-between'
                   }`}>
                   {option.label}
-                  {option.label === searchTerm && (
+                  {option.label === selectedValue && (
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
