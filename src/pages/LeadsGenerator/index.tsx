@@ -281,7 +281,7 @@ const LeadsGenerator = () => {
             };
             return (
               <div className="flex gap-x-2" key={i}>
-                <div className="flex flex-col gap-2 w-1/2 p-4 bg-light-purple-2 rounded-xl">
+                <div className="flex flex-col gap-2 w-[65%] p-4 bg-light-purple-2 rounded-xl">
                   <div className="flex gap-x-2 items-center">
                     <div className="bg-reddist w-[8px] h-[8px] rounded-xl" />
                     <Typography type="body" size="l" weight="bold">
