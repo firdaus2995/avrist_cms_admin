@@ -210,7 +210,7 @@ const LeadsGeneratorResultDetail = () => {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: isDraft ? 'Your information has been saved as a draft.' : 'Success',
           }),
         );
         _getTemplateType();
@@ -249,7 +249,7 @@ const LeadsGeneratorResultDetail = () => {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: isDraft ? 'Your information has been saved as a draft.' : 'Success',
           }),
         );
         goBack();
