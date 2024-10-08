@@ -797,7 +797,6 @@ export default function ContentManagerNew() {
                 name={id.toString()}
                 control={control}
                 defaultValue=""
-                rules={{ required: `${name} is required` }}
                 render={({ field }) => {
                   const onChange = useCallback(
                     (e: any) => {

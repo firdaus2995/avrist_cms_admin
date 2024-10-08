@@ -840,7 +840,6 @@ export default function ContentManagerDetailData() {
                 name={id.toString()}
                 control={control}
                 defaultValue=""
-                rules={{ required: `${name} is required` }}
                 render={({ field }) => {
                   const onChange = useCallback(
                     (e: any) => {
@@ -1361,7 +1360,6 @@ export default function ContentManagerDetailData() {
                                     rules={{
                                       // required: { value: true, message: `${val.name} is required` },
                                       validate: value => {
-                                        console.log('Email form', value);
                                         const parsedValue = JSON?.parse(value);
                                         if (parsedValue && parsedValue.length > 0) {
                                           // Check if parsedValue is an array and every item has imageUrl and altText properties
