@@ -485,6 +485,7 @@ const LeadsGenerator = () => {
                             setQuestion(prev => [
                               ...prev,
                               {
+                                // eslint-disable-next-line @typescript-eslint/restrict-plus-operands
                                 id: temp[temp.length - 1].id + 1,
                                 name: '',
                                 question: '',
