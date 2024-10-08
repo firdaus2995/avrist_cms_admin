@@ -136,29 +136,43 @@ export default function LeadsGeneratorResult() {
       header: () => <span className="text-[14px]">Narrative</span>,
       accessorKey: 'narrative',
       enableSorting: false,
-      cell: (info: any) => (
-        <div className="flex justify-start items-start w-[100px]">
-          <p className="text-[14px] truncate">
-            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-              ? info.getValue()
-              : '-'}
-          </p>
-        </div>
-      ),
+      cell: (info: any) => {
+        const parser = new DOMParser();
+        const parsedValue = parser.parseFromString(
+          info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-',
+          'text/html',
+        );
+        const value = parsedValue.body.textContent;
+
+        return (
+          <div className="flex justify-start items-start w-[100px]">
+            <p className="text-[14px] truncate">{value}</p>
+          </div>
+        );
+      },
     },
     {
       header: () => <span className="text-[14px]">Disclaimer</span>,
       accessorKey: 'disclaimer',
       enableSorting: false,
-      cell: (info: any) => (
-        <div className="flex justify-start items-start w-[100px]">
-          <p className="text-[14px] truncate">
-            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-              ? info.getValue()
-              : '-'}
-          </p>
-        </div>
-      ),
+      cell: (info: any) => {
+        const parser = new DOMParser();
+        const parsedValue = parser.parseFromString(
+          info.getValue() && info.getValue() !== '' && info.getValue() !== null
+            ? info.getValue()
+            : '-',
+          'text/html',
+        );
+        const value = parsedValue.body.textContent;
+
+        return (
+          <div className="flex justify-start items-start w-[100px]">
+            <p className="text-[14px] truncate">{value}</p>
+          </div>
+        );
+      },
     },
     {
       header: () => <span className="text-[14px]">Default Template</span>,
@@ -286,7 +300,7 @@ export default function LeadsGeneratorResult() {
         TopSideButtons={<TopRightButton />}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
-            rows={listData}
+            rows={listData.filter((item: any) => !item.isDraft)}
             columns={COLUMNS}
             loading={false}
             error={false}
