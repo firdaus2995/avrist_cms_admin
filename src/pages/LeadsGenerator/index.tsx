@@ -480,10 +480,12 @@ const LeadsGenerator = () => {
                         })}`}
                         onClick={() => {
                           if (isQuestion[i].question !== '') {
+                            const temp = JSON.parse(JSON.stringify(isQuestion));
+
                             setQuestion(prev => [
                               ...prev,
                               {
-                                id: null,
+                                id: temp[temp.length - 1].id + 1,
                                 name: '',
                                 question: '',
                                 isDraft: false,
@@ -569,7 +571,6 @@ const LeadsGenerator = () => {
             setQuestion(defaultQuestion);
           }
           setModal(prev => ({ ...prev, show: false }));
-          setEditable(false);
         }}
         submitTitle="Yes"
         icon={isModal.icon}
