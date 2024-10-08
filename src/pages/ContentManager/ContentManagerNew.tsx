@@ -573,7 +573,7 @@ export default function ContentManagerNew() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    type="email"
+                    type={field.value === '-' ? 'text' : 'email'}
                     fieldTypeLabel={transformText(name)}
                     labelTitle={transformText(name)}
                     placeholder=""
@@ -980,7 +980,7 @@ export default function ContentManagerNew() {
                                 <FormList.TextField
                                   {...field}
                                   key={val.id}
-                                  type="email"
+                                  type={field.value === '-' ? 'text' : 'email'}
                                   fieldTypeLabel={transformText(val.name)}
                                   labelTitle={transformText(val.name)}
                                   placeholder=""
