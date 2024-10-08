@@ -569,7 +569,7 @@ const LeadsGenerator = () => {
               .map((item: IQuestionProps) =>
                 item.id === isIdx ? { ...item, isDelete: true } : item,
               )
-              .filter(item => item.id && !item.isCreate);
+              .filter(item => item.id && !(item.isCreate && item.isDelete));
 
             setQuestion(data);
           } else {
