@@ -455,17 +455,22 @@ const LeadsGenerator = () => {
                 {isEditable && (
                   <>
                     <div
-                      className={`!min-w-[36px] ${styleButton({ variants: 'error' })}`}
+                      className={`!min-w-[36px] ${styleButton({
+                        variants: 'error',
+                        disabled: isQuestion?.length === 1,
+                      })}`}
                       onClick={() => {
-                        setIdx(item.id ? item.id : i);
-                        setModal({
-                          show: true,
-                          title: 'Delete Question',
-                          desc: `Do you want to delete Question ${i + 1}?`,
-                          icon: deleteIcon(),
-                        });
+                        if (isQuestion?.length > 0) {
+                          setIdx(item.id ? item.id : i);
+                          setModal({
+                            show: true,
+                            title: 'Delete Question',
+                            desc: `Do you want to delete Question ${i + 1}?`,
+                            icon: deleteIcon(),
+                          });
+                        }
                       }}>
-                      {trashIcon()}
+                      {isQuestion?.length > 1 ? trashIcon() : trashIcon('#798F9F')}
                     </div>
                     {i + 1 === isQuestion.filter(item => !item.isDelete).length && (
                       <div
@@ -475,10 +480,12 @@ const LeadsGenerator = () => {
                         })}`}
                         onClick={() => {
                           if (isQuestion[i].question !== '') {
+                            const temp = JSON.parse(JSON.stringify(isQuestion));
+
                             setQuestion(prev => [
                               ...prev,
                               {
-                                id: null,
+                                id: temp[temp.length - 1].id + 1,
                                 name: '',
                                 question: '',
                                 isDraft: false,
