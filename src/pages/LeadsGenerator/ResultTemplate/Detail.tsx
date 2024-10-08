@@ -178,8 +178,6 @@ const LeadsGeneratorResultDetail = () => {
     }
   }, [data, reset]);
 
-  console.log(data);
-
   // Handle form submission
   const onSubmitData = () => {
     if (pathname.includes('new')) {
@@ -200,8 +198,8 @@ const LeadsGeneratorResultDetail = () => {
       images: value?.images,
       isDraft, // Include isDraft in payload
       type: value?.type,
-      postTypeId: value?.postTypeId,
-      categoryId: value?.categoryId,
+      postTypeId: value?.postTypeId ?? null,
+      categoryId: value?.categoryId ?? null,
       isDefault: value?.isDefault ? value?.isDefault : false,
     };
     updateResultTemplate(payload)
@@ -239,8 +237,8 @@ const LeadsGeneratorResultDetail = () => {
       disclaimer: value.disclaimer,
       images: value?.images,
       type: value?.type,
-      postTypeId: value?.postTypeId,
-      categoryId: value?.categoryId,
+      postTypeId: value?.postTypeId ?? null,
+      categoryId: value?.categoryId ?? null,
       isDefault: value?.isDefault ? value?.isDefault : false,
     };
     createResultTemplate(payload)
@@ -379,7 +377,7 @@ const LeadsGeneratorResultDetail = () => {
                 name="postTypeId"
                 control={control}
                 defaultValue=""
-                rules={{ required: 'Content Type is required' }}
+                rules={{ required: false }}
                 render={({ field }) => {
                   const postTypeId = data?.resultTemplateDetail?.postTypeId ?? null;
                   useEffect(() => {
@@ -414,7 +412,7 @@ const LeadsGeneratorResultDetail = () => {
                 name="categoryId"
                 control={control}
                 defaultValue=""
-                // rules={{ required: 'Category Content is required' }}
+                rules={{ required: false }}
                 render={({ field }) => (
                   <FormList.DropDown
                     disabled={!isEditable || isCategory.length < 1}
@@ -480,6 +478,10 @@ const LeadsGeneratorResultDetail = () => {
                 validate: value => {
                   try {
                     const parsedValue = JSON.parse(value);
+
+                    if (Array.isArray(parsedValue) && parsedValue.length === 0) {
+                      return true;
+                    }
 
                     if (Array.isArray(parsedValue) && parsedValue.length > 0) {
                       if (parsedValue.every(item => item.imageUrl && item.altText)) {

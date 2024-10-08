@@ -21,6 +21,7 @@ export interface IQuestionProps {
   question: string;
   isDraft: boolean;
   isDelete: boolean;
+  isCreate?: boolean;
   answers: IAnswer[];
 }
 
@@ -209,6 +210,8 @@ const LeadsGenerator = () => {
           action: tempAction === 'create' ? 'create' : tempAction === 'delete' ? 'delete' : 'edit',
         });
       }
+      temp.id = temp.isCreate ? null : temp.id;
+      delete temp.isCreate;
       temp.isDraft = type === 'draft';
       temp.isDelete = temp.isDelete ?? false;
       request.push(temp);
@@ -491,6 +494,7 @@ const LeadsGenerator = () => {
                                 question: '',
                                 isDraft: false,
                                 isDelete: false,
+                                isCreate: true,
                                 answers: [
                                   {
                                     id: null,
@@ -565,7 +569,7 @@ const LeadsGenerator = () => {
               .map((item: IQuestionProps) =>
                 item.id === isIdx ? { ...item, isDelete: true } : item,
               )
-              .filter(item => item.id);
+              .filter(item => item.id && !item.isCreate);
 
             setQuestion(data);
           } else {
