@@ -223,7 +223,7 @@ export default function LeadsGeneratorConditions() {
             title: 'Success Delete Data',
           }),
         );
-        if (listData?.length === 1) {
+        if (listData?.length === 1 && pageIndex !== 0) {
           setPageIndex(pageIndex - 1);
         }
         await fetchQuery.refetch();
