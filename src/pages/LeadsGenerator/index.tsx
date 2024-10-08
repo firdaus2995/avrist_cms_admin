@@ -455,17 +455,22 @@ const LeadsGenerator = () => {
                 {isEditable && (
                   <>
                     <div
-                      className={`!min-w-[36px] ${styleButton({ variants: 'error' })}`}
+                      className={`!min-w-[36px] ${styleButton({
+                        variants: 'error',
+                        disabled: isQuestion?.length === 1,
+                      })}`}
                       onClick={() => {
-                        setIdx(item.id ? item.id : i);
-                        setModal({
-                          show: true,
-                          title: 'Delete Question',
-                          desc: `Do you want to delete Question ${i + 1}?`,
-                          icon: deleteIcon(),
-                        });
+                        if (isQuestion?.length > 0) {
+                          setIdx(item.id ? item.id : i);
+                          setModal({
+                            show: true,
+                            title: 'Delete Question',
+                            desc: `Do you want to delete Question ${i + 1}?`,
+                            icon: deleteIcon(),
+                          });
+                        }
                       }}>
-                      {trashIcon()}
+                      {isQuestion?.length > 1 ? trashIcon() : trashIcon('#798F9F')}
                     </div>
                     {i + 1 === isQuestion.filter(item => !item.isDelete).length && (
                       <div
@@ -564,6 +569,7 @@ const LeadsGenerator = () => {
             setQuestion(defaultQuestion);
           }
           setModal(prev => ({ ...prev, show: false }));
+          setEditable(false);
         }}
         submitTitle="Yes"
         icon={isModal.icon}
