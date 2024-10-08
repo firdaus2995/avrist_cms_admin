@@ -479,6 +479,10 @@ const LeadsGeneratorResultDetail = () => {
                   try {
                     const parsedValue = JSON.parse(value);
 
+                    if (!parsedValue) {
+                      return true;
+                    }
+
                     if (Array.isArray(parsedValue) && parsedValue.length === 0) {
                       return true;
                     }
