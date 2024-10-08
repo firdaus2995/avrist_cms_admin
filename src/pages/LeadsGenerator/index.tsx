@@ -564,6 +564,7 @@ const LeadsGenerator = () => {
             setQuestion(defaultQuestion);
           }
           setModal(prev => ({ ...prev, show: false }));
+          setEditable(false);
         }}
         submitTitle="Yes"
         icon={isModal.icon}
