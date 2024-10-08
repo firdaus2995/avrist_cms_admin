@@ -194,12 +194,12 @@ const LeadsGeneratorResultDetail = () => {
       id,
       name: value.resultName,
       narrative: value.narrative,
-      disclaimer: value.disclaimer,
-      images: value?.images,
+      disclaimer: value.disclaimer !== '' ? value.disclaimer : null,
+      images: value?.images !== '[]' ? value?.images : null,
       isDraft, // Include isDraft in payload
       type: value?.type,
-      postTypeId: value?.postTypeId ?? null,
-      categoryId: value?.categoryId ?? null,
+      postTypeId: value?.postTypeId !== '' ? value?.postTypeId : null,
+      categoryId: value?.categoryId !== '' ? value?.categoryId : null,
       isDefault: value?.isDefault ? value?.isDefault : false,
     };
     updateResultTemplate(payload)
@@ -234,11 +234,11 @@ const LeadsGeneratorResultDetail = () => {
       name: value.resultName,
       narrative: value.narrative,
       isDraft, // Use the isDraft state
-      disclaimer: value.disclaimer,
-      images: value?.images,
+      disclaimer: value.disclaimer !== '' ? value.disclaimer : null,
+      images: value?.images !== '[]' ? value?.images : null,
       type: value?.type,
-      postTypeId: value?.postTypeId ?? null,
-      categoryId: value?.categoryId ?? null,
+      postTypeId: value?.postTypeId !== '' ? value?.postTypeId : null,
+      categoryId: value?.categoryId !== '' ? value?.categoryId : null,
       isDefault: value?.isDefault ? value?.isDefault : false,
     };
     createResultTemplate(payload)
@@ -455,7 +455,7 @@ const LeadsGeneratorResultDetail = () => {
               control={control}
               defaultValue=""
               rules={{
-                required: { value: true, message: `Disclaimer is required` },
+                required: false,
               }}
               render={({ field }) => (
                 <FormList.TextEditor
