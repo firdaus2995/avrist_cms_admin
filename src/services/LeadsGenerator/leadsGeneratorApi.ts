@@ -12,13 +12,13 @@ export const leadsGeneratorApi = createApi({
           mutation resultTemplateCreate(
             $name: String!
             $narrative: String!
-            $disclaimer: String!
-            $images: String!
+            $disclaimer: String
+            $images: String
             $isDraft: Boolean!
             $isDefault: Boolean!
             $type: String!
-            $postTypeId: Int!
-            $categoryId: Int!
+            $postTypeId: Int
+            $categoryId: Int
           ) {
             resultTemplateCreate(
               request: {
@@ -126,13 +126,13 @@ export const leadsGeneratorApi = createApi({
             $id: Int!
             $name: String!
             $narrative: String!
-            $disclaimer: String!
-            $images: String!
+            $disclaimer: String
+            $images: String
             $isDraft: Boolean!
             $isDefault: Boolean!
             $type: String!
-            $postTypeId: Int!
-            $categoryId: Int!
+            $postTypeId: Int
+            $categoryId: Int
           ) {
             resultTemplateUpdate(
               id: $id
