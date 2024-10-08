@@ -595,7 +595,7 @@ export default function ContentManagerDetailData() {
                   <FormList.TextField
                     {...field}
                     key={id}
-                    type="email"
+                    type={field.value === '-' ? 'text' : 'email'}
                     fieldTypeLabel={transformText(name)}
                     labelTitle={transformText(name)}
                     disabled={!isEdited}
@@ -970,7 +970,7 @@ export default function ContentManagerDetailData() {
                                       <FormList.TextField
                                         {...field}
                                         key={id}
-                                        type="email"
+                                        type={field.value === '-' ? 'text' : 'email'}
                                         fieldTypeLabel={transformText(name)}
                                         labelTitle={transformText(name)}
                                         disabled={!isEdited}
