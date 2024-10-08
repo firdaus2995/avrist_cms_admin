@@ -300,7 +300,7 @@ export default function LeadsGeneratorResult() {
         TopSideButtons={<TopRightButton />}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
-            rows={listData}
+            rows={listData.filter((item: any) => !item.isDraft)}
             columns={COLUMNS}
             loading={false}
             error={false}
