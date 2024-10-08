@@ -226,6 +226,9 @@ export const stringifyContentData = (data: any) => {
         return item;
       });
     }
+    if (field && field.value === '') {
+      field.value = '-';
+    }
     return field;
   });
 };
