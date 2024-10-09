@@ -285,7 +285,12 @@ export default function ContentManagerDetailData() {
           convertedData.push(imageData);
         } else {
           const { id, fieldType, value } = item;
-          convertedData.push({ id, fieldType, value });
+          const data = {
+            id,
+            fieldType,
+            value: value === null || value === '' ? '-' : value,
+          };
+          convertedData.push(data);
         }
       }
     }
@@ -311,7 +316,6 @@ export default function ContentManagerDetailData() {
       categories: selectedCategories || '',
       contentData: convertContentData(contentTempData),
     };
-
     updateContentData(payload)
       .unwrap()
       .then(() => {
@@ -1357,35 +1361,25 @@ export default function ContentManagerDetailData() {
                                     name={`${idx}_${val.id}`}
                                     control={control}
                                     defaultValue={val.value}
-                                    rules={{
-                                      // required: { value: true, message: `${val.name} is required` },
-                                      validate: value => {
-                                        const parsedValue = JSON?.parse(value);
-                                        if (parsedValue && parsedValue.length > 0) {
-                                          // Check if parsedValue is an array and every item has imageUrl and altText properties
-                                          if (
-                                            Array.isArray(parsedValue) &&
-                                            parsedValue.every(item => item.imageUrl && item.altText)
-                                          ) {
-                                            return true; // Validation passed
-                                          }
-                                        }
-                                      },
-                                    }}
                                     render={({ field }) => {
                                       const onChange = useCallback(
                                         (e: any) => {
+                                          const value =
+                                            e.value === '' || e.value === null ? '-' : e.value;
                                           handleFormChange(
                                             val.id,
-                                            e.value,
+                                            value,
                                             val.fieldType,
                                             true,
                                             id,
+                                            idx,
+                                            val.id,
                                           );
-                                          field.onChange({ target: { value: e.value } });
+                                          field.onChange({ target: { value: value } });
                                         },
-                                        [val.id, val.fieldType, handleFormChange],
+                                        [val.id, val.fieldType, field, handleFormChange],
                                       );
+
                                       return (
                                         <FormList.EmailForm
                                           {...field}
