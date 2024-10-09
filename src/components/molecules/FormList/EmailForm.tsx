@@ -142,6 +142,9 @@ const EmailForm = ({
             setSearchTerm(e.target.value);
             setSelectedDefaultValue(null); // Reset nilai terpilih saat mencari
             setIsOpen(true); // Update search term
+            if (e.target.value === '') {
+              onChange({value: null, label: ''});
+            }
           }}
           onClick={() => {
             setIsOpen(!isOpen); // Toggle dropdown
