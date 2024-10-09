@@ -247,7 +247,10 @@ export const contentManagerApi = createApi({
                 id
                 title
                 shortDesc
-                categoryName
+                categories {
+                  categoryName
+                  categoryDescription
+                }
                 status
               }
             }
