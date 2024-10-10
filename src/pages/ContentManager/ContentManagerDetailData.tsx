@@ -1364,18 +1364,18 @@ export default function ContentManagerDetailData() {
                                     render={({ field }) => {
                                       const onChange = useCallback(
                                         (e: any) => {
-                                          const eventValue =
+                                          const value =
                                             e.value === '' || e.value === null ? '-' : e.value;
                                           handleFormChange(
                                             val.id,
-                                            eventValue,
+                                            value,
                                             val.fieldType,
                                             true,
                                             id,
                                             idx,
                                             val.id,
                                           );
-                                          field.onChange({ target: { value: eventValue } });
+                                          field.onChange({ target: { value: value } });
                                         },
                                         [val.id, val.fieldType, field, handleFormChange],
                                       );
