@@ -55,6 +55,7 @@ const LeadsGeneratorConditionDetail = () => {
     limit: 50,
     direction: 'desc',
     sortBy: 'id',
+    isDraft: false,
   });
   const { data: dataResult, refetch: refetchResult } = fetchQueryResultTemplate;
 
@@ -204,11 +205,11 @@ const LeadsGeneratorConditionDetail = () => {
         );
         goBack();
       })
-      .catch(() => {
+      .catch(err => {
         dispatch(
           openToast({
             type: 'error',
-            title: 'Failed',
+            title: err.message.split(': ')[1],
           }),
         );
       });
@@ -248,7 +249,7 @@ const LeadsGeneratorConditionDetail = () => {
         dispatch(
           openToast({
             type: 'success',
-            title: 'Success',
+            title: isDraft ? 'Your information has been saved as a draft.' : 'Success',
           }),
         );
         void refetchCondition();

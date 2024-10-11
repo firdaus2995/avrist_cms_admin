@@ -161,6 +161,18 @@ export default function LeadsGeneratorConditions() {
       ),
     },
     {
+      header: () => <span className="text-[14px]">Is Draft?</span>,
+      accessorKey: 'isDraft',
+      enableSorting: true,
+      cell: (info: any) => (
+        <div className="flex justify-start items-start w-[20px]">
+          <p className="text-[14px] truncate">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null ? 'Yes' : 'No'}
+          </p>
+        </div>
+      ),
+    },
+    {
       header: () => <span className="text-[14px]">Date Added</span>,
       accessorKey: 'createdAt',
       enableSorting: true,
