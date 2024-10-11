@@ -185,15 +185,13 @@ export default function LeadsGeneratorResult() {
       ),
     },
     {
-      header: () => <span className="text-[14px]">Total Image</span>,
-      accessorKey: 'images',
+      header: () => <span className="text-[14px]">Is Draft?</span>,
+      accessorKey: 'isDraft',
       enableSorting: true,
       cell: (info: any) => (
         <div className="flex justify-start items-start w-[20px]">
           <p className="text-[14px] truncate">
-            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-              ? JSON.parse(info.getValue())?.length
-              : '-'}
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null ? 'Yes' : 'No'}
           </p>
         </div>
       ),
@@ -300,7 +298,7 @@ export default function LeadsGeneratorResult() {
         TopSideButtons={<TopRightButton />}>
         <div className="overflow-x-auto w-full mb-5">
           <Table
-            rows={listData.filter((item: any) => !item.isDraft)}
+            rows={listData}
             columns={COLUMNS}
             loading={false}
             error={false}

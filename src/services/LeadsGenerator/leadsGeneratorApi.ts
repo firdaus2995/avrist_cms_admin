@@ -57,6 +57,7 @@ export const leadsGeneratorApi = createApi({
             $limit: Int!
             $sortBy: String
             $direction: String
+            $isDraft: Boolean
           ) {
             resultTemplateList(
               pageableRequest: {
@@ -64,6 +65,7 @@ export const leadsGeneratorApi = createApi({
                 limit: $limit
                 sortBy: $sortBy
                 direction: $direction
+                isDraft: $isDraft
               }
             ) {
               total
@@ -251,6 +253,7 @@ export const leadsGeneratorApi = createApi({
                 totalQuestion
                 totalAnswer
                 createdAt
+                isDraft
               }
             }
           }
