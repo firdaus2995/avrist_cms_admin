@@ -538,13 +538,13 @@ const LeadsGenerator = () => {
               }}>
               Cancel
             </div>
-            <div
+            {/* <div
               className={styleButton({ variants: 'secondary' })}
               onClick={() => {
                 _updateQuestion({ type: 'draft' });
               }}>
               Save as Draft
-            </div>
+            </div> */}
             <div
               className={styleButton({ variants: 'success' })}
               onClick={() => {
