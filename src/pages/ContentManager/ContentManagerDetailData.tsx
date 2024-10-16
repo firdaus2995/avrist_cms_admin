@@ -1375,7 +1375,7 @@ export default function ContentManagerDetailData() {
                                             idx,
                                             val.id,
                                           );
-                                          field.onChange({ target: { value: value } });
+                                          field.onChange({ target: { value } });
                                         },
                                         [val.id, val.fieldType, field, handleFormChange],
                                       );
