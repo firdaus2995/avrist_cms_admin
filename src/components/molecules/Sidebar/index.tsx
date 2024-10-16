@@ -25,6 +25,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { errorMessageTypeConverter } from '@/utils/logicHelper';
 import { checkVersion } from '@/utils/version';
 
+const leadsGenerator = import.meta.env.VITE_LEADS_GENERATOR;
+
 interface ISidebar {
   open: boolean;
   setOpen: (t: boolean) => void;
@@ -363,6 +365,9 @@ const MenuSidebar: React.FC<IMenuSidebar> = ({ open }) => {
           );
 
           if (hasRole || hasList) {
+            if ((!leadsGenerator || leadsGenerator !== 'true') && val.id === 9) {
+              return null;
+            }
             return (
               <div key={val.id}>
                 <div
