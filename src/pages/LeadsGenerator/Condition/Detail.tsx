@@ -209,7 +209,10 @@ const LeadsGeneratorConditionDetail = () => {
         dispatch(
           openToast({
             type: 'error',
-            title: err.message.split(': ')[1],
+            title: 'Failed',
+            message: err.message.includes('ConflictException')
+              ? 'Question conflicted with other condition!'
+              : err.message.split(': ')[1],
           }),
         );
       });
