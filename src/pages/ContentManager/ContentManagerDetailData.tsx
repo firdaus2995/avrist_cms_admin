@@ -246,15 +246,16 @@ export default function ContentManagerDetailData() {
               value: JSON.stringify(dataValue),
             };
           } else {
+            const tempValue = JSON.stringify(
+              item.contentData.map(
+                (data: { details: any[] }) =>
+                  data.details.find((d: { id: any }) => d.id === detail.id)?.value,
+              ),
+            );
             contentData[detail.id] = {
               id: detail.id,
               fieldType: detail.fieldType,
-              value: JSON.stringify(
-                item.contentData.map(
-                  (data: { details: any[] }) =>
-                    data.details.find((d: { id: any }) => d.id === detail.id)?.value,
-                ),
-              ),
+              value: tempValue === null || tempValue === '' ? '-' : tempValue,
             };
           }
         }
