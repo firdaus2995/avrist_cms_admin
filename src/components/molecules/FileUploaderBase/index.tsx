@@ -265,7 +265,9 @@ export default function FileUploaderBase({
             className={`min-w-[150px] bg-white border-dashed border-[2px] border-lavender rounded-xl`}>
             <label
               htmlFor={id}
-              className="flex flex-col justify-center items-center cursor-pointer">
+              className={`flex flex-col justify-center items-center ${
+                !disabled && 'cursor-pointer'
+              }`}>
               <input
                 ref={inputRef}
                 id={id}

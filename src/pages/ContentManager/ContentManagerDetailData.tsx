@@ -827,7 +827,7 @@ export default function ContentManagerDetailData() {
           );
         case 'EMAIL_FORM':
           return (
-            <div className="flex flex-row mt-16">
+            <div className="flex flex-row my-16">
               <div>
                 <Typography
                   type="body"
@@ -924,7 +924,7 @@ export default function ContentManagerDetailData() {
               <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
                 {name}
               </Typography>
-              <div className="card w-full shadow-md p-5 mt-5">
+              <div className="card w-full shadow-md p-5 my-5">
                 {contentData?.map((value: { details: any[] }, idx: Key) => (
                   <>
                     <div key={idx}>
@@ -1020,6 +1020,7 @@ export default function ContentManagerDetailData() {
                                         key={val.id}
                                         fieldTypeLabel={transformText(val.name)}
                                         labelTitle={transformText(val.name)}
+                                        disabled={!isEdited}
                                         isDocument={true}
                                         multiple={configs?.media_type === 'multiple_media'}
                                         error={!!errors?.[`${idx}_${val.id}`]?.message}
@@ -1140,7 +1141,7 @@ export default function ContentManagerDetailData() {
 
                                     return (
                                       <FormList.TextEditor
-                                        title={name}
+                                        title={val.name}
                                         value={field.value}
                                         disabled={!isEdited}
                                         onChange={onChange}
@@ -1340,7 +1341,7 @@ export default function ContentManagerDetailData() {
                               );
                             case 'EMAIL_FORM':
                               return (
-                                <div className="flex flex-row mt-16">
+                                <div className="flex flex-row my-16">
                                   <div>
                                     <Typography
                                       type="body"
@@ -1386,6 +1387,7 @@ export default function ContentManagerDetailData() {
                                           {...field}
                                           key={val.id}
                                           fieldTypeLabel={transformText(val.name)}
+                                          disabled={!isEdited}
                                           placeholder=""
                                           error={!!errors?.[`${idx}_${val.id}`]?.message}
                                           helperText={errors?.[`${idx}_${val.id}`]?.message}
@@ -1454,42 +1456,6 @@ export default function ContentManagerDetailData() {
       </div>
     );
   }, [selectedCategories]);
-
-  const submitButton = () => {
-    return (
-      <div className="flex justify-end mt-10">
-        <div className="flex flex-row p-2 gap-2">
-          <button
-            onClick={() => {
-              redirectPage();
-            }}
-            className="btn btn-outline text-xs btn-sm w-28 h-10">
-            {t('user.content-manager-detail-data.cancel')}
-          </button>
-          <button
-            onClick={() => {
-              const payload = {
-                id: contentDataDetailList?.id,
-                status:
-                  contentDataDetailList?.status === 'DELETE_REVIEW'
-                    ? 'DELETE_APPROVE'
-                    : 'WAITING_APPROVE',
-                comment: 'Already review',
-              };
-
-              if (isAlreadyReview) {
-                onUpdateStatus(payload);
-              } else {
-                setShowModalWarning(true);
-              }
-            }}
-            className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            {t('user.content-manager-detail-data.submit')}
-          </button>
-        </div>
-      </div>
-    );
-  };
 
   const rigthTopButton = () => {
     switch (contentDataDetailList?.status) {
@@ -1651,6 +1617,16 @@ export default function ContentManagerDetailData() {
         icon={PaperIcon}
         submitAction={() => {
           setShowModalReview(false);
+          const payload = {
+            id: contentDataDetailList?.id,
+            status:
+              contentDataDetailList?.status === 'DELETE_REVIEW'
+                ? 'DELETE_APPROVE'
+                : 'WAITING_APPROVE',
+            comment: 'Already review',
+          };
+
+          onUpdateStatus(payload);
         }}
         btnSubmitStyle="btn bg-secondary-warning border-none"
         cancelAction={() => {
@@ -1971,7 +1947,6 @@ export default function ContentManagerDetailData() {
                   updateType={''}
                 />
               </div>
-              {submitButton()}
             </div>
           ) : null
         ) : null}

@@ -867,7 +867,7 @@ export default function ContentManagerNew() {
               <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
                 {transformText(name)}
               </Typography>
-              <div className="card w-full shadow-md p-5">
+              <div className="card w-full shadow-md p-5 my-5">
                 <div className="p-2 flex items-end justify-end">
                   <div className="px-4 py-2 bg-light-purple rounded-xl font-semibold text-bright-purple">
                     {orderList?.find((entry: { id: any }) => entry.id === id)?.order}
@@ -1248,19 +1248,19 @@ export default function ContentManagerNew() {
                     }
                   },
                 )}
+                {showAddDataButton && (
+                  <div className="flex justify-end mt-8">
+                    <button
+                      onClick={() => {
+                        addNewLoopingField(id);
+                      }}
+                      className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
+                      <img src={Plus} className="mr-3" />
+                      {t('user.content-manager-new.add-data')}
+                    </button>
+                  </div>
+                )}
               </div>
-              {showAddDataButton && (
-                <div className="flex justify-end mt-8">
-                  <button
-                    onClick={() => {
-                      addNewLoopingField(id);
-                    }}
-                    className="btn btn-outline border-primary text-primary text-xs btn-sm w-48 h-10">
-                    <img src={Plus} className="mr-3" />
-                    {t('user.content-manager-new.add-data')}
-                  </button>
-                </div>
-              )}
             </div>
           );
         default:
