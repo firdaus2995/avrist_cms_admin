@@ -468,7 +468,7 @@ export default function ContentManagerDetailData() {
         (_: any, index: number) => index !== idx,
       );
       loopingElement.contentData = filteredElement;
-      console.log(updatedContentDataDetailList)
+
       setContentDataDetailList(updatedContentDataDetailList);
       setContentTempData(updatedContentDataDetailList.contentData);
     }
