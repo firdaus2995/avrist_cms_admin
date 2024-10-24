@@ -126,7 +126,7 @@ export default function PageManagementList() {
       startDate,
       endDate,
       isArchive: false,
-      dataType: "",
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,
@@ -142,7 +142,7 @@ export default function PageManagementList() {
       direction,
       search: searchQuery,
       isArchive: false,
-      dataType: "",
+      dataType: '',
     },
     {
       refetchOnMountOrArgChange: true,
@@ -227,7 +227,7 @@ export default function PageManagementList() {
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate truncate max-w-[100px] 2xl:max-w-[300px]">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
@@ -311,23 +311,21 @@ export default function PageManagementList() {
               </button>
             </div>
           </Link>
-          {
-            allowedStatusDelete.includes(info.row?.original?.status) ? (
-              <RoleRenderer allowedRoles={['PAGE_DELETE']}>
-                <div className="tooltip" data-tip="Delete">
-                  <img
-                    className={`cursor-pointer select-none flex items-center justify-center`}
-                    src={TableDelete}
-                    onClick={() => {
-                      onClickPageDelete(info.getValue(), info?.row?.original?.title);
-                    }}
-                  />
-                </div>
-              </RoleRenderer>
-            ) : (
-              <div className='w-[34px]'/>
-            )
-          }
+          {allowedStatusDelete.includes(info.row?.original?.status) ? (
+            <RoleRenderer allowedRoles={['PAGE_DELETE']}>
+              <div className="tooltip" data-tip="Delete">
+                <img
+                  className={`cursor-pointer select-none flex items-center justify-center`}
+                  src={TableDelete}
+                  onClick={() => {
+                    onClickPageDelete(info.getValue(), info?.row?.original?.title);
+                  }}
+                />
+              </div>
+            </RoleRenderer>
+          ) : (
+            <div className="w-[34px]" />
+          )}
         </div>
       ),
     },

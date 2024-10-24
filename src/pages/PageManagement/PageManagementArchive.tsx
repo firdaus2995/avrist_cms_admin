@@ -125,7 +125,9 @@ export default function PageManagementArchive() {
           openToast({
             type: 'error',
             title: t('user.page-management.archive.restore.failed'),
-            message: t(`errors.page-management.restore.${errorMessageTypeConverter(error.message)}`),
+            message: t(
+              `errors.page-management.restore.${errorMessageTypeConverter(error.message)}`,
+            ),
           }),
         );
       });
@@ -142,11 +144,11 @@ export default function PageManagementArchive() {
         // const id = info.row.original.id;
         return (
           // <Link to={`/page-management/detail/${id}`}>
-            <p className="text-[14px] truncate">
-              {info.getValue() && info.getValue() !== '' && info.getValue() !== null
-                ? info.getValue()
-                : '-'}
-            </p>
+          <p className="text-[14px] truncate truncate max-w-[100px] 2xl:max-w-[300px]">
+            {info.getValue() && info.getValue() !== '' && info.getValue() !== null
+              ? info.getValue()
+              : '-'}
+          </p>
           // </Link>
         );
       },
