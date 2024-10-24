@@ -924,7 +924,7 @@ export default function ContentManagerDetailData() {
               <Typography type="body" size="m" weight="bold" className="w-48 my-5 ml-1 mr-9">
                 {name}
               </Typography>
-              <div className="card w-full shadow-md p-5 mt-5">
+              <div className="card w-full shadow-md p-5 my-5">
                 {contentData?.map((value: { details: any[] }, idx: Key) => (
                   <>
                     <div key={idx}>
