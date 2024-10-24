@@ -1340,7 +1340,7 @@ export default function ContentManagerDetailData() {
                               );
                             case 'EMAIL_FORM':
                               return (
-                                <div className="flex flex-row mt-16">
+                                <div className="flex flex-row my-16">
                                   <div>
                                     <Typography
                                       type="body"
