@@ -827,7 +827,7 @@ export default function ContentManagerDetailData() {
           );
         case 'EMAIL_FORM':
           return (
-            <div className="flex flex-row mt-16">
+            <div className="flex flex-row my-16">
               <div>
                 <Typography
                   type="body"
@@ -1457,42 +1457,6 @@ export default function ContentManagerDetailData() {
     );
   }, [selectedCategories]);
 
-  const submitButton = () => {
-    return (
-      <div className="flex justify-end mt-10">
-        <div className="flex flex-row p-2 gap-2">
-          <button
-            onClick={() => {
-              redirectPage();
-            }}
-            className="btn btn-outline text-xs btn-sm w-28 h-10">
-            {t('user.content-manager-detail-data.cancel')}
-          </button>
-          <button
-            onClick={() => {
-              const payload = {
-                id: contentDataDetailList?.id,
-                status:
-                  contentDataDetailList?.status === 'DELETE_REVIEW'
-                    ? 'DELETE_APPROVE'
-                    : 'WAITING_APPROVE',
-                comment: 'Already review',
-              };
-
-              if (isAlreadyReview) {
-                onUpdateStatus(payload);
-              } else {
-                setShowModalWarning(true);
-              }
-            }}
-            className="btn btn-success text-xs text-white btn-sm w-28 h-10">
-            {t('user.content-manager-detail-data.submit')}
-          </button>
-        </div>
-      </div>
-    );
-  };
-
   const rigthTopButton = () => {
     switch (contentDataDetailList?.status) {
       case 'WAITING_REVIEW':
@@ -1653,6 +1617,16 @@ export default function ContentManagerDetailData() {
         icon={PaperIcon}
         submitAction={() => {
           setShowModalReview(false);
+          const payload = {
+            id: contentDataDetailList?.id,
+            status:
+              contentDataDetailList?.status === 'DELETE_REVIEW'
+                ? 'DELETE_APPROVE'
+                : 'WAITING_APPROVE',
+            comment: 'Already review',
+          };
+
+          onUpdateStatus(payload);
         }}
         btnSubmitStyle="btn bg-secondary-warning border-none"
         cancelAction={() => {
@@ -1973,7 +1947,6 @@ export default function ContentManagerDetailData() {
                   updateType={''}
                 />
               </div>
-              {submitButton()}
             </div>
           ) : null
         ) : null}
