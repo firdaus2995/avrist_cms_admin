@@ -1140,7 +1140,7 @@ export default function ContentManagerDetailData() {
 
                                     return (
                                       <FormList.TextEditor
-                                        title={name}
+                                        title={val.name}
                                         value={field.value}
                                         disabled={!isEdited}
                                         onChange={onChange}
