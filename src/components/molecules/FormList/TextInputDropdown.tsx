@@ -31,6 +31,7 @@ const TextInputDropDown = ({
 
   const handleInputChange = (e: { target: { value: React.SetStateAction<string> } }) => {
     setSearchTerm(e.target.value); // Update search term on typing
+    onChange(e.target.value);
     setSelectedValue('');
     setIsOpen(true); // Open dropdown on typing
   };
