@@ -37,15 +37,15 @@ export default function MyTaskTab(props: { id: any }) {
   }, [data]);
 
   useEffect(() => {
-    void fetchQuery.refetch()
-  }, [])
+    void fetchQuery.refetch();
+  }, []);
 
   // FUNCTION FOR SORTING FOR ATOMIC TABLE
   const handleSortModelChange = useCallback((sortModel: SortingState) => {
     if (sortModel.length) {
       setSortBy(sortModel[0].id);
       setDirection(sortModel[0].desc ? 'desc' : 'asc');
-    }else{
+    } else {
       setSortBy('id');
       setDirection('desc');
     }
@@ -53,7 +53,9 @@ export default function MyTaskTab(props: { id: any }) {
 
   const COLUMNS = [
     {
-      header: () => <span className="text-[14px]">{t('user.tabs-mytask.myTaskTab.tableHeaders.status')}</span>,
+      header: () => (
+        <span className="text-[14px]">{t('user.tabs-mytask.myTaskTab.tableHeaders.status')}</span>
+      ),
       accessorKey: 'status',
       enableSorting: false,
       cell: (info: any) => (
@@ -69,7 +71,11 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.id')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">
+          {t('user.tabs-mytask.myTaskTab.tableHeaders.id')}
+        </span>
+      ),
       accessorKey: 'id',
       enableSorting: true,
       cell: (info: any) => (
@@ -81,11 +87,15 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.title')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">
+          {t('user.tabs-mytask.myTaskTab.tableHeaders.title')}
+        </span>
+      ),
       accessorKey: 'title',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate max-w-[100px] 2xl:max-w-[300px]">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
@@ -93,11 +103,15 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.shortDescription')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">
+          {t('user.tabs-mytask.myTaskTab.tableHeaders.shortDescription')}
+        </span>
+      ),
       accessorKey: 'shortDesc',
       enableSorting: false,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate max-w-[150px] 2xl:max-w-[500px]">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
@@ -105,7 +119,11 @@ export default function MyTaskTab(props: { id: any }) {
       ),
     },
     {
-      header: () => <span className="text-[14px] font-black">{t('user.tabs-mytask.myTaskTab.tableHeaders.actions')}</span>,
+      header: () => (
+        <span className="text-[14px] font-black">
+          {t('user.tabs-mytask.myTaskTab.tableHeaders.actions')}
+        </span>
+      ),
       accessorKey: 'id',
       enableSorting: false,
       cell: (info: any) => (

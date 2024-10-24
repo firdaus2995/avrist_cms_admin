@@ -26,7 +26,7 @@ export default function CategoryTab(_props: { id: any }) {
       accessorKey: 'name',
       enableSorting: true,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate max-w-[100px] 2xl:max-w-[300px]">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
@@ -42,7 +42,7 @@ export default function CategoryTab(_props: { id: any }) {
       accessorKey: 'shortDesc',
       enableSorting: false,
       cell: (info: any) => (
-        <p className="text-[14px] truncate">
+        <p className="text-[14px] truncate max-w-[150px] 2xl:max-w-[500px]">
           {info.getValue() && info.getValue() !== '' && info.getValue() !== null
             ? info.getValue()
             : '-'}
