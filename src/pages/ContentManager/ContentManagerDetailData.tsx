@@ -1020,6 +1020,7 @@ export default function ContentManagerDetailData() {
                                         key={val.id}
                                         fieldTypeLabel={transformText(val.name)}
                                         labelTitle={transformText(val.name)}
+                                        disabled={!isEdited}
                                         isDocument={true}
                                         multiple={configs?.media_type === 'multiple_media'}
                                         error={!!errors?.[`${idx}_${val.id}`]?.message}
