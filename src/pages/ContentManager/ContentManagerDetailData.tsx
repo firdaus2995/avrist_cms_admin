@@ -468,7 +468,7 @@ export default function ContentManagerDetailData() {
         (_: any, index: number) => index !== idx,
       );
       loopingElement.contentData = filteredElement;
-
+      console.log(updatedContentDataDetailList)
       setContentDataDetailList(updatedContentDataDetailList);
       setContentTempData(updatedContentDataDetailList.contentData);
     }
@@ -1386,6 +1386,7 @@ export default function ContentManagerDetailData() {
                                           {...field}
                                           key={val.id}
                                           fieldTypeLabel={transformText(val.name)}
+                                          disabled={!isEdited}
                                           placeholder=""
                                           error={!!errors?.[`${idx}_${val.id}`]?.message}
                                           helperText={errors?.[`${idx}_${val.id}`]?.message}
