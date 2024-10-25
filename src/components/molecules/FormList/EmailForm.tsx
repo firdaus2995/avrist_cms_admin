@@ -143,7 +143,7 @@ const EmailForm = ({
             setSelectedDefaultValue(null); // Reset nilai terpilih saat mencari
             setIsOpen(true); // Update search term
             if (e.target.value === '') {
-              onChange({value: null, label: ''});
+              onChange({ value: null, label: '' });
             }
           }}
           onClick={() => {
