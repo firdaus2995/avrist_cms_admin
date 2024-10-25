@@ -779,46 +779,46 @@ export default function ContentManagerNew() {
           );
         case 'EMAIL_FORM':
           return (
-            <div className="flex flex-row mt-16">
-              <div>
-                <Typography
-                  type="body"
-                  size="m"
-                  weight="bold"
-                  className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                  {t('user.content-manager-new.email-form')}
-                </Typography>
-                <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-                  {name}
-                </Typography>
+            <div className="flex flex-col">
+              <div className="flex flex-row mt-16">
+                <div>
+                  <Typography type="body" size="m" weight="bold" className={`w-48 mr-9 -mt-7 mb-2`}>
+                    {t('user.content-manager-new.email-form')}
+                  </Typography>
+                  <Typography type="body" size="m" weight="bold" className="w-56">
+                    {name}
+                  </Typography>
+                </div>
+                <Controller
+                  key={id}
+                  name={id.toString()}
+                  control={control}
+                  defaultValue=""
+                  render={({ field }) => {
+                    const onChange = useCallback(
+                      (e: any) => {
+                        handleFormChange(id, e.value, fieldType);
+                        field.onChange({ target: { value: e.value } });
+                      },
+                      [id, field, handleFormChange],
+                    );
+                    return (
+                      <FormList.EmailForm
+                        {...field}
+                        key={id}
+                        fieldTypeLabel={transformText(name)}
+                        placeholder=""
+                        error={!!errors?.[id]?.message}
+                        helperText={errors?.[id]?.message}
+                        items={categoryList}
+                        onChange={onChange}
+                        border={true}
+                      />
+                    );
+                  }}
+                />
               </div>
-              <Controller
-                key={id}
-                name={id.toString()}
-                control={control}
-                defaultValue=""
-                render={({ field }) => {
-                  const onChange = useCallback(
-                    (e: any) => {
-                      handleFormChange(id, e.value, fieldType);
-                      field.onChange({ target: { value: e.value } });
-                    },
-                    [id, field, handleFormChange],
-                  );
-                  return (
-                    <FormList.EmailForm
-                      {...field}
-                      key={id}
-                      fieldTypeLabel={transformText(name)}
-                      placeholder=""
-                      error={!!errors?.[id]?.message}
-                      helperText={errors?.[id]?.message}
-                      items={categoryList}
-                      onChange={onChange}
-                    />
-                  );
-                }}
-              />
+              <div className="border my-10" />
             </div>
           );
         case 'TAGS':
@@ -1170,47 +1170,54 @@ export default function ContentManagerNew() {
                         );
                       case 'EMAIL_FORM':
                         return (
-                          <div className="flex flex-row mt-16">
-                            <div>
-                              <Typography
-                                type="body"
-                                size="m"
-                                weight="bold"
-                                className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
-                                {t('user.content-manager-new.email-form')}
-                              </Typography>
-                              <Typography type="body" size="m" weight="bold" className="w-56 ml-1">
-                                {val.name}
-                              </Typography>
+                          <div className="flex flex-col">
+                            <div className="flex flex-row mt-16">
+                              <div>
+                                <Typography
+                                  type="body"
+                                  size="m"
+                                  weight="bold"
+                                  className={`w-48 ml-1 mr-9 -mt-7 mb-2`}>
+                                  {t('user.content-manager-new.email-form')}
+                                </Typography>
+                                <Typography
+                                  type="body"
+                                  size="m"
+                                  weight="bold"
+                                  className="w-56 ml-1">
+                                  {val.name}
+                                </Typography>
+                              </div>
+                              <Controller
+                                key={val.id}
+                                name={val.id.toString()}
+                                control={control}
+                                defaultValue=""
+                                rules={{ required: `${val.name} is required` }}
+                                render={({ field }) => {
+                                  const onChange = useCallback(
+                                    (e: any) => {
+                                      handleFormChange(val.id, e.value, val.fieldType, true, id);
+                                      field.onChange({ target: { value: e.value } });
+                                    },
+                                    [val.id, val.fieldType, handleFormChange],
+                                  );
+                                  return (
+                                    <FormList.EmailForm
+                                      {...field}
+                                      key={val.id}
+                                      fieldTypeLabel={transformText(val.name)}
+                                      placeholder=""
+                                      error={!!errors?.[val.id]?.message}
+                                      helperText={errors?.[val.id]?.message}
+                                      items={categoryList}
+                                      onChange={onChange}
+                                    />
+                                  );
+                                }}
+                              />
                             </div>
-                            <Controller
-                              key={val.id}
-                              name={val.id.toString()}
-                              control={control}
-                              defaultValue=""
-                              rules={{ required: `${val.name} is required` }}
-                              render={({ field }) => {
-                                const onChange = useCallback(
-                                  (e: any) => {
-                                    handleFormChange(val.id, e.value, val.fieldType, true, id);
-                                    field.onChange({ target: { value: e.value } });
-                                  },
-                                  [val.id, val.fieldType, handleFormChange],
-                                );
-                                return (
-                                  <FormList.EmailForm
-                                    {...field}
-                                    key={val.id}
-                                    fieldTypeLabel={transformText(val.name)}
-                                    placeholder=""
-                                    error={!!errors?.[val.id]?.message}
-                                    helperText={errors?.[val.id]?.message}
-                                    items={categoryList}
-                                    onChange={onChange}
-                                  />
-                                );
-                              }}
-                            />
+                            <div className="border my-10" />
                           </div>
                         );
                       case 'TAGS':

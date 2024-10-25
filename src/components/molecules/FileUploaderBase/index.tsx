@@ -262,7 +262,9 @@ export default function FileUploaderBase({
             onDragOver={e => {
               e.preventDefault();
             }}
-            className={`min-w-[150px] bg-white border-dashed border-[2px] border-lavender rounded-xl`}>
+            className={`${
+              disabled && 'hidden'
+            } min-w-[150px] bg-white border-dashed border-[2px] border-lavender rounded-xl`}>
             <label
               htmlFor={id}
               className={`flex flex-col justify-center items-center ${
@@ -290,10 +292,16 @@ export default function FileUploaderBase({
               </div>
             </label>
           </div>
+          {disabled && value === '[]' && (
+            <div className="px-4 py-2 rounded-xl bg-light-purple-2">
+              <p>-</p>
+            </div>
+          )}
           <div className="w-full">
-            <p className="text-body-text-3 text-xs mt-2">{`Only Support format ${
-              isDocument ? '.pdf' : '.jpg, .jpeg, .png'
-            }`}</p>
+            <p
+              className={`text-body-text-3 text-xs mt-2 ${
+                disabled && 'hidden'
+              }`}>{`Only Support format ${isDocument ? '.pdf' : '.jpg, .jpeg, .png'}`}</p>
             {showMaxSize ? (
               <p className="text-body-text-3 text-xs">{`Max. ${maxSize
                 ?.toString()
