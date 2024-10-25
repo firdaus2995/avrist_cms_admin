@@ -1532,7 +1532,8 @@ export default function ContentManagerDetailData() {
             message: getMessageToast(status),
           }),
         );
-        redirectPage();
+        refetch();
+        window.scrollTo(0, 0);
       })
       .catch((error: any) => {
         dispatch(
