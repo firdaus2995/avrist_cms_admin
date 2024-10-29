@@ -948,7 +948,7 @@ export default function ContentManagerDetailData() {
                         )}
                       </div>
                       {value.details.map(
-                        (val: { fieldType: any; id: any; value: any; name: any }) => {
+                        (val: { config: any; fieldType: any; id: any; value: any; name: any }) => {
                           switch (val.fieldType) {
                             case 'EMAIL':
                               return (
@@ -1239,11 +1239,37 @@ export default function ContentManagerDetailData() {
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         isDocument={false}
-                                        multiple={configs?.media_type === 'multiple_media'}
+                                        multiple={
+                                          JSON.parse(val?.config)?.media_type === 'multiple_media'
+                                        }
                                         error={!!errors?.[`${idx}_${val.id}`]?.message}
                                         helperText={errors?.[`${idx}_${val.id}`]?.message}
                                         onChange={onChange}
                                         editMode={isEdited}
+                                        optionalComponent={() => {
+                                          return (
+                                            <div className="flex flex-col gap-2">
+                                              {JSON.parse(val?.config)?.width &&
+                                                JSON.parse(val?.config)?.height && (
+                                                  <p className="text-xs font-medium">
+                                                    Recommended Size:{' '}
+                                                    {JSON.parse(val?.config)?.width} x{' '}
+                                                    {JSON.parse(val?.config)?.height}
+                                                  </p>
+                                                )}
+                                              {JSON.parse(val?.config)?.image_fit && (
+                                                <p className="text-xs font-medium">
+                                                  Image Fit:{' '}
+                                                  {JSON.parse(val?.config)?.image_fit.includes(
+                                                    'full',
+                                                  )
+                                                    ? 'Proportional Full'
+                                                    : 'Proportional Crop'}
+                                                </p>
+                                              )}
+                                            </div>
+                                          );
+                                        }}
                                       />
                                     );
                                   }}

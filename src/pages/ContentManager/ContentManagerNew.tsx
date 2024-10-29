@@ -666,6 +666,25 @@ export default function ContentManagerNew() {
                     helperText={errors?.[id]?.message}
                     onChange={onChange}
                     editMode={true}
+                    optionalComponent={() => {
+                      return (
+                        <div className="flex flex-col gap-2">
+                          {configs?.width && configs?.height && (
+                            <p className="text-xs font-medium">
+                              Recommended Size: {configs?.width} x {configs?.height}
+                            </p>
+                          )}
+                          {configs?.image_fit && (
+                            <p className="text-xs font-medium">
+                              Image Fit:{' '}
+                              {configs?.image_fit.includes('full')
+                                ? 'Proportional Full'
+                                : 'Proportional Crop'}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    }}
                   />
                 );
               }}
@@ -1054,11 +1073,34 @@ export default function ContentManagerNew() {
                                   fieldTypeLabel={transformText(val.name)}
                                   labelTitle={transformText(val.name)}
                                   isDocument={false}
-                                  multiple={configs?.media_type === 'multiple_media'}
+                                  multiple={
+                                    JSON.parse(val?.config)?.media_type === 'multiple_media'
+                                  }
                                   error={!!errors?.[val.id]?.message}
                                   helperText={errors?.[val.id]?.message}
                                   onChange={onChange}
                                   editMode={true}
+                                  optionalComponent={() => {
+                                    return (
+                                      <div className="flex flex-col gap-2">
+                                        {JSON.parse(val?.config)?.width &&
+                                          JSON.parse(val?.config)?.height && (
+                                            <p className="text-xs font-medium">
+                                              Recommended Size: {JSON.parse(val?.config)?.width} x{' '}
+                                              {JSON.parse(val?.config)?.height}
+                                            </p>
+                                          )}
+                                        {JSON.parse(val?.config)?.image_fit && (
+                                          <p className="text-xs font-medium">
+                                            Image Fit:{' '}
+                                            {JSON.parse(val?.config)?.image_fit.includes('full')
+                                              ? 'Proportional Full'
+                                              : 'Proportional Crop'}
+                                          </p>
+                                        )}
+                                      </div>
+                                    );
+                                  }}
                                 />
                               );
                             }}
