@@ -979,8 +979,8 @@ export default function ContentManagerDetailData() {
                                         {...field}
                                         key={id}
                                         type={field.value === '-' ? 'text' : 'email'}
-                                        fieldTypeLabel={transformText(name)}
-                                        labelTitle={transformText(name)}
+                                        fieldTypeLabel={transformText(val.name)}
+                                        labelTitle={transformText(val.name)}
                                         disabled={!isEdited}
                                         placeholder=""
                                         error={!!errors?.[`${idx}_${val.id}`]?.message}
