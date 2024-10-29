@@ -1018,8 +1018,8 @@ export default function ContentTypeNew() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config.includes('width')
-                                              ? JSON.parse(openedAttribute?.config)?.width
+                                            val?.config.includes('width')
+                                              ? JSON.parse(val?.config)?.width
                                               : ''
                                           }
                                           inputStyle="rounded-3xl"
@@ -1040,7 +1040,6 @@ export default function ContentTypeNew() {
                                                   return attribute;
                                                 },
                                               );
-
                                             setOpenedAttribute((prevState: any) => ({
                                               ...prevState,
                                               attributeList: updatedAttributeList,
@@ -1052,8 +1051,8 @@ export default function ContentTypeNew() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config.includes('height')
-                                              ? JSON.parse(openedAttribute?.config)?.height
+                                            val?.config.includes('height')
+                                              ? JSON.parse(val?.config)?.height
                                               : ''
                                           }
                                           inputStyle="rounded-3xl"
@@ -1620,8 +1619,8 @@ export default function ContentTypeNew() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config.includes('width')
-                                              ? JSON.parse(openedAttribute?.config)?.width
+                                            val?.config.includes('width')
+                                              ? JSON.parse(val?.config)?.width
                                               : ''
                                           }
                                           inputStyle="rounded-3xl"

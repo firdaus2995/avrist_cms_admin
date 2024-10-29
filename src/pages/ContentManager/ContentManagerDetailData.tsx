@@ -1532,7 +1532,7 @@ export default function ContentManagerDetailData() {
             message: getMessageToast(status),
           }),
         );
-        refetch();
+        void refetch();
         window.scrollTo(0, 0);
       })
       .catch((error: any) => {
