@@ -953,8 +953,8 @@ export default function ContentManagerDetailData() {
                             case 'EMAIL':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{ required: `${val.name} is required` }}
@@ -994,8 +994,8 @@ export default function ContentManagerDetailData() {
                             case 'DOCUMENT':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1020,7 +1020,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.FileUploaderV2
                                         {...field}
-                                        key={val.id}
+                                        key={`${val.id}_${val.value}`}
                                         fieldTypeLabel={transformText(val.name)}
                                         labelTitle={transformText(val.name)}
                                         disabled={!isEdited}
@@ -1038,8 +1038,8 @@ export default function ContentManagerDetailData() {
                             case 'TEXT_AREA':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{ required: `${val.name} is required` }}
@@ -1062,7 +1062,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextAreaField
                                         {...field}
-                                        key={val.id}
+                                        key={`${val.id}_${val.value}`}
                                         fieldTypeLabel={transformText(val.name)}
                                         labelTitle={transformText(val.name)}
                                         placeholder=""
@@ -1077,8 +1077,8 @@ export default function ContentManagerDetailData() {
                             case 'TEXT_FIELD':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{ required: `${name} is required` }}
@@ -1102,7 +1102,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={val.id}
+                                        key={`${val.id}_${val.value}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
@@ -1118,8 +1118,8 @@ export default function ContentManagerDetailData() {
                             case 'TEXT_EDITOR':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1156,8 +1156,8 @@ export default function ContentManagerDetailData() {
                             case 'TAGS':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   render={({ field }) => {
@@ -1180,7 +1180,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={val.id}
+                                        key={`${val.id}_${val.value}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
@@ -1196,8 +1196,8 @@ export default function ContentManagerDetailData() {
                             case 'IMAGE':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1234,7 +1234,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.FileUploaderV2
                                         {...field}
-                                        key={val.id}
+                                        key={`${val.id}_${val.value}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
@@ -1278,8 +1278,8 @@ export default function ContentManagerDetailData() {
                             case 'YOUTUBE_URL':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1309,7 +1309,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={val.id}
+                                        key={`${val.id}_${val.value}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
@@ -1325,8 +1325,8 @@ export default function ContentManagerDetailData() {
                             case 'PHONE_NUMBER':
                               return (
                                 <Controller
-                                  key={val.id}
-                                  name={`${idx}_${val.id}`}
+                                  key={`${val.id}_${val.value}`}
+                                  name={`${val.id}_${val.value}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1355,7 +1355,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={val.id}
+                                        key={`${val.id}_${val.value}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
@@ -1389,8 +1389,8 @@ export default function ContentManagerDetailData() {
                                       </Typography>
                                     </div>
                                     <Controller
-                                      key={val.id}
-                                      name={`${idx}_${val.id}`}
+                                      key={`${val.id}_${val.value}`}
+                                      name={`${val.id}_${val.value}`}
                                       control={control}
                                       defaultValue={val.value}
                                       render={({ field }) => {
@@ -1415,7 +1415,7 @@ export default function ContentManagerDetailData() {
                                         return (
                                           <FormList.EmailForm
                                             {...field}
-                                            key={val.id}
+                                            key={`${val.id}_${val.value}`}
                                             fieldTypeLabel={transformText(val.name)}
                                             disabled={!isEdited}
                                             placeholder=""
