@@ -1115,9 +1115,9 @@ export default function ContentTypeEdit() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config !== null
-                                              ? openedAttribute?.config.includes('width')
-                                                ? JSON.parse(openedAttribute?.config)?.width
+                                            val?.config !== null
+                                              ? val?.config.includes('width')
+                                                ? JSON.parse(val?.config)?.width
                                                 : ''
                                               : ''
                                           }
@@ -1153,9 +1153,9 @@ export default function ContentTypeEdit() {
                                           labelStyle="font-bold"
                                           type="number"
                                           value={
-                                            openedAttribute?.config !== null
-                                              ? openedAttribute?.config.includes('height')
-                                                ? JSON.parse(openedAttribute?.config)?.height
+                                            val?.config !== null
+                                              ? val?.config.includes('height')
+                                                ? JSON.parse(val?.config)?.height
                                                 : ''
                                               : ''
                                           }
@@ -1795,9 +1795,9 @@ export default function ContentTypeEdit() {
                                             labelStyle="font-bold"
                                             type="number"
                                             value={
-                                              openedAttribute?.config !== null
-                                                ? openedAttribute?.config.includes('width')
-                                                  ? JSON.parse(openedAttribute?.config)?.width
+                                              val?.config !== null
+                                                ? val?.config.includes('width')
+                                                  ? JSON.parse(val?.config)?.width
                                                   : ''
                                                 : ''
                                             }
@@ -1846,9 +1846,9 @@ export default function ContentTypeEdit() {
                                             labelStyle="font-bold"
                                             type="number"
                                             value={
-                                              openedAttribute?.config !== null
-                                                ? openedAttribute?.config.includes('height')
-                                                  ? JSON.parse(openedAttribute?.config)?.height
+                                              val?.config !== null
+                                                ? val?.config.includes('height')
+                                                  ? JSON.parse(val?.config)?.height
                                                   : ''
                                                 : ''
                                             }
