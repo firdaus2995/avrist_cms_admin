@@ -221,6 +221,9 @@ export const stringifyContentData = (data: any) => {
           if (item.fieldType === 'IMAGE' || item.fieldType === 'DOCUMENT') {
             item.value = convertFileUploaderValue(item.value);
           }
+          if (item.fieldType === 'EMAIL_FORM') {
+            item.value = ['-'];
+          }
           item.value = JSON.stringify(item.value);
         }
         return item;
