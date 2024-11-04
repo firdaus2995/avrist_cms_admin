@@ -443,14 +443,13 @@ export default function ContentManagerDetailData() {
               ...detail,
               value: '',
             })),
-            uuid: uuidv4()
+            uuid: uuidv4(),
           },
         ],
       };
 
       const newAttributeList = [...contentDataDetailList.contentData];
       newAttributeList[existingLoopingIndex] = newLoopingField;
-      console.log(newAttributeList)
       setContentDataDetailList((prevContentDataDetailList: any) => ({
         ...prevContentDataDetailList,
         contentData: newAttributeList,
@@ -489,7 +488,6 @@ export default function ContentManagerDetailData() {
         (_: any, index: number) => index !== idx,
       );
       loopingElement.contentData = filteredElement;
-      console.log(updatedContentDataDetailList)
       setContentDataDetailList(updatedContentDataDetailList);
       setContentTempData(updatedContentDataDetailList.contentData);
     }
