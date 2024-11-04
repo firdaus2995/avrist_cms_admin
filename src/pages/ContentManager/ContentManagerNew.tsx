@@ -1114,7 +1114,7 @@ export default function ContentManagerNew() {
                             control={control}
                             defaultValue={''}
                             rules={{
-                              required: { value: true, message: `${name} is required` },
+                              required: { value: true, message: `${val.name} is required` },
                             }}
                             render={({ field }) => {
                               const onChange = useCallback(
@@ -1129,6 +1129,8 @@ export default function ContentManagerNew() {
                                 <FormList.TextEditor
                                   {...field}
                                   title={val.name}
+                                  error={!!errors?.[val.id]?.message}
+                                  helperText={errors?.[val.id]?.message}
                                   value={field.value}
                                   onChange={onChange}
                                 />

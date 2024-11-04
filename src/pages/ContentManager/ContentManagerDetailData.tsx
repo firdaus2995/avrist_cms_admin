@@ -760,6 +760,8 @@ export default function ContentManagerDetailData() {
                   <FormList.TextEditor
                     title={name}
                     value={field.value}
+                    error={!!errors?.[id.toString()]}
+                    helperText={errors?.[id.toString()]?.message}
                     disabled={!isEdited}
                     onChange={onChange}
                   />
@@ -1143,7 +1145,7 @@ export default function ContentManagerDetailData() {
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
-                                    required: { value: true, message: `${name} is required` },
+                                    required: { value: true, message: `${val.name} is required` },
                                   }}
                                   render={({ field }) => {
                                     const onChange = useCallback(
@@ -1166,6 +1168,8 @@ export default function ContentManagerDetailData() {
                                       <FormList.TextEditor
                                         title={val.name}
                                         value={field.value}
+                                        error={!!errors?.[`TEXT_EDITOR_${uniqueKey}`]}
+                                        helperText={errors?.[`TEXT_EDITOR_${uniqueKey}`]?.message}
                                         disabled={!isEdited}
                                         onChange={onChange}
                                       />
