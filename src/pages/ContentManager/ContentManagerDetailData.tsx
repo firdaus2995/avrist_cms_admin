@@ -40,6 +40,7 @@ import { ButtonMenu } from '@/components/molecules/ButtonMenu';
 import { CheckBox } from '@/components/atoms/Input/CheckBox';
 import { openToast } from '@/components/atoms/Toast/slice';
 import { errorMessageTypeConverter, transformText } from '@/utils/logicHelper';
+import { v4 as uuidv4 } from 'uuid';
 
 export default function ContentManagerDetailData() {
   const dispatch = useAppDispatch();
@@ -127,7 +128,26 @@ export default function ContentManagerDetailData() {
 
   useEffect(() => {
     if (contentDataDetail) {
-      setContentDataDetailList(contentDataDetail?.contentDataDetail);
+      const updatedContentData = contentDataDetail?.contentDataDetail?.contentData.map(
+        (item: any) => {
+          if (item.fieldType === 'LOOPING' && item.contentData) {
+            return {
+              ...item,
+              contentData: item.contentData.map((content: any) => ({
+                ...content,
+                uuid: uuidv4(),
+              })),
+            };
+          }
+          return item;
+        },
+      );
+
+      setContentDataDetailList({
+        ...contentDataDetail?.contentDataDetail,
+        contentData: updatedContentData,
+      });
+
       if (contentDataDetail?.contentDataDetail?.categories[0]?.categoryName) {
         setSelectedCategories(
           contentDataDetail?.contentDataDetail.categories.map((item: any) => item.categoryName),
@@ -423,13 +443,13 @@ export default function ContentManagerDetailData() {
               ...detail,
               value: '',
             })),
+            uuid: uuidv4(),
           },
         ],
       };
 
       const newAttributeList = [...contentDataDetailList.contentData];
       newAttributeList[existingLoopingIndex] = newLoopingField;
-
       setContentDataDetailList((prevContentDataDetailList: any) => ({
         ...prevContentDataDetailList,
         contentData: newAttributeList,
@@ -468,7 +488,6 @@ export default function ContentManagerDetailData() {
         (_: any, index: number) => index !== idx,
       );
       loopingElement.contentData = filteredElement;
-
       setContentDataDetailList(updatedContentDataDetailList);
       setContentTempData(updatedContentDataDetailList.contentData);
     }
@@ -489,7 +508,6 @@ export default function ContentManagerDetailData() {
 
   const renderFormList = () => {
     // DEFAULT VALUE
-
     return contentDataDetailList?.contentData.map((props: any, _index: number) => {
       const { id, name, fieldType, contentData, config, value } = props;
       const configs = JSON.parse(config);
@@ -928,9 +946,9 @@ export default function ContentManagerDetailData() {
                 {name}
               </Typography>
               <div className="card w-full shadow-md p-5 my-5">
-                {contentData?.map((value: { details: any[] }, idx: Key) => (
+                {contentData?.map((value: { details: any[]; uuid: any }, idx: Key) => (
                   <>
-                    <div key={idx}>
+                    <div key={`content-${idx}`}>
                       <div className="p-2 flex items-end justify-end">
                         <div className="px-4 py-2 bg-light-purple rounded-xl font-semibold text-bright-purple">
                           {(idx as number) + 1}
@@ -949,12 +967,14 @@ export default function ContentManagerDetailData() {
                       </div>
                       {value.details.map(
                         (val: { config: any; fieldType: any; id: any; value: any; name: any }) => {
+                          const uniqueKey = `${value.uuid}_${val.name}`;
+
                           switch (val.fieldType) {
                             case 'EMAIL':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`EMAIL_${uniqueKey}`}
+                                  name={`EMAIL_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{ required: `${val.name} is required` }}
@@ -994,8 +1014,8 @@ export default function ContentManagerDetailData() {
                             case 'DOCUMENT':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`DOCUMENT_${uniqueKey}`}
+                                  name={`DOCUMENT_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1038,8 +1058,8 @@ export default function ContentManagerDetailData() {
                             case 'TEXT_AREA':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`TEXT_AREA_${uniqueKey}`}
+                                  name={`TEXT_AREA_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{ required: `${val.name} is required` }}
@@ -1077,8 +1097,8 @@ export default function ContentManagerDetailData() {
                             case 'TEXT_FIELD':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`TEXT_FIELD_${uniqueKey}`}
+                                  name={`TEXT_FIELD_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{ required: `${name} is required` }}
@@ -1118,8 +1138,8 @@ export default function ContentManagerDetailData() {
                             case 'TEXT_EDITOR':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`TEXT_EDITOR_${uniqueKey}`}
+                                  name={`TEXT_EDITOR_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1156,8 +1176,8 @@ export default function ContentManagerDetailData() {
                             case 'TAGS':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`TAGS_${uniqueKey}`}
+                                  name={`TAGS_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   render={({ field }) => {
@@ -1196,8 +1216,8 @@ export default function ContentManagerDetailData() {
                             case 'IMAGE':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`IMAGE_${uniqueKey}`}
+                                  name={`IMAGE_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1278,8 +1298,8 @@ export default function ContentManagerDetailData() {
                             case 'YOUTUBE_URL':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`YOUTUBE_URL_${uniqueKey}`}
+                                  name={`YOUTUBE_URL_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1325,8 +1345,8 @@ export default function ContentManagerDetailData() {
                             case 'PHONE_NUMBER':
                               return (
                                 <Controller
-                                  key={`${val.id}_${val.value}`}
-                                  name={`${val.id}_${val.value}`}
+                                  key={`PHONE_NUMBER_${uniqueKey}`}
+                                  name={`PHONE_NUMBER_${uniqueKey}`}
                                   control={control}
                                   defaultValue={val.value}
                                   rules={{
@@ -1389,8 +1409,8 @@ export default function ContentManagerDetailData() {
                                       </Typography>
                                     </div>
                                     <Controller
-                                      key={`${val.id}_${val.value}`}
-                                      name={`${val.id}_${val.value}`}
+                                      key={`EMAIL_FORM_${uniqueKey}`}
+                                      name={`EMAIL_FORM_${uniqueKey}`}
                                       control={control}
                                       defaultValue={val.value}
                                       render={({ field }) => {
