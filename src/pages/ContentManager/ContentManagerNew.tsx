@@ -907,7 +907,7 @@ export default function ContentManagerNew() {
                 {attributeList?.map(
                   (val: { name: any; id: any; fieldType: any; config: any; duplicateId?: any }) => {
                     const configs = val?.config ? JSON.parse(val?.config) : {};
-                    console.log(errors)
+
                     switch (val.fieldType) {
                       case 'TEXT_FIELD':
                         return (
