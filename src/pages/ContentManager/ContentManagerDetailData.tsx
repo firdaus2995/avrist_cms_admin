@@ -1005,8 +1005,8 @@ export default function ContentManagerDetailData() {
                                         labelTitle={transformText(val.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`EMAIL_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`EMAIL_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -1042,14 +1042,14 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.FileUploaderV2
                                         {...field}
-                                        key={`${val.id}_${val.value}`}
+                                        key={`DOCUMENT_${uniqueKey}`}
                                         fieldTypeLabel={transformText(val.name)}
                                         labelTitle={transformText(val.name)}
                                         disabled={!isEdited}
                                         isDocument={true}
                                         multiple={configs?.media_type === 'multiple_media'}
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`DOCUMENT_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`DOCUMENT_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                         editMode={true}
                                       />
@@ -1084,12 +1084,12 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextAreaField
                                         {...field}
-                                        key={`${val.id}_${val.value}`}
+                                        key={`TEXT_AREA_${uniqueKey}`}
                                         fieldTypeLabel={transformText(val.name)}
                                         labelTitle={transformText(val.name)}
                                         placeholder=""
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`TEXT_AREA_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`TEXT_AREA_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -1124,13 +1124,13 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={`${val.id}_${val.value}`}
+                                        key={`TEXT_FIELD_${uniqueKey}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`TEXT_FIELD_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`TEXT_FIELD_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -1204,13 +1204,13 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={`${val.id}_${val.value}`}
+                                        key={`TAGS_${uniqueKey}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`TAGS_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`TAGS_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -1258,7 +1258,7 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.FileUploaderV2
                                         {...field}
-                                        key={`${val.id}_${val.value}`}
+                                        key={`IMAGE_${uniqueKey}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
@@ -1266,8 +1266,8 @@ export default function ContentManagerDetailData() {
                                         multiple={
                                           JSON.parse(val?.config)?.media_type === 'multiple_media'
                                         }
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`IMAGE_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`IMAGE_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                         editMode={isEdited}
                                         optionalComponent={() => {
@@ -1333,13 +1333,13 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={`${val.id}_${val.value}`}
+                                        key={`YOUTUBE_URL_${uniqueKey}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`YOUTUBE_URL_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`YOUTUBE_URL_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -1379,13 +1379,13 @@ export default function ContentManagerDetailData() {
                                     return (
                                       <FormList.TextField
                                         {...field}
-                                        key={`${val.id}_${val.value}`}
+                                        key={`PHONE_NUMBER_${uniqueKey}`}
                                         fieldTypeLabel={transformText(val?.name)}
                                         labelTitle={transformText(val?.name)}
                                         disabled={!isEdited}
                                         placeholder=""
-                                        error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                        helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                        error={!!errors?.[`PHONE_NUMBER_${uniqueKey}`]?.message}
+                                        helperText={errors?.[`PHONE_NUMBER_${uniqueKey}`]?.message}
                                         onChange={onChange}
                                       />
                                     );
@@ -1439,12 +1439,12 @@ export default function ContentManagerDetailData() {
                                         return (
                                           <FormList.EmailForm
                                             {...field}
-                                            key={`${val.id}_${val.value}`}
+                                            key={`EMAIL_FORM_${uniqueKey}`}
                                             fieldTypeLabel={transformText(val.name)}
                                             disabled={!isEdited}
                                             placeholder=""
-                                            error={!!errors?.[`${idx}_${val.id}`]?.message}
-                                            helperText={errors?.[`${idx}_${val.id}`]?.message}
+                                            error={!!errors?.[`EMAIL_FORM_${uniqueKey}`]?.message}
+                                            helperText={errors?.[`EMAIL_FORM_${uniqueKey}`]?.message}
                                             items={categoryList}
                                             onChange={onChange}
                                           />

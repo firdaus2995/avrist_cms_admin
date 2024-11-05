@@ -848,6 +848,7 @@ export default function ContentManagerNew() {
               control={control}
               defaultValue=""
               rules={{
+                required: { value: true, message: `${name} is required` },
                 maxLength: {
                   value: configs?.max_length > 0 ? configs?.max_length : 9999,
                   message: `${configs?.max_length} characters maximum`,
@@ -906,7 +907,7 @@ export default function ContentManagerNew() {
                 {attributeList?.map(
                   (val: { name: any; id: any; fieldType: any; config: any; duplicateId?: any }) => {
                     const configs = val?.config ? JSON.parse(val?.config) : {};
-
+                    console.log(errors)
                     switch (val.fieldType) {
                       case 'TEXT_FIELD':
                         return (
@@ -1270,6 +1271,9 @@ export default function ContentManagerNew() {
                             name={val.id.toString()}
                             control={control}
                             defaultValue=""
+                            rules={{
+                              required: { value: true, message: `${val.name} is required` },
+                            }}
                             render={({ field }) => {
                               const onChange = useCallback(
                                 (e: any) => {
